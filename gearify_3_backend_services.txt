@@ -1,0 +1,44 @@
+Context: You have already generated the Gearify architecture and umbrella repo.
+
+Goal: Generate runnable `.NET 8` microservices for Gearify. Each service is a separate repo. Use Clean Architecture + CQRS (MediatR) + FluentValidation + Mapster + Serilog + OpenTelemetry.
+
+---
+
+## Services to generate
+1. `gearify-api-gateway`
+2. `gearify-catalog-svc`
+3. `gearify-search-svc`
+4. `gearify-cart-svc`
+5. `gearify-order-svc`
+6. `gearify-payment-svc`
+7. `gearify-shipping-svc`
+8. `gearify-inventory-svc`
+9. `gearify-tenant-svc`
+10. `gearify-media-svc`
+11. `gearify-notification-svc`
+
+---
+
+## Each Service Must Include
+- `Program.cs` and minimal startup.
+- Clean Architecture folders: `Application`, `Domain`, `Infrastructure`, `API`.
+- `Dockerfile` (multi-stage).
+- `.github/workflows/ci.yml` (build, test, docker build).
+- Helm chart + Argo CD Application YAML.
+- `README.md` with env vars, endpoints, and run instructions.
+- Outbox pattern for SQS/SNS events.
+- Proper logging (Serilog JSON).
+- Unit tests + integration tests (Testcontainers).
+
+---
+
+## Notes
+- Payment service supports **Stripe** and **PayPal** adapters.
+- Shipping uses **EasyPost** and stub **Shippo** adapter.
+- Search uses **DynamoDB GSIs** (no Elasticsearch yet).
+- Security: JWT, rate limiting, idempotency keys.
+- DynamoDB: orders, catalog, tenants.
+- PostgreSQL: payments ledger.
+- Redis: sessions, idempotency tokens.
+
+Generate concise, runnable examples for at least one service (Order or Catalog) in full detail, and only structure for others.

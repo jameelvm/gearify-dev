@@ -1,0 +1,46 @@
+# Environment
+.env
+.env.*
+!.env.example
+.env.local
+.env.localstack
+docker-compose.override.yml
+
+# API Keys and Secrets
+**/localstack-api-key.txt
+**/*secret*
+**/*credentials*
+**/*api-key*
+!**/appsettings.json
+!**/appsettings.Development.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependencies
+node_modules/
+vendor/
+
+# Test results
+test-results/
+playwright-report/
+coverage/
+
+# Build artifacts
+dist/
+build/
+*.dll
+*.exe

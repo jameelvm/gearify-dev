@@ -1,0 +1,76 @@
+{
+  "services": [
+    {
+      "name": "gearify-api-gateway",
+      "repo": "git@github.com:yourorg/gearify-api-gateway.git",
+      "branch": "main",
+      "language": "dotnet"
+    },
+    {
+      "name": "gearify-catalog-svc",
+      "repo": "git@github.com:yourorg/gearify-catalog-svc.git",
+      "branch": "main",
+      "language": "dotnet"
+    },
+    {
+      "name": "gearify-search-svc",
+      "repo": "git@github.com:yourorg/gearify-search-svc.git",
+      "branch": "main",
+      "language": "dotnet"
+    },
+    {
+      "name": "gearify-cart-svc",
+      "repo": "git@github.com:yourorg/gearify-cart-svc.git",
+      "branch": "main",
+      "language": "dotnet"
+    },
+    {
+      "name": "gearify-order-svc",
+      "repo": "git@github.com:yourorg/gearify-order-svc.git",
+      "branch": "main",
+      "language": "dotnet"
+    },
+    {
+      "name": "gearify-payment-svc",
+      "repo": "git@github.com:yourorg/gearify-payment-svc.git",
+      "branch": "main",
+      "language": "dotnet"
+    },
+    {
+      "name": "gearify-shipping-svc",
+      "repo": "git@github.com:yourorg/gearify-shipping-svc.git",
+      "branch": "main",
+      "language": "dotnet"
+    },
+    {
+      "name": "gearify-inventory-svc",
+      "repo": "git@github.com:yourorg/gearify-inventory-svc.git",
+      "branch": "main",
+      "language": "dotnet"
+    },
+    {
+      "name": "gearify-tenant-svc",
+      "repo": "git@github.com:yourorg/gearify-tenant-svc.git",
+      "branch": "main",
+      "language": "dotnet"
+    },
+    {
+      "name": "gearify-media-svc",
+      "repo": "git@github.com:yourorg/gearify-media-svc.git",
+      "branch": "main",
+      "language": "dotnet"
+    },
+    {
+      "name": "gearify-notification-svc",
+      "repo": "git@github.com:yourorg/gearify-notification-svc.git",
+      "branch": "main",
+      "language": "dotnet"
+    },
+    {
+      "name": "gearify-web",
+      "repo": "git@github.com:yourorg/gearify-web.git",
+      "branch": "main",
+      "language": "angular"
+    }
+  ]
+}

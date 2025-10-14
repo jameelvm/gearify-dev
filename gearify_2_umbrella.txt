@@ -1,0 +1,156 @@
+SYSTEM INSTRUCTION:
+Proceed automatically. Do not ask follow-ups. Output files using fenced code blocks with full paths and contents. Keep commentary minimal.
+
+Context:
+- Architecture already defined (Gearify polyrepo microservices).
+- This repo is ONLY for local orchestration (dev). Each service is in its own repo (sibling folders).
+- We WILL use LocalStack Pro (Cognito + AWS service emulation) for local development.
+
+Goal:
+Generate the **umbrella orchestration repository** `gearify-umbrella` that runs all services locally with Docker Compose, seeds data, provides observability, and ships docs/tests.
+
+Repo Conventions (MUST follow exactly):
+- Service repos exist (or will exist) as **siblings** of the umbrella repo:
+  ../gearify-api-gateway
+  ../gearify-catalog-svc
+  ../gearify-search-svc
+  ../gearify-cart-svc
+  ../gearify-order-svc
+  ../gearify-payment-svc
+  ../gearify-shipping-svc
+  ../gearify-inventory-svc
+  ../gearify-tenant-svc
+  ../gearify-media-svc
+  ../gearify-notification-svc
+  ../gearify-web
+- Ports:
+  API Gateway 8080, Web 4200, Seq 5341, Jaeger 16686, Grafana 3000, Prometheus 9090,
+  MailHog 8025/1025, OTel 4317/4318, Postgres 5432, Redis 6379, DynamoDB LocalStack 4566.
+- One custom Docker network: `gearify-network`. All services must attach to it.
+- Use healthchecks + `depends_on` with `condition: service_healthy`.
+- Environment strategy: `.env.template` → `.env` (gitignored). Optional per-service `env_file:` overrides allowed.
+- Auth locally: **Cognito via LocalStack Pro** (User Pool + App Client). Also include a minimal **Mock JWT** toggle for emergency fallback (doc-only, not default).
+
+DELIVERABLES (print each file with full contents):
+1) gearify-umbrella/docker-compose.yml
+   - Infrastructure:
+     - localstack (Pro) with services: cognito-idp, dynamodb, s3, sqs, sns, secretsmanager, ssm, lambda, logs
+       * Mount `scripts/localstack-init.sh` into `/etc/localstack/init/ready.d/init-aws.sh`
+       * Expose 4566, persist via named volume
+     - postgres:16, redis:7, mailhog, seq, jaeger, otel-collector, prometheus, grafana
+     - Healthchecks for infra services
+   - App services built from **sibling repos** via `build.context: ../gearify-*-svc` (and `../gearify-web`, `../gearify-api-gateway`)
+   - Proper env wiring (pull from `.env` + `env_file` when provided)
+   - Single network `gearify-network`
+
+2) gearify-umbrella/docker-compose.dev.yml
+   - Frontend dev override:
+     - Volume-mount `../gearify-web` for hot reload
+     - Dev SSR command (e.g., `npm run start:ssr:dev`)
+     - Runtime env injection (serve `/env.js` containing `API_BASE_URL`)
+   - Optional faster rebuild flags for services (if helpful)
+
+3) gearify-umbrella/Makefile and make.bat
+   Targets (must exist):
+   - clone-all, pull-all, status-all
+   - build-all, build-parallel
+   - up, down, restart, logs, ps
+   - seed, seed-clean, validate-env
+   - test-e2e, test-load
+   - shell-<service> (open a shell into a service)
+   - localstack-status, localstack-logs, aws-resources, cognito-login (dev convenience)
+
+4) gearify-umbrella/.env.template (no secrets) and .gitignore (ignore .env, compose overrides, node_modules, etc.)
+
+5) gearify-umbrella/repos.json
+   - List all sibling repos with placeholders for Git URLs and branches.
+
+6) gearify-umbrella/scripts/
+   - clone-all.ps1 / clone-all.sh: clone if missing, else fetch/checkout/pull (use repos.json)
+   - validate-env.sh: check required vars are set; fail with useful message if not
+   - localstack-init.sh: (runs automatically)
+       * Create Cognito User Pool `gearify-users` + App Client `gearify-web-client`
+       * Create demo users: admin@gearify.com / Admin123! and user@global-demo.com / User123!
+       * Create DynamoDB tables: gearify-products (tenantId HASH, productId RANGE), gearify-orders (tenantId HASH, orderId RANGE),
+         gearify-tenants (tenantId HASH), gearify-feature-flags (tenantId HASH, flagKey RANGE)
+       * Create S3 buckets: gearify-product-images, gearify-assets
+       * Create SQS queues: gearify-order-events, gearify-payment-events, gearify-notification-events
+       * Create SNS topics: gearify-order-topic, gearify-payment-topic with SQS subscriptions
+       * Create Secrets: gearify/stripe-api-key, gearify/paypal-client-secret (dev placeholders)
+       * Create SSM params: /gearify/default-tenant-id, /gearify/demo-tenant-id
+       * Print Pool ID, Client ID, Queue URLs; write to `.env.localstack` for reference
+   - seed/
+       * seed-dynamodb.js (idempotent): seed tenants (default, global-demo), sample products (20+ cricket items with bats/pads/gloves/balls), feature flags
+       * seed-postgres.sql: create `payment_transactions` + sample rows, indexes
+       * seed-redis.sh: set sample feature toggles/session data with SETNX
+       * tenants.json: tenant theme/config data
+   - seed.ps1 and seed.sh wrappers to run all seeds cross-platform
+
+7) gearify-umbrella/observability/
+   - otel-collector-config.yaml: accept OTLP (4317/4318); export traces to Jaeger, metrics to Prometheus
+   - grafana/dashboards/gearify-overview.json: basic dashboard (requests, error rate, p95 latency)
+   - prometheus/prometheus.yml: scrape otel-collector metrics
+
+8) gearify-umbrella/tests/
+   - e2e/playwright.config.ts + tests/{catalog.spec.ts, checkout.spec.ts, multi-tenant.spec.ts, order-tracking.spec.ts}
+   - load/{checkout-flow.js, catalog-browsing.js} for k6
+
+9) gearify-umbrella/helm/gearify-chart/
+   - Chart.yaml, values.yaml, templates/deployment.yaml and service.yaml (minimal placeholders) to show GitOps handoff pattern
+
+10) gearify-umbrella/docs/
+   - ARCHITECTURE.md (high-level; services, data stores, flows)
+   - RUNBOOK.md (prereqs, quick start, ports, common commands)
+   - CUSTOMIZE.md (theming, feature flags, tenant switches)
+   - DEBUGGING.md (Seq logs, Jaeger traces, healthchecks, Docker tips)
+   - DATA-MODELS.md (DynamoDB/Postgres/Redis overview)
+   - API-REFERENCE.md (gateway routes, links to service Swagger)
+   - SECURITY.md (JWT/Cognito flow, headers, PCI minimization, webhooks)
+   - TAX-VAT.md (Stripe Tax + merchant responsibilities)
+   - COST.md (local + cloud cost levers and pointers)
+   - TROUBLESHOOTING.md (Docker/Windows issues, LocalStack common problems)
+   - CONTRIBUTING.md (branching, PR, coding style)
+   - TENANT-SETUP.md (add a new tenant end-to-end)
+   - LOCALSTACK-PRO.md (license, features used, troubleshooting)
+   - diagrams/{system-overview.mmd, service-interaction.mmd, checkout-flow.mmd, gitops-pipeline.mmd}
+
+11) gearify-umbrella/README.md
+   - Tight quick start with exact commands (Windows + macOS/Linux)
+
+.env.template (must include at least):
+- LOCALSTACK_API_KEY=(placeholder)
+- AWS_REGION=us-east-1
+- AWS_ACCESS_KEY_ID=test
+- AWS_SECRET_ACCESS_KEY=test
+- AWS_ENDPOINT=http://localstack:4566
+- DYNAMODB_ENDPOINT=http://localstack:4566
+- S3_ENDPOINT=http://localstack:4566
+- SQS_ENDPOINT=http://localstack:4566
+- SNS_ENDPOINT=http://localstack:4566
+- SECRETS_MANAGER_ENDPOINT=http://localstack:4566
+- POSTGRES_CONNECTION_STRING=Host=postgres;Database=gearify;Username=postgres;Password=postgres
+- REDIS_URL=redis://redis:6379
+- DEFAULT_TENANT_ID=default
+- DEMO_TENANT_ID=global-demo
+- (values to be filled by localstack-init.sh, but include variables) COGNITO_USER_POOL_ID, COGNITO_CLIENT_ID
+- JWT_ISSUER (Cognito), JWT_AUDIENCE (App Client)
+- STRIPE_API_KEY, STRIPE_WEBHOOK_SECRET, PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_MODE=sandbox
+- SEQ_URL=http://seq:5341
+- OTLP_ENDPOINT=http://otel-collector:4318
+- JAEGER_ENDPOINT=http://jaeger:14268/api/traces
+- PROMETHEUS_URL=http://prometheus:9090
+- TENANT_SERVICE_URL=http://tenant-svc:5008
+- CATALOG_SERVICE_URL=http://catalog-svc:5001
+- ORDER_SERVICE_URL=http://order-svc:5004
+- PAYMENT_SERVICE_URL=http://payment-svc:5005
+- SHIPPING_SERVICE_URL=http://shipping-svc:5006
+- NOTIFICATION_SERVICE_URL=http://notification-svc:5010
+- API_GATEWAY_URL=http://api-gateway:8080
+- FRONTEND_URL=http://localhost:4200
+- API_BASE_URL=http://localhost:8080
+
+OUTPUT FORMAT:
+- First, print a concise tree of `gearify-umbrella/`.
+- Then print each file with a fenced code block starting with a header line:
+  ```txt
+  # path: gearify-umbrella/<relative-path>

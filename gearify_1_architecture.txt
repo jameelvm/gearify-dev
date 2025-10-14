@@ -1,0 +1,50 @@
+Goal: Design the full architecture and repo structure for a global e-commerce web platform called **Gearify**, specialized in selling cricket equipment (bats, pads, gloves, etc.). It must support **multi-tenant**, **worldwide shipping**, and **two global payment methods only**: **Stripe** and **PayPal**.
+
+---
+
+## Objectives
+1. Define the **high-level system architecture** using microservices.
+2. Show how services interact (SQS/SNS, database, etc.).
+3. Design a **polyrepo setup** (each service is a separate Git repo, each with its own CI/CD pipeline).
+4. Specify **frontend architecture** (Angular 18 + SSR with MobileShell and DesktopShell).
+5. Include **logging, tracing, caching, security, CI/CD, and GitOps** details.
+6. Generate **Mermaid diagrams** for system and service interaction.
+
+---
+
+## Requirements Summary
+
+### Business
+- Sell cricket equipment globally.
+- Product info includes bats, pads, gloves, balls, kits, etc.
+- Product attributes: weight (oz/g), grade, weightType (Heavy, Medium, Light).
+- Add-ons: Knocking, Oiling, Toe Binding.
+- Multi-tenant setup: shop-specific logos, header colors, limited theme overrides.
+- Search required, but keep simple (no Elasticsearch yet).
+- Track orders, shipping, and payments globally.
+
+### Technology
+- Cloud: AWS.
+- Infra: Docker, Kubernetes, Argo CD (GitOps).
+- Backend: .NET 8 microservices (Clean Architecture + CQRS + MediatR).
+- Frontend: Angular 18 + SSR.
+- Databases:
+  - DynamoDB (catalog, orders, tenants, feature flags).
+  - PostgreSQL (payments ledger, reconciliation).
+  - Redis (cache, sessions).
+- Messaging: SQS + SNS.
+- Observability: Serilog + OpenTelemetry.
+- Auth: JWT (Cognito-compatible in cloud).
+- Infra as code: Terraform modules per service.
+- CI/CD: GitHub Actions + Argo CD + Helm.
+
+---
+
+## Deliverables
+- List of all microservices, their purpose, data store, and events.
+- Diagram showing interaction and data flow.
+- Explanation of security, scaling, and resilience mechanisms.
+- Folder structure of repos and GitOps flow.
+- Highlight tenant configuration and feature-flag architecture.
+
+---

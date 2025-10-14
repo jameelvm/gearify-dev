@@ -1,0 +1,413 @@
+version: '3.9'
+
+networks:
+  gearify-network:
+    name: gearify-network
+    driver: bridge
+
+volumes:
+  localstack-data:
+  postgres-data:
+  redis-data:
+  seq-data:
+  grafana-data:
+  prometheus-data:
+
+services:
+  # Infrastructure Services
+  localstack:
+    image: localstack/localstack-pro:latest
+    container_name: gearify-localstack
+    environment:
+      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_API_KEY}
+      - SERVICES=cognito-idp,dynamodb,s3,sqs,sns,secretsmanager,ssm,lambda,logs
+      - DEBUG=1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - LAMBDA_EXECUTOR=docker-reuse
+      - DYNAMODB_SHARE_DB=1
+      - PERSISTENCE=1
+    ports:
+      - "4566:4566"
+    volumes:
+      - "./scripts/localstack-init.sh:/etc/localstack/init/ready.d/init-aws.sh"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - localstack-data:/var/lib/localstack
+    networks:
+      - gearify-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: gearify-postgres
+    environment:
+      POSTGRES_DB: gearify
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - gearify-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: gearify-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - gearify-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Observability Services
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: gearify-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - gearify-network
+
+  seq:
+    image: datalust/seq:latest
+    container_name: gearify-seq
+    environment:
+      ACCEPT_EULA: Y
+      SEQ_FIRSTRUN_ADMINPASSWORD: admin
+    ports:
+      - "5341:80"
+    volumes:
+      - seq-data:/data
+    networks:
+      - gearify-network
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: gearify-jaeger
+    ports:
+      - "16686:16686"
+    networks:
+      - gearify-network
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: gearify-otel-collector
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./observability/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    networks:
+      - gearify-network
+    depends_on:
+      - jaeger
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: gearify-prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    volumes:
+      - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - gearify-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: gearify-grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./observability/grafana/dashboards:/etc/grafana/provisioning/dashboards
+    ports:
+      - "3000:3000"
+    networks:
+      - gearify-network
+    depends_on:
+      - prometheus
+
+  # Application Services
+  tenant-svc:
+    build:
+      context: ../gearify-tenant-svc
+      dockerfile: Dockerfile
+    container_name: gearify-tenant-svc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - AWS_ENDPOINT=${AWS_ENDPOINT}
+      - DYNAMODB_ENDPOINT=${DYNAMODB_ENDPOINT}
+      - REDIS_URL=${REDIS_URL}
+      - SEQ_URL=${SEQ_URL}
+      - OTLP_ENDPOINT=${OTLP_ENDPOINT}
+    ports:
+      - "5008:80"
+    networks:
+      - gearify-network
+    depends_on:
+      localstack:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  catalog-svc:
+    build:
+      context: ../gearify-catalog-svc
+      dockerfile: Dockerfile
+    container_name: gearify-catalog-svc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - AWS_ENDPOINT=${AWS_ENDPOINT}
+      - DYNAMODB_ENDPOINT=${DYNAMODB_ENDPOINT}
+      - S3_ENDPOINT=${S3_ENDPOINT}
+      - REDIS_URL=${REDIS_URL}
+      - SEQ_URL=${SEQ_URL}
+      - OTLP_ENDPOINT=${OTLP_ENDPOINT}
+    ports:
+      - "5001:80"
+    networks:
+      - gearify-network
+    depends_on:
+      localstack:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  search-svc:
+    build:
+      context: ../gearify-search-svc
+      dockerfile: Dockerfile
+    container_name: gearify-search-svc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DYNAMODB_ENDPOINT=${DYNAMODB_ENDPOINT}
+      - REDIS_URL=${REDIS_URL}
+      - SEQ_URL=${SEQ_URL}
+      - OTLP_ENDPOINT=${OTLP_ENDPOINT}
+    ports:
+      - "5002:80"
+    networks:
+      - gearify-network
+    depends_on:
+      localstack:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  cart-svc:
+    build:
+      context: ../gearify-cart-svc
+      dockerfile: Dockerfile
+    container_name: gearify-cart-svc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - REDIS_URL=${REDIS_URL}
+      - SEQ_URL=${SEQ_URL}
+      - OTLP_ENDPOINT=${OTLP_ENDPOINT}
+    ports:
+      - "5003:80"
+    networks:
+      - gearify-network
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  order-svc:
+    build:
+      context: ../gearify-order-svc
+      dockerfile: Dockerfile
+    container_name: gearify-order-svc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DYNAMODB_ENDPOINT=${DYNAMODB_ENDPOINT}
+      - SNS_ENDPOINT=${SNS_ENDPOINT}
+      - REDIS_URL=${REDIS_URL}
+      - SEQ_URL=${SEQ_URL}
+      - OTLP_ENDPOINT=${OTLP_ENDPOINT}
+    ports:
+      - "5004:80"
+    networks:
+      - gearify-network
+    depends_on:
+      localstack:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  payment-svc:
+    build:
+      context: ../gearify-payment-svc
+      dockerfile: Dockerfile
+    container_name: gearify-payment-svc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - POSTGRES_CONNECTION_STRING=${POSTGRES_CONNECTION_STRING}
+      - SNS_ENDPOINT=${SNS_ENDPOINT}
+      - SECRETS_MANAGER_ENDPOINT=${SECRETS_MANAGER_ENDPOINT}
+      - STRIPE_API_KEY=${STRIPE_API_KEY}
+      - PAYPAL_CLIENT_ID=${PAYPAL_CLIENT_ID}
+      - PAYPAL_CLIENT_SECRET=${PAYPAL_CLIENT_SECRET}
+      - SEQ_URL=${SEQ_URL}
+      - OTLP_ENDPOINT=${OTLP_ENDPOINT}
+    ports:
+      - "5005:80"
+    networks:
+      - gearify-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+
+  shipping-svc:
+    build:
+      context: ../gearify-shipping-svc
+      dockerfile: Dockerfile
+    container_name: gearify-shipping-svc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DYNAMODB_ENDPOINT=${DYNAMODB_ENDPOINT}
+      - SNS_ENDPOINT=${SNS_ENDPOINT}
+      - SEQ_URL=${SEQ_URL}
+      - OTLP_ENDPOINT=${OTLP_ENDPOINT}
+    ports:
+      - "5006:80"
+    networks:
+      - gearify-network
+    depends_on:
+      localstack:
+        condition: service_healthy
+
+  inventory-svc:
+    build:
+      context: ../gearify-inventory-svc
+      dockerfile: Dockerfile
+    container_name: gearify-inventory-svc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DYNAMODB_ENDPOINT=${DYNAMODB_ENDPOINT}
+      - SQS_ENDPOINT=${SQS_ENDPOINT}
+      - SEQ_URL=${SEQ_URL}
+      - OTLP_ENDPOINT=${OTLP_ENDPOINT}
+    ports:
+      - "5007:80"
+    networks:
+      - gearify-network
+    depends_on:
+      localstack:
+        condition: service_healthy
+
+  media-svc:
+    build:
+      context: ../gearify-media-svc
+      dockerfile: Dockerfile
+    container_name: gearify-media-svc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - S3_ENDPOINT=${S3_ENDPOINT}
+      - SEQ_URL=${SEQ_URL}
+      - OTLP_ENDPOINT=${OTLP_ENDPOINT}
+    ports:
+      - "5009:80"
+    networks:
+      - gearify-network
+    depends_on:
+      localstack:
+        condition: service_healthy
+
+  notification-svc:
+    build:
+      context: ../gearify-notification-svc
+      dockerfile: Dockerfile
+    container_name: gearify-notification-svc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - SQS_ENDPOINT=${SQS_ENDPOINT}
+      - SMTP_HOST=mailhog
+      - SMTP_PORT=1025
+      - SEQ_URL=${SEQ_URL}
+      - OTLP_ENDPOINT=${OTLP_ENDPOINT}
+    ports:
+      - "5010:80"
+    networks:
+      - gearify-network
+    depends_on:
+      localstack:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
+
+  api-gateway:
+    build:
+      context: ../gearify-api-gateway
+      dockerfile: Dockerfile
+    container_name: gearify-api-gateway
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - TENANT_SERVICE_URL=${TENANT_SERVICE_URL}
+      - CATALOG_SERVICE_URL=${CATALOG_SERVICE_URL}
+      - SEARCH_SERVICE_URL=http://search-svc:80
+      - CART_SERVICE_URL=http://cart-svc:80
+      - ORDER_SERVICE_URL=${ORDER_SERVICE_URL}
+      - PAYMENT_SERVICE_URL=${PAYMENT_SERVICE_URL}
+      - SHIPPING_SERVICE_URL=${SHIPPING_SERVICE_URL}
+      - INVENTORY_SERVICE_URL=http://inventory-svc:80
+      - MEDIA_SERVICE_URL=http://media-svc:80
+      - NOTIFICATION_SERVICE_URL=${NOTIFICATION_SERVICE_URL}
+      - COGNITO_USER_POOL_ID=${COGNITO_USER_POOL_ID}
+      - COGNITO_CLIENT_ID=${COGNITO_CLIENT_ID}
+      - JWT_ISSUER=${JWT_ISSUER}
+      - JWT_AUDIENCE=${JWT_AUDIENCE}
+      - SEQ_URL=${SEQ_URL}
+      - OTLP_ENDPOINT=${OTLP_ENDPOINT}
+    ports:
+      - "8080:80"
+    networks:
+      - gearify-network
+    depends_on:
+      - tenant-svc
+      - catalog-svc
+      - search-svc
+      - cart-svc
+      - order-svc
+      - payment-svc
+      - shipping-svc
+      - inventory-svc
+      - media-svc
+      - notification-svc
+
+  web:
+    build:
+      context: ../gearify-web
+      dockerfile: Dockerfile
+    container_name: gearify-web
+    environment:
+      - API_BASE_URL=${API_BASE_URL}
+    ports:
+      - "4200:80"
+    networks:
+      - gearify-network
+    depends_on:
+      - api-gateway

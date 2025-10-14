@@ -1,0 +1,24 @@
+sequenceDiagram
+    participant User
+    participant Gateway
+    participant Order
+    participant Payment
+    participant SNS
+    participant SQS
+    participant Notification
+
+    User->>Gateway: POST /api/orders
+    Gateway->>Order: Create Order
+    Order->>SNS: Publish OrderCreated
+    Order-->>Gateway: Order ID
+    Gateway-->>User: 201 Created
+
+    SNS->>SQS: Queue event
+    SQS->>Payment: Process payment
+    Payment->>Stripe: Create intent
+    Stripe-->>Payment: Intent ID
+    Payment->>SNS: Publish PaymentSucceeded
+
+    SNS->>SQS: Queue event
+    SQS->>Notification: Send email
+    Notification->>User: Order confirmation email

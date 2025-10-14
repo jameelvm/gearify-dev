@@ -1,0 +1,227 @@
+Build Gearify, a cricket e-commerce platform for mobile + desktop web with worldwide shipping and only two global payment methods (Stripe + PayPal).
+Architecture is polyrepo: each microservice and the web app live in separate Git repositories with their own CI/CD. Provide a small umbrella repo for local orchestration. Everything must be runnable via Docker Compose.
+
+Repositories (create all; each includes its own Dockerfile, CI, docs)
+
+gearify-api-gateway
+
+gearify-catalog-svc
+
+gearify-search-svc
+
+gearify-cart-svc
+
+gearify-order-svc
+
+gearify-payment-svc (Stripe + PayPal only; adapters; webhooks → SQS → service; Postgres ledger)
+
+gearify-shipping-svc (Aggregator adapter: EasyPost primary, Shippo stub; worldwide; pickup flow)
+
+gearify-inventory-svc
+
+gearify-tenant-svc
+
+gearify-media-svc
+
+gearify-notification-svc
+
+gearify-web (Angular 18 + SSR; one app with MobileShell & DesktopShell)
+
+gearify-shared-kernel (C# abstractions, DTOs, common middlewares; published as a private NuGet)
+
+gearify-shared-contracts (OpenAPI/TypeScript/C# clients; versioned package for services & web)
+
+gearify-infra-templates (Terraform, Helm charts, Argo CD Applications, GitOps docs)
+
+gearify-umbrella (local developer convenience: docker-compose that consumes other repos as git submodules or sibling folders; make targets; e2e tests & seeds)
+
+Each repo must be standalone (build, test, dockerize) and reference shared packages via versioned artifacts (private NuGet/npm) — not by source.
+
+Tech (apply to relevant repos)
+
+Backend: .NET 8, Clean Architecture + CQRS (MediatR), FluentValidation, Mapster, Polly, Serilog (JSON), OpenTelemetry.
+
+Frontend: Angular 18 + Angular Universal (SSR). One app, two shells (MobileShell, DesktopShell), shared UI-Kit, RxJS services, lazy feature modules.
+
+Data (Hybrid)
+
+DynamoDB (on-demand): catalog, carts, orders, inventory, tenant configs, feature flags
+
+Postgres 16: payments/refunds/reconciliation ledger
+
+Redis 7: sessions, cache, idempotency tokens
+
+S3 (LocalStack locally): media
+
+SQS/SNS (LocalStack locally): async events (Outbox → SQS)
+
+Search: no Elasticsearch at MVP; search-svc uses DynamoDB GSIs + tokenized fields (optional Postgres FTS).
+
+Payments: only Stripe + PayPal via adapter strategy; provider webhooks → tiny webhook endpoints (or Lambdas in cloud) → SQS → payment-svc; idempotency keys; refunds; reconciliation job.
+
+Shipping: aggregator adapter (EasyPost primary, Shippo stub) for worldwide carriers; normalize tracking; Pickup method with pickup window & code. International: HS code, CN22/CN23 data, Incoterms DDU/DDP flag, customs value placeholders.
+
+Security (must implement + document):
+JWT at gateway (Cognito-compatible); rate limiting; WAF headers; CSRF where applicable; strict CSP/HSTS/XFO/nosniff; PCI scope minimization (Stripe Elements/PayPal hosted — never store PAN); webhook signature verification & replay protection; Secrets via env (local) and Secrets Manager (cloud templates); audit logs; PII minimization; redaction in logs; OpenTelemetry traces with correlation IDs.
+
+What to Output
+A) Umbrella repo (gearify-umbrella)
+
+docker-compose.yml wiring all services + deps (DynamoDB Local, Postgres, Redis, LocalStack, MailHog, Seq, OTel Collector).
+
+Makefile / make.bat: clone-all, build-all, up, down, seed, e2e, smoke, lint.
+
+scripts/bootstrap.sh & scripts/bootstrap.ps1 that create all repos as sibling folders with correct file contents (use heredocs), or as git submodules pointing to local paths.
+
+docs/ with RUNBOOK.md, CUSTOMIZE.md, DEBUGGING.md, DATA-MODELS.md, API-REFERENCE.md (OpenAPI), TAX-VAT.md, SECURITY.md, COST.md, DIAGRAMS.mmd (Mermaid sources).
+
+Playwright e2e and k6 smoke hitting compose stack.
+
+Seeds: brands (CA, SG, GM, MRF, Kookaburra), realistic bats (oz/g, grade, weightType), pads/gloves/balls; tenants default and global-demo.
+
+Mermaid diagrams saved in docs/diagrams/:
+
+High-level system, 2) Service interaction (SQS/SNS outbox), 3) Frontend modules & shells,
+
+Checkout sequence, 5) Payments webhooks → SQS → payment-svc,
+
+Shipping flow w/ customs fields, 7) Logging & tracing flow, 8) GitOps pipeline.
+
+B) Each service repo (e.g., gearify-order-svc)
+
+README with local run instructions, env vars table, health endpoints.
+
+Program.cs + Clean Architecture folders (Application/Domain/Infrastructure/API).
+
+OpenAPI spec & Swagger UI.
+
+Unit tests (handlers/validators) + integration tests (docker-compose override or Testcontainers).
+
+Dockerfile (multi-stage).
+
+.github/workflows/ci.yml → build, test, docker build, (optionally) push.
+
+/deploy with Helm chart for the service & example Argo CD Application YAML.
+
+C) gearify-web repo
+
+Angular 18 + SSR, MobileShell/DesktopShell, feature modules (home, catalog, product, cart, checkout, orders, admin, auth, shared, logging), UI-Kit.
+
+Storybook config (optional), Jest unit, Playwright e2e (can run against umbrella compose).
+
+.github/workflows/ci.yml (lint + unit + build).
+
+Theming via CSS variables (3 light light palettes).
+
+D) Shared packages
+
+gearify-shared-kernel (.NET): abstractions (Outbox contracts, Result, Correlation middleware, Idempotency filters, common Serilog/OTel setup). publish to private NuGet; versioned tags.
+
+gearify-shared-contracts: OpenAPI specs + generated C# and TypeScript clients; publish to private NuGet & npm.
+
+E) Infra templates (gearify-infra-templates)
+
+Terraform modules (VPC, ECR, DynamoDB, SQS/SNS, S3, CloudFront, Cognito placeholders, ElastiCache, RDS/Aurora-compatible Postgres).
+
+Helm charts per service.
+
+Argo CD Applications per service.
+
+GitOps doc showing one-repo-per-service deployment pattern.
+
+CI/CD (per repo) + GitOps
+
+Per-repo CI (GitHub Actions):
+
+.NET services: restore → build → test → docker build → (optional) push to ECR.
+
+Angular web: install → lint → test → build → docker build → (optional) push.
+
+Versioning: semantic version tags per repo (vX.Y.Z).
+
+Release: create release notes; publish shared packages on tag.
+
+GitOps (infra templates repo): Argo CD syncs each service from its own chart & image tag.
+
+Environments: dev/qa/prod; per-service promotion via tag or Helm values PR.
+
+Local Orchestration
+
+Umbrella compose uses build from local repos (context paths) so devs can run everything together.
+
+Example run:
+
+# once
+chmod +x scripts/bootstrap.sh
+./scripts/bootstrap.sh   # creates all repos and writes files
+cd gearify-umbrella
+make up                  # or: docker compose up --build
+
+
+Verification steps (document endpoints):
+
+Web: http://localhost:4200
+ (SSR proxied if applicable)
+
+Gateway: http://localhost:8080
+
+Swagger per service: :5xxx/swagger
+
+Seq: http://localhost:5341
+, MailHog: http://localhost:8025
+
+LocalStack: http://localhost:4566
+
+Security (summarize in SECURITY.md and enforce in code)
+
+JWT auth (dev key locally, Cognito-compatible in cloud), RBAC (admin/staff/customer).
+
+Idempotency keys on create/capture/refund; rate limiting at gateway; request size limits; validation everywhere.
+
+PCI minimization: Stripe Elements/PayPal hosted; never store PAN; verify webhook signatures; replay protection.
+
+Headers/CSP/HSTS/XFO/nosniff; CSRF if cookies used.
+
+Secrets via env (local) and Secrets Manager (cloud templates).
+
+Audit logs for admin actions; PII minimization & log redaction.
+
+OpenTelemetry tracing across all services; correlation IDs in logs.
+
+Taxes (global note)
+
+payment-svc integrates Stripe Tax by default via ITaxProvider; optional TaxJarAdapter stub.
+
+Show taxes on order, store jurisdiction breakdown when provided.
+
+Merchant responsibility disclaimer in UI and TAX-VAT.md: registration/nexus/VAT filings and remittance are the merchant’s duty.
+
+Diagrams (Mermaid)
+
+Generate and save diagrams under gearify-umbrella/docs/diagrams/ for: system, services/SQS, frontend shells, checkout, payments webhooks, shipping/customs, logging/tracing, GitOps pipeline.
+
+Output Format (strict)
+
+Print a high-level repo map (list of repos with short description).
+
+For each repo, print a tree and the file contents (code/config/tests/docs).
+
+In gearify-umbrella, include bootstrap.sh and bootstrap.ps1 that create sibling repo folders and write all files using heredocs.
+
+Provide local run steps + verification URLs + Stripe test cards + PayPal sandbox note.
+
+Keep files concise but runnable; use TODOs sparingly; prefer minimal, idiomatic code.
+
+Non-negotiables
+
+Worldwide shipping via aggregator; include Pickup.
+
+Only Stripe + PayPal for payments.
+
+No Elasticsearch at MVP.
+
+Polyrepo with per-repo CI and per-service GitOps.
+
+Security controls & docs included.
+
+Build these repositories with runnable code, per-repo CI, umbrella compose, seeds, tests, docs, and GitOps templates exactly as specified. Do not add or remove services.

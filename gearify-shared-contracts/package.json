@@ -1,0 +1,7 @@
+﻿{
+  "name": "@gearify/shared-contracts",
+  "version": "1.0.0",
+  "description": "OpenAPI specs and generated TypeScript/C# clients",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts"
+}

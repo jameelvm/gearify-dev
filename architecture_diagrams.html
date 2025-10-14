@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gearify Architecture Diagrams</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 {
+            color: #1e3a8a;
+            border-bottom: 3px solid #1e3a8a;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+        h2 {
+            color: #334155;
+            margin-top: 40px;
+            padding: 10px;
+            background: #e0e7ff;
+            border-left: 4px solid #1e3a8a;
+        }
+        .diagram-container {
+            background: white;
+            padding: 40px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        .diagram-container.large {
+            min-height: 1000px;
+        }
+        .description {
+            background: #f8fafc;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #3b82f6;
+            border-radius: 4px;
+        }
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+        .zoom-note {
+            background: #dbeafe;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 500;
+            color: #1e40af;
+        }
+    </style>
+</head>
+<body>
+    <h1>🏏 Gearify - Architecture Diagrams</h1>
+    <p style="font-size: 18px; color: #64748b;">Global Cricket E-Commerce Platform - System Architecture Visualization</p>
+
+    <h2>1. High-Level System Architecture</h2>
+    <div class="description">
+        <strong>Overview:</strong> This diagram shows the complete system architecture with all layers - from client applications through edge services, microservices, data stores, and external integrations.
+    </div>
+    <div class="zoom-note">
+        💡 <strong>Tip:</strong> Use Ctrl+Scroll or trackpad to zoom in/out. Diagram is extra large for better readability.
+    </div>
+    <div class="diagram-container large">
+        <div class="mermaid">
+graph TB
+    subgraph "Client Layer"
+        WEB[Web Browser]
+        MOBILE[Mobile App]
+    end
+
+    subgraph "Edge Layer"
+        CDN[CloudFront CDN]
+        WAF[AWS WAF]
+        ALB[Application Load Balancer]
+    end
+
+    subgraph "Application Layer - API Gateway"
+        APIGW[API Gateway Service<br/>YARP + .NET 8]
+    end
+
+    subgraph "Application Layer - Microservices"
+        CATALOG["📦 Catalog Service<br/><br/>Product Management<br/>Categories & Search<br/>Inventory Tracking"]
+        ORDER["🛒 Order Service<br/><br/>Order Processing<br/>Order Lifecycle<br/>Fulfillment"]
+        PAYMENT["💳 Payment Service<br/><br/>Stripe & PayPal<br/>Refunds<br/>Reconciliation"]
+        SHIPPING["📮 Shipping Service<br/><br/>Rate Calculation<br/>Label Generation<br/>Carrier Integration"]
+        CUSTOMER["👤 Customer Service<br/><br/>User Profiles<br/>Address Management<br/>Preferences"]
+        CART["🛍️ Cart Service<br/><br/>Shopping Cart<br/>Cart Persistence<br/>Abandoned Cart"]
+        TENANT["🏢 Tenant Service<br/><br/>Multi-Tenancy<br/>Tenant Config<br/>Branding"]
+        NOTIF["📧 Notification Service<br/><br/>Email & SMS<br/>Push Notifications<br/>Templates"]
+        FLAG["🚩 Feature Flag Service<br/><br/>Feature Toggles<br/>A/B Testing<br/>Rollouts"]
+        SEARCH["🔍 Search Service<br/><br/>Product Search<br/>Faceted Filters<br/>Suggestions"]
+        REVIEW["⭐ Review Service<br/><br/>Product Reviews<br/>Ratings<br/>Moderation"]
+        INVENTORY["📊 Inventory Service<br/><br/>Stock Management<br/>Reservations<br/>Alerts"]
+        ANALYTICS["📈 Analytics Service<br/><br/>Business Metrics<br/>Reports<br/>Dashboards"]
+    end
+
+    subgraph "Data Layer"
+        DYNAMO[(DynamoDB)]
+        POSTGRES[(PostgreSQL RDS)]
+        REDIS[(Redis ElastiCache)]
+        S3[(S3 Storage)]
+    end
+
+    subgraph "Messaging Layer"
+        SQS[SQS Queues]
+        SNS[SNS Topics]
+    end
+
+    subgraph "External Services"
+        STRIPE[Stripe API]
+        PAYPAL[PayPal API]
+        CARRIERS[Shipping Carriers<br/>FedEx/DHL/UPS]
+        SES[AWS SES]
+    end
+
+    WEB --> CDN
+    MOBILE --> CDN
+    CDN --> WAF
+    WAF --> ALB
+    ALB --> APIGW
+
+    APIGW --> CATALOG
+    APIGW --> ORDER
+    APIGW --> PAYMENT
+    APIGW --> SHIPPING
+    APIGW --> CUSTOMER
+    APIGW --> CART
+    APIGW --> TENANT
+    APIGW --> SEARCH
+    APIGW --> REVIEW
+
+    CATALOG --> DYNAMO
+    CATALOG --> REDIS
+    CATALOG --> S3
+    ORDER --> DYNAMO
+    ORDER --> REDIS
+    PAYMENT --> POSTGRES
+    PAYMENT --> REDIS
+    SHIPPING --> DYNAMO
+    SHIPPING --> REDIS
+    CUSTOMER --> DYNAMO
+    CUSTOMER --> REDIS
+    CART --> REDIS
+    CART --> DYNAMO
+    TENANT --> DYNAMO
+    TENANT --> REDIS
+    SEARCH --> DYNAMO
+    SEARCH --> REDIS
+    REVIEW --> DYNAMO
+    REVIEW --> REDIS
+    INVENTORY --> DYNAMO
+    INVENTORY --> REDIS
+    ANALYTICS --> DYNAMO
+    ANALYTICS --> S3
+
+    CATALOG -.-> SNS
+    ORDER -.-> SNS
+    PAYMENT -.-> SNS
+    SHIPPING -.-> SNS
+    CUSTOMER -.-> SNS
+    INVENTORY -.-> SNS
+
+    SNS -.-> SQS
+    SQS -.-> NOTIF
+    SQS -.-> ANALYTICS
+    SQS -.-> INVENTORY
+    SQS -.-> SEARCH
+
+    PAYMENT --> STRIPE
+    PAYMENT --> PAYPAL
+    SHIPPING --> CARRIERS
+    NOTIF --> SES
+
+    FLAG --> DYNAMO
+    FLAG --> REDIS
+
+    style APIGW fill:#ff9999
+    style CATALOG fill:#99ccff
+    style ORDER fill:#99ccff
+    style PAYMENT fill:#ffcc99
+    style REDIS fill:#ffff99
+    style DYNAMO fill:#99ff99
+    style POSTGRES fill:#99ff99
+        </div>
+    </div>
+
+    <h2>2. Event-Driven Order Flow</h2>
+    <div class="description">
+        <strong>Overview:</strong> This sequence diagram shows how an order flows through the system using event-driven architecture with SNS/SQS messaging.
+    </div>
+    <div class="diagram-container">
+        <div class="mermaid">
+sequenceDiagram
+    participant Client
+    participant APIGW as API Gateway
+    participant Order as Order Service
+    participant Inventory as Inventory Service
+    participant Payment as Payment Service
+    participant Shipping as Shipping Service
+    participant Notification as Notification Service
+    participant SNS as SNS Topics
+    participant SQS as SQS Queues
+
+    Client->>APIGW: POST /orders
+    APIGW->>Order: Create Order
+
+    Order->>SNS: Publish OrderPlaced Event
+    SNS->>SQS: Route to Inventory Queue
+    SNS->>SQS: Route to Payment Queue
+
+    SQS->>Inventory: Consume OrderPlaced
+    Inventory->>Inventory: Reserve Stock
+    Inventory->>SNS: Publish InventoryReserved
+
+    SQS->>Payment: Consume OrderPlaced
+    Payment->>Payment: Process Payment
+    Payment->>SNS: Publish PaymentCompleted
+
+    SNS->>SQS: Route to Order Queue
+    SNS->>SQS: Route to Shipping Queue
+    SNS->>SQS: Route to Notification Queue
+
+    SQS->>Order: Consume PaymentCompleted
+    Order->>Order: Update Order Status
+    Order->>SNS: Publish OrderConfirmed
+
+    SQS->>Shipping: Consume OrderConfirmed
+    Shipping->>Shipping: Create Shipping Label
+    Shipping->>SNS: Publish ShippingLabelCreated
+
+    SQS->>Notification: Consume OrderConfirmed
+    Notification->>Notification: Send Confirmation Email
+
+    Order->>APIGW: Return Order Response
+    APIGW->>Client: 201 Created
+        </div>
+    </div>
+
+    <h2>3. CQRS Pattern Implementation</h2>
+    <div class="description">
+        <strong>Overview:</strong> Command Query Responsibility Segregation (CQRS) pattern showing separation of write and read models for better scalability.
+    </div>
+    <div class="diagram-container">
+        <div class="mermaid">
+graph LR
+    subgraph "Command Side - Write"
+        CMD[Command API]
+        CMDH[Command Handlers]
+        AGGS[Aggregates]
+        WRITEDB[(Write DB<br/>DynamoDB)]
+    end
+
+    subgraph "Event Bus"
+        EVENTS[Domain Events<br/>SNS/SQS]
+    end
+
+    subgraph "Query Side - Read"
+        READDB[(Read DB<br/>Redis Cache)]
+        QUERYH[Query Handlers]
+        QUERY[Query API]
+    end
+
+    CMD --> CMDH
+    CMDH --> AGGS
+    AGGS --> WRITEDB
+    AGGS --> EVENTS
+    EVENTS --> READDB
+    READDB --> QUERYH
+    QUERYH --> QUERY
+
+    style CMD fill:#ff9999
+    style QUERY fill:#99ccff
+    style EVENTS fill:#ffcc99
+        </div>
+    </div>
+
+    <h2>4. Multi-Tenant Data Isolation</h2>
+    <div class="description">
+        <strong>Overview:</strong> Shows how tenant isolation is achieved through domain-based routing and partition keys in data storage.
+    </div>
+    <div class="diagram-container">
+        <div class="mermaid">
+graph TB
+    subgraph "Request Flow"
+        REQ[Client Request<br/>tenant1.gearify.com]
+        APIGW[API Gateway]
+        TENANT[Tenant Service]
+        CACHE[Redis Cache]
+        SERVICE[Any Microservice]
+    end
+
+    subgraph "Data Storage"
+        DYNAMO[(DynamoDB<br/>Tenant Partition Key)]
+    end
+
+    REQ -->|1. Extract Tenant| APIGW
+    APIGW -->|2. Resolve Tenant ID| TENANT
+    TENANT -->|3. Check Cache| CACHE
+    CACHE -->|4. Return Config| APIGW
+    APIGW -->|5. Add Tenant Context| SERVICE
+    SERVICE -->|6. Query with TenantId| DYNAMO
+
+    style REQ fill:#ff9999
+    style APIGW fill:#99ccff
+    style DYNAMO fill:#99ff99
+        </div>
+    </div>
+
+    <h2>5. Kubernetes Deployment Architecture</h2>
+    <div class="description">
+        <strong>Overview:</strong> AWS EKS cluster architecture showing how services are deployed in Kubernetes with supporting infrastructure.
+    </div>
+    <div class="diagram-container">
+        <div class="mermaid">
+graph TB
+    subgraph "AWS Cloud"
+        subgraph "VPC"
+            subgraph "Public Subnets"
+                ALB[Application Load Balancer]
+                NAT[NAT Gateway]
+            end
+
+            subgraph "Private Subnets - EKS Cluster"
+                subgraph "Namespace: gearify-prod"
+                    APIGW_POD[API Gateway Pods]
+                    CATALOG_POD[Catalog Service Pods]
+                    ORDER_POD[Order Service Pods]
+                    PAYMENT_POD[Payment Service Pods]
+                end
+
+                subgraph "Namespace: gearify-infra"
+                    ARGOCD[ArgoCD]
+                    PROMETHEUS[Prometheus]
+                    GRAFANA[Grafana]
+                    JAEGER[Jaeger]
+                end
+            end
+
+            subgraph "Data Layer"
+                RDS[(RDS PostgreSQL)]
+                ELASTICACHE[ElastiCache Redis]
+            end
+        end
+
+        DYNAMO[(DynamoDB)]
+        S3[(S3)]
+        SQS_SNS[SQS/SNS]
+        SECRETS[Secrets Manager]
+    end
+
+    ALB --> APIGW_POD
+    APIGW_POD --> CATALOG_POD
+    APIGW_POD --> ORDER_POD
+    APIGW_POD --> PAYMENT_POD
+
+    CATALOG_POD --> DYNAMO
+    CATALOG_POD --> ELASTICACHE
+    ORDER_POD --> DYNAMO
+    PAYMENT_POD --> RDS
+
+    CATALOG_POD --> SQS_SNS
+    ORDER_POD --> SQS_SNS
+
+    ARGOCD -.->|Deploy| CATALOG_POD
+    ARGOCD -.->|Deploy| ORDER_POD
+
+    style ARGOCD fill:#ff9999
+    style PROMETHEUS fill:#99ccff
+        </div>
+    </div>
+
+    <h2>6. CI/CD & GitOps Flow</h2>
+    <div class="description">
+        <strong>Overview:</strong> Complete CI/CD pipeline from code commit to production deployment using GitHub Actions and ArgoCD.
+    </div>
+    <div class="diagram-container">
+        <div class="mermaid">
+graph LR
+    subgraph "Developer"
+        CODE[Code Changes]
+        PR[Pull Request]
+    end
+
+    subgraph "GitHub"
+        REPO[Service Repo]
+        ACTIONS[GitHub Actions]
+    end
+
+    subgraph "Build & Test"
+        BUILD[Build .NET 8]
+        TEST[Run Tests]
+        SCAN[Security Scan]
+        DOCKER[Build Docker Image]
+    end
+
+    subgraph "Container Registry"
+        ECR[AWS ECR]
+    end
+
+    subgraph "GitOps Repo"
+        HELM[Helm Charts Repo]
+        MANIFEST[K8s Manifests]
+    end
+
+    subgraph "Kubernetes"
+        ARGOCD[ArgoCD]
+        EKS[EKS Cluster]
+    end
+
+    CODE --> PR
+    PR --> REPO
+    REPO -->|Trigger| ACTIONS
+    ACTIONS --> BUILD
+    BUILD --> TEST
+    TEST --> SCAN
+    SCAN --> DOCKER
+    DOCKER --> ECR
+    ECR -->|Update Image Tag| MANIFEST
+    MANIFEST --> HELM
+    HELM -->|Sync| ARGOCD
+    ARGOCD -->|Deploy| EKS
+
+    style ACTIONS fill:#ff9999
+    style ARGOCD fill:#99ccff
+    style ECR fill:#ffcc99
+        </div>
+    </div>
+
+    <h2>7. Microservices Overview</h2>
+    <div class="description">
+        <strong>Overview:</strong> All 14 microservices and their primary responsibilities in the Gearify ecosystem.
+    </div>
+    <div class="diagram-container">
+        <div class="mermaid">
+graph TB
+    subgraph "Core Services"
+        APIGW[API Gateway<br/>Routing & Auth]
+        CATALOG[Catalog Service<br/>Products & Inventory]
+        ORDER[Order Service<br/>Order Management]
+        PAYMENT[Payment Service<br/>Stripe & PayPal]
+    end
+
+    subgraph "Supporting Services"
+        SHIPPING[Shipping Service<br/>Carriers Integration]
+        CUSTOMER[Customer Service<br/>User Profiles]
+        CART[Cart Service<br/>Shopping Cart]
+        SEARCH[Search Service<br/>Product Search]
+    end
+
+    subgraph "Platform Services"
+        TENANT[Tenant Service<br/>Multi-Tenancy]
+        FLAG[Feature Flag Service<br/>Feature Management]
+        NOTIF[Notification Service<br/>Email & SMS]
+        ANALYTICS[Analytics Service<br/>Business Metrics]
+    end
+
+    subgraph "Additional Services"
+        REVIEW[Review Service<br/>Product Reviews]
+        INVENTORY[Inventory Service<br/>Stock Management]
+    end
+
+    APIGW --> CATALOG
+    APIGW --> ORDER
+    APIGW --> PAYMENT
+    APIGW --> SHIPPING
+    APIGW --> CUSTOMER
+    APIGW --> CART
+    APIGW --> SEARCH
+    APIGW --> REVIEW
+
+    ORDER --> INVENTORY
+    ORDER --> PAYMENT
+    ORDER --> SHIPPING
+    ORDER --> NOTIF
+
+    style APIGW fill:#ff6b6b
+    style CATALOG fill:#4ecdc4
+    style ORDER fill:#95e1d3
+    style PAYMENT fill:#f38181
+        </div>
+    </div>
+
+    <h2>8. Deployment Environments</h2>
+    <div class="description">
+        <strong>Overview:</strong> Three-tier deployment strategy with progressive rollout from Development to Production.
+    </div>
+    <div class="diagram-container">
+        <div class="mermaid">
+graph LR
+    DEV[Development<br/>Auto Deploy<br/>LocalStack<br/>1 Replica]
+    STAGING[Staging<br/>Auto Deploy<br/>AWS Services<br/>2 Replicas]
+    PROD[Production<br/>Manual Approval<br/>High Availability<br/>Auto-Scaling]
+
+    DEV -->|Auto Deploy| STAGING
+    STAGING -->|Manual Approval| PROD
+
+    style DEV fill:#99ccff
+    style STAGING fill:#ffcc99
+    style PROD fill:#ff9999
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: false,
+                htmlLabels: true,
+                curve: 'basis',
+                nodeSpacing: 120,
+                rankSpacing: 80,
+                padding: 30
+            },
+            sequence: {
+                useMaxWidth: true,
+                wrap: true
+            },
+            fontSize: 15
+        });
+    </script>
+</body>
+</html>

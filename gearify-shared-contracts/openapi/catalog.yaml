@@ -1,0 +1,11 @@
+﻿openapi: 3.0.3
+info:
+  title: Catalog Service API
+  version: 1.0.0
+paths:
+  /api/products:
+    get:
+      summary: List products
+      responses:
+        '200':
+          description: Success

@@ -1,0 +1,26 @@
+graph TB
+    User[User Browser] --> Web[Frontend Angular SSR]
+    Web --> Gateway[API Gateway]
+    Gateway --> Tenant[Tenant Service]
+    Gateway --> Catalog[Catalog Service]
+    Gateway --> Order[Order Service]
+    Gateway --> Payment[Payment Service]
+    Gateway --> Shipping[Shipping Service]
+
+    Tenant --> DDB[(DynamoDB)]
+    Catalog --> DDB
+    Catalog --> S3[(S3 Images)]
+    Order --> DDB
+    Payment --> PG[(PostgreSQL)]
+    Shipping --> DDB
+
+    Order --> SNS[SNS Topics]
+    Payment --> SNS
+    SNS --> SQS[SQS Queues]
+    SQS --> Notification[Notification Service]
+
+    Payment --> Stripe[Stripe API]
+    Payment --> PayPal[PayPal API]
+
+    Catalog --> Redis[(Redis Cache)]
+    Order --> Redis

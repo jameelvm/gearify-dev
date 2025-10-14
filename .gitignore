@@ -1,0 +1,74 @@
+# Environment files with secrets
+.env
+.env.*
+!.env.example
+.env.local
+.env.production
+.env.development
+**/gearify-umbrella/.env
+
+# API Keys and Secrets
+**/localstack-api-key.txt
+**/*secret*
+**/*credentials*
+**/*api-key*
+!**/appsettings.json
+!**/appsettings.Development.json
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.vs/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+
+# Dependencies
+node_modules/
+vendor/
+packages/
+
+# Test results
+test-results/
+playwright-report/
+coverage/
+TestResults/
+
+# Build artifacts
+dist/
+build/
+out/
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.user
+*.suo
+
+# Docker
+docker-compose.override.yml
+
+# LocalStack persistence
+gearify-umbrella/localstack-data/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary files
+*.tmp
+*.temp
+~$*

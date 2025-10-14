@@ -1,0 +1,8 @@
+﻿replicaCount: 2
+
+image:
+  repository: gearify/catalog-svc
+  tag: latest
+
+service:
+  port: 5001

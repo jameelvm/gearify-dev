@@ -1,0 +1,39 @@
+replicaCount: 2
+
+image:
+  repository: 123456789.dkr.ecr.us-east-1.amazonaws.com/gearify
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: gearify.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: gearify-tls
+      hosts:
+        - gearify.example.com
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80

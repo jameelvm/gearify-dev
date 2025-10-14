@@ -1,0 +1,27 @@
+Context: All code and infrastructure for Gearify are generated.
+
+Goal: Generate documentation and templates for security, taxes, and testing.
+
+---
+
+## Deliverables
+1. **SECURITY.md**
+   - JWT auth (Cognito-compatible), rate limiting, CSRF, headers (CSP/HSTS/XFO/nosniff), PCI minimization, webhook verification, audit logs, PII minimization.
+   - Include OWASP ASVS checklist mapping to Gearify.
+2. **TAX-VAT.md**
+   - Use Stripe Tax (default) + optional TaxJar adapter.
+   - Explain merchant responsibility for tax collection/remittance.
+   - Mention nexus and VAT registration implications.
+3. **TESTING.md**
+   - List all test categories: unit, integration, contract, e2e (Playwright), load (k6).
+   - Provide folder examples and coverage strategy.
+4. **Mermaid diagrams**
+   - Logging/tracing flow.
+   - Checkout sequence.
+   - Shipping/customs flow.
+   - GitOps pipeline.
+
+---
+
+## Output Format
+Markdown docs with section headers and examples, stored in `/docs/` under umbrella repo.

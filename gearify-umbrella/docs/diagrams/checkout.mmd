@@ -1,0 +1,9 @@
+﻿sequenceDiagram
+    participant User
+    participant Web
+    participant Gateway
+    participant Order
+    User->>Web: Checkout
+    Web->>Gateway: POST /orders
+    Gateway->>Order: Create order
+    Order->>User: Order confirmed

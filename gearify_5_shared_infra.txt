@@ -1,0 +1,23 @@
+Context: Gearify has multiple microservices and one web app.
+
+Goal: Generate shared code and infrastructure templates.
+
+---
+
+## Repositories
+1. `gearify-shared-kernel`
+   - C# library for: Result wrapper, Outbox base classes, Correlation ID middleware, Serilog/OTel setup, common exceptions.
+   - Publish to private NuGet.
+2. `gearify-shared-contracts`
+   - Generated OpenAPI clients (C# + TypeScript).
+   - Publish to private NuGet and npm.
+3. `gearify-infra-templates`
+   - Terraform modules (VPC, DynamoDB, SQS/SNS, S3, CloudFront, RDS/Postgres, ElastiCache, Cognito placeholders).
+   - Helm charts and Argo CD templates for each service.
+   - `docs/GitOps.md` showing per-repo pipeline and Argo sync.
+
+---
+
+## Notes
+- Use cost-effective AWS options (DynamoDB on-demand, S3 Standard-IA, RDS minimal size).
+- Include `COST.md` summarizing resource estimates and cost optimization tips.

@@ -1,0 +1,12 @@
+graph LR
+    A[Dev Commit] --> B[GitHub Actions]
+    B --> C[Build Docker Image]
+    C --> D[Push to ECR]
+    D --> E[Update Helm Values]
+    E --> F[Commit to GitOps Repo]
+    F --> G[Argo CD Detects Change]
+    G --> H[Sync to EKS]
+    H --> I[Rolling Deployment]
+    I --> J{Health Check}
+    J -->|Pass| K[Complete]
+    J -->|Fail| L[Rollback]

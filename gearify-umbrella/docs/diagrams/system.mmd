@@ -1,0 +1,8 @@
+﻿graph TD
+    Web[Angular Web] --> GW[API Gateway]
+    GW --> Cat[Catalog Service]
+    GW --> Cart[Cart Service]
+    GW --> Ord[Order Service]
+    Cat --> Dyn[DynamoDB]
+    Cart --> Redis
+    Ord --> Dyn

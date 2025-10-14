@@ -1,0 +1,30 @@
+Context: You have already generated the backend architecture.
+
+Goal: Build the `gearify-web` Angular 18 app with SSR (Angular Universal) for desktop and mobile browsers.
+
+---
+
+## Requirements
+- One codebase with two shells:
+  - `MobileShell`: bottom nav, compact layout.
+  - `DesktopShell`: sidebar filters, top bar.
+- Shared `UI-Kit` with components (buttons, modals, product cards, price tags, brand bar).
+- Feature modules:
+  - `home`, `catalog`, `product`, `cart`, `checkout`, `orders`, `admin`, `auth`, `shared`, `logging`.
+- Integrate APIs via `gearify-shared-contracts`.
+- Theme support via CSS variables (light palettes).
+- SSR support for SEO.
+- Responsive design.
+- Routing by device breakpoint (Angular CDK Layout).
+- Use RxJS effectively for async state.
+- Include Jest unit tests and Playwright e2e for checkout flow.
+- Add `.github/workflows/ci.yml` for lint + test + build.
+
+---
+
+## Deliverables
+- Folder structure.
+- `angular.json`, `package.json`, SSR setup.
+- Example component (ProductCardComponent).
+- Example page (Checkout page with Stripe/PayPal options).
+- Basic theme CSS variables and one light color palette.

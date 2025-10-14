@@ -1,0 +1,13 @@
+graph LR
+    A[Browse Products] --> B[Add to Cart]
+    B --> C[View Cart]
+    C --> D[Checkout]
+    D --> E{Payment Method}
+    E -->|Stripe| F[Stripe Elements]
+    E -->|PayPal| G[PayPal SDK]
+    F --> H[Payment Intent]
+    G --> I[PayPal Order]
+    H --> J[Confirm Payment]
+    I --> J
+    J --> K[Order Confirmed]
+    K --> L[Send Notification]

@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  web:
+    build:
+      context: ../gearify-web
+      dockerfile: Dockerfile.dev
+      target: development
+    command: npm run start:ssr:dev
+    volumes:
+      - ../gearify-web:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - API_BASE_URL=http://localhost:8080
+      - WATCH=true
+    ports:
+      - "4200:4200"
+      - "4000:4000"

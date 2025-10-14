@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gearify - High-Level System Architecture</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #1e293b;
+            color: white;
+        }
+        h1 {
+            color: #60a5fa;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+        .diagram-container {
+            background: white;
+            padding: 40px;
+            margin: 20px auto;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            overflow: auto;
+            min-height: 1200px;
+        }
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            min-width: 1800px;
+        }
+        .legend {
+            background: #334155;
+            padding: 20px;
+            margin: 20px auto;
+            border-radius: 8px;
+            max-width: 1200px;
+        }
+        .legend h3 {
+            color: #60a5fa;
+            margin-top: 0;
+        }
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .legend-item {
+            background: #475569;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .legend-item strong {
+            color: #93c5fd;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .note {
+            background: #1e40af;
+            padding: 15px;
+            margin: 20px auto;
+            border-radius: 8px;
+            max-width: 1200px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>🏏 Gearify - High-Level System Architecture</h1>
+    <p class="subtitle">Global Multi-Tenant Cricket E-Commerce Platform</p>
+
+    <div class="note">
+        💡 <strong>Tip:</strong> Scroll horizontally to see the full diagram. The diagram is extra large for better readability.
+    </div>
+
+    <div class="diagram-container">
+        <div class="mermaid">
+graph TB
+    subgraph CLIENT["🌐 Client Layer"]
+        WEB["Web Browser<br/>(Angular 18 SSR)"]
+        MOBILE["Mobile App<br/>(iOS/Android)"]
+    end
+
+    subgraph EDGE["⚡ Edge & Security Layer"]
+        CDN["CloudFront CDN<br/>Global Distribution"]
+        WAF["AWS WAF<br/>Web Application Firewall<br/>DDoS Protection"]
+        ALB["Application Load Balancer<br/>SSL Termination"]
+    end
+
+    subgraph GATEWAY["🚪 API Gateway Layer"]
+        APIGW["API Gateway Service<br/>YARP Reverse Proxy<br/>.NET 8<br/><br/>• JWT Validation<br/>• Rate Limiting<br/>• Request Routing"]
+    end
+
+    subgraph CORE["💼 Core Business Services"]
+        CATALOG["📦 Catalog Service<br/><br/>• Product Management<br/>• Categories<br/>• Search<br/>• Inventory Tracking"]
+        ORDER["🛒 Order Service<br/><br/>• Order Processing<br/>• Order Lifecycle<br/>• Fulfillment"]
+        PAYMENT["💳 Payment Service<br/><br/>• Stripe Integration<br/>• PayPal Integration<br/>• Refunds<br/>• Reconciliation"]
+        CART["🛍️ Cart Service<br/><br/>• Shopping Cart<br/>• Cart Persistence<br/>• Abandoned Cart"]
+    end
+
+    subgraph SUPPORT["🔧 Supporting Services"]
+        SHIPPING["📮 Shipping Service<br/><br/>• Rate Calculation<br/>• Label Generation<br/>• Carrier Integration<br/>• Tracking"]
+        CUSTOMER["👤 Customer Service<br/><br/>• User Profiles<br/>• Address Management<br/>• Preferences"]
+        SEARCH["🔍 Search Service<br/><br/>• Product Search<br/>• Faceted Filters<br/>• Suggestions"]
+        REVIEW["⭐ Review Service<br/><br/>• Product Reviews<br/>• Ratings<br/>• Moderation"]
+    end
+
+    subgraph PLATFORM["🏗️ Platform Services"]
+        TENANT["🏢 Tenant Service<br/><br/>• Multi-Tenancy<br/>• Tenant Config<br/>• Branding"]
+        NOTIF["📧 Notification Service<br/><br/>• Email (SES)<br/>• SMS<br/>• Push Notifications"]
+        FLAG["🚩 Feature Flag Service<br/><br/>• Feature Toggles<br/>• A/B Testing<br/>• Rollouts"]
+        INVENTORY["📊 Inventory Service<br/><br/>• Stock Management<br/>• Reservations<br/>• Low Stock Alerts"]
+        ANALYTICS["📈 Analytics Service<br/><br/>• Business Metrics<br/>• Reports<br/>• Dashboards"]
+    end
+
+    subgraph DATA["💾 Data Layer"]
+        DYNAMO["DynamoDB<br/><br/>• Products<br/>• Orders<br/>• Customers<br/>• Tenants"]
+        POSTGRES["PostgreSQL RDS<br/><br/>• Payments<br/>• Transactions<br/>• Reconciliation"]
+        REDIS["Redis ElastiCache<br/><br/>• Session Cache<br/>• Product Cache<br/>• Rate Limiting"]
+        S3["S3 Storage<br/><br/>• Product Images<br/>• Documents<br/>• Backups"]
+    end
+
+    subgraph MESSAGING["📨 Messaging Layer"]
+        SNS["SNS Topics<br/>Event Publishing"]
+        SQS["SQS Queues<br/>Event Consumption"]
+    end
+
+    subgraph EXTERNAL["🌍 External Services"]
+        STRIPE["Stripe API<br/>Payment Gateway"]
+        PAYPAL["PayPal API<br/>Payment Gateway"]
+        CARRIERS["Shipping Carriers<br/>FedEx • DHL • UPS"]
+        SES["AWS SES<br/>Email Service"]
+    end
+
+    %% Client to Edge
+    WEB -->|HTTPS| CDN
+    MOBILE -->|HTTPS| CDN
+
+    %% Edge Layer Flow
+    CDN -->|Security Check| WAF
+    WAF -->|Route Traffic| ALB
+    ALB -->|Forward Request| APIGW
+
+    %% Gateway to Core Services
+    APIGW -->|/catalog| CATALOG
+    APIGW -->|/orders| ORDER
+    APIGW -->|/payments| PAYMENT
+    APIGW -->|/cart| CART
+
+    %% Gateway to Support Services
+    APIGW -->|/shipping| SHIPPING
+    APIGW -->|/customers| CUSTOMER
+    APIGW -->|/search| SEARCH
+    APIGW -->|/reviews| REVIEW
+
+    %% Gateway to Platform Services
+    APIGW -->|/tenants| TENANT
+    APIGW -->|/flags| FLAG
+
+    %% Core Services to Data
+    CATALOG -->|Read/Write| DYNAMO
+    CATALOG -->|Cache| REDIS
+    CATALOG -->|Store Images| S3
+
+    ORDER -->|Read/Write| DYNAMO
+    ORDER -->|Cache| REDIS
+
+    PAYMENT -->|Transactions| POSTGRES
+    PAYMENT -->|Cache| REDIS
+
+    CART -->|Cache| REDIS
+    CART -->|Backup| DYNAMO
+
+    %% Support Services to Data
+    SHIPPING -->|Read/Write| DYNAMO
+    SHIPPING -->|Cache Rates| REDIS
+
+    CUSTOMER -->|Read/Write| DYNAMO
+    CUSTOMER -->|Sessions| REDIS
+
+    SEARCH -->|Read| DYNAMO
+    SEARCH -->|Cache Results| REDIS
+
+    REVIEW -->|Read/Write| DYNAMO
+    REVIEW -->|Cache| REDIS
+
+    %% Platform Services to Data
+    TENANT -->|Read/Write| DYNAMO
+    TENANT -->|Heavy Cache| REDIS
+
+    FLAG -->|Read/Write| DYNAMO
+    FLAG -->|Cache| REDIS
+
+    INVENTORY -->|Read/Write| DYNAMO
+    INVENTORY -->|Locks| REDIS
+
+    ANALYTICS -->|Read Events| DYNAMO
+    ANALYTICS -->|Data Lake| S3
+
+    %% Event Publishing
+    CATALOG -.->|Product Events| SNS
+    ORDER -.->|Order Events| SNS
+    PAYMENT -.->|Payment Events| SNS
+    SHIPPING -.->|Shipping Events| SNS
+    CUSTOMER -.->|Customer Events| SNS
+    INVENTORY -.->|Inventory Events| SNS
+
+    %% Event Distribution
+    SNS -.->|Fan-out| SQS
+
+    %% Event Consumption
+    SQS -.->|Process| NOTIF
+    SQS -.->|Aggregate| ANALYTICS
+    SQS -.->|Update| INVENTORY
+    SQS -.->|Index| SEARCH
+
+    %% External Service Integrations
+    PAYMENT -->|Process Payments| STRIPE
+    PAYMENT -->|Process Payments| PAYPAL
+    SHIPPING -->|Get Rates & Labels| CARRIERS
+    NOTIF -->|Send Emails| SES
+
+    %% Styling
+    style APIGW fill:#ef4444,stroke:#991b1b,stroke-width:4px,color:#fff
+    style CATALOG fill:#3b82f6,stroke:#1e40af,stroke-width:3px,color:#fff
+    style ORDER fill:#3b82f6,stroke:#1e40af,stroke-width:3px,color:#fff
+    style PAYMENT fill:#f59e0b,stroke:#b45309,stroke-width:3px,color:#fff
+    style CART fill:#3b82f6,stroke:#1e40af,stroke-width:3px,color:#fff
+
+    style DYNAMO fill:#10b981,stroke:#047857,stroke-width:3px,color:#fff
+    style POSTGRES fill:#10b981,stroke:#047857,stroke-width:3px,color:#fff
+    style REDIS fill:#fbbf24,stroke:#d97706,stroke-width:3px,color:#000
+    style S3 fill:#10b981,stroke:#047857,stroke-width:3px,color:#fff
+
+    style SNS fill:#f97316,stroke:#c2410c,stroke-width:3px,color:#fff
+    style SQS fill:#f97316,stroke:#c2410c,stroke-width:3px,color:#fff
+
+    style STRIPE fill:#8b5cf6,stroke:#6d28d9,stroke-width:3px,color:#fff
+    style PAYPAL fill:#8b5cf6,stroke:#6d28d9,stroke-width:3px,color:#fff
+        </div>
+    </div>
+
+    <div class="legend">
+        <h3>📚 Architecture Components</h3>
+        <div class="legend-grid">
+            <div class="legend-item">
+                <strong>🌐 Client Layer</strong>
+                Angular 18 SSR web app + mobile apps
+            </div>
+            <div class="legend-item">
+                <strong>⚡ Edge Layer</strong>
+                CloudFront, WAF, Load Balancer
+            </div>
+            <div class="legend-item">
+                <strong>🚪 API Gateway</strong>
+                YARP reverse proxy, auth, routing
+            </div>
+            <div class="legend-item">
+                <strong>💼 Core Services</strong>
+                Catalog, Order, Payment, Cart
+            </div>
+            <div class="legend-item">
+                <strong>🔧 Support Services</strong>
+                Shipping, Customer, Search, Reviews
+            </div>
+            <div class="legend-item">
+                <strong>🏗️ Platform Services</strong>
+                Tenant, Notifications, Feature Flags
+            </div>
+            <div class="legend-item">
+                <strong>💾 Data Stores</strong>
+                DynamoDB, PostgreSQL, Redis, S3
+            </div>
+            <div class="legend-item">
+                <strong>📨 Messaging</strong>
+                SNS/SQS for async events
+            </div>
+            <div class="legend-item">
+                <strong>🌍 External Services</strong>
+                Stripe, PayPal, Shipping Carriers
+            </div>
+        </div>
+    </div>
+
+    <div class="legend">
+        <h3>🔑 Key Architecture Principles</h3>
+        <div class="legend-grid">
+            <div class="legend-item">
+                <strong>Microservices</strong>
+                14 independent services, each with single responsibility
+            </div>
+            <div class="legend-item">
+                <strong>Event-Driven</strong>
+                Async communication via SNS/SQS for loose coupling
+            </div>
+            <div class="legend-item">
+                <strong>Multi-Tenant</strong>
+                Tenant isolation via partition keys and domain routing
+            </div>
+            <div class="legend-item">
+                <strong>CQRS</strong>
+                Separate read/write models for better scalability
+            </div>
+            <div class="legend-item">
+                <strong>Polyglot Persistence</strong>
+                Right database for each use case
+            </div>
+            <div class="legend-item">
+                <strong>Cloud-Native</strong>
+                Kubernetes on AWS EKS with auto-scaling
+            </div>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: false,
+                htmlLabels: true,
+                curve: 'basis',
+                padding: 20,
+                nodeSpacing: 150,
+                rankSpacing: 100
+            },
+            fontSize: 16
+        });
+    </script>
+</body>
+</html>
