@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gearify Monitoring Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 {
+            color: white;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+        }
+        .card h3 {
+            margin: 10px 0;
+            color: #333;
+            font-size: 1.5em;
+        }
+        .card a {
+            display: inline-block;
+            margin: 15px 0 10px 0;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        .card a:hover {
+            background: #5568d3;
+        }
+        .category {
+            color: #667eea;
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .card p {
+            color: #666;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+        .status-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .status-card h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        #status {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+        .icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        .refresh-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .refresh-btn:hover {
+            background: #218838;
+        }
+        .last-update {
+            color: #666;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Gearify Monitoring Dashboard</h1>
+
+        <div class="grid">
+            <div class="card">
+                <div class="icon">🐳</div>
+                <div class="category">Container Management</div>
+                <h3>Portainer</h3>
+                <a href="http://localhost:9000" target="_blank">Open Portainer →</a>
+                <p>Manage all Docker containers, view logs, stats, and more. Your central hub for container operations.</p>
+            </div>
+
+            <div class="card">
+                <div class="icon">📊</div>
+                <div class="category">Metrics & Dashboards</div>
+                <h3>Grafana</h3>
+                <a href="http://localhost:3000" target="_blank">Open Grafana →</a>
+                <p>Visualize metrics with beautiful dashboards. Monitor service performance over time.</p>
+            </div>
+
+            <div class="card">
+                <div class="icon">🔍</div>
+                <div class="category">Distributed Tracing</div>
+                <h3>Jaeger</h3>
+                <a href="http://localhost:16686" target="_blank">Open Jaeger →</a>
+                <p>Trace requests across microservices. Find bottlenecks and analyze request flow.</p>
+            </div>
+
+            <div class="card">
+                <div class="icon">📝</div>
+                <div class="category">Structured Logs</div>
+                <h3>Seq</h3>
+                <a href="http://localhost:5341" target="_blank">Open Seq →</a>
+                <p>Search and analyze application logs. Track errors and debug issues efficiently.</p>
+            </div>
+
+            <div class="card">
+                <div class="icon">📈</div>
+                <div class="category">Metrics Query</div>
+                <h3>Prometheus</h3>
+                <a href="http://localhost:9090" target="_blank">Open Prometheus →</a>
+                <p>Query metrics with PromQL. Explore time-series data and service metrics.</p>
+            </div>
+
+            <div class="card">
+                <div class="icon">📧</div>
+                <div class="category">Email Testing</div>
+                <h3>MailHog</h3>
+                <a href="http://localhost:8025" target="_blank">Open MailHog →</a>
+                <p>View test emails sent by the application. Perfect for development testing.</p>
+            </div>
+
+            <div class="card">
+                <div class="icon">🛍️</div>
+                <div class="category">Application</div>
+                <h3>Web App</h3>
+                <a href="http://localhost:4200" target="_blank">Open Web App →</a>
+                <p>Main Gearify e-commerce application. Customer-facing interface.</p>
+            </div>
+
+            <div class="card">
+                <div class="icon">🚪</div>
+                <div class="category">API</div>
+                <h3>API Gateway</h3>
+                <a href="http://localhost:8080" target="_blank">Open API Gateway →</a>
+                <p>Central API entry point. Routes requests to microservices.</p>
+            </div>
+        </div>
+
+        <div class="status-card">
+            <h2>📋 Service Health Status</h2>
+            <pre id="status">Checking service status...</pre>
+            <button class="refresh-btn" onclick="checkServices()">🔄 Refresh Now</button>
+            <div class="last-update" id="lastUpdate"></div>
+        </div>
+    </div>
+
+    <script>
+        async function checkServices() {
+            const statusElement = document.getElementById('status');
+            const lastUpdateElement = document.getElementById('lastUpdate');
+
+            statusElement.textContent = 'Checking services...';
+
+            const services = [
+                { name: 'Portainer', port: 9000 },
+                { name: 'API Gateway', port: 8080 },
+                { name: 'Web App', port: 4200 },
+                { name: 'Grafana', port: 3000 },
+                { name: 'Jaeger', port: 16686 },
+                { name: 'Seq', port: 5341 },
+                { name: 'Prometheus', port: 9090 },
+                { name: 'MailHog', port: 8025 },
+                { name: 'Catalog Service', port: 5001 },
+                { name: 'Search Service', port: 5002 },
+                { name: 'Cart Service', port: 5003 },
+                { name: 'Order Service', port: 5004 },
+                { name: 'Payment Service', port: 5005 },
+                { name: 'Shipping Service', port: 5006 },
+                { name: 'Inventory Service', port: 5007 },
+                { name: 'Tenant Service', port: 5008 },
+                { name: 'Media Service', port: 5009 },
+                { name: 'Notification Service', port: 5010 }
+            ];
+
+            let status = '';
+            let healthyCount = 0;
+            let unhealthyCount = 0;
+
+            for (const service of services) {
+                const url = `http://localhost:${service.port}`;
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+                    await fetch(url, {
+                        mode: 'no-cors',
+                        signal: controller.signal
+                    });
+
+                    clearTimeout(timeoutId);
+                    status += `✅ ${service.name.padEnd(25)} - http://localhost:${service.port}\n`;
+                    healthyCount++;
+                } catch (e) {
+                    status += `❌ ${service.name.padEnd(25)} - Not accessible\n`;
+                    unhealthyCount++;
+                }
+            }
+
+            status = `Summary: ${healthyCount} healthy, ${unhealthyCount} not accessible\n\n` + status;
+            statusElement.textContent = status;
+
+            const now = new Date();
+            lastUpdateElement.textContent = `Last updated: ${now.toLocaleTimeString()}`;
+        }
+
+        // Check services on load
+        checkServices();
+
+        // Auto-refresh every 30 seconds
+        setInterval(checkServices, 30000);
+    </script>
+</body>
+</html>
