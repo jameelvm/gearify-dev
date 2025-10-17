@@ -18,7 +18,22 @@
       "Bash(powershell:*)",
       "Bash(bash:*)",
       "Bash(dir:*)",
-      "Bash(powershell.exe:*)"
+      "Bash(powershell.exe:*)",
+      "Bash(if [ ! -d \"gearify-order-svc/Domain/Entities\" ])",
+      "Bash(then mkdir -p \"gearify-order-svc/Domain/Entities\")",
+      "Bash(fi)",
+      "Bash(if [ ! -d \"gearify-order-svc/Infrastructure/Repositories\" ])",
+      "Bash(then mkdir -p \"gearify-order-svc/Infrastructure/Repositories\")",
+      "Bash(if [ ! -d \"gearify-order-svc/Application/Commands\" ])",
+      "Bash(then mkdir -p \"gearify-order-svc/Application/Commands\")",
+      "Bash(if [ ! -d \"gearify-search-svc/Application/Queries\" ])",
+      "Bash(then mkdir -p \"gearify-search-svc/Application/Queries\")",
+      "Bash(if [ ! -d \"gearify-search-svc/Infrastructure/Repositories\" ])",
+      "Bash(then mkdir -p \"gearify-search-svc/Infrastructure/Repositories\")",
+      "Bash(if [ ! -d \"gearify-notification-svc/Domain/Entities\" ])",
+      "Bash(then mkdir -p \"gearify-notification-svc/Domain/Entities\")",
+      "Bash(if [ ! -d \"gearify-notification-svc/Infrastructure/Email\" ])",
+      "Bash(then mkdir -p \"gearify-notification-svc/Infrastructure/Email\")"
     ],
     "deny": [],
     "ask": []
