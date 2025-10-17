@@ -16,7 +16,9 @@
       "Bash(git config:*)",
       "Bash(cat:*)",
       "Bash(powershell:*)",
-      "Bash(bash:*)"
+      "Bash(bash:*)",
+      "Bash(dir:*)",
+      "Bash(powershell.exe:*)"
     ],
     "deny": [],
     "ask": []

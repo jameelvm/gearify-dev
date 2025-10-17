@@ -1,44 +1,248 @@
-Context: You have already generated the Gearify architecture and umbrella repo.
+Context: You have already generated the Gearify architecture, umbrella repo, and basic service structure. All services are running in Docker Compose with LocalStack Pro, Portainer, and full observability stack.
 
-Goal: Generate runnable `.NET 8` microservices for Gearify. Each service is a separate repo. Use Clean Architecture + CQRS (MediatR) + FluentValidation + Mapster + Serilog + OpenTelemetry.
+Goal: Enhance and complete the `.NET 8` microservices for Gearify. Each service is a separate repo. Use Clean Architecture + CQRS (MediatR) + FluentValidation + Serilog + OpenTelemetry + AWS SDK.
 
 ---
 
-## Services to generate
-1. `gearify-api-gateway`
-2. `gearify-catalog-svc`
-3. `gearify-search-svc`
-4. `gearify-cart-svc`
-5. `gearify-order-svc`
-6. `gearify-payment-svc`
-7. `gearify-shipping-svc`
-8. `gearify-inventory-svc`
-9. `gearify-tenant-svc`
-10. `gearify-media-svc`
-11. `gearify-notification-svc`
+## Services Already Created (Need Enhancement)
+1. `gearify-api-gateway` - YARP reverse proxy
+2. `gearify-catalog-svc` - Product catalog with DynamoDB & S3
+3. `gearify-search-svc` - Search with DynamoDB GSIs
+4. `gearify-cart-svc` - Shopping cart with Redis
+5. `gearify-order-svc` - Order management with DynamoDB & SNS
+6. `gearify-payment-svc` - Payment processing with PostgreSQL
+7. `gearify-shipping-svc` - Shipping with EasyPost/Shippo adapters
+8. `gearify-inventory-svc` - Inventory management with DynamoDB & SQS
+9. `gearify-tenant-svc` - Multi-tenant management with DynamoDB
+10. `gearify-media-svc` - Media management with S3
+11. `gearify-notification-svc` - Email/SMS with SQS & MailHog
+
+---
+
+## Current Infrastructure Stack
+
+**Already Running:**
+- LocalStack Pro (Cognito, DynamoDB, S3, SQS, SNS, Secrets Manager)
+- PostgreSQL 16
+- Redis 7
+- Seq (Structured Logging)
+- Jaeger (Distributed Tracing)
+- Prometheus (Metrics)
+- Grafana (Dashboards)
+- OpenTelemetry Collector
+- Portainer (Container Management UI)
+- MailHog (Email Testing)
+
+**DynamoDB Tables Created:**
+- gearify-products
+- gearify-orders
+- gearify-tenants
+- gearify-feature-flags
+
+**Cognito Setup:**
+- User Pool ID: us-east-1_53b31cb045fd499d80dc09eabdcbf912
+- Client ID: rrd810v6eyejkdlhm0vf6q3dir
+- Demo users created
 
 ---
 
 ## Each Service Must Include
-- `Program.cs` and minimal startup.
-- Clean Architecture folders: `Application`, `Domain`, `Infrastructure`, `API`.
-- `Dockerfile` (multi-stage).
-- `.github/workflows/ci.yml` (build, test, docker build).
-- Helm chart + Argo CD Application YAML.
-- `README.md` with env vars, endpoints, and run instructions.
-- Outbox pattern for SQS/SNS events.
-- Proper logging (Serilog JSON).
-- Unit tests + integration tests (Testcontainers).
+
+### Core Structure
+- `Program.cs` with minimal API setup
+- Clean Architecture folders: `Application`, `Domain`, `Infrastructure`, `API`
+- `Dockerfile` (multi-stage with .NET 8)
+- Health endpoint: `app.MapGet("/health", () => Results.Ok(new { status = "healthy" }))`
+
+### Dependencies Required
+```xml
+<PackageReference Include="MediatR" Version="12.2.0" />
+<PackageReference Include="FluentValidation" Version="11.9.0" />
+<PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+<PackageReference Include="Serilog.Formatting.Json" Version="3.1.0" />
+<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.7.0" />
+<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.7.1" />
+<PackageReference Include="StackExchange.Redis" Version="2.7.17" />
+<PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.0" />
+<PackageReference Include="AWSSDK.S3" Version="3.7.0" />
+<PackageReference Include="AWSSDK.SQS" Version="3.7.0" />
+<PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.0" />
+<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+```
+
+### Logging Configuration
+```csharp
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console(new JsonFormatter())
+    .WriteTo.Seq(Environment.GetEnvironmentVariable("SEQ_URL") ?? "http://seq:5341")
+    .CreateLogger();
+```
+
+### OpenTelemetry Configuration
+```csharp
+builder.Services.AddOpenTelemetry()
+    .WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddOtlpExporter(options => {
+            options.Endpoint = new Uri(Environment.GetEnvironmentVariable("OTLP_ENDPOINT") ?? "http://otel-collector:4318");
+        }));
+```
+
+### Redis Connection (with retry logic)
+```csharp
+var redisConnection = builder.Configuration["REDIS_URL"] ?? "localhost:6379";
+if (redisConnection.StartsWith("redis://")) {
+    redisConnection = redisConnection.Substring(8);
+}
+var configOptions = ConfigurationOptions.Parse(redisConnection);
+configOptions.AbortOnConnectFail = false;
+configOptions.ConnectRetry = 5;
+configOptions.ConnectTimeout = 5000;
+var redis = ConnectionMultiplexer.Connect(configOptions);
+```
+
+### AWS Configuration (LocalStack)
+```csharp
+var dynamoConfig = new AmazonDynamoDBConfig {
+    ServiceURL = builder.Configuration["DYNAMODB_ENDPOINT"] ?? "http://localhost:4566"
+};
+builder.Services.AddSingleton<IAmazonDynamoDB>(new AmazonDynamoDBClient(dynamoConfig));
+```
+
+### Dockerfile Template
+```dockerfile
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY *.csproj .
+RUN dotnet restore
+COPY . .
+RUN dotnet publish -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=build /app/publish .
+EXPOSE 80
+ENTRYPOINT ["dotnet", "Gearify.[ServiceName].dll"]
+```
+
+---
+
+## Service-Specific Requirements
+
+### Payment Service
+- PostgreSQL connection string support
+- Stripe adapter with API key from environment
+- PayPal adapter with OAuth
+- Transaction ledger with ACID guarantees
+- Idempotency keys in Redis
+
+### Shipping Service
+- EasyPost adapter (API key from environment)
+- Shippo adapter (stub implementation)
+- Rate calculation aggregator
+- Label generation with S3 storage
+
+### Search Service
+- DynamoDB GSI queries (no Elasticsearch)
+- Full-text search on product name/description
+- Faceted search (category, price range, brand)
+- Redis caching for popular searches
+
+### Notification Service
+- SQS queue consumer
+- MailHog SMTP integration
+- Email templates
+- SMS stub (Twilio adapter structure)
+
+### API Gateway
+- YARP reverse proxy configuration
+- JWT authentication with Cognito
+- Rate limiting middleware
+- Request/response logging
+- CORS configuration
+
+---
+
+## Docker Compose Integration
+
+All services must:
+- Connect to `gearify-network`
+- Use environment variables from `.env` file
+- Have proper `depends_on` with health checks
+- Map ports correctly (5001-5010 for services)
+- Support graceful shutdown
+
+---
+
+## Testing Requirements
+
+### Unit Tests
+- xUnit test project
+- FluentAssertions for readable assertions
+- NSubstitute for mocking
+- Test coverage > 70%
+
+### Integration Tests
+- Testcontainers for LocalStack, PostgreSQL, Redis
+- Real AWS SDK calls against LocalStack
+- End-to-end API tests
+- Database migration tests
+
+---
+
+## Observability
+
+All services must emit:
+- **Logs**: JSON format to Seq (errors, warnings, info)
+- **Traces**: OTLP to Jaeger via OpenTelemetry Collector
+- **Metrics**: Request count, duration, error rate to Prometheus
+
+---
+
+## Security
+
+- JWT validation with Cognito JWKS
+- API key validation for service-to-service
+- Rate limiting per tenant
+- Input validation with FluentValidation
+- SQL injection prevention (parameterized queries)
+- XSS prevention (content security policy)
+
+---
+
+## Enhancement Priority
+
+**Phase 1 (Critical):**
+1. Complete CRUD operations for all services
+2. Add proper error handling and validation
+3. Implement health endpoints correctly
+4. Add missing AWS service integrations
+
+**Phase 2 (Important):**
+1. Complete unit test coverage
+2. Add integration tests
+3. Implement outbox pattern for events
+4. Add idempotency for payment/order operations
+
+**Phase 3 (Nice-to-have):**
+1. GraphQL API layer
+2. Caching strategies
+3. Performance optimization
+4. Advanced monitoring dashboards
 
 ---
 
 ## Notes
-- Payment service supports **Stripe** and **PayPal** adapters.
-- Shipping uses **EasyPost** and stub **Shippo** adapter.
-- Search uses **DynamoDB GSIs** (no Elasticsearch yet).
-- Security: JWT, rate limiting, idempotency keys.
-- DynamoDB: orders, catalog, tenants.
-- PostgreSQL: payments ledger.
-- Redis: sessions, idempotency tokens.
 
-Generate concise, runnable examples for at least one service (Order or Catalog) in full detail, and only structure for others.
+- All services are already running and accessible
+- LocalStack Pro license is configured
+- Portainer UI available at http://localhost:9000
+- Monitoring dashboard at `monitoring-dashboard.html`
+- Health check script at `scripts/check-services.sh`
+- Full environment configured in `gearify-umbrella/.env`
+
+**Generate detailed implementations for missing features in order of priority above.**
