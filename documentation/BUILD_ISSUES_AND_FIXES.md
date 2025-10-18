@@ -70,3 +70,22 @@ dotnet build Gearify.sln
 ```
 
 **Note:** You may see warnings about OpenTelemetry package vulnerabilities (NU1902). These are moderate severity and can be addressed by upgrading to version 1.8.0+ when ready.
+
+## Code Quality Improvements
+
+### CQRS File Structure Refactoring ✅
+
+**Issue:** Commands and handlers were mixed in the same file, violating Single Responsibility Principle
+
+**Services Refactored:**
+- **Cart Service**: Separated `AddToCartCommand`, `RemoveFromCartCommand`, and `ClearCartCommand` into individual files with their handlers
+- **Order Service**: Created `CreateOrderCommandHandler.cs`
+- **Search Service**: Created `SearchProductsQueryHandler.cs`
+
+**Benefits:**
+- Clearer file organization following CQRS best practices
+- Each file has a single responsibility
+- Easier to navigate, test, and maintain
+- Better git diff readability
+
+See [CQRS_FILE_STRUCTURE_GUIDE.md](./CQRS_FILE_STRUCTURE_GUIDE.md) for detailed explanation and examples.
