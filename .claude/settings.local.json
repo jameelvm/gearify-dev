@@ -33,7 +33,13 @@
       "Bash(if [ ! -d \"gearify-notification-svc/Domain/Entities\" ])",
       "Bash(then mkdir -p \"gearify-notification-svc/Domain/Entities\")",
       "Bash(if [ ! -d \"gearify-notification-svc/Infrastructure/Email\" ])",
-      "Bash(then mkdir -p \"gearify-notification-svc/Infrastructure/Email\")"
+      "Bash(then mkdir -p \"gearify-notification-svc/Infrastructure/Email\")",
+      "Bash(dotnet sln add:*)",
+      "Bash(dotnet new sln:*)",
+      "Bash(dotnet sln:*)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet add:*)",
+      "Bash(dotnet clean:*)"
     ],
     "deny": [],
     "ask": []

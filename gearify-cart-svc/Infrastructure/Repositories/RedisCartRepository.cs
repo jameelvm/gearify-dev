@@ -1,6 +1,8 @@
+using System;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Gearify.CartService.Domain.Entities;
 using StackExchange.Redis;
-using System.Text.Json;
 
 namespace Gearify.CartService.Infrastructure.Repositories;
 

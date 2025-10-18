@@ -1,3 +1,5 @@
+using System;
+
 namespace Gearify.NotificationService.Domain.Entities;
 
 public class Notification

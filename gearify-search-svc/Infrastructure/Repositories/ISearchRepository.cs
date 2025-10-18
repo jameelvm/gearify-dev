@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Gearify.SearchService.Application.Queries;
 
 namespace Gearify.SearchService.Infrastructure.Repositories;

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Gearify.OrderService.Domain.Entities;
 
 namespace Gearify.OrderService.Infrastructure.Repositories;

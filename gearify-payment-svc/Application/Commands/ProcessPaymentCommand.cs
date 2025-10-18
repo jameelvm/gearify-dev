@@ -1,3 +1,4 @@
+using System;
 using Gearify.PaymentService.Domain.Entities;
 using MediatR;
 

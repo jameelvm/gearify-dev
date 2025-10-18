@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using MediatR;
 
 namespace Gearify.SearchService.Application.Queries;

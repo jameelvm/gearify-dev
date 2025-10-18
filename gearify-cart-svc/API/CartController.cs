@@ -14,11 +14,24 @@ public class CartController : ControllerBase
     public CartController(IMediator mediator) => _mediator = mediator;
 
     [HttpPost("{userId}/items")]
-    public async Task<IActionResult> AddToCart(string userId, [FromBody] AddItemRequest request)
+    public async Task<IActionResult> AddToCart(string userId, [FromBody] AddItemRequest request, [FromHeader(Name = "X-Tenant-Id")] string tenantId)
     {
-        var cart = await _mediator.Send(new AddToCartCommand(userId, request.ProductId, request.Quantity, request.Price));
-        return Ok(cart);
+        var result = await _mediator.Send(new AddToCartCommand(
+            userId,
+            tenantId,
+            request.ProductId,
+            request.ProductName,
+            request.Sku,
+            request.Quantity,
+            request.Price,
+            request.ImageUrl
+        ));
+
+        if (!result.Success)
+            return BadRequest(result.ErrorMessage);
+
+        return Ok(result.Cart);
     }
 }
 
-public record AddItemRequest(string ProductId, int Quantity, decimal Price);
+public record AddItemRequest(string ProductId, string ProductName, string Sku, int Quantity, decimal Price, string? ImageUrl = null);

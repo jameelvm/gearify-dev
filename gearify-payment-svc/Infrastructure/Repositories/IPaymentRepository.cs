@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Gearify.PaymentService.Domain.Entities;
 
 namespace Gearify.PaymentService.Infrastructure.Repositories;

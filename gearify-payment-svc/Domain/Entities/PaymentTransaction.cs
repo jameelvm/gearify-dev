@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Gearify.PaymentService.Domain.Entities;
 
 public class PaymentTransaction

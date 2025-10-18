@@ -1,6 +1,8 @@
+using System;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Gearify.PaymentService.Application.Commands;
 using StackExchange.Redis;
-using System.Text.Json;
 
 namespace Gearify.PaymentService.Infrastructure.PaymentProviders;
 

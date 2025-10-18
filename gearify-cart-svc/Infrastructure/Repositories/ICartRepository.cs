@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Gearify.CartService.Domain.Entities;
 
 namespace Gearify.CartService.Infrastructure.Repositories;

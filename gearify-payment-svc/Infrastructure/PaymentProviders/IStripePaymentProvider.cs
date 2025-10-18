@@ -1,3 +1,7 @@
+using System;
+using System.Threading.Tasks;
+using Gearify.PaymentService.Application.Commands;
+
 namespace Gearify.PaymentService.Infrastructure.PaymentProviders;
 
 public interface IStripePaymentProvider
