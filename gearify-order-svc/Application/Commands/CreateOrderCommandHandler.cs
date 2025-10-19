@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Gearify.OrderService.Domain.Entities;
 using Gearify.OrderService.Infrastructure.Repositories;
+using Gearify.SharedKernel.Multitenancy;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -12,11 +13,16 @@ namespace Gearify.OrderService.Application.Commands;
 public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, CreateOrderResult>
 {
     private readonly IOrderRepository _repository;
+    private readonly ITenantContext _tenantContext;
     private readonly ILogger<CreateOrderCommandHandler> _logger;
 
-    public CreateOrderCommandHandler(IOrderRepository repository, ILogger<CreateOrderCommandHandler> logger)
+    public CreateOrderCommandHandler(
+        IOrderRepository repository,
+        ITenantContext tenantContext,
+        ILogger<CreateOrderCommandHandler> logger)
     {
         _repository = repository;
+        _tenantContext = tenantContext;
         _logger = logger;
     }
 
@@ -24,10 +30,12 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Cre
     {
         try
         {
+            var tenantId = _tenantContext.TenantId;
+
             var order = new Order
             {
                 Id = Guid.NewGuid().ToString(),
-                TenantId = request.TenantId,
+                TenantId = tenantId,
                 UserId = request.UserId,
                 Items = request.Items,
                 ShippingAddress = request.ShippingAddress,

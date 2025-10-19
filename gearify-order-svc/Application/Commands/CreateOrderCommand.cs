@@ -5,7 +5,6 @@ using MediatR;
 namespace Gearify.OrderService.Application.Commands;
 
 public record CreateOrderCommand(
-    string TenantId,
     string UserId,
     List<OrderItem> Items,
     string ShippingAddress

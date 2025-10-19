@@ -5,7 +5,6 @@ using MediatR;
 namespace Gearify.PaymentService.Application.Commands;
 
 public record ProcessPaymentCommand(
-    string TenantId,
     string OrderId,
     string UserId,
     decimal Amount,

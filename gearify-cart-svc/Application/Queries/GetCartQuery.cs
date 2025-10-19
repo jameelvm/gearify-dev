@@ -3,4 +3,4 @@ using MediatR;
 
 namespace Gearify.CartService.Application.Queries;
 
-public record GetCartQuery(string UserId, string TenantId) : IRequest<Cart?>;
+public record GetCartQuery(string UserId) : IRequest<Cart?>;

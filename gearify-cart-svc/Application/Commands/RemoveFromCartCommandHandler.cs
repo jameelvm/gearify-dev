@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Gearify.CartService.Infrastructure.Repositories;
+using Gearify.SharedKernel.Multitenancy;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -10,11 +11,16 @@ namespace Gearify.CartService.Application.Commands;
 public class RemoveFromCartCommandHandler : IRequestHandler<RemoveFromCartCommand, RemoveFromCartResult>
 {
     private readonly ICartRepository _repository;
+    private readonly ITenantContext _tenantContext;
     private readonly ILogger<RemoveFromCartCommandHandler> _logger;
 
-    public RemoveFromCartCommandHandler(ICartRepository repository, ILogger<RemoveFromCartCommandHandler> logger)
+    public RemoveFromCartCommandHandler(
+        ICartRepository repository,
+        ITenantContext tenantContext,
+        ILogger<RemoveFromCartCommandHandler> logger)
     {
         _repository = repository;
+        _tenantContext = tenantContext;
         _logger = logger;
     }
 
@@ -22,7 +28,8 @@ public class RemoveFromCartCommandHandler : IRequestHandler<RemoveFromCartComman
     {
         try
         {
-            var cart = await _repository.GetCartAsync(request.UserId, request.TenantId);
+            var tenantId = _tenantContext.TenantId;
+            var cart = await _repository.GetCartAsync(request.UserId, tenantId);
             if (cart == null)
             {
                 return new RemoveFromCartResult(false, "Cart not found");

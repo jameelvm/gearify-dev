@@ -4,7 +4,6 @@ namespace Gearify.CartService.Application.Commands;
 
 public record RemoveFromCartCommand(
     string UserId,
-    string TenantId,
     string ProductId
 ) : IRequest<RemoveFromCartResult>;
 

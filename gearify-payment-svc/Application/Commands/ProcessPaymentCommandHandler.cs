@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Gearify.PaymentService.Domain.Entities;
 using Gearify.PaymentService.Infrastructure.PaymentProviders;
 using Gearify.PaymentService.Infrastructure.Repositories;
+using Gearify.SharedKernel.Multitenancy;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -15,6 +16,7 @@ public class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymentComman
     private readonly IIdempotencyService _idempotency;
     private readonly IStripePaymentProvider _stripeProvider;
     private readonly IPayPalPaymentProvider _paypalProvider;
+    private readonly ITenantContext _tenantContext;
     private readonly ILogger<ProcessPaymentCommandHandler> _logger;
 
     public ProcessPaymentCommandHandler(
@@ -22,12 +24,14 @@ public class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymentComman
         IIdempotencyService idempotency,
         IStripePaymentProvider stripeProvider,
         IPayPalPaymentProvider paypalProvider,
+        ITenantContext tenantContext,
         ILogger<ProcessPaymentCommandHandler> logger)
     {
         _repository = repository;
         _idempotency = idempotency;
         _stripeProvider = stripeProvider;
         _paypalProvider = paypalProvider;
+        _tenantContext = tenantContext;
         _logger = logger;
     }
 
@@ -35,6 +39,8 @@ public class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymentComman
     {
         try
         {
+            var tenantId = _tenantContext.TenantId;
+
             // Check idempotency
             var existingResult = await _idempotency.GetResultAsync(request.IdempotencyKey);
             if (existingResult != null)
@@ -46,7 +52,7 @@ public class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymentComman
             // Create transaction record
             var transaction = new PaymentTransaction
             {
-                TenantId = request.TenantId,
+                TenantId = tenantId,
                 OrderId = request.OrderId,
                 UserId = request.UserId,
                 Amount = request.Amount,

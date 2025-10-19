@@ -4,7 +4,6 @@ using MediatR;
 namespace Gearify.SearchService.Application.Queries;
 
 public record SearchProductsQuery(
-    string TenantId,
     string? SearchTerm = null,
     string? Category = null,
     decimal? MinPrice = null,

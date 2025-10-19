@@ -1,5 +1,6 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Gearify.SharedKernel.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -18,6 +19,9 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
+
+// Add multitenancy support
+builder.Services.AddMultitenancy();
 
 var dynamoConfig = new AmazonDynamoDBConfig
 {
@@ -44,6 +48,10 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(redis);
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
 var app = builder.Build();
+
+// Add tenant resolution middleware (must be before controllers)
+app.UseMultitenancy();
+
 app.UseSwagger();
 app.UseSwaggerUI();
 app.MapControllers();

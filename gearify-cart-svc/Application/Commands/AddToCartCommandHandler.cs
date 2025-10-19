@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Gearify.CartService.Domain.Entities;
 using Gearify.CartService.Infrastructure.Repositories;
+using Gearify.SharedKernel.Multitenancy;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -12,11 +13,16 @@ namespace Gearify.CartService.Application.Commands;
 public class AddToCartCommandHandler : IRequestHandler<AddToCartCommand, AddToCartResult>
 {
     private readonly ICartRepository _repository;
+    private readonly ITenantContext _tenantContext;
     private readonly ILogger<AddToCartCommandHandler> _logger;
 
-    public AddToCartCommandHandler(ICartRepository repository, ILogger<AddToCartCommandHandler> logger)
+    public AddToCartCommandHandler(
+        ICartRepository repository,
+        ITenantContext tenantContext,
+        ILogger<AddToCartCommandHandler> logger)
     {
         _repository = repository;
+        _tenantContext = tenantContext;
         _logger = logger;
     }
 
@@ -24,11 +30,13 @@ public class AddToCartCommandHandler : IRequestHandler<AddToCartCommand, AddToCa
     {
         try
         {
-            var cart = await _repository.GetCartAsync(request.UserId, request.TenantId)
+            var tenantId = _tenantContext.TenantId;
+
+            var cart = await _repository.GetCartAsync(request.UserId, tenantId)
                 ?? new Cart
                 {
                     UserId = request.UserId,
-                    TenantId = request.TenantId,
+                    TenantId = tenantId,
                     ExpiresAt = DateTime.UtcNow.AddDays(7)
                 };
 

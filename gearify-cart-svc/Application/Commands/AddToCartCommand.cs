@@ -5,7 +5,6 @@ namespace Gearify.CartService.Application.Commands;
 
 public record AddToCartCommand(
     string UserId,
-    string TenantId,
     string ProductId,
     string ProductName,
     string Sku,
