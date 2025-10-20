@@ -40,7 +40,11 @@
       "Bash(dotnet build:*)",
       "Bash(dotnet add:*)",
       "Bash(dotnet clean:*)",
-      "Bash(dotnet run:*)"
+      "Bash(dotnet run:*)",
+      "Bash(docker-compose stop:*)",
+      "Bash(docker-compose rm:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(timeout 90 docker logs -f gearify-localstack)"
     ],
     "deny": [],
     "ask": []

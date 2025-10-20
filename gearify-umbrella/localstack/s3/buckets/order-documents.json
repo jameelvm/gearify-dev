@@ -1,0 +1,21 @@
+{
+  "BucketName": "gearify-order-documents",
+  "Region": "us-east-1",
+  "CorsConfiguration": {
+    "CorsRules": [
+      {
+        "AllowedHeaders": ["*"],
+        "AllowedMethods": ["GET", "PUT", "POST"],
+        "AllowedOrigins": ["*"],
+        "ExposeHeaders": ["ETag"],
+        "MaxAgeSeconds": 3000
+      }
+    ]
+  },
+  "PublicAccessBlock": {
+    "BlockPublicAcls": true,
+    "IgnorePublicAcls": true,
+    "BlockPublicPolicy": true,
+    "RestrictPublicBuckets": true
+  }
+}

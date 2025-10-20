@@ -1,11 +1,14 @@
 using Amazon.DynamoDBv2;
+using Amazon.Runtime;
 using Amazon.S3;
 using FluentValidation;
 using Gearify.CatalogService.Application.Commands;
 using Gearify.CatalogService.Application.Validators;
 using Gearify.CatalogService.Infrastructure.Repositories;
+using Gearify.CatalogService.Infrastructure.Swagger;
 using Gearify.SharedKernel.Extensions;
 using MediatR;
+using Microsoft.OpenApi.Models;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
@@ -25,7 +28,18 @@ try
     // Add services
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+    builder.Services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc("v1", new OpenApiInfo
+        {
+            Title = "Catalog Service API",
+            Version = "v1",
+            Description = "Gearify Catalog Service - Manages product catalog"
+        });
+
+        // Add X-Tenant-Id header parameter for all operations
+        c.OperationFilter<TenantHeaderOperationFilter>();
+    });
 
     // Add multitenancy support
     builder.Services.AddMultitenancy();
@@ -43,19 +57,25 @@ try
     // FluentValidation
     builder.Services.AddValidatorsFromAssemblyContaining<CreateProductValidator>();
 
-    // AWS Services
+    // AWS Services - Configure for LocalStack with fake credentials
+    var dynamoEndpoint = builder.Configuration["DYNAMODB_ENDPOINT"] ?? "http://localhost:4566";
+    var s3Endpoint = builder.Configuration["S3_ENDPOINT"] ?? "http://localhost:4566";
+
+    // Use fake credentials for LocalStack (it doesn't validate them)
+    var credentials = new BasicAWSCredentials("test", "test");
+
     var dynamoConfig = new AmazonDynamoDBConfig
     {
-        ServiceURL = builder.Configuration["DYNAMODB_ENDPOINT"] ?? "http://localhost:4566"
+        ServiceURL = dynamoEndpoint
     };
-    builder.Services.AddSingleton<IAmazonDynamoDB>(new AmazonDynamoDBClient(dynamoConfig));
+    builder.Services.AddSingleton<IAmazonDynamoDB>(new AmazonDynamoDBClient(credentials, dynamoConfig));
 
     var s3Config = new AmazonS3Config
     {
-        ServiceURL = builder.Configuration["S3_ENDPOINT"] ?? "http://localhost:4566",
+        ServiceURL = s3Endpoint,
         ForcePathStyle = true
     };
-    builder.Services.AddSingleton<IAmazonS3>(new AmazonS3Client(s3Config));
+    builder.Services.AddSingleton<IAmazonS3>(new AmazonS3Client(credentials, s3Config));
 
     // Repositories
     builder.Services.AddScoped<IProductRepository, DynamoDbProductRepository>();

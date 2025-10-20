@@ -1,0 +1,43 @@
+{
+  "PoolName": "gearify-users",
+  "Policies": {
+    "PasswordPolicy": {
+      "MinimumLength": 8,
+      "RequireUppercase": true,
+      "RequireLowercase": true,
+      "RequireNumbers": true,
+      "RequireSymbols": false
+    }
+  },
+  "AutoVerifiedAttributes": ["email"],
+  "UsernameAttributes": ["email"],
+  "Schema": [
+    {
+      "Name": "email",
+      "AttributeDataType": "String",
+      "Required": true,
+      "Mutable": false
+    },
+    {
+      "Name": "name",
+      "AttributeDataType": "String",
+      "Required": false,
+      "Mutable": true
+    },
+    {
+      "Name": "custom:tenantId",
+      "AttributeDataType": "String",
+      "Required": false,
+      "Mutable": true,
+      "DeveloperOnlyAttribute": false
+    }
+  ],
+  "UserPoolTags": {
+    "Service": "Authentication",
+    "Environment": "Development"
+  },
+  "MfaConfiguration": "OPTIONAL",
+  "UserAttributeUpdateSettings": {
+    "AttributesRequireVerificationBeforeUpdate": ["email"]
+  }
+}

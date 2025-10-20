@@ -1,0 +1,25 @@
+{
+  "ClientName": "gearify-web-client",
+  "UserPoolId": "us-east-1_gearify",
+  "GenerateSecret": false,
+  "RefreshTokenValidity": 30,
+  "AccessTokenValidity": 60,
+  "IdTokenValidity": 60,
+  "TokenValidityUnits": {
+    "AccessToken": "minutes",
+    "IdToken": "minutes",
+    "RefreshToken": "days"
+  },
+  "ExplicitAuthFlows": [
+    "ALLOW_USER_PASSWORD_AUTH",
+    "ALLOW_REFRESH_TOKEN_AUTH",
+    "ALLOW_USER_SRP_AUTH"
+  ],
+  "PreventUserExistenceErrors": "ENABLED",
+  "EnableTokenRevocation": true,
+  "AllowedOAuthFlows": ["code", "implicit"],
+  "AllowedOAuthScopes": ["openid", "email", "profile"],
+  "AllowedOAuthFlowsUserPoolClient": true,
+  "CallbackURLs": ["http://localhost:3000/callback"],
+  "LogoutURLs": ["http://localhost:3000/logout"]
+}

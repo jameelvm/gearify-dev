@@ -1,0 +1,16 @@
+{
+  "Name": "/gearify/config/api-rate-limits",
+  "Description": "API rate limiting configuration",
+  "Value": "{\"requestsPerMinute\":100,\"requestsPerHour\":5000,\"burstSize\":20,\"enableRateLimiting\":true}",
+  "Type": "String",
+  "Tags": [
+    {
+      "Key": "Service",
+      "Value": "ApiGateway"
+    },
+    {
+      "Key": "Environment",
+      "Value": "Development"
+    }
+  ]
+}

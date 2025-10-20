@@ -1,0 +1,82 @@
+[
+  {
+    "tenantId": {"S": "default-tenant"},
+    "flagKey": {"S": "enable-product-recommendations"},
+    "enabled": {"BOOL": true},
+    "description": {"S": "Enable AI-powered product recommendations"},
+    "createdAt": {"S": "2025-01-15T10:00:00.000Z"},
+    "updatedAt": {"S": "2025-01-15T10:00:00.000Z"}
+  },
+  {
+    "tenantId": {"S": "default-tenant"},
+    "flagKey": {"S": "enable-advanced-search"},
+    "enabled": {"BOOL": true},
+    "description": {"S": "Enable advanced search filters"},
+    "createdAt": {"S": "2025-01-15T10:00:00.000Z"},
+    "updatedAt": {"S": "2025-01-15T10:00:00.000Z"}
+  },
+  {
+    "tenantId": {"S": "default-tenant"},
+    "flagKey": {"S": "enable-wishlist"},
+    "enabled": {"BOOL": true},
+    "description": {"S": "Enable user wishlist functionality"},
+    "createdAt": {"S": "2025-01-15T10:00:00.000Z"},
+    "updatedAt": {"S": "2025-01-15T10:00:00.000Z"}
+  },
+  {
+    "tenantId": {"S": "test-tenant"},
+    "flagKey": {"S": "enable-product-recommendations"},
+    "enabled": {"BOOL": false},
+    "description": {"S": "Enable AI-powered product recommendations"},
+    "createdAt": {"S": "2025-01-16T10:00:00.000Z"},
+    "updatedAt": {"S": "2025-01-16T10:00:00.000Z"}
+  },
+  {
+    "tenantId": {"S": "test-tenant"},
+    "flagKey": {"S": "enable-advanced-search"},
+    "enabled": {"BOOL": true},
+    "description": {"S": "Enable advanced search filters"},
+    "createdAt": {"S": "2025-01-16T10:00:00.000Z"},
+    "updatedAt": {"S": "2025-01-16T10:00:00.000Z"}
+  },
+  {
+    "tenantId": {"S": "test-tenant"},
+    "flagKey": {"S": "enable-bulk-ordering"},
+    "enabled": {"BOOL": true},
+    "description": {"S": "Enable bulk ordering for business customers"},
+    "createdAt": {"S": "2025-01-16T10:00:00.000Z"},
+    "updatedAt": {"S": "2025-01-16T10:00:00.000Z"}
+  },
+  {
+    "tenantId": {"S": "acme-corp"},
+    "flagKey": {"S": "enable-product-recommendations"},
+    "enabled": {"BOOL": true},
+    "description": {"S": "Enable AI-powered product recommendations"},
+    "createdAt": {"S": "2025-01-17T10:00:00.000Z"},
+    "updatedAt": {"S": "2025-01-17T10:00:00.000Z"}
+  },
+  {
+    "tenantId": {"S": "acme-corp"},
+    "flagKey": {"S": "enable-advanced-search"},
+    "enabled": {"BOOL": true},
+    "description": {"S": "Enable advanced search filters"},
+    "createdAt": {"S": "2025-01-17T10:00:00.000Z"},
+    "updatedAt": {"S": "2025-01-17T10:00:00.000Z"}
+  },
+  {
+    "tenantId": {"S": "acme-corp"},
+    "flagKey": {"S": "enable-bulk-ordering"},
+    "enabled": {"BOOL": true},
+    "description": {"S": "Enable bulk ordering for business customers"},
+    "createdAt": {"S": "2025-01-17T10:00:00.000Z"},
+    "updatedAt": {"S": "2025-01-17T10:00:00.000Z"}
+  },
+  {
+    "tenantId": {"S": "acme-corp"},
+    "flagKey": {"S": "enable-enterprise-dashboard"},
+    "enabled": {"BOOL": true},
+    "description": {"S": "Enable enterprise analytics dashboard"},
+    "createdAt": {"S": "2025-01-17T10:00:00.000Z"},
+    "updatedAt": {"S": "2025-01-17T10:00:00.000Z"}
+  }
+]

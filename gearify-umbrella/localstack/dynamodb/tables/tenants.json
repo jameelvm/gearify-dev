@@ -1,0 +1,16 @@
+{
+  "TableName": "gearify-tenants",
+  "AttributeDefinitions": [
+    {
+      "AttributeName": "tenantId",
+      "AttributeType": "S"
+    }
+  ],
+  "KeySchema": [
+    {
+      "AttributeName": "tenantId",
+      "KeyType": "HASH"
+    }
+  ],
+  "BillingMode": "PAY_PER_REQUEST"
+}

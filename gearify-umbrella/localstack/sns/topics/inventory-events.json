@@ -1,0 +1,18 @@
+{
+  "TopicName": "gearify-inventory-events",
+  "DisplayName": "Gearify Inventory Events",
+  "Attributes": {
+    "DeliveryPolicy": "{\"http\":{\"defaultHealthyRetryPolicy\":{\"minDelayTarget\":20,\"maxDelayTarget\":20,\"numRetries\":3,\"numMaxDelayRetries\":0,\"numNoDelayRetries\":0,\"numMinDelayRetries\":0,\"backoffFunction\":\"linear\"},\"disableSubscriptionOverrides\":false}}",
+    "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"*\"},\"Action\":\"SNS:Publish\",\"Resource\":\"*\"}]}"
+  },
+  "Tags": {
+    "Service": "InventoryService",
+    "Environment": "Development"
+  },
+  "Subscriptions": [
+    {
+      "Protocol": "sqs",
+      "Endpoint": "arn:aws:sqs:us-east-1:000000000000:gearify-notification-requested"
+    }
+  ]
+}

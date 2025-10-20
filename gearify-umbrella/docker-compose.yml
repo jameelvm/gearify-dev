@@ -30,7 +30,14 @@ services:
     ports:
       - "4566:4566"
     volumes:
-      - "./scripts/localstack-init.sh:/etc/localstack/init/ready.d/init-aws.sh"
+      - "./localstack/init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh"
+      - "./localstack/dynamodb:/etc/localstack/init/ready.d/dynamodb"
+      - "./localstack/s3:/etc/localstack/init/ready.d/s3"
+      - "./localstack/sqs:/etc/localstack/init/ready.d/sqs"
+      - "./localstack/sns:/etc/localstack/init/ready.d/sns"
+      - "./localstack/cognito:/etc/localstack/init/ready.d/cognito"
+      - "./localstack/secretsmanager:/etc/localstack/init/ready.d/secretsmanager"
+      - "./localstack/ssm:/etc/localstack/init/ready.d/ssm"
       - "/var/run/docker.sock:/var/run/docker.sock"
       - localstack-data:/var/lib/localstack
     networks:

@@ -1,0 +1,56 @@
+[
+  {
+    "tenantId": {"S": "default-tenant"},
+    "name": {"S": "Default Tenant - Gearify Outdoor Store"},
+    "description": {"S": "Default tenant for outdoor and camping gear"},
+    "tier": {"S": "premium"},
+    "status": {"S": "active"},
+    "settings": {"M": {
+      "currency": {"S": "USD"},
+      "timezone": {"S": "America/New_York"},
+      "features": {"M": {
+        "advancedSearch": {"BOOL": true},
+        "recommendations": {"BOOL": true},
+        "analytics": {"BOOL": true}
+      }}
+    }},
+    "createdAt": {"S": "2025-01-15T10:00:00.000Z"},
+    "updatedAt": {"S": "2025-01-15T10:00:00.000Z"}
+  },
+  {
+    "tenantId": {"S": "test-tenant"},
+    "name": {"S": "Test Tenant - Office Solutions"},
+    "description": {"S": "Test tenant for office equipment and electronics"},
+    "tier": {"S": "standard"},
+    "status": {"S": "active"},
+    "settings": {"M": {
+      "currency": {"S": "USD"},
+      "timezone": {"S": "America/Los_Angeles"},
+      "features": {"M": {
+        "advancedSearch": {"BOOL": true},
+        "recommendations": {"BOOL": false},
+        "analytics": {"BOOL": true}
+      }}
+    }},
+    "createdAt": {"S": "2025-01-16T10:00:00.000Z"},
+    "updatedAt": {"S": "2025-01-16T10:00:00.000Z"}
+  },
+  {
+    "tenantId": {"S": "acme-corp"},
+    "name": {"S": "ACME Corporation"},
+    "description": {"S": "Enterprise tenant for business equipment"},
+    "tier": {"S": "enterprise"},
+    "status": {"S": "active"},
+    "settings": {"M": {
+      "currency": {"S": "USD"},
+      "timezone": {"S": "America/Chicago"},
+      "features": {"M": {
+        "advancedSearch": {"BOOL": true},
+        "recommendations": {"BOOL": true},
+        "analytics": {"BOOL": true}
+      }}
+    }},
+    "createdAt": {"S": "2025-01-17T10:00:00.000Z"},
+    "updatedAt": {"S": "2025-01-17T10:00:00.000Z"}
+  }
+]

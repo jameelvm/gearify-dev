@@ -1,0 +1,16 @@
+{
+  "Name": "/gearify/config/cache-settings",
+  "Description": "Caching configuration for services",
+  "Value": "{\"productCacheTTL\":300,\"categoryCacheTTL\":600,\"userSessionTTL\":3600,\"enableDistributedCache\":true,\"cacheProvider\":\"Redis\"}",
+  "Type": "String",
+  "Tags": [
+    {
+      "Key": "Service",
+      "Value": "Configuration"
+    },
+    {
+      "Key": "Environment",
+      "Value": "Development"
+    }
+  ]
+}

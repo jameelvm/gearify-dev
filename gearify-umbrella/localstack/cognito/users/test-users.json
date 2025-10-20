@@ -1,0 +1,46 @@
+[
+  {
+    "Username": "admin@default-tenant.com",
+    "UserAttributes": [
+      {"Name": "email", "Value": "admin@default-tenant.com"},
+      {"Name": "name", "Value": "Default Admin"},
+      {"Name": "custom:tenantId", "Value": "default-tenant"},
+      {"Name": "email_verified", "Value": "true"}
+    ],
+    "TemporaryPassword": "TempPass123!",
+    "MessageAction": "SUPPRESS"
+  },
+  {
+    "Username": "user@default-tenant.com",
+    "UserAttributes": [
+      {"Name": "email", "Value": "user@default-tenant.com"},
+      {"Name": "name", "Value": "Default User"},
+      {"Name": "custom:tenantId", "Value": "default-tenant"},
+      {"Name": "email_verified", "Value": "true"}
+    ],
+    "TemporaryPassword": "TempPass123!",
+    "MessageAction": "SUPPRESS"
+  },
+  {
+    "Username": "admin@test-tenant.com",
+    "UserAttributes": [
+      {"Name": "email", "Value": "admin@test-tenant.com"},
+      {"Name": "name", "Value": "Test Admin"},
+      {"Name": "custom:tenantId", "Value": "test-tenant"},
+      {"Name": "email_verified", "Value": "true"}
+    ],
+    "TemporaryPassword": "TempPass123!",
+    "MessageAction": "SUPPRESS"
+  },
+  {
+    "Username": "admin@acme-corp.com",
+    "UserAttributes": [
+      {"Name": "email", "Value": "admin@acme-corp.com"},
+      {"Name": "name", "Value": "ACME Admin"},
+      {"Name": "custom:tenantId", "Value": "acme-corp"},
+      {"Name": "email_verified", "Value": "true"}
+    ],
+    "TemporaryPassword": "TempPass123!",
+    "MessageAction": "SUPPRESS"
+  }
+]

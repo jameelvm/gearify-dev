@@ -1,0 +1,16 @@
+{
+  "Name": "/gearify/config/feature-flags",
+  "Description": "Global feature flags configuration",
+  "Value": "{\"enableNewCheckout\":false,\"enableProductReviews\":true,\"enableWishlist\":true,\"enableLiveChat\":false,\"maintenanceMode\":false}",
+  "Type": "String",
+  "Tags": [
+    {
+      "Key": "Service",
+      "Value": "Configuration"
+    },
+    {
+      "Key": "Environment",
+      "Value": "Development"
+    }
+  ]
+}

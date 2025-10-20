@@ -1,0 +1,13 @@
+{
+  "QueueName": "gearify-order-created",
+  "Attributes": {
+    "DelaySeconds": "0",
+    "MessageRetentionPeriod": "345600",
+    "ReceiveMessageWaitTimeSeconds": "20",
+    "VisibilityTimeout": "30"
+  },
+  "Tags": {
+    "Service": "OrderService",
+    "Environment": "Development"
+  }
+}

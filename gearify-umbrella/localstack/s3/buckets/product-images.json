@@ -1,0 +1,21 @@
+{
+  "BucketName": "gearify-product-images",
+  "Region": "us-east-1",
+  "CorsConfiguration": {
+    "CorsRules": [
+      {
+        "AllowedHeaders": ["*"],
+        "AllowedMethods": ["GET", "PUT", "POST", "DELETE"],
+        "AllowedOrigins": ["*"],
+        "ExposeHeaders": ["ETag"],
+        "MaxAgeSeconds": 3000
+      }
+    ]
+  },
+  "PublicAccessBlock": {
+    "BlockPublicAcls": false,
+    "IgnorePublicAcls": false,
+    "BlockPublicPolicy": false,
+    "RestrictPublicBuckets": false
+  }
+}
