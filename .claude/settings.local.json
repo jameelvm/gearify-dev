@@ -39,7 +39,8 @@
       "Bash(dotnet sln:*)",
       "Bash(dotnet build:*)",
       "Bash(dotnet add:*)",
-      "Bash(dotnet clean:*)"
+      "Bash(dotnet clean:*)",
+      "Bash(dotnet run:*)"
     ],
     "deny": [],
     "ask": []

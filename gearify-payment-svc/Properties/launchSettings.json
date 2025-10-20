@@ -6,7 +6,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:5005",
+      "applicationUrl": "http://localhost:6005",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "REDIS_URL": "localhost:6379",
@@ -16,6 +16,12 @@
         "PAYPAL_CLIENT_ID": "your_paypal_client_id",
         "PAYPAL_SECRET": "your_paypal_secret"
       }
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
+      "publishAllPorts": true
     }
   }
 }
