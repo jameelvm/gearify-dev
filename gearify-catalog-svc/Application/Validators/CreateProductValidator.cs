@@ -7,7 +7,6 @@ public class CreateProductValidator : AbstractValidator<CreateProductCommand>
 {
     public CreateProductValidator()
     {
-        RuleFor(x => x.TenantId).NotEmpty().WithMessage("TenantId is required");
         RuleFor(x => x.Sku).NotEmpty().WithMessage("SKU is required");
         RuleFor(x => x.Name).NotEmpty().MinimumLength(3).MaximumLength(200).WithMessage("Name must be between 3 and 200 characters");
         RuleFor(x => x.Category).NotEmpty().WithMessage("Category is required");

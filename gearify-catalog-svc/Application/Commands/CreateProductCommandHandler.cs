@@ -1,5 +1,6 @@
 using Gearify.CatalogService.Domain.Entities;
 using Gearify.CatalogService.Infrastructure.Repositories;
+using Gearify.SharedKernel.Multitenancy;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -8,13 +9,16 @@ namespace Gearify.CatalogService.Application.Commands;
 public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, CreateProductResult>
 {
     private readonly IProductRepository _repository;
+    private readonly ITenantContext _tenantContext;
     private readonly ILogger<CreateProductCommandHandler> _logger;
 
     public CreateProductCommandHandler(
         IProductRepository repository,
+        ITenantContext tenantContext,
         ILogger<CreateProductCommandHandler> logger)
     {
         _repository = repository;
+        _tenantContext = tenantContext;
         _logger = logger;
     }
 
@@ -22,10 +26,12 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
     {
         try
         {
+            var tenantId = _tenantContext.TenantId;
+
             var product = new Product
             {
                 Id = Guid.NewGuid().ToString(),
-                TenantId = request.TenantId,
+                TenantId = tenantId,
                 Sku = request.Sku,
                 Name = request.Name,
                 Description = request.Description,
@@ -47,7 +53,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to create product for tenant {TenantId}", request.TenantId);
+            _logger.LogError(ex, "Failed to create product for tenant {TenantId}", _tenantContext.TenantId);
             return new CreateProductResult(string.Empty, false, ex.Message);
         }
     }

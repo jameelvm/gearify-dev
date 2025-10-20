@@ -4,6 +4,7 @@ using FluentValidation;
 using Gearify.CatalogService.Application.Commands;
 using Gearify.CatalogService.Application.Validators;
 using Gearify.CatalogService.Infrastructure.Repositories;
+using Gearify.SharedKernel.Extensions;
 using MediatR;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -25,6 +26,9 @@ try
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
+
+    // Add multitenancy support
+    builder.Services.AddMultitenancy();
 
     // CORS
     builder.Services.AddCors(options =>
@@ -68,6 +72,9 @@ try
             }));
 
     var app = builder.Build();
+
+    // Add tenant resolution middleware (must be before controllers)
+    app.UseMultitenancy();
 
     app.UseSwagger();
     app.UseSwaggerUI();

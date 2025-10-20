@@ -1,4 +1,5 @@
 using Gearify.CatalogService.Infrastructure.Repositories;
+using Gearify.SharedKernel.Multitenancy;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -7,13 +8,16 @@ namespace Gearify.CatalogService.Application.Commands;
 public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, UpdateProductResult>
 {
     private readonly IProductRepository _repository;
+    private readonly ITenantContext _tenantContext;
     private readonly ILogger<UpdateProductCommandHandler> _logger;
 
     public UpdateProductCommandHandler(
         IProductRepository repository,
+        ITenantContext tenantContext,
         ILogger<UpdateProductCommandHandler> logger)
     {
         _repository = repository;
+        _tenantContext = tenantContext;
         _logger = logger;
     }
 
@@ -21,7 +25,8 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
     {
         try
         {
-            var product = await _repository.GetByIdAsync(request.ProductId, request.TenantId);
+            var tenantId = _tenantContext.TenantId;
+            var product = await _repository.GetByIdAsync(request.ProductId, tenantId);
             if (product == null)
             {
                 return new UpdateProductResult(false, "Product not found");

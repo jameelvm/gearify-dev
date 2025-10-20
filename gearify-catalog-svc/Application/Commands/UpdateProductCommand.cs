@@ -4,7 +4,6 @@ namespace Gearify.CatalogService.Application.Commands;
 
 public record UpdateProductCommand(
     string ProductId,
-    string TenantId,
     string? Name,
     string? Description,
     decimal? Price,

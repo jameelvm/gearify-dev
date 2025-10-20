@@ -19,13 +19,13 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("products")]
-    public async Task<IActionResult> GetProducts([FromQuery] string? category, [FromHeader(Name = "X-Tenant-Id")] string tenantId = "default")
+    public async Task<IActionResult> GetProducts([FromQuery] string? category)
     {
         try
         {
             var products = string.IsNullOrEmpty(category)
-                ? await _mediator.Send(new GetAllProductsQuery(tenantId))
-                : await _mediator.Send(new GetProductsByCategoryQuery(category, tenantId));
+                ? await _mediator.Send(new GetAllProductsQuery())
+                : await _mediator.Send(new GetProductsByCategoryQuery(category));
 
             return Ok(products);
         }
@@ -37,11 +37,11 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("products/{id}")]
-    public async Task<IActionResult> GetProduct(string id, [FromHeader(Name = "X-Tenant-Id")] string tenantId = "default")
+    public async Task<IActionResult> GetProduct(string id)
     {
         try
         {
-            var product = await _mediator.Send(new GetProductByIdQuery(id, tenantId));
+            var product = await _mediator.Send(new GetProductByIdQuery(id));
             return product == null ? NotFound() : Ok(product);
         }
         catch (Exception ex)

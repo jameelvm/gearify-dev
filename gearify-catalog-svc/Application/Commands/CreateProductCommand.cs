@@ -3,7 +3,6 @@ using MediatR;
 namespace Gearify.CatalogService.Application.Commands;
 
 public record CreateProductCommand(
-    string TenantId,
     string Sku,
     string Name,
     string Description,
