@@ -1,11 +1,14 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Amazon.Runtime;
+using Gearify.CartService.Infrastructure.Swagger;
 using Gearify.SharedKernel.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Formatting.Json;
 using StackExchange.Redis;
@@ -18,16 +21,30 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 builder.Services.AddControllers();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Cart Service API",
+        Version = "v1",
+        Description = "Gearify Cart Service - Manages shopping carts"
+    });
+
+    // Add X-Tenant-Id header parameter for all operations
+    c.OperationFilter<TenantHeaderOperationFilter>();
+});
 
 // Add multitenancy support
 builder.Services.AddMultitenancy();
 
+// Use fake credentials for LocalStack (it doesn't validate them)
+var credentials = new BasicAWSCredentials("test", "test");
+
 var dynamoConfig = new AmazonDynamoDBConfig
 {
-    ServiceURL = builder.Configuration["AWS:DynamoDB:ServiceURL"] ?? "http://localhost:8000"
+    ServiceURL = builder.Configuration["AWS:DynamoDB:ServiceURL"] ?? "http://localhost:4566"
 };
-builder.Services.AddSingleton<IAmazonDynamoDB>(new AmazonDynamoDBClient(dynamoConfig));
+builder.Services.AddSingleton<IAmazonDynamoDB>(new AmazonDynamoDBClient(credentials, dynamoConfig));
 builder.Services.AddSingleton<IDynamoDBContext, DynamoDBContext>();
 
 var redisConnection = builder.Configuration["REDIS_URL"] ?? builder.Configuration["Redis:ConnectionString"] ?? "localhost:6379";

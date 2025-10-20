@@ -1,8 +1,10 @@
 ﻿using Gearify.ShippingService.Infrastructure.Adapters;
+using Gearify.ShippingService.Infrastructure.Swagger;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Formatting.Json;
 
@@ -14,7 +16,18 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 builder.Services.AddControllers();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Shipping Service API",
+        Version = "v1",
+        Description = "Gearify Shipping Service - Manages shipping and logistics"
+    });
+
+    // Add X-Tenant-Id header parameter for all operations
+    c.OperationFilter<TenantHeaderOperationFilter>();
+});
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
 builder.Services.AddSingleton<IShippingAdapter, EasyPostAdapter>();
