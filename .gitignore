@@ -14,6 +14,13 @@
 **/*api-key*
 !**/appsettings.json
 !**/appsettings.Development.json
+appsettings.Production.json
+**/appsettings.*.local.json
+**/secrets.json
+
+# User secrets (ASP.NET Core)
+**/secrets/
+UserSecretsId
 
 # OS files
 .DS_Store

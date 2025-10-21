@@ -44,7 +44,12 @@
       "Bash(docker-compose stop:*)",
       "Bash(docker-compose rm:*)",
       "Bash(docker-compose up:*)",
-      "Bash(timeout 90 docker logs -f gearify-localstack)"
+      "Bash(timeout 90 docker logs -f gearify-localstack)",
+      "Bash(dotnet remove package:*)",
+      "Bash(for svc in tenant order payment shipping inventory media notification search)",
+      "Bash(do sed -i '1i using System.Collections.Generic;' \"gearify-$svc-svc/Infrastructure/Swagger/TenantHeaderOperationFilter.cs\")",
+      "Bash(done)",
+      "Bash(dotnet remove:*)"
     ],
     "deny": [],
     "ask": []

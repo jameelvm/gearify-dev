@@ -1,29 +1,30 @@
-﻿using Gearify.SearchService.Infrastructure.Swagger;
+using System;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
-using Serilog;
+﻿using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddControllers();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Search Service API",
-        Version = "v1",
-        Description = "Gearify Search Service - Manages search and discovery"
-    });
-
-    // Add X-Tenant-Id header parameter for all operations
-    c.OperationFilter<TenantHeaderOperationFilter>();
-});
 Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
-builder.Host.UseSerilog();
-var app = builder.Build();
-app.UseSwagger();
-app.UseSwaggerUI();
-app.MapControllers();
-app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
-app.Run();
+
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
+
+    builder.Host.UseSerilog();
+
+    var startup = new Gearify.SearchService.Startup(builder.Configuration);
+    startup.ConfigureServices(builder.Services);
+
+    var app = builder.Build();
+
+    startup.Configure(app, app.Environment);
+
+    Log.Information("Search Service starting...");
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

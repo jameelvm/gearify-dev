@@ -1,76 +1,33 @@
-﻿using Amazon.DynamoDBv2;
-using Amazon.DynamoDBv2.DataModel;
-using Amazon.Runtime;
-using Gearify.CartService.Infrastructure.Swagger;
-using Gearify.SharedKernel.Extensions;
-using MediatR;
+﻿using System;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Formatting.Json;
-using StackExchange.Redis;
-
-var builder = WebApplication.CreateBuilder(args);
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console(new JsonFormatter())
     .CreateLogger();
 
-builder.Host.UseSerilog();
-builder.Services.AddControllers();
-builder.Services.AddSwaggerGen(c =>
+try
 {
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Cart Service API",
-        Version = "v1",
-        Description = "Gearify Cart Service - Manages shopping carts"
-    });
+    var builder = WebApplication.CreateBuilder(args);
 
-    // Add X-Tenant-Id header parameter for all operations
-    c.OperationFilter<TenantHeaderOperationFilter>();
-});
+    builder.Host.UseSerilog();
 
-// Add multitenancy support
-builder.Services.AddMultitenancy();
+    var startup = new Gearify.CartService.Startup(builder.Configuration);
+    startup.ConfigureServices(builder.Services);
 
-// Use fake credentials for LocalStack (it doesn't validate them)
-var credentials = new BasicAWSCredentials("test", "test");
+    var app = builder.Build();
 
-var dynamoConfig = new AmazonDynamoDBConfig
-{
-    ServiceURL = builder.Configuration["AWS:DynamoDB:ServiceURL"] ?? "http://localhost:4566"
-};
-builder.Services.AddSingleton<IAmazonDynamoDB>(new AmazonDynamoDBClient(credentials, dynamoConfig));
-builder.Services.AddSingleton<IDynamoDBContext, DynamoDBContext>();
+    startup.Configure(app, app.Environment);
 
-var redisConnection = builder.Configuration["REDIS_URL"] ?? builder.Configuration["Redis:ConnectionString"] ?? "localhost:6379";
-// Remove redis:// prefix if present
-if (redisConnection.StartsWith("redis://"))
-{
-    redisConnection = redisConnection.Substring(8);
+    Log.Information("Cart Service starting...");
+    app.Run();
 }
-
-var configOptions = ConfigurationOptions.Parse(redisConnection);
-configOptions.AbortOnConnectFail = false;
-configOptions.ConnectRetry = 5;
-configOptions.ConnectTimeout = 5000;
-
-var redis = ConnectionMultiplexer.Connect(configOptions);
-builder.Services.AddSingleton<IConnectionMultiplexer>(redis);
-
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
-
-var app = builder.Build();
-
-// Add tenant resolution middleware (must be before controllers)
-app.UseMultitenancy();
-
-app.UseSwagger();
-app.UseSwaggerUI();
-app.MapControllers();
-app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
-app.Run();
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

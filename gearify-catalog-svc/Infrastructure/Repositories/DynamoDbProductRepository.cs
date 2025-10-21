@@ -6,15 +6,10 @@ using System.Text.Json;
 
 namespace Gearify.CatalogService.Infrastructure.Repositories;
 
-public class DynamoDbProductRepository : IProductRepository
+public class DynamoDbProductRepository(IAmazonDynamoDB dynamoDb) : IProductRepository
 {
-    private readonly IAmazonDynamoDB _dynamoDb;
+    private readonly IAmazonDynamoDB _dynamoDb = dynamoDb;
     private readonly string _tableName = "gearify-products";
-
-    public DynamoDbProductRepository(IAmazonDynamoDB dynamoDb)
-    {
-        _dynamoDb = dynamoDb;
-    }
 
     public async Task<Product?> GetByIdAsync(string productId, string tenantId)
     {
