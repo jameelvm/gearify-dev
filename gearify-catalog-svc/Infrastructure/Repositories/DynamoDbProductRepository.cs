@@ -33,20 +33,37 @@ public class DynamoDbProductRepository(IAmazonDynamoDB dynamoDb) : IProductRepos
 
     public async Task<List<Product>> GetAllAsync(string tenantId, int skip = 0, int take = 50)
     {
-        var request = new QueryRequest
+        try
         {
-            TableName = _tableName,
-            KeyConditionExpression = "PK = :pk AND begins_with(SK, :sk)",
-            ExpressionAttributeValues = new Dictionary<string, AttributeValue>
-            {
-                { ":pk", new AttributeValue { S = $"TENANT#{tenantId}" } },
-                { ":sk", new AttributeValue { S = "PRODUCT#" } }
-            },
-            Limit = take
-        };
+            Console.WriteLine($"[DynamoDbProductRepository] Querying products for tenant: {tenantId}");
+            Console.WriteLine($"[DynamoDbProductRepository] Table name: {_tableName}");
+            Console.WriteLine($"[DynamoDbProductRepository] DynamoDB client endpoint: {_dynamoDb.Config.ServiceURL}");
 
-        var response = await _dynamoDb.QueryAsync(request);
-        return response.Items.Select(DeserializeProduct).ToList();
+            var request = new QueryRequest
+            {
+                TableName = _tableName,
+                KeyConditionExpression = "PK = :pk AND begins_with(SK, :sk)",
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+                {
+                    { ":pk", new AttributeValue { S = $"TENANT#{tenantId}" } },
+                    { ":sk", new AttributeValue { S = "PRODUCT#" } }
+                },
+                Limit = take
+            };
+
+            Console.WriteLine($"[DynamoDbProductRepository] Executing query...");
+            var response = await _dynamoDb.QueryAsync(request);
+            Console.WriteLine($"[DynamoDbProductRepository] Query successful. Items returned: {response.Items.Count}");
+
+            return response.Items.Select(DeserializeProduct).ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[DynamoDbProductRepository] ERROR: {ex.GetType().Name}");
+            Console.WriteLine($"[DynamoDbProductRepository] Message: {ex.Message}");
+            Console.WriteLine($"[DynamoDbProductRepository] Stack trace: {ex.StackTrace}");
+            throw;
+        }
     }
 
     public async Task<List<Product>> GetByCategoryAsync(string category, string tenantId)

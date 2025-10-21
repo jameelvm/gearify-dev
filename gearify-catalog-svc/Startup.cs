@@ -32,6 +32,18 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        // Log LocalStack configuration for debugging
+        var useLocalStack = Configuration.GetValue<bool>("LocalStack:UseLocalStack");
+        var localStackHost = Configuration["LocalStack:Config:LocalStackHost"];
+        var awsRegion = Configuration["AWS:Region"];
+
+        Console.WriteLine($"=== LocalStack Configuration ===");
+        Console.WriteLine($"UseLocalStack: {useLocalStack}");
+        Console.WriteLine($"LocalStackHost: {localStackHost}");
+        Console.WriteLine($"AWS Region: {awsRegion}");
+        Console.WriteLine($"Environment: {Configuration["ASPNETCORE_ENVIRONMENT"]}");
+        Console.WriteLine($"================================");
+
         // Controllers
         services.AddControllers();
         services.AddEndpointsApiExplorer();
@@ -65,15 +77,28 @@ public class Startup
         // FluentValidation
         services.AddValidatorsFromAssemblyContaining<CreateProductValidator>();
 
-        // LocalStack Configuration (Development only)
-        // Automatically configures AWS services to use LocalStack when enabled
-        services.AddLocalStack(Configuration);
-
         // AWS Service Configuration
-        // Uses LocalStack in development, IAM roles in production
-        services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
-        services.AddAWSService<IAmazonDynamoDB>();
-        services.AddAWSService<IAmazonS3>();
+        // LocalStack.Client.Extensions automatically intercepts when UseLocalStack=true
+        try
+        {
+            services.AddLocalStack(Configuration);
+
+            var awsOptions = Configuration.GetAWSOptions();
+            Console.WriteLine($"AWS Options - Region: {awsOptions.Region}");
+            Console.WriteLine($"AWS Options - ServiceURL: {awsOptions.DefaultClientConfig.ServiceURL}");
+
+            services.AddDefaultAWSOptions(awsOptions);
+            services.AddAWSService<IAmazonDynamoDB>();
+            services.AddAWSService<IAmazonS3>();
+
+            Console.WriteLine("AWS services registered successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"ERROR configuring AWS services: {ex.Message}");
+            Console.WriteLine($"Stack trace: {ex.StackTrace}");
+            throw;
+        }
 
         // Repositories
         services.AddScoped<IProductRepository, DynamoDbProductRepository>();
