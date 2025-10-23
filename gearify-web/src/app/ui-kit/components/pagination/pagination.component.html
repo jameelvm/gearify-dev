@@ -1,0 +1,97 @@
+<nav class="pagination" role="navigation" aria-label="Pagination Navigation">
+  <div class="pagination__container">
+    <!-- Items info and per-page selector -->
+    <div class="pagination__info">
+      @if (showTotalItems() && totalItems() > 0) {
+        <span class="pagination__items-display">
+          Showing {{ startItem() }} to {{ endItem() }} of {{ totalItems() }} items
+        </span>
+      }
+
+      @if (showItemsPerPageSelector() && itemsPerPageOptions().length > 0) {
+        <div class="pagination__per-page">
+          <label for="items-per-page" class="pagination__per-page-label">
+            Items per page:
+          </label>
+          <select
+            id="items-per-page"
+            class="pagination__per-page-select"
+            [value]="itemsPerPage()"
+            (change)="onItemsPerPageChange($any($event.target).value)"
+            aria-label="Select number of items per page">
+            @for (option of itemsPerPageOptions(); track option) {
+              <option [value]="option">{{ option }}</option>
+            }
+          </select>
+        </div>
+      }
+    </div>
+
+    <!-- Pagination controls -->
+    <div class="pagination__controls">
+      <!-- Previous button -->
+      <button
+        type="button"
+        class="pagination__button pagination__button--nav"
+        [disabled]="isFirstPage()"
+        (click)="goToPreviousPage()"
+        aria-label="Go to previous page">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        <span class="pagination__button-text">Previous</span>
+      </button>
+
+      <!-- Page numbers -->
+      <div class="pagination__pages" role="group" aria-label="Page numbers">
+        @for (page of visiblePageNumbers(); track trackByIndex($index)) {
+          @if (isEllipsis(page)) {
+            <span class="pagination__ellipsis" aria-hidden="true">...</span>
+          } @else if (isNumber(page)) {
+            <button
+              type="button"
+              class="pagination__button pagination__button--page"
+              [class.pagination__button--active]="page === currentPage()"
+              [attr.aria-label]="'Go to page ' + page"
+              [attr.aria-current]="page === currentPage() ? 'page' : null"
+              (click)="goToPage(page)">
+              {{ page }}
+            </button>
+          }
+        }
+      </div>
+
+      <!-- Next button -->
+      <button
+        type="button"
+        class="pagination__button pagination__button--nav"
+        [disabled]="isLastPage()"
+        (click)="goToNextPage()"
+        aria-label="Go to next page">
+        <span class="pagination__button-text">Next</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+
+      <!-- Jump to page -->
+      @if (showJumpToPage() && totalPages() > 1) {
+        <div class="pagination__jump">
+          <label for="jump-to-page" class="pagination__jump-label">
+            Go to:
+          </label>
+          <input
+            type="number"
+            id="jump-to-page"
+            class="pagination__jump-input"
+            [min]="1"
+            [max]="totalPages()"
+            [(ngModel)]="jumpToPageValue"
+            (keyup.enter)="onJumpToPage()"
+            (blur)="onJumpToPage()"
+            aria-label="Jump to page number" />
+        </div>
+      }
+    </div>
+  </div>
+</nav>

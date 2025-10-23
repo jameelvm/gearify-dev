@@ -11,7 +11,7 @@ processors:
     timeout: 10s
 
 exporters:
-  otlp:
+  otlp/jaeger:
     endpoint: jaeger:4317
     tls:
       insecure: true
@@ -25,7 +25,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp, debug]
+      exporters: [otlp/jaeger, debug]
     metrics:
       receivers: [otlp]
       processors: [batch]

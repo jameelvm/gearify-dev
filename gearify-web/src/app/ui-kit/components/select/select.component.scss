@@ -1,0 +1,214 @@
+.select-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  position: relative;
+}
+
+.select-label {
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.select-container {
+  position: relative;
+}
+
+.select-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-2) var(--spacing-3);
+  font-size: 16px;
+  font-family: var(--font-family-base);
+  color: var(--color-text-primary);
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-primary);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: var(--color-background-paper);
+  }
+}
+
+.select-value {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &.select-placeholder {
+    color: var(--color-text-hint);
+  }
+}
+
+.select-arrow {
+  margin-left: var(--spacing-2);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  transition: transform var(--transition-fast);
+
+  &.select-arrow-open {
+    transform: rotate(180deg);
+  }
+}
+
+.select-container.select-error .select-trigger {
+  border-color: var(--color-error);
+
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1);
+  }
+}
+
+.select-container.select-open .select-trigger {
+  border-color: var(--color-primary);
+}
+
+.select-dropdown {
+  position: absolute;
+  top: calc(100% + var(--spacing-1));
+  left: 0;
+  right: 0;
+  max-height: 300px;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-2);
+  z-index: var(--z-dropdown);
+  animation: slideDown var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.select-search {
+  padding: var(--spacing-2);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.select-search-input {
+  width: 100%;
+  padding: var(--spacing-2);
+  font-size: 14px;
+  font-family: var(--font-family-base);
+  color: var(--color-text-primary);
+  background-color: var(--color-background-paper);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+  }
+
+  &::placeholder {
+    color: var(--color-text-hint);
+  }
+}
+
+.select-options {
+  overflow-y: auto;
+  max-height: 250px;
+
+  /* Custom scrollbar */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--color-background-paper);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: var(--border-radius-sm);
+
+    &:hover {
+      background: var(--color-divider);
+    }
+  }
+}
+
+.select-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-2) var(--spacing-3);
+  font-size: 14px;
+  font-family: var(--font-family-base);
+  color: var(--color-text-primary);
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  text-align: left;
+
+  &:hover {
+    background-color: var(--color-background-paper);
+  }
+
+  &.select-option-highlighted {
+    background-color: var(--color-background-paper);
+  }
+
+  &.select-option-selected {
+    color: var(--color-primary);
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+.select-check {
+  margin-left: var(--spacing-2);
+  color: var(--color-primary);
+  font-size: 16px;
+}
+
+.select-option-empty {
+  padding: var(--spacing-3);
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+.select-error-message {
+  font-size: 12px;
+  color: var(--color-error);
+}
+
+.select-container.select-disabled {
+  .select-trigger {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}

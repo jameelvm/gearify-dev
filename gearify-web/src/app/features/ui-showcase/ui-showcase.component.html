@@ -1,0 +1,215 @@
+<div class="showcase">
+  <header class="showcase-header">
+    <h1>Gearify UI Kit Showcase</h1>
+    <p>All components from Phase 2 in action</p>
+    <div class="theme-toggle">
+      <app-button variant="outline" size="small" (clicked)="themeService.toggleTheme()">
+        Toggle Theme
+      </app-button>
+    </div>
+  </header>
+
+  <div class="showcase-content">
+
+    <!-- Buttons Section -->
+    <section class="showcase-section">
+      <h2>Buttons</h2>
+      <div class="component-grid">
+        <div>
+          <h3>Variants</h3>
+          <div class="button-group">
+            <app-button variant="primary">Primary</app-button>
+            <app-button variant="secondary">Secondary</app-button>
+            <app-button variant="outline">Outline</app-button>
+            <app-button variant="ghost">Ghost</app-button>
+            <app-button variant="danger">Danger</app-button>
+          </div>
+        </div>
+        <div>
+          <h3>Sizes</h3>
+          <div class="button-group">
+            <app-button size="small">Small</app-button>
+            <app-button size="medium">Medium</app-button>
+            <app-button size="large">Large</app-button>
+          </div>
+        </div>
+        <div>
+          <h3>States</h3>
+          <div class="button-group">
+            <app-button [disabled]="true">Disabled</app-button>
+            <app-button [loading]="isLoading()" (clicked)="simulateLoading()">
+              {{ isLoading() ? 'Loading...' : 'Click to Load' }}
+            </app-button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Badges Section -->
+    <section class="showcase-section">
+      <h2>Badges</h2>
+      <div class="badge-group">
+        <app-badge variant="primary">Primary</app-badge>
+        <app-badge variant="success">Success</app-badge>
+        <app-badge variant="warning">Warning</app-badge>
+        <app-badge variant="danger">Danger</app-badge>
+        <app-badge variant="info">Info</app-badge>
+        <app-badge variant="primary" [pill]="true">Pill Badge</app-badge>
+      </div>
+    </section>
+
+    <!-- Spinner Section -->
+    <section class="showcase-section">
+      <h2>Spinners</h2>
+      <div class="spinner-group">
+        <app-spinner size="small"></app-spinner>
+        <app-spinner size="medium"></app-spinner>
+        <app-spinner size="large"></app-spinner>
+      </div>
+    </section>
+
+    <!-- Form Components Section -->
+    <section class="showcase-section">
+      <h2>Form Components</h2>
+      <form [formGroup]="testForm" (ngSubmit)="handleFormSubmit()" class="form-demo">
+        <app-input
+          label="Email Address"
+          type="email"
+          placeholder="you@example.com"
+          formControlName="email"
+          [error]="emailError"
+          icon="📧">
+        </app-input>
+
+        <app-select
+          label="Country"
+          [options]="countries"
+          [searchable]="true"
+          formControlName="country"
+          placeholder="Select your country">
+        </app-select>
+
+        <app-checkbox
+          label="I accept the terms and conditions"
+          formControlName="acceptTerms">
+        </app-checkbox>
+
+        <app-button type="submit" variant="primary">Submit Form</app-button>
+      </form>
+    </section>
+
+    <!-- Price Tags Section -->
+    <section class="showcase-section">
+      <h2>Price Tags</h2>
+      <div class="price-group">
+        <app-price-tag [price]="29.99" currency="USD"></app-price-tag>
+        <app-price-tag [price]="29.99" [compareAtPrice]="49.99" currency="USD"></app-price-tag>
+        <app-price-tag [price]="1299.99" [compareAtPrice]="1599.99" currency="USD" size="large"></app-price-tag>
+      </div>
+    </section>
+
+    <!-- Rating Section -->
+    <section class="showcase-section">
+      <h2>Rating Component</h2>
+      <div class="rating-group">
+        <div>
+          <h3>Read-only</h3>
+          <app-rating [rating]="4.5" [count]="127"></app-rating>
+        </div>
+        <div>
+          <h3>Interactive (Click to rate)</h3>
+          <app-rating
+            [rating]="userRating()"
+            [interactive]="true"
+            (ratingChanged)="handleRatingChange($event)">
+          </app-rating>
+          <p>Your rating: {{ userRating() }} stars</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Product Card Section -->
+    <section class="showcase-section">
+      <h2>Product Card</h2>
+      <div class="product-grid">
+        <app-product-card
+          [product]="sampleProduct"
+          (productClicked)="logProductClick($event)"
+          (addToCart)="logAddToCart($event)"
+          (toggleWishlist)="logWishlist($event)">
+        </app-product-card>
+        <app-product-card
+          [product]="sampleProduct"
+          [compact]="true"
+          (productClicked)="logProductClick($event)"
+          (addToCart)="logAddToCart($event)"
+          (toggleWishlist)="logWishlist($event)">
+        </app-product-card>
+      </div>
+    </section>
+
+    <!-- Modal Section -->
+    <section class="showcase-section">
+      <h2>Modal</h2>
+      <app-button (clicked)="showModal.set(true)">Open Modal</app-button>
+
+      @if (showModal()) {
+        <app-modal
+          [size]="'medium'"
+          [title]="'Example Modal'"
+          [closeOnBackdrop]="true"
+          (closed)="showModal.set(false)">
+          <div body>
+            <p>This is a modal body with some content.</p>
+            <p>You can close it by clicking the X, pressing ESC, or clicking the backdrop.</p>
+          </div>
+          <div footer>
+            <app-button variant="outline" (clicked)="showModal.set(false)">Cancel</app-button>
+            <app-button variant="primary" (clicked)="showModal.set(false)">Confirm</app-button>
+          </div>
+        </app-modal>
+      }
+    </section>
+
+    <!-- Breadcrumb Section -->
+    <section class="showcase-section">
+      <h2>Breadcrumb</h2>
+      <app-breadcrumb
+        [items]="breadcrumbs"
+        (itemClicked)="logBreadcrumb($event)">
+      </app-breadcrumb>
+    </section>
+
+    <!-- Pagination Section -->
+    <section class="showcase-section">
+      <h2>Pagination</h2>
+      <app-pagination
+        [currentPage]="currentPage()"
+        [totalPages]="10"
+        [totalItems]="100"
+        [itemsPerPage]="10"
+        (pageChanged)="handlePageChange($event)">
+      </app-pagination>
+    </section>
+
+    <!-- Image Gallery Section -->
+    <section class="showcase-section">
+      <h2>Image Gallery</h2>
+      <app-image-gallery
+        [images]="galleryImages"
+        (imageClicked)="logImage($event)">
+      </app-image-gallery>
+    </section>
+
+    <!-- Brand Bar Section -->
+    <section class="showcase-section">
+      <h2>Brand Bar</h2>
+      <app-brand-bar
+        [brands]="brands"
+        [autoScroll]="true"
+        (brandClicked)="logBrand($event)">
+      </app-brand-bar>
+    </section>
+
+  </div>
+</div>

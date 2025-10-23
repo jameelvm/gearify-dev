@@ -1,0 +1,9 @@
+<div [class]="'price-tag price-tag-' + size">
+  <span class="price-current">{{ formattedPrice }}</span>
+  @if (formattedComparePrice) {
+    <span class="price-compare">{{ formattedComparePrice }}</span>
+  }
+  @if (discountPercentage) {
+    <span class="price-discount">-{{ discountPercentage }}%</span>
+  }
+</div>

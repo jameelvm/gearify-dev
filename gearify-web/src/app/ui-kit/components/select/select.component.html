@@ -1,0 +1,88 @@
+<div class="select-wrapper" (keydown)="onKeyDown($event)">
+  @if (label) {
+    <label class="select-label">{{ label }}</label>
+  }
+
+  <div
+    class="select-container"
+    [class.select-error]="error"
+    [class.select-disabled]="disabled"
+    [class.select-open]="isOpen()"
+  >
+    <button
+      type="button"
+      class="select-trigger"
+      [disabled]="disabled"
+      (click)="toggleDropdown()"
+      [attr.aria-expanded]="isOpen()"
+      [attr.aria-haspopup]="true"
+      [attr.aria-label]="label || 'Select option'"
+    >
+      <span
+        class="select-value"
+        [class.select-placeholder]="!value()"
+      >
+        {{ getSelectedLabel() }}
+      </span>
+      <span
+        class="select-arrow"
+        [class.select-arrow-open]="isOpen()"
+        aria-hidden="true"
+      >
+        ▼
+      </span>
+    </button>
+
+    @if (isOpen()) {
+      <div
+        class="select-dropdown"
+        role="listbox"
+        [attr.aria-label]="label || 'Options'"
+      >
+        @if (searchable) {
+          <div class="select-search">
+            <input
+              #searchInput
+              type="text"
+              class="select-search-input"
+              placeholder="Search..."
+              [value]="searchQuery()"
+              (input)="onSearchInput($event)"
+              (click)="$event.stopPropagation()"
+              aria-label="Search options"
+            />
+          </div>
+        }
+
+        <div class="select-options">
+          @if (filteredOptions().length === 0) {
+            <div class="select-option-empty">
+              No options found
+            </div>
+          }
+
+          @for (option of filteredOptions(); track trackByValue($index, option)) {
+            <button
+              type="button"
+              class="select-option"
+              [class.select-option-selected]="option.value === value()"
+              [class.select-option-highlighted]="$index === highlightedIndex()"
+              (click)="selectOption(option)"
+              role="option"
+              [attr.aria-selected]="option.value === value()"
+            >
+              {{ option.label }}
+              @if (option.value === value()) {
+                <span class="select-check" aria-hidden="true">✓</span>
+              }
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (error) {
+    <span class="select-error-message" role="alert">{{ error }}</span>
+  }
+</div>

@@ -1,0 +1,2 @@
+Placeholder for favicon.ico
+Generate a proper favicon using a tool like https://favicon.io/

@@ -1,0 +1,108 @@
+/* Material Design Dark Theme */
+[data-theme='dark'] {
+  /* Material Design Dark Color Palette */
+  --color-primary: #BB86FC;        /* Purple 200 */
+  --color-primary-light: #E1BEE7;  /* Purple 100 */
+  --color-primary-dark: #9C27B0;   /* Purple 500 */
+  --color-secondary: #FFB74D;      /* Orange 300 */
+  --color-secondary-light: #FFCC80;/* Orange 200 */
+  --color-secondary-dark: #F57C00; /* Orange 700 */
+  --color-success: #69F0AE;        /* Green A200 */
+  --color-warning: #FFD740;        /* Yellow A200 */
+  --color-error: #FF5252;          /* Red A200 */
+  --color-info: #40C4FF;           /* Blue A200 */
+
+  /* Material Design Dark Text Colors */
+  --color-text-primary: rgba(255, 255, 255, 1);
+  --color-text-secondary: rgba(255, 255, 255, 0.70);
+  --color-text-disabled: rgba(255, 255, 255, 0.50);
+  --color-text-hint: rgba(255, 255, 255, 0.50);
+
+  /* Material Design Dark Background Colors */
+  --color-background: #121212;            /* Base dark surface */
+  --color-background-paper: #1E1E1E;      /* Elevated surface */
+  --color-background-default: #181818;
+  --color-surface: #1E1E1E;
+  --color-surface-variant: #2C2C2C;
+
+  /* Border Colors */
+  --color-border: rgba(255, 255, 255, 0.12);
+  --color-divider: rgba(255, 255, 255, 0.12);
+  --color-outline: rgba(255, 255, 255, 0.12);
+
+  /* Material Design Dark Elevation Overlays */
+  /* In dark theme, elevation is shown by lightening the surface */
+  --elevation-0: none;
+  --elevation-1: 0px 2px 1px -1px rgba(0, 0, 0, 0.2),
+                 0px 1px 1px 0px rgba(0, 0, 0, 0.14),
+                 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+  --elevation-2: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+                 0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+                 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  --elevation-3: 0px 3px 3px -2px rgba(0, 0, 0, 0.2),
+                 0px 3px 4px 0px rgba(0, 0, 0, 0.14),
+                 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+  --elevation-4: 0px 2px 4px -1px rgba(0, 0, 0, 0.2),
+                 0px 4px 5px 0px rgba(0, 0, 0, 0.14),
+                 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+  --elevation-6: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),
+                 0px 6px 10px 0px rgba(0, 0, 0, 0.14),
+                 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+  --elevation-8: 0px 5px 5px -3px rgba(0, 0, 0, 0.2),
+                 0px 8px 10px 1px rgba(0, 0, 0, 0.14),
+                 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+  --elevation-12: 0px 7px 8px -4px rgba(0, 0, 0, 0.2),
+                  0px 12px 17px 2px rgba(0, 0, 0, 0.14),
+                  0px 5px 22px 4px rgba(0, 0, 0, 0.12);
+  --elevation-16: 0px 8px 10px -5px rgba(0, 0, 0, 0.2),
+                  0px 16px 24px 2px rgba(0, 0, 0, 0.14),
+                  0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+  --elevation-24: 0px 11px 15px -7px rgba(0, 0, 0, 0.2),
+                  0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+                  0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+
+  /* Legacy shadow support */
+  --shadow-1: var(--elevation-2);
+  --shadow-2: var(--elevation-4);
+  --shadow-3: var(--elevation-8);
+
+  /* State Layers for Dark Theme */
+  --state-hover-opacity: 0.08;
+  --state-focus-opacity: 0.24;
+  --state-selected-opacity: 0.16;
+  --state-activated-opacity: 0.24;
+  --state-pressed-opacity: 0.16;
+  --state-dragged-opacity: 0.16;
+}
+
+/* Smooth Material Design Theme Transitions */
+:root,
+[data-theme='dark'] {
+  * {
+    transition-property: background-color, color, border-color, box-shadow;
+    transition-duration: var(--duration-standard);
+    transition-timing-function: var(--easing-standard);
+  }
+
+  /* Don't animate transforms and opacity with theme changes */
+  *::before,
+  *::after {
+    transition-property: background-color, color, border-color, box-shadow;
+    transition-duration: var(--duration-standard);
+    transition-timing-function: var(--easing-standard);
+  }
+}
+
+/* Material Design Elevation Overlay for Dark Theme */
+[data-theme='dark'] {
+  /* Apply white overlay to elevated surfaces */
+  .elevation-1 { background-color: color-mix(in srgb, var(--color-surface) 95%, white 5%); }
+  .elevation-2 { background-color: color-mix(in srgb, var(--color-surface) 93%, white 7%); }
+  .elevation-3 { background-color: color-mix(in srgb, var(--color-surface) 92%, white 8%); }
+  .elevation-4 { background-color: color-mix(in srgb, var(--color-surface) 91%, white 9%); }
+  .elevation-6 { background-color: color-mix(in srgb, var(--color-surface) 89%, white 11%); }
+  .elevation-8 { background-color: color-mix(in srgb, var(--color-surface) 88%, white 12%); }
+  .elevation-12 { background-color: color-mix(in srgb, var(--color-surface) 86%, white 14%); }
+  .elevation-16 { background-color: color-mix(in srgb, var(--color-surface) 85%, white 15%); }
+  .elevation-24 { background-color: color-mix(in srgb, var(--color-surface) 84%, white 16%); }
+}

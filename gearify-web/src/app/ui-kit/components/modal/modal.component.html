@@ -1,0 +1,36 @@
+@if (isVisible()) {
+  <div class="modal-backdrop" @fadeIn (click)="onBackdropClick($event)">
+    <div [class]="getModalClasses()" @slideIn role="dialog" aria-modal="true" [attr.aria-labelledby]="title ? 'modal-title' : null">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        @if (title) {
+          <h2 id="modal-title" class="modal-title">{{ title }}</h2>
+        }
+        <ng-content select="[header]"></ng-content>
+
+        @if (showCloseButton) {
+          <button
+            type="button"
+            class="modal-close-button"
+            (click)="close()"
+            aria-label="Close modal">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        }
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <ng-content select="[body]"></ng-content>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <ng-content select="[footer]"></ng-content>
+      </div>
+    </div>
+  </div>
+}

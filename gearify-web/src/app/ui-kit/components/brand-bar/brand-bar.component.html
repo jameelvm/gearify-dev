@@ -1,0 +1,79 @@
+<div class="brand-bar">
+  <div class="brand-bar-header">
+    <h2 class="brand-bar-title">Featured Brands</h2>
+
+    <div class="brand-bar-controls">
+      <button
+        class="scroll-btn scroll-btn-left"
+        (click)="scrollLeft()"
+        aria-label="Scroll left">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button
+        class="scroll-btn scroll-btn-right"
+        (click)="scrollRight()"
+        aria-label="Scroll right">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div
+    #scrollContainer
+    class="brand-bar-container"
+    [class.auto-scroll]="autoScroll() && !isPaused()"
+    (mouseenter)="onMouseEnter()"
+    (mouseleave)="onMouseLeave()">
+
+    <div class="brand-bar-track">
+      @for (brand of brands(); track trackByBrandId($index, brand)) {
+        <button
+          class="brand-item"
+          (click)="onBrandClick(brand)"
+          [attr.aria-label]="'View ' + brand.name">
+          <div class="brand-logo-wrapper">
+            <img
+              [src]="brand.logoUrl"
+              [alt]="brand.name + ' logo'"
+              class="brand-logo"
+              loading="lazy">
+          </div>
+          <span class="brand-name">{{ brand.name }}</span>
+        </button>
+      }
+
+      <!-- Duplicate brands for seamless infinite scroll when auto-scroll is enabled -->
+      @if (autoScroll()) {
+        @for (brand of brands(); track 'duplicate-' + trackByBrandId($index, brand)) {
+          <button
+            class="brand-item"
+            (click)="onBrandClick(brand)"
+            [attr.aria-label]="'View ' + brand.name">
+            <div class="brand-logo-wrapper">
+              <img
+                [src]="brand.logoUrl"
+                [alt]="brand.name + ' logo'"
+                class="brand-logo"
+                loading="lazy">
+            </div>
+            <span class="brand-name">{{ brand.name }}</span>
+          </button>
+        }
+      }
+    </div>
+  </div>
+
+  @if (autoScroll() && isPaused()) {
+    <div class="pause-indicator">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <rect x="6" y="4" width="4" height="16" rx="1"/>
+        <rect x="14" y="4" width="4" height="16" rx="1"/>
+      </svg>
+      Paused
+    </div>
+  }
+</div>

@@ -1,0 +1,144 @@
+@import '../../../../styles/variables';
+
+.rating-container {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-family-base);
+}
+
+.rating-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  line-height: 1;
+}
+
+.rating-star {
+  position: relative;
+  display: inline-block;
+  font-size: 1.25rem;
+  color: var(--color-text-disabled);
+  transition: transform var(--transition-fast);
+  cursor: default;
+
+  .star-full,
+  .star-empty {
+    position: absolute;
+    top: 0;
+    left: 0;
+    user-select: none;
+  }
+
+  .star-full {
+    color: var(--color-warning);
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .star-empty {
+    color: var(--color-text-disabled);
+  }
+}
+
+// Star states
+.rating-star-full {
+  .star-full {
+    width: 100%;
+  }
+}
+
+.rating-star-half {
+  .star-full {
+    width: 50%;
+  }
+}
+
+.rating-star-empty {
+  .star-full {
+    width: 0;
+  }
+}
+
+// Interactive mode
+.rating-interactive {
+  .rating-star-clickable {
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      transform: scale(1.15);
+    }
+
+    &:focus {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+      border-radius: var(--border-radius-sm);
+    }
+
+    &:active {
+      transform: scale(1.05);
+    }
+  }
+}
+
+// Rating info (value and count)
+.rating-info {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-1);
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.rating-value {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.rating-count {
+  color: var(--color-text-secondary);
+}
+
+// Size variants (can be extended)
+.rating-container.rating-small {
+  .rating-star {
+    font-size: 1rem;
+  }
+}
+
+.rating-container.rating-large {
+  .rating-star {
+    font-size: 1.5rem;
+  }
+}
+
+// Disabled state
+.rating-container[aria-disabled="true"] {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+// Accessibility: High contrast mode support
+@media (prefers-contrast: high) {
+  .rating-star {
+    .star-full {
+      color: #000000;
+    }
+
+    .star-empty {
+      color: #666666;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .rating-star {
+    font-size: 1.125rem;
+  }
+
+  .rating-info {
+    font-size: 0.8125rem;
+  }
+}

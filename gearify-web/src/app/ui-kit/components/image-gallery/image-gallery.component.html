@@ -1,0 +1,110 @@
+<div class="image-gallery">
+  <!-- Main Image Display -->
+  <div class="gallery-main">
+    @if (currentImage()) {
+      <div
+        class="main-image-container"
+        (click)="onMainImageClick()"
+        (touchstart)="onTouchStart($event)"
+        (touchmove)="onTouchMove($event)"
+        (touchend)="onTouchEnd()">
+        <img
+          [src]="currentImage()!.url"
+          [alt]="currentImage()!.alt"
+          class="main-image"
+          loading="eager">
+        <div class="zoom-hint">Click to view fullscreen</div>
+      </div>
+    }
+
+    <!-- Navigation Buttons -->
+    <button
+      class="nav-btn nav-btn-prev"
+      (click)="previous()"
+      [disabled]="images().length <= 1"
+      aria-label="Previous image">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <button
+      class="nav-btn nav-btn-next"
+      (click)="next()"
+      [disabled]="images().length <= 1"
+      aria-label="Next image">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Thumbnail Navigation Strip -->
+  @if (images().length > 1) {
+    <div class="gallery-thumbnails">
+      <div class="thumbnails-container">
+        @for (image of images(); track trackByUrl($index, image)) {
+          <button
+            class="thumbnail"
+            [class.active]="currentIndex() === $index"
+            (click)="selectImage($index)"
+            [attr.aria-label]="'View image ' + ($index + 1)">
+            <img
+              [src]="getThumbnail(image)"
+              [alt]="image.alt"
+              loading="lazy">
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Fullscreen Modal -->
+  @if (isFullscreen()) {
+    <div class="fullscreen-modal" (click)="closeFullscreen()">
+      <div class="fullscreen-content" (click)="$event.stopPropagation()">
+        <button
+          class="close-btn"
+          (click)="closeFullscreen()"
+          aria-label="Close fullscreen">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+
+        <div
+          class="fullscreen-image-container"
+          (touchstart)="onTouchStart($event)"
+          (touchmove)="onTouchMove($event)"
+          (touchend)="onTouchEnd()">
+          @if (currentImage()) {
+            <img
+              [src]="currentImage()!.url"
+              [alt]="currentImage()!.alt"
+              class="fullscreen-image">
+          }
+        </div>
+
+        <button
+          class="fullscreen-nav-btn fullscreen-nav-prev"
+          (click)="previous()"
+          aria-label="Previous image">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+            <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button
+          class="fullscreen-nav-btn fullscreen-nav-next"
+          (click)="next()"
+          aria-label="Next image">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="fullscreen-counter">
+          {{ currentIndex() + 1 }} / {{ images().length }}
+        </div>
+      </div>
+    </div>
+  }
+</div>

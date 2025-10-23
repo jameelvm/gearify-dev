@@ -1,0 +1,47 @@
+<nav class="breadcrumb" aria-label="Breadcrumb" role="navigation">
+  <ol class="breadcrumb__list">
+    @for (item of processedItems(); track trackByIndex($index)) {
+      <li class="breadcrumb__item" [class.breadcrumb__item--active]="item.isLast">
+        @if (!item.isLast && item.url) {
+          <a
+            [href]="item.url"
+            class="breadcrumb__link"
+            (click)="onItemClick(item, $event)"
+            [attr.aria-current]="item.isLast ? 'page' : null">
+            @if (item.isFirst && showHomeIcon()) {
+              <span class="breadcrumb__icon breadcrumb__icon--home" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+              </span>
+            }
+            @if (item.icon && !item.isFirst) {
+              <span class="breadcrumb__icon" aria-hidden="true">{{ item.icon }}</span>
+            }
+            <span class="breadcrumb__label">{{ item.label }}</span>
+          </a>
+        } @else {
+          <span class="breadcrumb__text" [attr.aria-current]="item.isLast ? 'page' : null">
+            @if (item.isFirst && showHomeIcon()) {
+              <span class="breadcrumb__icon breadcrumb__icon--home" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+              </span>
+            }
+            @if (item.icon && !item.isFirst) {
+              <span class="breadcrumb__icon" aria-hidden="true">{{ item.icon }}</span>
+            }
+            <span class="breadcrumb__label">{{ item.label }}</span>
+          </span>
+        }
+
+        @if (!item.isLast) {
+          <span class="breadcrumb__separator" aria-hidden="true">{{ separator() }}</span>
+        }
+      </li>
+    }
+  </ol>
+</nav>

@@ -49,7 +49,22 @@
       "Bash(for svc in tenant order payment shipping inventory media notification search)",
       "Bash(do sed -i '1i using System.Collections.Generic;' \"gearify-$svc-svc/Infrastructure/Swagger/TenantHeaderOperationFilter.cs\")",
       "Bash(done)",
-      "Bash(dotnet remove:*)"
+      "Bash(dotnet remove:*)",
+      "Bash(docker-compose ps:*)",
+      "Bash(docker-compose restart:*)",
+      "Bash(test:*)",
+      "Bash(if [ ! -d \"C:\\Gearify\\gearify-web\\src\\app\\ui-kit\\directives\" ])",
+      "Bash(then mkdir -p \"C:\\Gearify\\gearify-web\\src\\app\\ui-kit\\directives\")",
+      "Bash(npm install)",
+      "Bash(npm start)",
+      "Bash(npm start:*)",
+      "Bash(npm run build)",
+      "Bash(move:*)",
+      "Bash(find:*)",
+      "Bash(timeout:*)",
+      "Bash(if [ -d \".angular\" ])",
+      "Bash(then rm -rf .angular)",
+      "Bash(else echo \"No .angular directory found\")"
     ],
     "deny": [],
     "ask": []

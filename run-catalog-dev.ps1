@@ -8,9 +8,13 @@ Write-Host ""
 
 # Set environment to Development
 $env:ASPNETCORE_ENVIRONMENT = "Development"
+$env:OTLP_ENDPOINT = "http://localhost:4318"
+$env:SEQ_URL = "http://localhost:5341"
 
 Write-Host "Environment Settings:" -ForegroundColor Yellow
 Write-Host "  ASPNETCORE_ENVIRONMENT: $env:ASPNETCORE_ENVIRONMENT" -ForegroundColor Green
+Write-Host "  OTLP_ENDPOINT: $env:OTLP_ENDPOINT" -ForegroundColor Green
+Write-Host "  SEQ_URL: $env:SEQ_URL" -ForegroundColor Green
 Write-Host ""
 
 # Check if LocalStack is running

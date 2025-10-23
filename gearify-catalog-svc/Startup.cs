@@ -104,6 +104,12 @@ public class Startup
         services.AddScoped<IProductRepository, DynamoDbProductRepository>();
 
         // OpenTelemetry
+        var otlpEndpoint = Environment.GetEnvironmentVariable("OTLP_ENDPOINT") ?? "http://otel-collector:4318";
+        Console.WriteLine($"=== OpenTelemetry Configuration ===");
+        Console.WriteLine($"OTLP Endpoint: {otlpEndpoint}");
+        Console.WriteLine($"Service Name: catalog-service");
+        Console.WriteLine($"====================================");
+
         services.AddOpenTelemetry()
             .WithTracing(tracing => tracing
                 .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("catalog-service"))
@@ -111,7 +117,8 @@ public class Startup
                 .AddHttpClientInstrumentation()
                 .AddOtlpExporter(options =>
                 {
-                    options.Endpoint = new Uri(Environment.GetEnvironmentVariable("OTLP_ENDPOINT") ?? "http://otel-collector:4318");
+                    options.Endpoint = new Uri(otlpEndpoint);
+                    options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
                 }));
     }
 

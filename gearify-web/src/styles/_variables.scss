@@ -1,0 +1,172 @@
+/* CSS Variables for Material Design theming */
+:root {
+  /* Material Design Color Palette - Light Theme */
+  --color-primary: #6200EA;        /* Deep Purple 500 */
+  --color-primary-light: #B388FF;  /* Deep Purple 200 */
+  --color-primary-dark: #4527A0;   /* Deep Purple 800 */
+  --color-secondary: #FF6F00;      /* Orange 900 */
+  --color-secondary-light: #FFB74D;/* Orange 300 */
+  --color-secondary-dark: #E65100; /* Orange 900 */
+  --color-success: #00C853;        /* Green A700 */
+  --color-warning: #FFD600;        /* Yellow A700 */
+  --color-error: #D50000;          /* Red A700 */
+  --color-info: #2979FF;           /* Blue A400 */
+
+  /* Material Design Text Colors */
+  --color-text-primary: rgba(0, 0, 0, 0.87);
+  --color-text-secondary: rgba(0, 0, 0, 0.60);
+  --color-text-disabled: rgba(0, 0, 0, 0.38);
+  --color-text-hint: rgba(0, 0, 0, 0.38);
+
+  /* Material Design Background Colors */
+  --color-background: #FAFAFA;            /* Grey 50 */
+  --color-background-paper: #FFFFFF;
+  --color-background-default: #F5F5F5;    /* Grey 100 */
+  --color-surface: #FFFFFF;
+  --color-surface-variant: #F5F5F5;
+
+  /* Border Colors */
+  --color-border: rgba(0, 0, 0, 0.12);
+  --color-divider: rgba(0, 0, 0, 0.12);
+  --color-outline: rgba(0, 0, 0, 0.12);
+
+  /* Material Design Elevation Shadows */
+  --elevation-0: none;
+  --elevation-1: 0px 2px 1px -1px rgba(0, 0, 0, 0.2),
+                 0px 1px 1px 0px rgba(0, 0, 0, 0.14),
+                 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+  --elevation-2: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+                 0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+                 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  --elevation-3: 0px 3px 3px -2px rgba(0, 0, 0, 0.2),
+                 0px 3px 4px 0px rgba(0, 0, 0, 0.14),
+                 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+  --elevation-4: 0px 2px 4px -1px rgba(0, 0, 0, 0.2),
+                 0px 4px 5px 0px rgba(0, 0, 0, 0.14),
+                 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+  --elevation-6: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),
+                 0px 6px 10px 0px rgba(0, 0, 0, 0.14),
+                 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+  --elevation-8: 0px 5px 5px -3px rgba(0, 0, 0, 0.2),
+                 0px 8px 10px 1px rgba(0, 0, 0, 0.14),
+                 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+  --elevation-12: 0px 7px 8px -4px rgba(0, 0, 0, 0.2),
+                  0px 12px 17px 2px rgba(0, 0, 0, 0.14),
+                  0px 5px 22px 4px rgba(0, 0, 0, 0.12);
+  --elevation-16: 0px 8px 10px -5px rgba(0, 0, 0, 0.2),
+                  0px 16px 24px 2px rgba(0, 0, 0, 0.14),
+                  0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+  --elevation-24: 0px 11px 15px -7px rgba(0, 0, 0, 0.2),
+                  0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+                  0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+
+  /* Legacy shadow support */
+  --shadow-1: var(--elevation-2);
+  --shadow-2: var(--elevation-4);
+  --shadow-3: var(--elevation-8);
+
+  /* Material Design Spacing (8dp grid system) */
+  --spacing-1: 4px;   /* 0.5x */
+  --spacing-2: 8px;   /* 1x - base unit */
+  --spacing-3: 16px;  /* 2x */
+  --spacing-4: 24px;  /* 3x */
+  --spacing-5: 32px;  /* 4x */
+  --spacing-6: 40px;  /* 5x */
+  --spacing-7: 48px;  /* 6x */
+  --spacing-8: 64px;  /* 8x */
+
+  /* Material Design Typography */
+  --font-family-base: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --font-family-mono: 'Roboto Mono', 'Courier New', monospace;
+
+  /* Material Design Type Scale */
+  --font-size-base: 16px;
+  --font-size-h1: 96px;     /* Headline 1 */
+  --font-size-h2: 60px;     /* Headline 2 */
+  --font-size-h3: 48px;     /* Headline 3 */
+  --font-size-h4: 34px;     /* Headline 4 */
+  --font-size-h5: 24px;     /* Headline 5 */
+  --font-size-h6: 20px;     /* Headline 6 */
+  --font-size-subtitle1: 16px;
+  --font-size-subtitle2: 14px;
+  --font-size-body1: 16px;
+  --font-size-body2: 14px;
+  --font-size-button: 14px;
+  --font-size-caption: 12px;
+  --font-size-overline: 10px;
+
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  /* Line Heights */
+  --line-height-base: 1.5;
+  --line-height-heading: 1.2;
+  --line-height-tight: 1.25;
+  --line-height-relaxed: 1.75;
+
+  /* Material Design Motion - Easing Curves */
+  --easing-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --easing-decelerate: cubic-bezier(0.0, 0.0, 0.2, 1);
+  --easing-accelerate: cubic-bezier(0.4, 0.0, 1, 1);
+  --easing-sharp: cubic-bezier(0.4, 0.0, 0.6, 1);
+
+  /* Material Design Motion - Durations */
+  --duration-shortest: 150ms;
+  --duration-shorter: 200ms;
+  --duration-short: 250ms;
+  --duration-standard: 300ms;
+  --duration-complex: 375ms;
+  --duration-entering: 225ms;
+  --duration-leaving: 195ms;
+
+  /* Transitions */
+  --transition-fast: var(--duration-shortest) var(--easing-standard);
+  --transition-medium: var(--duration-standard) var(--easing-standard);
+  --transition-slow: var(--duration-complex) var(--easing-standard);
+
+  /* Material Design Shape - Border Radius */
+  --border-radius-none: 0;
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  --border-radius-full: 9999px;
+
+  /* Layout */
+  --container-max-width: 1280px;
+  --header-height: 64px;
+  --footer-height: 200px;
+
+  /* Breakpoints (Material Design) */
+  --breakpoint-xs: 0;
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 960px;
+  --breakpoint-lg: 1280px;
+  --breakpoint-xl: 1920px;
+
+  /* Z-Index Scale */
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-notification: 1080;
+
+  /* State Layers (for hover, focus, etc.) */
+  --state-hover-opacity: 0.04;
+  --state-focus-opacity: 0.12;
+  --state-selected-opacity: 0.08;
+  --state-activated-opacity: 0.12;
+  --state-pressed-opacity: 0.10;
+  --state-dragged-opacity: 0.08;
+
+  /* Ripple Effect */
+  --ripple-duration: 600ms;
+  --ripple-easing: var(--easing-standard);
+}

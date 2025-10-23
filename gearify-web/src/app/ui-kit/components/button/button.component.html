@@ -1,0 +1,21 @@
+<button
+  [type]="type"
+  [disabled]="disabled || loading"
+  [class]="'btn btn-' + variant + ' btn-' + size"
+  [class.btn-full-width]="fullWidth"
+  [class.btn-loading]="loading"
+  (click)="handleClick($event)"
+>
+  @if (loading) {
+    <span class="btn-spinner"></span>
+  }
+  @if (iconLeft && !loading) {
+    <span class="btn-icon-left">{{ iconLeft }}</span>
+  }
+  <span class="btn-content">
+    <ng-content></ng-content>
+  </span>
+  @if (iconRight && !loading) {
+    <span class="btn-icon-right">{{ iconRight }}</span>
+  }
+</button>

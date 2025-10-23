@@ -1,0 +1,266 @@
+.pagination {
+  --pagination-padding: 1rem 0;
+  --pagination-gap: 1rem;
+  --pagination-button-size: 2.5rem;
+  --pagination-button-padding: 0.5rem 1rem;
+  --pagination-button-bg: var(--color-bg-primary, #ffffff);
+  --pagination-button-bg-hover: var(--color-bg-secondary, #f3f4f6);
+  --pagination-button-bg-active: var(--color-primary, #3b82f6);
+  --pagination-button-color: var(--color-text-primary, #111827);
+  --pagination-button-color-active: var(--color-text-inverse, #ffffff);
+  --pagination-button-border: 1px solid var(--color-border, #e5e7eb);
+  --pagination-button-border-radius: var(--border-radius-md, 0.375rem);
+  --pagination-font-size: var(--font-size-sm, 0.875rem);
+  --pagination-disabled-opacity: 0.5;
+
+  padding: var(--pagination-padding);
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pagination-gap);
+    align-items: center;
+  }
+
+  &__info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    font-size: var(--pagination-font-size);
+    color: var(--color-text-secondary, #6b7280);
+  }
+
+  &__items-display {
+    font-weight: 500;
+  }
+
+  &__per-page {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__per-page-label {
+    font-size: var(--pagination-font-size);
+    color: var(--color-text-secondary, #6b7280);
+  }
+
+  &__per-page-select {
+    padding: 0.375rem 0.75rem;
+    font-size: var(--pagination-font-size);
+    border: var(--pagination-button-border);
+    border-radius: var(--pagination-button-border-radius);
+    background-color: var(--pagination-button-bg);
+    color: var(--pagination-button-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: var(--pagination-button-bg-hover);
+      border-color: var(--color-primary, #3b82f6);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary, #3b82f6);
+      outline-offset: 2px;
+    }
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  &__pages {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  &__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    min-width: var(--pagination-button-size);
+    height: var(--pagination-button-size);
+    padding: var(--pagination-button-padding);
+    font-size: var(--pagination-font-size);
+    font-weight: 500;
+    color: var(--pagination-button-color);
+    background-color: var(--pagination-button-bg);
+    border: var(--pagination-button-border);
+    border-radius: var(--pagination-button-border-radius);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+
+    &:hover:not(:disabled) {
+      background-color: var(--pagination-button-bg-hover);
+      border-color: var(--color-primary, #3b82f6);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary, #3b82f6);
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      opacity: var(--pagination-disabled-opacity);
+      cursor: not-allowed;
+    }
+
+    &--nav {
+      padding: 0.5rem 0.875rem;
+
+      svg {
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+    }
+
+    &--page {
+      min-width: var(--pagination-button-size);
+      padding: 0.5rem;
+    }
+
+    &--active {
+      background-color: var(--pagination-button-bg-active);
+      color: var(--pagination-button-color-active);
+      border-color: var(--pagination-button-bg-active);
+
+      &:hover {
+        background-color: var(--pagination-button-bg-active);
+        border-color: var(--pagination-button-bg-active);
+        opacity: 0.9;
+      }
+    }
+  }
+
+  &__button-text {
+    @media (max-width: 640px) {
+      display: none;
+    }
+  }
+
+  &__ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--pagination-button-size);
+    height: var(--pagination-button-size);
+    color: var(--color-text-secondary, #6b7280);
+    user-select: none;
+  }
+
+  &__jump {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: 0.5rem;
+  }
+
+  &__jump-label {
+    font-size: var(--pagination-font-size);
+    color: var(--color-text-secondary, #6b7280);
+  }
+
+  &__jump-input {
+    width: 4rem;
+    padding: 0.375rem 0.5rem;
+    font-size: var(--pagination-font-size);
+    text-align: center;
+    border: var(--pagination-button-border);
+    border-radius: var(--pagination-button-border-radius);
+    background-color: var(--pagination-button-bg);
+    color: var(--pagination-button-color);
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: var(--color-primary, #3b82f6);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary, #3b82f6);
+      outline-offset: 2px;
+    }
+
+    // Remove spinner arrows
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    &[type='number'] {
+      -moz-appearance: textfield;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .pagination {
+    --pagination-button-size: 2.25rem;
+    --pagination-font-size: var(--font-size-xs, 0.75rem);
+
+    &__container {
+      gap: 0.75rem;
+    }
+
+    &__info {
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: center;
+    }
+
+    &__controls {
+      gap: 0.25rem;
+    }
+
+    &__pages {
+      gap: 0.125rem;
+    }
+
+    &__jump {
+      margin-left: 0.25rem;
+
+      &-label {
+        display: none;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .pagination {
+    &__info {
+      font-size: 0.75rem;
+    }
+
+    &__per-page {
+      width: 100%;
+      justify-content: center;
+    }
+
+    &__controls {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .pagination {
+    --pagination-button-bg: var(--color-bg-primary-dark, #1f2937);
+    --pagination-button-bg-hover: var(--color-bg-secondary-dark, #374151);
+    --pagination-button-bg-active: var(--color-primary-dark, #2563eb);
+    --pagination-button-color: var(--color-text-primary-dark, #f9fafb);
+    --pagination-button-color-active: var(--color-text-inverse-dark, #ffffff);
+    --pagination-button-border: 1px solid var(--color-border-dark, #374151);
+  }
+}

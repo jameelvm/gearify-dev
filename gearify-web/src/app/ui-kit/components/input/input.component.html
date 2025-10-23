@@ -1,0 +1,23 @@
+<div class="input-wrapper">
+  @if (label) {
+    <label class="input-label">{{ label }}</label>
+  }
+  <div class="input-container" [class.input-error]="error">
+    @if (icon) {
+      <span class="input-icon">{{ icon }}</span>
+    }
+    <input
+      [type]="type"
+      [placeholder]="placeholder"
+      [disabled]="disabled"
+      [value]="value"
+      (input)="onInput($event)"
+      (blur)="onTouched()"
+      class="input-field"
+      [class.input-with-icon]="icon"
+    />
+  </div>
+  @if (error) {
+    <span class="input-error-message">{{ error }}</span>
+  }
+</div>

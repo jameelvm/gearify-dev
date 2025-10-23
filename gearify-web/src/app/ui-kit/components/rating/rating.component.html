@@ -1,0 +1,33 @@
+<div
+  class="rating-container"
+  [class.rating-interactive]="interactive"
+  (mouseleave)="onMouseLeave()"
+  [attr.role]="interactive ? 'radiogroup' : null"
+  [attr.aria-label]="getAriaLabel()">
+
+  <div class="rating-stars">
+    <span
+      *ngFor="let starIndex of stars"
+      class="rating-star"
+      [class.rating-star-full]="getStarType(starIndex) === 'full'"
+      [class.rating-star-half]="getStarType(starIndex) === 'half'"
+      [class.rating-star-empty]="getStarType(starIndex) === 'empty'"
+      [class.rating-star-clickable]="interactive"
+      (mouseenter)="onStarHover(starIndex)"
+      (click)="onStarClick(starIndex)"
+      [attr.role]="interactive ? 'radio' : null"
+      [attr.aria-checked]="interactive && currentRating() === starIndex ? 'true' : null"
+      [attr.aria-label]="getStarAriaLabel(starIndex)"
+      [attr.tabindex]="interactive ? 0 : null"
+      (keydown.enter)="onStarClick(starIndex)"
+      (keydown.space)="onStarClick(starIndex); $event.preventDefault()">
+      <span class="star-full" aria-hidden="true">★</span>
+      <span class="star-empty" aria-hidden="true">☆</span>
+    </span>
+  </div>
+
+  <div class="rating-info" *ngIf="count !== undefined">
+    <span class="rating-value">{{ currentRating() | number:'1.1-1' }}</span>
+    <span class="rating-count">({{ count }})</span>
+  </div>
+</div>

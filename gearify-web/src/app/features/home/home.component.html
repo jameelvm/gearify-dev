@@ -1,0 +1,121 @@
+<div class="home">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">Welcome to Gearify</h1>
+        <p class="hero-subtitle">Discover amazing products at unbeatable prices</p>
+        <div class="hero-actions">
+          <app-button variant="primary" size="large" routerLink="/products">
+            Shop Now
+          </app-button>
+          <app-button variant="outline" size="large" routerLink="/categories">
+            Browse Categories
+          </app-button>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img src="https://via.placeholder.com/600x400?text=Hero+Image" alt="Hero" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="categories">
+    <div class="container">
+      <div class="section-header">
+        <h2>Shop by Category</h2>
+        <a routerLink="/categories" class="view-all">View All</a>
+      </div>
+      <div class="categories-grid">
+        @for (category of categories(); track category.id) {
+          <div class="category-card" (click)="handleCategoryClick(category)">
+            <div class="category-icon">{{ category.icon }}</div>
+            <h3 class="category-name">{{ category.name }}</h3>
+            <p class="category-count">{{ category.count }} products</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Products Section -->
+  <section class="featured-products">
+    <div class="container">
+      <div class="section-header">
+        <h2>Featured Products</h2>
+        <a routerLink="/products" class="view-all">View All</a>
+      </div>
+      <div class="products-grid">
+        @for (product of featuredProducts(); track product.id) {
+          <app-product-card
+            [product]="product"
+            (productClicked)="handleProductClick(product)"
+            (addToCart)="handleAddToCart(product)"
+            (toggleWishlist)="handleToggleWishlist(product)">
+          </app-product-card>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- New Arrivals Section -->
+  <section class="new-arrivals">
+    <div class="container">
+      <div class="section-header">
+        <h2>New Arrivals</h2>
+        <app-badge variant="success">New</app-badge>
+      </div>
+      <div class="products-grid">
+        @for (product of newArrivals(); track product.id) {
+          <app-product-card
+            [product]="product"
+            (productClicked)="handleProductClick(product)"
+            (addToCart)="handleAddToCart(product)"
+            (toggleWishlist)="handleToggleWishlist(product)">
+          </app-product-card>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <div class="container">
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🚚</div>
+          <h3>Free Shipping</h3>
+          <p>On orders over $50</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>Secure Payment</h3>
+          <p>100% secure transactions</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">↩️</div>
+          <h3>Easy Returns</h3>
+          <p>30-day return policy</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💬</div>
+          <h3>24/7 Support</h3>
+          <p>Dedicated customer service</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Brands Section -->
+  <section class="brands">
+    <div class="container">
+      <h2 class="section-title">Popular Brands</h2>
+      <app-brand-bar
+        [brands]="brands()"
+        [autoScroll]="true"
+        (brandClicked)="handleBrandClick($event)">
+      </app-brand-bar>
+    </div>
+  </section>
+</div>

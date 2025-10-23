@@ -1,0 +1,275 @@
+.brand-bar {
+  width: 100%;
+  padding: var(--spacing-xl, 2rem) 0;
+  background-color: var(--color-background-primary, #ffffff);
+  position: relative;
+}
+
+.brand-bar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-lg, 1.5rem);
+  padding: 0 var(--spacing-md, 1rem);
+}
+
+.brand-bar-title {
+  font-size: var(--font-size-xl, 1.5rem);
+  font-weight: 600;
+  color: var(--color-text-primary, #333);
+  margin: 0;
+}
+
+.brand-bar-controls {
+  display: flex;
+  gap: var(--spacing-sm, 0.75rem);
+}
+
+.scroll-btn {
+  background-color: var(--color-background-secondary, #f5f5f5);
+  border: 1px solid var(--color-border, #ddd);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--color-text-primary, #333);
+
+  &:hover {
+    background-color: var(--color-primary, #007bff);
+    border-color: var(--color-primary, #007bff);
+    color: white;
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.brand-bar-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &.auto-scroll {
+    overflow-x: hidden;
+  }
+}
+
+.brand-bar-track {
+  display: flex;
+  gap: var(--spacing-lg, 1.5rem);
+  padding: var(--spacing-md, 1rem);
+  min-width: max-content;
+}
+
+.brand-item {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm, 0.75rem);
+  padding: var(--spacing-md, 1rem);
+  background-color: var(--color-background-primary, #ffffff);
+  border: 1px solid var(--color-border, #ddd);
+  border-radius: var(--border-radius-lg, 8px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: var(--color-primary, #007bff);
+
+    .brand-logo {
+      transform: scale(1.05);
+    }
+
+    .brand-name {
+      color: var(--color-primary, #007bff);
+    }
+  }
+
+  &:active {
+    transform: translateY(-2px);
+  }
+}
+
+.brand-logo-wrapper {
+  width: 100px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-background-secondary, #f5f5f5);
+  border-radius: var(--border-radius-md, 6px);
+  padding: var(--spacing-sm, 0.75rem);
+  overflow: hidden;
+}
+
+.brand-logo {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+  filter: grayscale(100%);
+  opacity: 0.7;
+
+  .brand-item:hover & {
+    filter: grayscale(0%);
+    opacity: 1;
+  }
+}
+
+.brand-name {
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: 500;
+  color: var(--color-text-secondary, #666);
+  text-align: center;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.pause-indicator {
+  position: absolute;
+  bottom: var(--spacing-md, 1rem);
+  right: var(--spacing-md, 1rem);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs, 0.5rem);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: var(--spacing-xs, 0.5rem) var(--spacing-md, 1rem);
+  border-radius: var(--border-radius-full, 999px);
+  font-size: var(--font-size-sm, 0.875rem);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Responsive Design - Mobile Grid Layout
+@media (max-width: 768px) {
+  .brand-bar {
+    padding: var(--spacing-lg, 1.5rem) 0;
+  }
+
+  .brand-bar-header {
+    padding: 0 var(--spacing-sm, 0.75rem);
+  }
+
+  .brand-bar-title {
+    font-size: var(--font-size-lg, 1.25rem);
+  }
+
+  .scroll-btn {
+    width: 36px;
+    height: 36px;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .brand-bar-container {
+    overflow-x: auto;
+
+    &.auto-scroll {
+      overflow-x: auto;
+    }
+  }
+
+  .brand-bar-track {
+    gap: var(--spacing-md, 1rem);
+    padding: var(--spacing-sm, 0.75rem);
+  }
+
+  .brand-item {
+    min-width: 120px;
+    padding: var(--spacing-sm, 0.75rem);
+  }
+
+  .brand-logo-wrapper {
+    width: 80px;
+    height: 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-bar-controls {
+    display: none;
+  }
+
+  .brand-bar-container {
+    // Grid layout for very small screens
+    &:not(.auto-scroll) {
+      overflow-x: auto;
+    }
+  }
+
+  .brand-bar-track {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: var(--spacing-sm, 0.75rem);
+    padding: var(--spacing-xs, 0.5rem);
+    width: 100%;
+  }
+
+  .brand-item {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .brand-logo-wrapper {
+    width: 100%;
+    height: 50px;
+  }
+
+  .pause-indicator {
+    bottom: var(--spacing-sm, 0.75rem);
+    right: var(--spacing-sm, 0.75rem);
+    font-size: var(--font-size-xs, 0.75rem);
+    padding: var(--spacing-xs, 0.5rem) var(--spacing-sm, 0.75rem);
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+  }
+}
+
+// Animation for auto-scroll
+@media (prefers-reduced-motion: reduce) {
+  .brand-item {
+    transition: none;
+  }
+
+  .scroll-btn {
+    transition: none;
+  }
+
+  .brand-logo {
+    transition: none;
+  }
+}
