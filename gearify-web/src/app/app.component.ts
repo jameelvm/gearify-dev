@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ThemeService } from '@core/services/theme.service';
 import { isMobileDevice, isTouchDevice } from '@shared/utils/device.utils';
+import { STORAGE_KEYS } from '@shared/constants/api.constants';
 
 /**
  * Root application component
@@ -21,8 +22,15 @@ export class AppComponent implements OnInit {
   isTouch = signal(false);
 
   ngOnInit(): void {
+    this.initializeTenantId();
     this.detectDevice();
     this.setupResizeListener();
+  }
+
+  private initializeTenantId(): void {
+    if (typeof localStorage !== 'undefined' && !localStorage.getItem(STORAGE_KEYS.TENANT_ID)) {
+      localStorage.setItem(STORAGE_KEYS.TENANT_ID, 'default');
+    }
   }
 
   private detectDevice(): void {

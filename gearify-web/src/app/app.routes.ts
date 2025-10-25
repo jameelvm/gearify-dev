@@ -25,6 +25,10 @@ export const routes: Routes = [
   {
     path: 'showcase',
     loadComponent: () => import('./features/ui-showcase/ui-showcase.component').then(m => m.UiShowcaseComponent)
+  },
+  {
+    path: 'auth',
+    loadChildren: () => import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES)
   }
   // Future routes to be implemented:
   // {
@@ -35,10 +39,6 @@ export const routes: Routes = [
   //   path: 'checkout',
   //   canActivate: [authGuard],
   //   loadComponent: () => import('./features/checkout/checkout.component').then(m => m.CheckoutComponent)
-  // },
-  // {
-  //   path: 'auth',
-  //   loadChildren: () => import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES)
   // },
   // {
   //   path: 'account',

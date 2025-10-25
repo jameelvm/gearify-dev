@@ -35,14 +35,15 @@ export class AuthService {
   /**
    * Log in a user with email and password
    */
-  login(credentials: LoginRequest): Observable<{ user: User; tokens: AuthTokens }> {
+  login(credentials: LoginRequest): Observable<{ user: User; token: string; refreshToken: string }> {
     this.authState.update(state => ({ ...state, isLoading: true }));
-    return this.api.post<{ user: User; tokens: AuthTokens }>(API_CONFIG.ENDPOINTS.LOGIN, credentials).pipe(
+    return this.api.post<{ user: User; token: string; refreshToken: string }>(API_CONFIG.ENDPOINTS.LOGIN, credentials).pipe(
       tap(response => {
-        this.setAuthData(response.user, response.tokens);
+        const tokens = { accessToken: response.token, refreshToken: response.refreshToken, expiresIn: 900 };
+        this.setAuthData(response.user, tokens);
         this.authState.update(state => ({
           user: response.user,
-          tokens: response.tokens,
+          tokens,
           isAuthenticated: true,
           isLoading: false,
         }));
@@ -53,14 +54,16 @@ export class AuthService {
   /**
    * Register a new user
    */
-  register(data: RegisterRequest): Observable<{ user: User; tokens: AuthTokens }> {
+  register(data: RegisterRequest): Observable<{ user: User; token: string; refreshToken: string }> {
     this.authState.update(state => ({ ...state, isLoading: true }));
-    return this.api.post<{ user: User; tokens: AuthTokens }>(API_CONFIG.ENDPOINTS.REGISTER, data).pipe(
+    const registerData = { ...data, role: data.role || 'Customer' };
+    return this.api.post<{ user: User; token: string; refreshToken: string }>(API_CONFIG.ENDPOINTS.REGISTER, registerData).pipe(
       tap(response => {
-        this.setAuthData(response.user, response.tokens);
+        const tokens = { accessToken: response.token, refreshToken: response.refreshToken, expiresIn: 900 };
+        this.setAuthData(response.user, tokens);
         this.authState.update(state => ({
           user: response.user,
-          tokens: response.tokens,
+          tokens,
           isAuthenticated: true,
           isLoading: false,
         }));
@@ -87,8 +90,8 @@ export class AuthService {
       isLoading: false,
     });
 
-    // Navigate to home/login
-    this.router.navigate(['/showcase']);
+    // Navigate to login page
+    this.router.navigate(['/auth/login']);
   }
 
   /**
@@ -124,8 +127,12 @@ export class AuthService {
    */
   private setAuthData(user: User, tokens: AuthTokens): void {
     if (typeof localStorage !== 'undefined') {
-      localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, tokens.accessToken);
-      localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, tokens.refreshToken);
+      if (tokens.accessToken) {
+        localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, tokens.accessToken);
+      }
+      if (tokens.refreshToken) {
+        localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, tokens.refreshToken);
+      }
       localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
     }
   }

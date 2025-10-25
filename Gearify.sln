@@ -27,13 +27,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gearify.NotificationService
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gearify.SharedKernel", "gearify-shared-kernel\Gearify.SharedKernel.csproj", "{87EA3E51-380D-4181-8115-08246FFD653B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gearify.AuthService", "gearify-auth-svc\Gearify.AuthService.csproj", "{8013B3B8-4F77-48CB-A213-75801A2E91FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{EC491ED7-6506-44F6-8D19-08D36F4B04F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -84,5 +83,12 @@ Global
 		{87EA3E51-380D-4181-8115-08246FFD653B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87EA3E51-380D-4181-8115-08246FFD653B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{87EA3E51-380D-4181-8115-08246FFD653B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8013B3B8-4F77-48CB-A213-75801A2E91FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8013B3B8-4F77-48CB-A213-75801A2E91FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8013B3B8-4F77-48CB-A213-75801A2E91FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8013B3B8-4F77-48CB-A213-75801A2E91FD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

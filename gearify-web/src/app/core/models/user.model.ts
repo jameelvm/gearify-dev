@@ -3,13 +3,16 @@
  */
 export interface User {
   id: string;
-  tenantId: string;
   email: string;
   firstName: string;
   lastName: string;
   phone?: string;
-  role: UserRole;
-  isEmailVerified: boolean;
+  role: UserRole | string;
+  isActive: boolean;
+  emailVerified?: boolean;
+  lastLoginAt?: string | null;
+  tenantId?: string;
+  isEmailVerified?: boolean;
   defaultShippingAddress?: {
     address1: string;
     address2?: string;
@@ -18,20 +21,22 @@ export interface User {
     postalCode: string;
     country: string;
   };
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export enum UserRole {
   Customer = 'Customer',
   Admin = 'Admin',
+  Manager = 'Manager',
   SuperAdmin = 'SuperAdmin'
 }
 
 export interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
+  accessToken?: string;
+  refreshToken?: string;
+  expiresIn?: number;
+  token?: string;
 }
 
 export interface LoginRequest {
@@ -45,7 +50,8 @@ export interface RegisterRequest {
   password: string;
   firstName: string;
   lastName: string;
-  tenantId: string;
+  role?: string;
+  phone?: string;
 }
 
 export interface AuthState {

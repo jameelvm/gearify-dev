@@ -8,6 +8,7 @@ import {
   BadgeComponent
 } from '@app/ui-kit/components';
 import { Product } from '@core/models/product.model';
+import { NavbarComponent } from '@shared/components/navbar/navbar.component';
 
 /**
  * Home Page Component
@@ -22,7 +23,8 @@ import { Product } from '@core/models/product.model';
     ButtonComponent,
     ProductCardComponent,
     BrandBarComponent,
-    BadgeComponent
+    BadgeComponent,
+    NavbarComponent
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
@@ -46,25 +48,25 @@ export class HomeComponent implements OnInit {
       {
         id: '1',
         tenantId: 'demo',
-        sku: 'LAPTOP-001',
-        name: 'Premium Laptop Pro 15"',
-        description: 'High-performance laptop with stunning display',
-        category: 'Electronics',
-        brand: 'TechBrand',
-        price: 1299.99,
-        compareAtPrice: 1599.99,
+        sku: 'BAT-001',
+        name: 'Professional English Willow Cricket Bat',
+        description: 'Premium grade English willow bat with excellent stroke play',
+        category: 'Cricket Bats',
+        brand: 'SS',
+        price: 299.99,
+        compareAtPrice: 399.99,
         currency: 'USD',
-        imageUrls: ['https://via.placeholder.com/400x400?text=Laptop'],
-        tags: ['laptop', 'electronics', 'featured'],
+        imageUrls: ['https://images.unsplash.com/photo-1624526267942-ab0ff8a3e972?w=400&h=400&fit=crop'],
+        tags: ['bat', 'cricket', 'featured', 'english-willow'],
         attributes: {
-          'Screen Size': '15 inches',
-          'RAM': '16GB',
-          'Storage': '512GB SSD'
+          'Weight': '1150-1200g',
+          'Wood Type': 'English Willow',
+          'Handle': 'Cane Handle'
         },
         isActive: true,
         stockQuantity: 15,
         rating: {
-          average: 4.5,
+          average: 4.8,
           count: 127
         },
         createdAt: new Date(),
@@ -73,23 +75,23 @@ export class HomeComponent implements OnInit {
       {
         id: '2',
         tenantId: 'demo',
-        sku: 'PHONE-001',
-        name: 'Smartphone X Pro',
-        description: 'Latest flagship smartphone with amazing camera',
-        category: 'Electronics',
-        brand: 'PhoneBrand',
-        price: 899.99,
-        compareAtPrice: 999.99,
+        sku: 'BALL-001',
+        name: 'Premium Leather Cricket Ball',
+        description: 'Hand-stitched genuine leather cricket ball for professional play',
+        category: 'Cricket Balls',
+        brand: 'Kookaburra',
+        price: 29.99,
+        compareAtPrice: 39.99,
         currency: 'USD',
-        imageUrls: ['https://via.placeholder.com/400x400?text=Smartphone'],
-        tags: ['phone', 'electronics', 'featured'],
+        imageUrls: ['https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=400&h=400&fit=crop'],
+        tags: ['ball', 'cricket', 'featured', 'leather'],
         attributes: {
-          'Screen Size': '6.5 inches',
-          'RAM': '8GB',
-          'Storage': '256GB'
+          'Weight': '156g',
+          'Material': 'Genuine Leather',
+          'Type': 'Match Quality'
         },
         isActive: true,
-        stockQuantity: 25,
+        stockQuantity: 50,
         rating: {
           average: 4.7,
           count: 89
@@ -100,23 +102,23 @@ export class HomeComponent implements OnInit {
       {
         id: '3',
         tenantId: 'demo',
-        sku: 'HEADPHONE-001',
-        name: 'Wireless Headphones Pro',
-        description: 'Premium noise-cancelling wireless headphones',
-        category: 'Audio',
-        brand: 'AudioBrand',
-        price: 349.99,
-        compareAtPrice: 449.99,
+        sku: 'PAD-001',
+        name: 'Professional Batting Pads',
+        description: 'Lightweight batting pads with superior protection',
+        category: 'Cricket Protection',
+        brand: 'Gray-Nicolls',
+        price: 149.99,
+        compareAtPrice: 199.99,
         currency: 'USD',
-        imageUrls: ['https://via.placeholder.com/400x400?text=Headphones'],
-        tags: ['audio', 'headphones', 'featured'],
+        imageUrls: ['https://images.unsplash.com/photo-1593341646782-e0b495cff86d?w=400&h=400&fit=crop'],
+        tags: ['pads', 'cricket', 'featured', 'protection'],
         attributes: {
-          'Battery Life': '30 hours',
-          'Noise Cancelling': 'Active',
-          'Wireless': 'Bluetooth 5.0'
+          'Size': 'Adult',
+          'Weight': 'Lightweight',
+          'Material': 'High-density foam'
         },
         isActive: true,
-        stockQuantity: 40,
+        stockQuantity: 25,
         rating: {
           average: 4.6,
           count: 156
@@ -127,25 +129,25 @@ export class HomeComponent implements OnInit {
       {
         id: '4',
         tenantId: 'demo',
-        sku: 'WATCH-001',
-        name: 'Smart Watch Ultra',
-        description: 'Advanced smartwatch with health tracking',
-        category: 'Wearables',
-        brand: 'WatchBrand',
-        price: 599.99,
-        compareAtPrice: 699.99,
+        sku: 'GLOVE-001',
+        name: 'Premium Batting Gloves',
+        description: 'Professional batting gloves with superior grip and comfort',
+        category: 'Cricket Gloves',
+        brand: 'SG',
+        price: 79.99,
+        compareAtPrice: 99.99,
         currency: 'USD',
-        imageUrls: ['https://via.placeholder.com/400x400?text=Smartwatch'],
-        tags: ['watch', 'wearables', 'featured'],
+        imageUrls: ['https://images.unsplash.com/photo-1593341646591-4cbb2619ae50?w=400&h=400&fit=crop'],
+        tags: ['gloves', 'cricket', 'featured', 'batting'],
         attributes: {
-          'Display': 'AMOLED',
-          'Battery': '48 hours',
-          'Water Resistant': '50m'
+          'Size': 'Adult',
+          'Material': 'Premium Leather',
+          'Palm': 'Dual-layer protection'
         },
         isActive: true,
         stockQuantity: 30,
         rating: {
-          average: 4.4,
+          average: 4.5,
           count: 92
         },
         createdAt: new Date(),
@@ -161,22 +163,22 @@ export class HomeComponent implements OnInit {
 
   private loadBrands(): void {
     this.brands.set([
-      { id: '1', name: 'TechBrand', logoUrl: 'https://via.placeholder.com/120x60?text=TechBrand' },
-      { id: '2', name: 'PhoneBrand', logoUrl: 'https://via.placeholder.com/120x60?text=PhoneBrand' },
-      { id: '3', name: 'AudioBrand', logoUrl: 'https://via.placeholder.com/120x60?text=AudioBrand' },
-      { id: '4', name: 'WatchBrand', logoUrl: 'https://via.placeholder.com/120x60?text=WatchBrand' },
-      { id: '5', name: 'GameBrand', logoUrl: 'https://via.placeholder.com/120x60?text=GameBrand' }
+      { id: '1', name: 'SS', logoUrl: 'https://via.placeholder.com/120x60?text=SS' },
+      { id: '2', name: 'Kookaburra', logoUrl: 'https://via.placeholder.com/120x60?text=Kookaburra' },
+      { id: '3', name: 'Gray-Nicolls', logoUrl: 'https://via.placeholder.com/120x60?text=Gray-Nicolls' },
+      { id: '4', name: 'SG', logoUrl: 'https://via.placeholder.com/120x60?text=SG' },
+      { id: '5', name: 'MRF', logoUrl: 'https://via.placeholder.com/120x60?text=MRF' }
     ]);
   }
 
   private loadCategories(): void {
     this.categories.set([
-      { id: '1', name: 'Electronics', icon: '💻', count: 150 },
-      { id: '2', name: 'Fashion', icon: '👕', count: 230 },
-      { id: '3', name: 'Home & Garden', icon: '🏠', count: 180 },
-      { id: '4', name: 'Sports', icon: '⚽', count: 95 },
-      { id: '5', name: 'Books', icon: '📚', count: 340 },
-      { id: '6', name: 'Toys', icon: '🎮', count: 120 }
+      { id: '1', name: 'Cricket Bats', icon: '🏏', count: 150 },
+      { id: '2', name: 'Cricket Balls', icon: '🔴', count: 230 },
+      { id: '3', name: 'Protection Gear', icon: '🛡️', count: 180 },
+      { id: '4', name: 'Cricket Clothing', icon: '👕', count: 95 },
+      { id: '5', name: 'Training Equipment', icon: '🎯', count: 120 },
+      { id: '6', name: 'Accessories', icon: '🎒', count: 85 }
     ]);
   }
 

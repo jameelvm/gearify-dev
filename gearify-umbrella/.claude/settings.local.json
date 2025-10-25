@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Gearify/**)",
+      "Bash(docker compose build:*)",
+      "Bash(docker compose:*)",
+      "Bash(curl:*)",
+      "Bash(docker logs:*)",
+      "Bash(docker exec:*)",
+      "Bash(docker restart:*)",
+      "Bash(docker ps:*)",
+      "Bash(docker inspect:*)",
+      "Bash(docker port:*)",
+      "Bash(docker cp:*)",
+      "Bash(dir \"C:\\Gearify\\gearify-auth-svc\" /b)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -4,9 +4,10 @@ EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY *.csproj .
-RUN dotnet restore
-COPY . .
+COPY gearify-api-gateway/*.csproj ./gearify-api-gateway/
+RUN dotnet restore gearify-api-gateway/Gearify.ApiGateway.csproj
+COPY gearify-api-gateway/. ./gearify-api-gateway/
+WORKDIR /src/gearify-api-gateway
 RUN dotnet build -c Release -o /app/build
 
 FROM build AS publish

@@ -64,7 +64,8 @@
       "Bash(timeout:*)",
       "Bash(if [ -d \".angular\" ])",
       "Bash(then rm -rf .angular)",
-      "Bash(else echo \"No .angular directory found\")"
+      "Bash(else echo \"No .angular directory found\")",
+      "Bash(tree:*)"
     ],
     "deny": [],
     "ask": []

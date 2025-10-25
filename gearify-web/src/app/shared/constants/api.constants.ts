@@ -4,10 +4,11 @@ export const API_CONFIG = {
   BASE_URL: environment.apiUrl,
   ENDPOINTS: {
     // Auth
-    LOGIN: '/auth/login',
-    REGISTER: '/auth/register',
-    REFRESH_TOKEN: '/auth/refresh',
-    LOGOUT: '/auth/logout',
+    LOGIN: '/api/auth/login',
+    REGISTER: '/api/auth/register',
+    REFRESH_TOKEN: '/api/auth/refresh',
+    LOGOUT: '/api/auth/logout',
+    ME: '/api/auth/me',
     
     // Products
     PRODUCTS: '/api/catalog/products',

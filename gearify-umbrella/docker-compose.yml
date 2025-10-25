@@ -174,8 +174,8 @@ services:
   # Application Services
   tenant-svc:
     build:
-      context: ../gearify-tenant-svc
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: gearify-tenant-svc/Dockerfile
     container_name: gearify-tenant-svc
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -196,8 +196,8 @@ services:
 
   catalog-svc:
     build:
-      context: ../gearify-catalog-svc
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: gearify-catalog-svc/Dockerfile
     container_name: gearify-catalog-svc
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -217,10 +217,37 @@ services:
       redis:
         condition: service_healthy
 
+  auth-svc:
+    build:
+      context: ..
+      dockerfile: gearify-auth-svc/Dockerfile
+    container_name: gearify-auth-svc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - DYNAMODB_ENDPOINT=${DYNAMODB_ENDPOINT}
+      - REDIS_URL=${REDIS_URL}
+      - SEQ_URL=${SEQ_URL}
+      - OTLP_ENDPOINT=${OTLP_ENDPOINT}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ISSUER=${JWT_ISSUER}
+      - JWT_AUDIENCE=${JWT_AUDIENCE}
+    ports:
+      - "5011:80"
+    networks:
+      - gearify-network
+    depends_on:
+      localstack:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
   search-svc:
     build:
-      context: ../gearify-search-svc
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: gearify-search-svc/Dockerfile
     container_name: gearify-search-svc
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -240,8 +267,8 @@ services:
 
   cart-svc:
     build:
-      context: ../gearify-cart-svc
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: gearify-cart-svc/Dockerfile
     container_name: gearify-cart-svc
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -258,8 +285,8 @@ services:
 
   order-svc:
     build:
-      context: ../gearify-order-svc
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: gearify-order-svc/Dockerfile
     container_name: gearify-order-svc
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -280,8 +307,8 @@ services:
 
   payment-svc:
     build:
-      context: ../gearify-payment-svc
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: gearify-payment-svc/Dockerfile
     container_name: gearify-payment-svc
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -305,8 +332,8 @@ services:
 
   shipping-svc:
     build:
-      context: ../gearify-shipping-svc
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: gearify-shipping-svc/Dockerfile
     container_name: gearify-shipping-svc
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -324,8 +351,8 @@ services:
 
   inventory-svc:
     build:
-      context: ../gearify-inventory-svc
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: gearify-inventory-svc/Dockerfile
     container_name: gearify-inventory-svc
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -343,8 +370,8 @@ services:
 
   media-svc:
     build:
-      context: ../gearify-media-svc
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: gearify-media-svc/Dockerfile
     container_name: gearify-media-svc
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -361,8 +388,8 @@ services:
 
   notification-svc:
     build:
-      context: ../gearify-notification-svc
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: gearify-notification-svc/Dockerfile
     container_name: gearify-notification-svc
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -383,12 +410,13 @@ services:
 
   api-gateway:
     build:
-      context: ../gearify-api-gateway
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: gearify-api-gateway/Dockerfile
     container_name: gearify-api-gateway
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - TENANT_SERVICE_URL=${TENANT_SERVICE_URL}
+      - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
       - CATALOG_SERVICE_URL=${CATALOG_SERVICE_URL}
       - SEARCH_SERVICE_URL=http://search-svc:80
       - CART_SERVICE_URL=http://cart-svc:80
@@ -402,6 +430,7 @@ services:
       - COGNITO_CLIENT_ID=${COGNITO_CLIENT_ID}
       - JWT_ISSUER=${JWT_ISSUER}
       - JWT_AUDIENCE=${JWT_AUDIENCE}
+      - JWT_SECRET=${JWT_SECRET}
       - SEQ_URL=${SEQ_URL}
       - OTLP_ENDPOINT=${OTLP_ENDPOINT}
     ports:
@@ -410,6 +439,7 @@ services:
       - gearify-network
     depends_on:
       - tenant-svc
+      - auth-svc
       - catalog-svc
       - search-svc
       - cart-svc
@@ -422,8 +452,8 @@ services:
 
   web:
     build:
-      context: ../gearify-web
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: gearify-web/Dockerfile
     container_name: gearify-web
     environment:
       - API_BASE_URL=${API_BASE_URL}
