@@ -12,7 +12,11 @@
       "Bash(docker inspect:*)",
       "Bash(docker port:*)",
       "Bash(docker cp:*)",
-      "Bash(dir \"C:\\Gearify\\gearify-auth-svc\" /b)"
+      "Bash(dir \"C:\\Gearify\\gearify-auth-svc\" /b)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(powershell -Command \"Stop-Process -Id 33288 -Force\")"
     ],
     "deny": [],
     "ask": []

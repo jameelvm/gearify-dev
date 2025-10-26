@@ -1,14 +1,6 @@
 {
   "profiles": {
-    "Gearify.AuthService": {
-      "commandName": "Project",
-      "launchBrowser": true,
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "applicationUrl": "https://localhost:51742;http://localhost:51743"
-    },
-    "Local Debug": {
+    "auth-svc": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
@@ -20,6 +12,14 @@
         "AWS_REGION": "us-east-1"
       },
       "applicationUrl": "http://localhost:5011"
+    },
+    "Gearify.AuthService": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:51742;http://localhost:51743"
     }
   }
 }
