@@ -1,3 +1,4 @@
+using Gearify.AuthService.Application.Services;
 using Gearify.AuthService.Domain.Entities;
 using Gearify.AuthService.Domain.Events;
 using Gearify.AuthService.Infrastructure.Repositories;
@@ -19,6 +20,7 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
     private readonly ITenantContext _tenantContext;
     private readonly IMediator _mediator;
     private readonly ILogger<RegisterUserCommandHandler> _logger;
+    private readonly IPasswordPolicyService _passwordPolicyService;
 
     public RegisterUserCommandHandler(
         IUserRepository repository,
@@ -26,7 +28,8 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
         IJwtService jwtService,
         ITenantContext tenantContext,
         IMediator mediator,
-        ILogger<RegisterUserCommandHandler> logger)
+        ILogger<RegisterUserCommandHandler> logger,
+        IPasswordPolicyService passwordPolicyService)
     {
         _repository = repository;
         _passwordHasher = passwordHasher;
@@ -34,6 +37,7 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
         _tenantContext = tenantContext;
         _mediator = mediator;
         _logger = logger;
+        _passwordPolicyService = passwordPolicyService;
     }
 
     public async Task<RegisterUserResult> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
@@ -41,6 +45,15 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
         try
         {
             var tenantId = _tenantContext.TenantId;
+
+            // Validate password against policy
+            var passwordValidation = _passwordPolicyService.ValidatePassword(request.Password);
+            if (!passwordValidation.IsValid)
+            {
+                var errorMessage = string.Join(" ", passwordValidation.Errors);
+                _logger.LogWarning("Registration failed: Password does not meet policy requirements. {Errors}", errorMessage);
+                return new RegisterUserResult(string.Empty, string.Empty, string.Empty, false, errorMessage);
+            }
 
             // Check if user already exists
             var existingUser = await _repository.GetByEmailAsync(request.Email, tenantId);
@@ -50,13 +63,20 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
                 return new RegisterUserResult(string.Empty, string.Empty, string.Empty, false, "Email already registered");
             }
 
+            // Generate email verification token
+            var emailVerificationToken = Guid.NewGuid().ToString("N"); // 32 character hex string
+            var emailVerificationExpiry = DateTime.UtcNow.AddHours(24); // Token valid for 24 hours
+
+            // Hash password
+            var passwordHash = _passwordPolicyService.HashPassword(request.Password);
+
             // Create new user
             var user = new User
             {
                 Id = Guid.NewGuid().ToString(),
                 TenantId = tenantId,
                 Email = request.Email.ToLowerInvariant(),
-                PasswordHash = _passwordHasher.HashPassword(request.Password),
+                PasswordHash = passwordHash,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 Phone = request.Phone ?? string.Empty,
@@ -64,8 +84,14 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
                 IsActive = true,
-                EmailVerified = false
+                EmailVerified = false,
+                EmailVerificationToken = emailVerificationToken,
+                EmailVerificationTokenExpiry = emailVerificationExpiry,
+                LastPasswordChangeAt = DateTime.UtcNow
             };
+
+            // Add to password history
+            _passwordPolicyService.AddToPasswordHistory(passwordHash, user);
 
             // Generate tokens
             var accessToken = _jwtService.GenerateAccessToken(user);

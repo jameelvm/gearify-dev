@@ -162,6 +162,40 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
+    /// Verify email address using verification token
+    /// </summary>
+    /// <param name="token">Email verification token</param>
+    /// <returns>Success or failure message</returns>
+    [HttpPost("verify-email")]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> VerifyEmail([FromQuery] string token)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return BadRequest(new { error = "Verification token is required" });
+            }
+
+            var command = new VerifyEmailCommand(token);
+            var result = await _mediator.Send(command);
+
+            if (!result.Success)
+            {
+                return BadRequest(new { error = result.Message });
+            }
+
+            return Ok(new { message = result.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during email verification");
+            return StatusCode(500, new { error = "Email verification failed" });
+        }
+    }
+
+    /// <summary>
     /// Get current authenticated user information
     /// </summary>
     /// <returns>Current user details</returns>

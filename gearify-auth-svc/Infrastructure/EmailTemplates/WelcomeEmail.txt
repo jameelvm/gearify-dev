@@ -1,0 +1,40 @@
+═══════════════════════════════════════════════════════════════
+                    WELCOME TO GEARIFY!
+═══════════════════════════════════════════════════════════════
+
+Hello {{FirstName}}! 👋
+
+Thank you for registering with Gearify. We're excited to have you on
+board and can't wait for you to explore everything we have to offer!
+
+───────────────────────────────────────────────────────────────
+
+TO COMPLETE YOUR REGISTRATION:
+
+To complete your registration and activate your account, please verify
+your email address by clicking the link below or copying it into your
+browser:
+
+{{VerificationLink}}
+
+───────────────────────────────────────────────────────────────
+
+⚠️  IMPORTANT: This verification link will expire in 24 hours.
+
+───────────────────────────────────────────────────────────────
+
+SECURITY NOTE:
+
+If you didn't create an account with Gearify, please ignore this email.
+Your email address will not be used without verification.
+
+───────────────────────────────────────────────────────────────
+
+Best regards,
+The Gearify Team
+
+═══════════════════════════════════════════════════════════════
+© 2024 Gearify. All rights reserved.
+═══════════════════════════════════════════════════════════════
+
+This is an automated email. Please do not reply to this message.

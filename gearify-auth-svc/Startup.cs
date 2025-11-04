@@ -2,6 +2,8 @@ using Amazon.DynamoDBv2;
 using Amazon.Runtime;
 using FluentValidation;
 using Gearify.AuthService.Application.Commands;
+using Gearify.AuthService.Application.Models;
+using Gearify.AuthService.Application.Services;
 using Gearify.AuthService.Application.Validators;
 using Gearify.AuthService.Infrastructure.Repositories;
 using Gearify.AuthService.Infrastructure.Services;
@@ -149,6 +151,8 @@ public class Startup
 
             services.AddDefaultAWSOptions(awsOptions);
             services.AddAWSService<IAmazonDynamoDB>();
+            services.AddAWSService<Amazon.SimpleEmail.IAmazonSimpleEmailService>();
+            services.AddAWSService<Amazon.SimpleNotificationService.IAmazonSimpleNotificationService>();
 
             Console.WriteLine("AWS services registered successfully");
         }
@@ -159,12 +163,31 @@ public class Startup
             throw;
         }
 
+        // Configuration sections
+        services.Configure<SecurityConfiguration>(Configuration.GetSection("Security"));
+
         // Repositories
         services.AddScoped<IUserRepository, DynamoDbUserRepository>();
+        services.AddScoped<IMfaCodeRepository, DynamoDbMfaCodeRepository>();
+        services.AddScoped<IUserSessionRepository, DynamoDbUserSessionRepository>();
 
-        // Services
+        // Core Services
         services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
         services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<IEmailTemplateService, EmailTemplateService>();
+        services.AddScoped<IEmailService, SesEmailService>();
+
+        // Security Services
+        services.AddScoped<IPasswordPolicyService, PasswordPolicyService>();
+        services.AddScoped<IAccountLockoutService, AccountLockoutService>();
+
+        // MFA Services
+        services.AddScoped<ITotpService, TotpService>();
+        services.AddScoped<IOtpService, OtpService>();
+        services.AddScoped<ISmsService, SmsService>();
+
+        // Session Services
+        services.AddScoped<ISessionService, SessionService>();
 
         // OpenTelemetry
         var otlpEndpoint = Environment.GetEnvironmentVariable("OTLP_ENDPOINT") ?? "http://otel-collector:4318";

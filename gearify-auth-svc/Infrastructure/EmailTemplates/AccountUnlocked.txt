@@ -1,0 +1,57 @@
+═══════════════════════════════════════════════════════════
+✅ ACCOUNT UNLOCKED - GEARIFY
+═══════════════════════════════════════════════════════════
+
+Hi {{FirstName}},
+
+✅ GOOD NEWS
+Your Gearify account has been unlocked and is now accessible.
+
+═══════════════════════════════════════════════════════════
+
+UNLOCK DETAILS:
+• Unlocked at: {{UnlockTime}}
+• Method:      {{UnlockMethod}}
+
+Your account was previously locked due to multiple failed login
+attempts. The lockout period has now expired, or an administrator
+has manually unlocked your account.
+
+═══════════════════════════════════════════════════════════
+
+🔐 STRENGTHEN YOUR ACCOUNT SECURITY
+
+To prevent future lockouts and enhance your account security:
+
+1. ENABLE MFA
+   Add Multi-Factor Authentication for extra security
+
+2. USE A STRONG PASSWORD
+   Create a unique, complex password
+
+3. USE A PASSWORD MANAGER
+   Store your passwords securely
+
+4. REVIEW ACTIVE SESSIONS
+   Check for any unauthorized access
+
+Visit Security Settings:
+{{SecuritySettingsLink}}
+
+═══════════════════════════════════════════════════════════
+
+NEED HELP?
+
+If you continue to experience issues accessing your account,
+please contact our support team.
+
+═══════════════════════════════════════════════════════════
+
+Best regards,
+The Gearify Security Team
+
+---
+This is an automated security notification from Gearify.
+If you need assistance, contact: support@gearify.com
+
+© 2025 Gearify. All rights reserved.

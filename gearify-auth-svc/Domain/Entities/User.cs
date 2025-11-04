@@ -79,4 +79,89 @@ public class User
     /// Gets or sets the expiry date/time for the refresh token
     /// </summary>
     public DateTime? RefreshTokenExpiry { get; set; }
+
+    /// <summary>
+    /// Gets or sets the email verification token
+    /// </summary>
+    public string? EmailVerificationToken { get; set; }
+
+    /// <summary>
+    /// Gets or sets the expiry date/time for the email verification token
+    /// </summary>
+    public DateTime? EmailVerificationTokenExpiry { get; set; }
+
+    // ==================== MFA Fields ====================
+
+    /// <summary>
+    /// Gets or sets whether MFA is enabled for this user
+    /// </summary>
+    public bool MfaEnabled { get; set; } = false;
+
+    /// <summary>
+    /// Gets or sets the preferred MFA method
+    /// </summary>
+    public string PreferredMfaMethod { get; set; } = "None"; // Stored as string for DynamoDB
+
+    /// <summary>
+    /// Gets or sets the TOTP secret for authenticator apps (encrypted)
+    /// </summary>
+    public string? TotpSecret { get; set; }
+
+    /// <summary>
+    /// Gets or sets the backup codes (hashed, comma-separated)
+    /// </summary>
+    public string? BackupCodes { get; set; }
+
+    /// <summary>
+    /// Gets or sets when MFA was last set up
+    /// </summary>
+    public DateTime? LastMfaSetupAt { get; set; }
+
+    // ==================== Password Reset Fields ====================
+
+    /// <summary>
+    /// Gets or sets the password reset token
+    /// </summary>
+    public string? PasswordResetToken { get; set; }
+
+    /// <summary>
+    /// Gets or sets the expiry date/time for the password reset token
+    /// </summary>
+    public DateTime? PasswordResetTokenExpiry { get; set; }
+
+    /// <summary>
+    /// Gets or sets when password was last changed
+    /// </summary>
+    public DateTime? LastPasswordChangeAt { get; set; }
+
+    // ==================== Account Lockout Fields ====================
+
+    /// <summary>
+    /// Gets or sets the number of failed login attempts
+    /// </summary>
+    public int FailedLoginAttempts { get; set; } = 0;
+
+    /// <summary>
+    /// Gets or sets when the account lockout ends
+    /// </summary>
+    public DateTime? LockoutEnd { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether lockout is enabled for this user
+    /// </summary>
+    public bool LockoutEnabled { get; set; } = true;
+
+    // ==================== Password History ====================
+
+    /// <summary>
+    /// Gets or sets password history (last 5 hashed passwords, comma-separated)
+    /// </summary>
+    public string? PasswordHistory { get; set; }
+
+    // ==================== Session Tracking ====================
+
+    /// <summary>
+    /// Gets or sets the count of active sessions
+    /// </summary>
+    public int ActiveSessionCount { get; set; } = 0;
 }

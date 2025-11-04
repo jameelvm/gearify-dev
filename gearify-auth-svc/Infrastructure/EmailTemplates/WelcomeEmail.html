@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Gearify</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; background-color: #f4f4f4;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td style="padding: 40px 0; text-align: center;">
+                <table role="presentation" style="width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="padding: 40px 40px 20px; text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
+                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 600;">
+                                Welcome to Gearify!
+                            </h1>
+                        </td>
+                    </tr>
+
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding: 40px;">
+                            <h2 style="margin: 0 0 20px; color: #333333; font-size: 22px; font-weight: 600;">
+                                Hello {{FirstName}}! 👋
+                            </h2>
+
+                            <p style="margin: 0 0 20px; color: #666666; font-size: 16px; line-height: 1.6;">
+                                Thank you for registering with Gearify. We're excited to have you on board and can't wait for you to explore everything we have to offer!
+                            </p>
+
+                            <p style="margin: 0 0 30px; color: #666666; font-size: 16px; line-height: 1.6;">
+                                To complete your registration and activate your account, please verify your email address by clicking the button below:
+                            </p>
+
+                            <!-- CTA Button -->
+                            <table role="presentation" style="margin: 0 auto;">
+                                <tr>
+                                    <td style="border-radius: 4px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                        <a href="{{VerificationLink}}"
+                                           style="display: inline-block; padding: 16px 40px; font-size: 16px; color: #ffffff; text-decoration: none; font-weight: 600;">
+                                            Verify Email Address
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p style="margin: 30px 0 0; color: #999999; font-size: 14px; line-height: 1.6;">
+                                Or copy and paste this link into your browser:
+                            </p>
+                            <p style="margin: 10px 0 0; padding: 15px; background-color: #f8f9fa; border-radius: 4px; word-break: break-all;">
+                                <a href="{{VerificationLink}}" style="color: #667eea; text-decoration: none;">
+                                    {{VerificationLink}}
+                                </a>
+                            </p>
+
+                            <!-- Important Notice -->
+                            <table role="presentation" style="margin: 30px 0; padding: 15px; background-color: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+                                <tr>
+                                    <td>
+                                        <p style="margin: 0; color: #856404; font-size: 14px;">
+                                            ⚠️ <strong>Important:</strong> This verification link will expire in 24 hours.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 30px 40px; background-color: #f8f9fa; border-radius: 0 0 8px 8px; border-top: 1px solid #e9ecef;">
+                            <p style="margin: 0 0 10px; color: #999999; font-size: 12px; line-height: 1.6;">
+                                If you didn't create an account with Gearify, please ignore this email. Your email address will not be used without verification.
+                            </p>
+
+                            <p style="margin: 15px 0 0; color: #666666; font-size: 14px; line-height: 1.6;">
+                                Best regards,<br>
+                                <strong>The Gearify Team</strong>
+                            </p>
+
+                            <hr style="margin: 20px 0; border: none; border-top: 1px solid #e9ecef;">
+
+                            <p style="margin: 0; color: #999999; font-size: 12px; text-align: center;">
+                                © 2024 Gearify. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -106,6 +106,34 @@ awslocal dynamodb create-table \
   --region us-east-1 \
   2>/dev/null || echo "    Table gearify-users already exists, skipping..."
 
+# User Sessions table
+echo "  - Creating table: UserSessions"
+awslocal dynamodb create-table \
+  --table-name UserSessions \
+  --attribute-definitions \
+    AttributeName=PK,AttributeType=S \
+    AttributeName=SK,AttributeType=S \
+  --key-schema \
+    AttributeName=PK,KeyType=HASH \
+    AttributeName=SK,KeyType=RANGE \
+  --billing-mode PAY_PER_REQUEST \
+  --region us-east-1 \
+  2>/dev/null || echo "    Table UserSessions already exists, skipping..."
+
+# MFA Codes table
+echo "  - Creating table: MfaCodes"
+awslocal dynamodb create-table \
+  --table-name MfaCodes \
+  --attribute-definitions \
+    AttributeName=PK,AttributeType=S \
+    AttributeName=SK,AttributeType=S \
+  --key-schema \
+    AttributeName=PK,KeyType=HASH \
+    AttributeName=SK,KeyType=RANGE \
+  --billing-mode PAY_PER_REQUEST \
+  --region us-east-1 \
+  2>/dev/null || echo "    Table MfaCodes already exists, skipping..."
+
 echo "DynamoDB tables created successfully!"
 
 # ==========================================

@@ -1,0 +1,41 @@
+═══════════════════════════════════════════════════════════
+⚠️ MULTI-FACTOR AUTHENTICATION DISABLED - GEARIFY
+═══════════════════════════════════════════════════════════
+
+Hi {{FirstName}},
+
+⚠️ SECURITY NOTICE
+Multi-Factor Authentication has been disabled for your Gearify
+account.
+
+═══════════════════════════════════════════════════════════
+
+Disabled at: {{DisabledTime}}
+
+Your account is now protected by your password only. We strongly
+recommend keeping MFA enabled for maximum security.
+
+═══════════════════════════════════════════════════════════
+
+⚠️ DIDN'T DISABLE MFA?
+
+If you didn't make this change, please contact our security
+team immediately at security@gearify.com.
+
+═══════════════════════════════════════════════════════════
+
+🔐 WANT TO RE-ENABLE MFA?
+
+You can re-enable Multi-Factor Authentication at any time from
+your account security settings.
+
+═══════════════════════════════════════════════════════════
+
+Best regards,
+The Gearify Security Team
+
+---
+This is an automated security notification from Gearify.
+If you did not disable MFA, contact: security@gearify.com
+
+© 2025 Gearify. All rights reserved.

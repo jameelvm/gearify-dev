@@ -16,7 +16,11 @@
       "Bash(netstat:*)",
       "Bash(findstr:*)",
       "Bash(taskkill:*)",
-      "Bash(powershell -Command \"Stop-Process -Id 33288 -Force\")"
+      "Bash(powershell -Command \"Stop-Process -Id 33288 -Force\")",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet restore:*)",
+      "Bash(dotnet list:*)",
+      "Bash(dotnet clean:*)"
     ],
     "deny": [],
     "ask": []

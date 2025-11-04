@@ -1,3 +1,4 @@
+using Gearify.AuthService.Application.Services;
 using Gearify.AuthService.Domain.Events;
 using Gearify.AuthService.Infrastructure.Repositories;
 using Gearify.AuthService.Infrastructure.Services;
@@ -18,6 +19,8 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResult>
     private readonly ITenantContext _tenantContext;
     private readonly IMediator _mediator;
     private readonly ILogger<LoginCommandHandler> _logger;
+    private readonly IAccountLockoutService _accountLockoutService;
+    private readonly IEmailService _emailService;
 
     public LoginCommandHandler(
         IUserRepository repository,
@@ -25,7 +28,9 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResult>
         IJwtService jwtService,
         ITenantContext tenantContext,
         IMediator mediator,
-        ILogger<LoginCommandHandler> logger)
+        ILogger<LoginCommandHandler> logger,
+        IAccountLockoutService accountLockoutService,
+        IEmailService emailService)
     {
         _repository = repository;
         _passwordHasher = passwordHasher;
@@ -33,6 +38,8 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResult>
         _tenantContext = tenantContext;
         _mediator = mediator;
         _logger = logger;
+        _accountLockoutService = accountLockoutService;
+        _emailService = emailService;
     }
 
     public async Task<LoginResult> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -49,6 +56,20 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResult>
                 return new LoginResult(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, false, "Invalid email or password");
             }
 
+            // Check if account is locked out
+            if (_accountLockoutService.IsLockedOut(user))
+            {
+                var remainingTime = _accountLockoutService.GetRemainingLockoutTime(user);
+                _logger.LogWarning("Login failed: Account {UserId} is locked out. Remaining time: {RemainingMinutes} minutes",
+                    user.Id, remainingTime?.TotalMinutes ?? 0);
+
+                return new LoginResult(
+                    string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
+                    false,
+                    $"Account is locked. Please try again in {Math.Ceiling(remainingTime?.TotalMinutes ?? 0)} minutes."
+                );
+            }
+
             // Check if user is active
             if (!user.IsActive)
             {
@@ -60,8 +81,41 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResult>
             if (!_passwordHasher.VerifyPassword(request.Password, user.PasswordHash))
             {
                 _logger.LogWarning("Login failed: Invalid password for user {UserId}", user.Id);
+
+                // Record failed attempt and check if account should be locked
+                var wasLocked = _accountLockoutService.RecordFailedLoginAttempt(user);
+                await _repository.UpdateAsync(user);
+
+                if (wasLocked)
+                {
+                    _logger.LogWarning("Account {UserId} has been locked due to too many failed attempts", user.Id);
+
+                    // Send account locked email
+                    var lockoutData = new Dictionary<string, string>
+                    {
+                        { "FirstName", user.FirstName },
+                        { "FailedAttempts", user.FailedLoginAttempts.ToString() },
+                        { "LockoutTime", DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss UTC") },
+                        { "UnlockTime", user.LockoutEnd?.ToString("yyyy-MM-dd HH:mm:ss UTC") ?? "Unknown" },
+                        { "LockoutDuration", _accountLockoutService.GetRemainingLockoutTime(user)?.TotalMinutes.ToString("0") ?? "30" },
+                        { "ResetPasswordLink", $"{GetWebAppUrl()}/reset-password" }
+                    };
+
+                    await _emailService.SendTemplatedEmailAsync(user.Email, "AccountLocked", lockoutData);
+
+                    var remainingTime = _accountLockoutService.GetRemainingLockoutTime(user);
+                    return new LoginResult(
+                        string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
+                        false,
+                        $"Too many failed attempts. Account is locked for {Math.Ceiling(remainingTime?.TotalMinutes ?? 30)} minutes."
+                    );
+                }
+
                 return new LoginResult(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, false, "Invalid email or password");
             }
+
+            // Password is correct - reset failed login attempts
+            _accountLockoutService.ResetFailedLoginAttempts(user);
 
             // Generate tokens
             var accessToken = _jwtService.GenerateAccessToken(user);
@@ -101,5 +155,11 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResult>
             _logger.LogError(ex, "Failed to login user for tenant {TenantId}", _tenantContext.TenantId);
             return new LoginResult(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, false, "Login failed");
         }
+    }
+
+    private string GetWebAppUrl()
+    {
+        // This should come from configuration - using placeholder for now
+        return "http://localhost:4200";
     }
 }

@@ -32,6 +32,13 @@ public interface IUserRepository
     Task<User?> GetByRefreshTokenAsync(string refreshToken, string tenantId);
 
     /// <summary>
+    /// Gets a user by their email verification token
+    /// </summary>
+    /// <param name="token">The email verification token</param>
+    /// <returns>The user if found, null otherwise</returns>
+    Task<User?> GetByEmailVerificationTokenAsync(string token);
+
+    /// <summary>
     /// Creates a new user
     /// </summary>
     /// <param name="user">The user to create</param>

@@ -21,7 +21,7 @@ services:
     container_name: gearify-localstack
     environment:
       - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_API_KEY}
-      - SERVICES=cognito-idp,dynamodb,s3,sqs,sns,secretsmanager,ssm,lambda,logs
+      - SERVICES=cognito-idp,dynamodb,s3,sqs,sns,ses,secretsmanager,ssm,lambda,logs
       - DEBUG=1
       - DOCKER_HOST=unix:///var/run/docker.sock
       - LAMBDA_EXECUTOR=docker-reuse
@@ -35,6 +35,7 @@ services:
       - "./localstack/s3:/etc/localstack/init/ready.d/s3"
       - "./localstack/sqs:/etc/localstack/init/ready.d/sqs"
       - "./localstack/sns:/etc/localstack/init/ready.d/sns"
+      - "./localstack/ses:/etc/localstack/init/ready.d/ses"
       - "./localstack/cognito:/etc/localstack/init/ready.d/cognito"
       - "./localstack/secretsmanager:/etc/localstack/init/ready.d/secretsmanager"
       - "./localstack/ssm:/etc/localstack/init/ready.d/ssm"

@@ -81,6 +81,28 @@ public class DynamoDbUserRepository : IUserRepository
         return DeserializeUser(response.Items[0]);
     }
 
+    public async Task<User?> GetByEmailVerificationTokenAsync(string token)
+    {
+        // Scan the table to find user with this verification token
+        // Note: This is inefficient but acceptable for verification token lookups which are rare
+        var request = new ScanRequest
+        {
+            TableName = _tableName,
+            FilterExpression = "EmailVerificationToken = :token",
+            ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+            {
+                { ":token", new AttributeValue { S = token } }
+            }
+        };
+
+        var response = await _dynamoDb.ScanAsync(request);
+
+        if (response.Items.Count == 0)
+            return null;
+
+        return DeserializeUser(response.Items[0]);
+    }
+
     public async Task CreateAsync(User user)
     {
         var item = SerializeUser(user);
@@ -150,6 +172,16 @@ public class DynamoDbUserRepository : IUserRepository
             item["RefreshTokenExpiry"] = new AttributeValue { S = user.RefreshTokenExpiry.Value.ToString("O") };
         }
 
+        if (!string.IsNullOrEmpty(user.EmailVerificationToken))
+        {
+            item["EmailVerificationToken"] = new AttributeValue { S = user.EmailVerificationToken };
+        }
+
+        if (user.EmailVerificationTokenExpiry.HasValue)
+        {
+            item["EmailVerificationTokenExpiry"] = new AttributeValue { S = user.EmailVerificationTokenExpiry.Value.ToString("O") };
+        }
+
         return item;
     }
 
@@ -184,6 +216,16 @@ public class DynamoDbUserRepository : IUserRepository
         if (item.ContainsKey("RefreshTokenExpiry"))
         {
             user.RefreshTokenExpiry = DateTime.Parse(item["RefreshTokenExpiry"].S);
+        }
+
+        if (item.ContainsKey("EmailVerificationToken"))
+        {
+            user.EmailVerificationToken = item["EmailVerificationToken"].S;
+        }
+
+        if (item.ContainsKey("EmailVerificationTokenExpiry"))
+        {
+            user.EmailVerificationTokenExpiry = DateTime.Parse(item["EmailVerificationTokenExpiry"].S);
         }
 
         return user;

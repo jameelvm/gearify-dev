@@ -1,0 +1,58 @@
+═══════════════════════════════════════════════════════════
+🔒 ACCOUNT LOCKED - GEARIFY
+═══════════════════════════════════════════════════════════
+
+Hi {{FirstName}},
+
+⚠️ SECURITY ALERT
+Your Gearify account has been temporarily locked due to multiple
+failed login attempts.
+
+═══════════════════════════════════════════════════════════
+
+LOCKOUT DETAILS:
+• Locked at:     {{LockoutTime}}
+• Unlock time:   {{UnlockTime}}
+• Duration:      {{LockoutDuration}} minutes
+• Failed attempts: {{FailedAttempts}}
+
+═══════════════════════════════════════════════════════════
+
+WHAT SHOULD YOU DO?
+
+1. WAIT IT OUT
+   Your account will automatically unlock at {{UnlockTime}}
+
+2. RESET YOUR PASSWORD
+   If you've forgotten your password, visit:
+   {{ResetPasswordLink}}
+
+3. CONTACT SUPPORT
+   If you believe this is an error or your account has been
+   compromised, contact us immediately.
+
+═══════════════════════════════════════════════════════════
+
+⚠️ DIDN'T TRY TO LOG IN?
+
+If you didn't attempt to access your account, someone else may
+be trying to gain unauthorized access.
+
+WE RECOMMEND:
+• Reset your password immediately
+• Enable Multi-Factor Authentication (MFA)
+• Review your recent account activity
+• Contact our security team
+
+═══════════════════════════════════════════════════════════
+
+Thank you for helping us keep your account secure.
+
+Best regards,
+The Gearify Security Team
+
+---
+This is an automated security notification from Gearify.
+If you need assistance, contact: support@gearify.com
+
+© 2025 Gearify. All rights reserved.
