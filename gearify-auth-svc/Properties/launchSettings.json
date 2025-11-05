@@ -6,12 +6,12 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:5011",
+        "ASPNETCORE_URLS": "http://0.0.0.0:5011",
         "AWS_ACCESS_KEY_ID": "test",
         "AWS_SECRET_ACCESS_KEY": "test",
         "AWS_REGION": "us-east-1"
       },
-      "applicationUrl": "http://localhost:5011"
+      "applicationUrl": "http://0.0.0.0:5011"
     },
     "Gearify.AuthService": {
       "commandName": "Project",
