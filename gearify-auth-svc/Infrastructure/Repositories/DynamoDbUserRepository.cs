@@ -182,6 +182,63 @@ public class DynamoDbUserRepository : IUserRepository
             item["EmailVerificationTokenExpiry"] = new AttributeValue { S = user.EmailVerificationTokenExpiry.Value.ToString("O") };
         }
 
+        // Password History
+        if (!string.IsNullOrEmpty(user.PasswordHistory))
+        {
+            item["PasswordHistory"] = new AttributeValue { S = user.PasswordHistory };
+        }
+
+        // MFA Fields
+        item["MfaEnabled"] = new AttributeValue { BOOL = user.MfaEnabled };
+
+        if (!string.IsNullOrEmpty(user.PreferredMfaMethod))
+        {
+            item["PreferredMfaMethod"] = new AttributeValue { S = user.PreferredMfaMethod };
+        }
+
+        if (!string.IsNullOrEmpty(user.TotpSecret))
+        {
+            item["TotpSecret"] = new AttributeValue { S = user.TotpSecret };
+        }
+
+        if (!string.IsNullOrEmpty(user.BackupCodes))
+        {
+            item["BackupCodes"] = new AttributeValue { S = user.BackupCodes };
+        }
+
+        if (user.LastMfaSetupAt.HasValue)
+        {
+            item["LastMfaSetupAt"] = new AttributeValue { S = user.LastMfaSetupAt.Value.ToString("O") };
+        }
+
+        // Password Reset Fields
+        if (!string.IsNullOrEmpty(user.PasswordResetToken))
+        {
+            item["PasswordResetToken"] = new AttributeValue { S = user.PasswordResetToken };
+        }
+
+        if (user.PasswordResetTokenExpiry.HasValue)
+        {
+            item["PasswordResetTokenExpiry"] = new AttributeValue { S = user.PasswordResetTokenExpiry.Value.ToString("O") };
+        }
+
+        if (user.LastPasswordChangeAt.HasValue)
+        {
+            item["LastPasswordChangeAt"] = new AttributeValue { S = user.LastPasswordChangeAt.Value.ToString("O") };
+        }
+
+        // Account Lockout Fields
+        item["FailedLoginAttempts"] = new AttributeValue { N = user.FailedLoginAttempts.ToString() };
+        item["LockoutEnabled"] = new AttributeValue { BOOL = user.LockoutEnabled };
+
+        if (user.LockoutEnd.HasValue)
+        {
+            item["LockoutEnd"] = new AttributeValue { S = user.LockoutEnd.Value.ToString("O") };
+        }
+
+        // Session Tracking
+        item["ActiveSessionCount"] = new AttributeValue { N = user.ActiveSessionCount.ToString() };
+
         return item;
     }
 
@@ -226,6 +283,76 @@ public class DynamoDbUserRepository : IUserRepository
         if (item.ContainsKey("EmailVerificationTokenExpiry"))
         {
             user.EmailVerificationTokenExpiry = DateTime.Parse(item["EmailVerificationTokenExpiry"].S);
+        }
+
+        // Password History
+        if (item.ContainsKey("PasswordHistory"))
+        {
+            user.PasswordHistory = item["PasswordHistory"].S;
+        }
+
+        // MFA Fields
+        if (item.ContainsKey("MfaEnabled"))
+        {
+            user.MfaEnabled = item["MfaEnabled"].BOOL;
+        }
+
+        if (item.ContainsKey("PreferredMfaMethod"))
+        {
+            user.PreferredMfaMethod = item["PreferredMfaMethod"].S;
+        }
+
+        if (item.ContainsKey("TotpSecret"))
+        {
+            user.TotpSecret = item["TotpSecret"].S;
+        }
+
+        if (item.ContainsKey("BackupCodes"))
+        {
+            user.BackupCodes = item["BackupCodes"].S;
+        }
+
+        if (item.ContainsKey("LastMfaSetupAt"))
+        {
+            user.LastMfaSetupAt = DateTime.Parse(item["LastMfaSetupAt"].S);
+        }
+
+        // Password Reset Fields
+        if (item.ContainsKey("PasswordResetToken"))
+        {
+            user.PasswordResetToken = item["PasswordResetToken"].S;
+        }
+
+        if (item.ContainsKey("PasswordResetTokenExpiry"))
+        {
+            user.PasswordResetTokenExpiry = DateTime.Parse(item["PasswordResetTokenExpiry"].S);
+        }
+
+        if (item.ContainsKey("LastPasswordChangeAt"))
+        {
+            user.LastPasswordChangeAt = DateTime.Parse(item["LastPasswordChangeAt"].S);
+        }
+
+        // Account Lockout Fields
+        if (item.ContainsKey("FailedLoginAttempts"))
+        {
+            user.FailedLoginAttempts = int.Parse(item["FailedLoginAttempts"].N);
+        }
+
+        if (item.ContainsKey("LockoutEnabled"))
+        {
+            user.LockoutEnabled = item["LockoutEnabled"].BOOL;
+        }
+
+        if (item.ContainsKey("LockoutEnd"))
+        {
+            user.LockoutEnd = DateTime.Parse(item["LockoutEnd"].S);
+        }
+
+        // Session Tracking
+        if (item.ContainsKey("ActiveSessionCount"))
+        {
+            user.ActiveSessionCount = int.Parse(item["ActiveSessionCount"].N);
         }
 
         return user;

@@ -4,7 +4,7 @@
   "description": "Gearify E-Commerce Web Frontend - Angular 18 with SSR",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --port 4200",
+    "start": "ng serve --host 0.0.0.0 --port 4200 --disable-host-check",
     "build": "ng build",
     "build:ssr": "ng build && ng run gearify-web:server",
     "watch": "ng build --watch --configuration development",

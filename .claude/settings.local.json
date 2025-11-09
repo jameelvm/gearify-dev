@@ -65,7 +65,9 @@
       "Bash(if [ -d \".angular\" ])",
       "Bash(then rm -rf .angular)",
       "Bash(else echo \"No .angular directory found\")",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(docker-compose down:*)",
+      "Bash(docker-compose build:*)"
     ],
     "deny": [],
     "ask": []

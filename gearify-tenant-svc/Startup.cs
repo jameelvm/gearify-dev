@@ -1,4 +1,7 @@
+using Amazon.DynamoDBv2;
+using Gearify.TenantService.Infrastructure.Repositories;
 using Gearify.TenantService.Infrastructure.Swagger;
+using LocalStack.Client.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,6 +37,15 @@ public class Startup
 
             c.OperationFilter<TenantHeaderOperationFilter>();
         });
+
+        // AWS Service Configuration
+        services.AddLocalStack(Configuration);
+        var awsOptions = Configuration.GetAWSOptions();
+        services.AddDefaultAWSOptions(awsOptions);
+        services.AddAWSService<IAmazonDynamoDB>();
+
+        // Repositories
+        services.AddScoped<ITenantRepository, DynamoDbTenantRepository>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

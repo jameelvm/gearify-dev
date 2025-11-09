@@ -1,3 +1,4 @@
+using Gearify.ApiGateway.Middleware;
 using Microsoft.AspNetCore.RateLimiting;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -16,14 +17,33 @@ try
 
     builder.Host.UseSerilog();
 
-    // CORS
+    // CORS - Allow subdomain-based origins
     builder.Services.AddCors(options =>
     {
         options.AddDefaultPolicy(policy =>
-            policy.WithOrigins("http://localhost:3000", "http://localhost:5173")
-                  .AllowAnyMethod()
-                  .AllowAnyHeader()
-                  .AllowCredentials());
+            policy.SetIsOriginAllowed(origin =>
+            {
+                // Allow localhost variations
+                if (origin.StartsWith("http://localhost:") || origin.StartsWith("https://localhost:"))
+                    return true;
+
+                // Allow localhost.direct subdomains
+                if (origin.Contains("localhost.direct:"))
+                    return true;
+
+                // Allow localtest.me subdomains
+                if (origin.Contains("localtest.me:"))
+                    return true;
+
+                // Allow production domains (add your production domain here)
+                if (origin.Contains("gearify.com"))
+                    return true;
+
+                return false;
+            })
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
     });
 
     // YARP Reverse Proxy
@@ -87,6 +107,10 @@ try
 
     app.UseSerilogRequestLogging();
     app.UseCors();
+
+    // Tenant resolution middleware - must be before rate limiter and auth
+    app.UseMiddleware<TenantResolutionMiddleware>();
+
     app.UseRateLimiter();
 
     if (!string.IsNullOrEmpty(cognitoAuthority))

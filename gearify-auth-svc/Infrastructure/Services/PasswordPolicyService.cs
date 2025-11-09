@@ -51,7 +51,7 @@ public class PasswordPolicyService : IPasswordPolicyService
         }
 
         // Check special character requirement
-        if (_policySettings.RequireSpecialChar && !password.Any(ch => !char.IsLetterOrDigit(ch)))
+        if (_policySettings.RequireSpecialChar && password.All(char.IsLetterOrDigit))
         {
             errors.Add("Password must contain at least one special character.");
         }

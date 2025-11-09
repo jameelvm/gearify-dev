@@ -180,6 +180,9 @@ services:
     container_name: gearify-tenant-svc
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
       - AWS_ENDPOINT=${AWS_ENDPOINT}
       - DYNAMODB_ENDPOINT=${DYNAMODB_ENDPOINT}
       - REDIS_URL=${REDIS_URL}
@@ -416,6 +419,7 @@ services:
     container_name: gearify-api-gateway
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
       - TENANT_SERVICE_URL=${TENANT_SERVICE_URL}
       - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
       - CATALOG_SERVICE_URL=${CATALOG_SERVICE_URL}

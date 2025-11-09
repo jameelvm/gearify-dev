@@ -29,6 +29,10 @@ export const routes: Routes = [
   {
     path: 'auth',
     loadChildren: () => import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES)
+  },
+  {
+    path: 'tenant-not-found',
+    loadComponent: () => import('./features/errors/tenant-not-found.component').then(m => m.TenantNotFoundComponent)
   }
   // Future routes to be implemented:
   // {

@@ -20,7 +20,8 @@
       "Bash(dotnet build:*)",
       "Bash(dotnet restore:*)",
       "Bash(dotnet list:*)",
-      "Bash(dotnet clean:*)"
+      "Bash(dotnet clean:*)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []
