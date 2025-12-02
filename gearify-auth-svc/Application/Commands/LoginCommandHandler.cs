@@ -21,6 +21,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResult>
     private readonly ILogger<LoginCommandHandler> _logger;
     private readonly IAccountLockoutService _accountLockoutService;
     private readonly IEmailService _emailService;
+    private readonly ISessionService _sessionService;
 
     public LoginCommandHandler(
         IUserRepository repository,
@@ -30,7 +31,8 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResult>
         IMediator mediator,
         ILogger<LoginCommandHandler> logger,
         IAccountLockoutService accountLockoutService,
-        IEmailService emailService)
+        IEmailService emailService,
+        ISessionService sessionService)
     {
         _repository = repository;
         _passwordHasher = passwordHasher;
@@ -40,6 +42,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResult>
         _logger = logger;
         _accountLockoutService = accountLockoutService;
         _emailService = emailService;
+        _sessionService = sessionService;
     }
 
     public async Task<LoginResult> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -128,6 +131,18 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResult>
             user.UpdatedAt = DateTime.UtcNow;
 
             await _repository.UpdateAsync(user);
+
+            // Create session for multi-device tracking
+            var deviceInfo = request.DeviceInfo ?? "Unknown Device";
+            var ipAddress = request.IpAddress ?? "Unknown IP";
+
+            await _sessionService.CreateSessionAsync(
+                user.Id,
+                user.TenantId,
+                refreshToken,
+                deviceInfo,
+                ipAddress
+            );
 
             _logger.LogInformation("User logged in successfully: {UserId}", user.Id);
 

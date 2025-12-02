@@ -346,7 +346,7 @@ public class DynamoDbUserRepository : IUserRepository
 
         if (item.ContainsKey("LockoutEnd"))
         {
-            user.LockoutEnd = DateTime.Parse(item["LockoutEnd"].S);
+            user.LockoutEnd = DateTime.Parse(item["LockoutEnd"].S, null, System.Globalization.DateTimeStyles.RoundtripKind);
         }
 
         // Session Tracking

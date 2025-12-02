@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Locked</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: #dc3545;
+            color: #ffffff;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .alert-icon {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .message {
+            margin-bottom: 20px;
+            color: #555;
+        }
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .info-box strong {
+            color: #dc3545;
+        }
+        .cta-button {
+            display: inline-block;
+            background: #007bff;
+            color: #ffffff;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 20px 0;
+            font-weight: 500;
+        }
+        .cta-button:hover {
+            background: #0056b3;
+        }
+        .security-tips {
+            background: #e7f3ff;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .security-tips h3 {
+            margin-top: 0;
+            color: #007bff;
+            font-size: 16px;
+        }
+        .security-tips ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .security-tips li {
+            margin: 5px 0;
+            color: #555;
+        }
+        .footer {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            border-top: 1px solid #e9ecef;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔒 Security Alert: Account Locked</h1>
+        </div>
+
+        <div class="content">
+            <div class="alert-icon">⚠️</div>
+
+            <div class="greeting">
+                Hello {{FirstName}},
+            </div>
+
+            <div class="message">
+                <p>Your Gearify account has been temporarily locked due to multiple failed login attempts.</p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>Failed Login Attempts:</strong> {{FailedAttempts}}</p>
+                <p><strong>Locked At:</strong> {{LockoutTime}}</p>
+                <p><strong>Unlock Time:</strong> {{UnlockTime}}</p>
+                <p><strong>Lockout Duration:</strong> {{LockoutDuration}}</p>
+            </div>
+
+            <div class="message">
+                <p><strong>What happened?</strong></p>
+                <p>To protect your account, we automatically lock it after several unsuccessful login attempts. This is a security measure to prevent unauthorized access.</p>
+            </div>
+
+            <div class="message">
+                <p><strong>What can you do?</strong></p>
+                <ul>
+                    <li><strong>Wait for automatic unlock:</strong> Your account will automatically unlock at {{UnlockTime}}</li>
+                    <li><strong>Reset your password:</strong> If you've forgotten your password, you can reset it immediately using the button below</li>
+                </ul>
+            </div>
+
+            <div style="text-align: center;">
+                <a href="{{ResetPasswordLink}}" class="cta-button">Reset Password Now</a>
+            </div>
+
+            <div class="security-tips">
+                <h3>🛡️ Security Tips</h3>
+                <ul>
+                    <li>Never share your password with anyone</li>
+                    <li>Use a strong, unique password for your Gearify account</li>
+                    <li>Enable two-factor authentication for extra security</li>
+                    <li>If you didn't attempt to login, contact our support team immediately</li>
+                </ul>
+            </div>
+
+            <div class="message" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e9ecef;">
+                <p style="color: #dc3545;"><strong>⚠️ Didn't try to login?</strong></p>
+                <p>If you didn't attempt to access your account, someone may be trying to gain unauthorized access. Please reset your password immediately and contact our security team.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Gearify Security Team</strong></p>
+            <p>This is an automated security notification. Please do not reply to this email.</p>
+            <p>If you have questions, contact us at support@gearify.com</p>
+        </div>
+    </div>
+</body>
+</html>

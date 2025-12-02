@@ -140,16 +140,26 @@ public class Startup
         services.AddValidatorsFromAssemblyContaining<RegisterUserValidator>();
 
         // AWS Service Configuration
-        // LocalStack.Client.Extensions automatically intercepts when UseLocalStack=true
         try
         {
-            services.AddLocalStack(Configuration);
-
             var awsOptions = Configuration.GetAWSOptions();
+
+            // Override ServiceURL from environment variable if present (for Docker)
+            var dynamoDbEndpoint = Environment.GetEnvironmentVariable("DYNAMODB_ENDPOINT");
+            if (!string.IsNullOrEmpty(dynamoDbEndpoint))
+            {
+                awsOptions.DefaultClientConfig.ServiceURL = dynamoDbEndpoint;
+                Console.WriteLine($"Overriding AWS ServiceURL from environment: {dynamoDbEndpoint}");
+            }
+
             Console.WriteLine($"AWS Options - Region: {awsOptions.Region}");
             Console.WriteLine($"AWS Options - ServiceURL: {awsOptions.DefaultClientConfig.ServiceURL}");
 
             services.AddDefaultAWSOptions(awsOptions);
+
+            // AddLocalStack for credentials/configuration (must be after AddDefaultAWSOptions)
+            services.AddLocalStack(Configuration);
+
             services.AddAWSService<IAmazonDynamoDB>();
             services.AddAWSService<Amazon.SimpleEmail.IAmazonSimpleEmailService>();
             services.AddAWSService<Amazon.SimpleNotificationService.IAmazonSimpleNotificationService>();

@@ -70,24 +70,64 @@ try
         options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
     });
 
-    // JWT Authentication (Cognito)
-    var cognitoAuthority = builder.Configuration["Cognito:Authority"];
-    var cognitoUserPoolId = builder.Configuration["Cognito:UserPoolId"];
-    var cognitoRegion = builder.Configuration["Cognito:Region"];
+    // JWT Authentication (Auth Service)
+    var jwtSecret = builder.Configuration["JwtSettings:Secret"];
+    var jwtIssuer = builder.Configuration["JwtSettings:Issuer"];
+    var jwtAudience = builder.Configuration["JwtSettings:Audience"];
 
-    if (!string.IsNullOrEmpty(cognitoAuthority) && !string.IsNullOrEmpty(cognitoUserPoolId))
+    if (!string.IsNullOrEmpty(jwtSecret))
     {
-        builder.Services.AddAuthentication("Bearer")
+        var key = System.Text.Encoding.UTF8.GetBytes(jwtSecret);
+
+        builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                options.Authority = $"{cognitoAuthority}/{cognitoUserPoolId}";
                 options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(key),
                     ValidateIssuer = true,
-                    ValidateAudience = false,
-                    ValidateLifetime = true
+                    ValidIssuer = jwtIssuer,
+                    ValidateAudience = true,
+                    ValidAudience = jwtAudience,
+                    ValidateLifetime = true,        // Validates token expiration
+                    ClockSkew = TimeSpan.Zero       // No grace period for expiration
+                };
+
+                options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        if (context.Exception is Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException)
+                        {
+                            context.Response.Headers.Append("Token-Expired", "true");
+                            Log.Warning("JWT token expired for request {Path}", context.Request.Path);
+                        }
+                        else
+                        {
+                            Log.Error(context.Exception, "JWT authentication failed for request {Path}", context.Request.Path);
+                        }
+                        return Task.CompletedTask;
+                    },
+                    OnTokenValidated = context =>
+                    {
+                        var userId = context.Principal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                        var tenantId = context.Principal?.FindFirst("tenantId")?.Value;
+                        Log.Information("JWT token validated for user {UserId} in tenant {TenantId}", userId, tenantId);
+                        return Task.CompletedTask;
+                    },
+                    OnChallenge = context =>
+                    {
+                        Log.Warning("JWT authentication challenge for request {Path}: {Error}",
+                            context.Request.Path, context.ErrorDescription);
+                        return Task.CompletedTask;
+                    }
                 };
             });
+    }
+    else
+    {
+        Log.Warning("JWT authentication is disabled: No JWT secret configured");
     }
 
     builder.Services.AddAuthorization();
@@ -113,11 +153,9 @@ try
 
     app.UseRateLimiter();
 
-    if (!string.IsNullOrEmpty(cognitoAuthority))
-    {
-        app.UseAuthentication();
-        app.UseAuthorization();
-    }
+    // Always enable authentication and authorization
+    app.UseAuthentication();
+    app.UseAuthorization();
 
     app.MapReverseProxy();
     app.MapGet("/health", () => Results.Ok(new

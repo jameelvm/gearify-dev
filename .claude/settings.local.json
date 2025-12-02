@@ -67,7 +67,12 @@
       "Bash(else echo \"No .angular directory found\")",
       "Bash(tree:*)",
       "Bash(docker-compose down:*)",
-      "Bash(docker-compose build:*)"
+      "Bash(docker-compose build:*)",
+      "Bash(ACCESS_TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzOTcyZmFkNy0yNmNjLTRjNDUtYTQ3Zi1jYWU5NjQ5NDA3ZjIiLCJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJqdGkiOiI2NzdhMGJlNC01NzkyLTQxOTgtYjBmZC0yZWY3YjZjZmMxMmYiLCJ0ZW5hbnRJZCI6ImRlZmF1bHQiLCJyb2xlIjoiQ3VzdG9tZXIiLCJmaXJzdE5hbWUiOiJUZXN0IiwibGFzdE5hbWUiOiJVc2VyIiwiZXhwIjoxNzY0Mjc4NzUwLCJpc3MiOiJnZWFyaWZ5LWF1dGgiLCJhdWQiOiJnZWFyaWZ5LWFwaSJ9.q-LTYN-QD5zG3l-5diSCFpWH5yOppxWaOtNFtQP4wS8\")",
+      "Bash(if [ -d \"gearify-auth-svc/EmailTemplates\" ])",
+      "Bash(then echo \"Exists\")",
+      "Bash(else echo \"Not found\")",
+      "Bash(ls -la \"C:\\Gearify\\gearify-web\\src\\assets\\images\"\" 2>&1 || dir \"C:Gearifygearify-websrcassetsimages\"\")"
     ],
     "deny": [],
     "ask": []

@@ -38,12 +38,18 @@ export class ProductCardComponent {
   @Output() toggleWishlist = new EventEmitter<Product>();
 
   imageLoaded = false;
+  imageErrorOccurred = false;
+
+  /**
+   * Placeholder image as data URI to avoid missing file requests
+   */
+  private readonly placeholderImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
 
   /**
    * Get the primary image URL for the product
    */
   get primaryImageUrl(): string {
-    return this.product.imageUrls?.[0] || '/assets/images/placeholder-product.png';
+    return this.product.imageUrls?.[0] || this.placeholderImage;
   }
 
   /**
@@ -105,8 +111,14 @@ export class ProductCardComponent {
    * Handle image error event
    */
   onImageError(event: Event): void {
+    // Prevent infinite loop - only set placeholder once
+    if (this.imageErrorOccurred) {
+      return;
+    }
+
+    this.imageErrorOccurred = true;
     const img = event.target as HTMLImageElement;
-    img.src = '/assets/images/placeholder-product.png';
+    img.src = this.placeholderImage;
     this.imageLoaded = true;
   }
 }

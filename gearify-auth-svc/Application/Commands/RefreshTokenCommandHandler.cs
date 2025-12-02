@@ -1,3 +1,4 @@
+using Gearify.AuthService.Application.Services;
 using Gearify.AuthService.Infrastructure.Repositories;
 using Gearify.AuthService.Infrastructure.Services;
 using Gearify.SharedKernel.Multitenancy;
@@ -15,17 +16,20 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, R
     private readonly IJwtService _jwtService;
     private readonly ITenantContext _tenantContext;
     private readonly ILogger<RefreshTokenCommandHandler> _logger;
+    private readonly ISessionService _sessionService;
 
     public RefreshTokenCommandHandler(
         IUserRepository repository,
         IJwtService jwtService,
         ITenantContext tenantContext,
-        ILogger<RefreshTokenCommandHandler> logger)
+        ILogger<RefreshTokenCommandHandler> logger,
+        ISessionService sessionService)
     {
         _repository = repository;
         _jwtService = jwtService;
         _tenantContext = tenantContext;
         _logger = logger;
+        _sessionService = sessionService;
     }
 
     public async Task<RefreshTokenResult> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
@@ -34,7 +38,7 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, R
         {
             var tenantId = _tenantContext.TenantId;
 
-            // Find user by refresh token
+            // Find user by refresh token (fallback for legacy tokens)
             var user = await _repository.GetByRefreshTokenAsync(request.RefreshToken, tenantId);
             if (user == null)
             {
@@ -42,11 +46,12 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, R
                 return new RefreshTokenResult(string.Empty, string.Empty, false, "Invalid refresh token");
             }
 
-            // Check if token is expired
-            if (user.RefreshTokenExpiry == null || user.RefreshTokenExpiry < DateTime.UtcNow)
+            // Validate session using refresh token
+            var session = await _sessionService.ValidateSessionAsync(user.Id, request.RefreshToken);
+            if (session == null)
             {
-                _logger.LogWarning("Refresh token expired for user {UserId}", user.Id);
-                return new RefreshTokenResult(string.Empty, string.Empty, false, "Refresh token expired");
+                _logger.LogWarning("Session validation failed for user {UserId} - session not found or expired", user.Id);
+                return new RefreshTokenResult(string.Empty, string.Empty, false, "Invalid or expired session");
             }
 
             // Check if user is active
@@ -56,18 +61,38 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, R
                 return new RefreshTokenResult(string.Empty, string.Empty, false, "Account is inactive");
             }
 
+            // Clean up expired sessions for this user
+            await _sessionService.CleanupExpiredSessionsAsync(user.Id);
+
             // Generate new tokens
             var accessToken = _jwtService.GenerateAccessToken(user);
             var newRefreshToken = _jwtService.GenerateRefreshToken();
 
-            // Update user's refresh token
+            // Update user's refresh token (for backward compatibility)
             user.RefreshToken = newRefreshToken;
             user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
             user.UpdatedAt = DateTime.UtcNow;
 
             await _repository.UpdateAsync(user);
 
-            _logger.LogInformation("Access token refreshed for user {UserId}", user.Id);
+            // Update session with new refresh token and extend expiry
+            session.RefreshToken = newRefreshToken;
+            session.ExpiresAt = DateTime.UtcNow.AddDays(7);
+            session.LastAccessedAt = DateTime.UtcNow;
+
+            await _sessionService.RevokeSessionAsync(user.Id, session.Id); // Mark old session inactive
+
+            // Create new session with rotated token
+            await _sessionService.CreateSessionAsync(
+                user.Id,
+                user.TenantId,
+                newRefreshToken,
+                session.DeviceInfo,
+                session.IpAddress,
+                session.Location
+            );
+
+            _logger.LogInformation("Access token refreshed and session rotated for user {UserId}", user.Id);
 
             return new RefreshTokenResult(accessToken, newRefreshToken, true);
         }

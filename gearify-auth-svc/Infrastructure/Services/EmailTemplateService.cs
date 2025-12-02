@@ -21,7 +21,7 @@ public class EmailTemplateService : IEmailTemplateService
         _logger = logger;
 
         // Templates are stored in Infrastructure/EmailTemplates
-        _templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "EmailTemplates");
+        _templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Infrastructure/EmailTemplates");
 
         // Define subjects for each template
         _subjects = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)

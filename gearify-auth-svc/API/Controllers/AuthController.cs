@@ -95,7 +95,16 @@ public class AuthController : ControllerBase
     {
         try
         {
-            var command = new LoginCommand(request.Email, request.Password);
+            // Extract device info and IP address
+            var userAgent = HttpContext.Request.Headers["User-Agent"].ToString();
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
+
+            var command = new LoginCommand(
+                request.Email,
+                request.Password,
+                userAgent,
+                ipAddress
+            );
             var result = await _mediator.Send(command);
 
             if (!result.Success)
@@ -237,6 +246,43 @@ public class AuthController : ControllerBase
         {
             _logger.LogError(ex, "Error retrieving current user");
             return StatusCode(500, new { error = "Failed to retrieve user" });
+        }
+    }
+
+    /// <summary>
+    /// Logout current session by revoking the refresh token
+    /// </summary>
+    /// <param name="request">Request containing refresh token</param>
+    /// <returns>Success message</returns>
+    [HttpPost("logout")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Logout([FromBody] RefreshTokenRequest request)
+    {
+        try
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { error = "Invalid token" });
+            }
+
+            // Find and revoke the session associated with this refresh token
+            var command = new LogoutCommand(userId, request.RefreshToken);
+            var result = await _mediator.Send(command);
+
+            if (!result.Success)
+            {
+                return BadRequest(new { error = result.Message });
+            }
+
+            return Ok(new { message = "Logged out successfully" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during logout");
+            return StatusCode(500, new { error = "Logout failed" });
         }
     }
 }
