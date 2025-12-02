@@ -322,7 +322,14 @@ export class NavbarComponent {
   }
 
   logout(): void {
-    this.authService.logout();
-    this.showUserMenu = false;
+    this.authService.logout().subscribe({
+      next: () => {
+        this.showUserMenu = false;
+      },
+      error: (error) => {
+        console.error('Logout error:', error);
+        this.showUserMenu = false;
+      }
+    });
   }
 }

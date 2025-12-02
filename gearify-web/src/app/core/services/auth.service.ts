@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, of, catchError } from 'rxjs';
 import { ApiService } from './api.service';
 import { User, AuthTokens, LoginRequest, RegisterRequest, AuthState } from '../models/user.model';
 import { STORAGE_KEYS, API_CONFIG } from '@shared/constants/api.constants';
@@ -74,24 +74,59 @@ export class AuthService {
   /**
    * Log out the current user
    */
-  logout(): void {
-    // Clear localStorage (with SSR check)
-    if (typeof localStorage !== 'undefined') {
-      localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-      localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-      localStorage.removeItem(STORAGE_KEYS.USER);
+  logout(): Observable<void> {
+    const refreshToken = this.authState().tokens?.refreshToken;
+
+    // Call backend logout endpoint to revoke session
+    if (refreshToken) {
+      return this.api.post<{ message: string }>(API_CONFIG.ENDPOINTS.LOGOUT, { refreshToken }).pipe(
+        tap(() => {
+          console.log('Session revoked successfully');
+        }),
+        catchError((error) => {
+          console.error('Failed to revoke session on server:', error);
+          // Return success even if server call fails (fail-safe)
+          return of(undefined);
+        }),
+        tap(() => {
+          // Clear localStorage (with SSR check)
+          if (typeof localStorage !== 'undefined') {
+            localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
+            localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
+            localStorage.removeItem(STORAGE_KEYS.USER);
+          }
+
+          // Reset auth state
+          this.authState.set({
+            user: null,
+            tokens: null,
+            isAuthenticated: false,
+            isLoading: false,
+          });
+
+          // Navigate to login page
+          this.router.navigate(['/auth/login']);
+        })
+      );
+    } else {
+      // No refresh token, just clear local data
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
+        localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
+        localStorage.removeItem(STORAGE_KEYS.USER);
+      }
+
+      this.authState.set({
+        user: null,
+        tokens: null,
+        isAuthenticated: false,
+        isLoading: false,
+      });
+
+      this.router.navigate(['/auth/login']);
+
+      return of(undefined);
     }
-
-    // Reset auth state
-    this.authState.set({
-      user: null,
-      tokens: null,
-      isAuthenticated: false,
-      isLoading: false,
-    });
-
-    // Navigate to login page
-    this.router.navigate(['/auth/login']);
   }
 
   /**

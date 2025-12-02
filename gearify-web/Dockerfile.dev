@@ -1,0 +1,21 @@
+FROM node:20
+
+WORKDIR /app
+
+# Copy package files first for better layer caching
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy the rest of the application
+# Note: In dev mode, this gets overridden by volume mount
+COPY . .
+
+# Expose Angular dev server port
+EXPOSE 4200
+
+# Start dev server
+# --host 0.0.0.0 allows external access from host machine
+# --poll enables file watching in Docker containers
+CMD ["npm", "start", "--", "--host", "0.0.0.0", "--poll", "2000"]
