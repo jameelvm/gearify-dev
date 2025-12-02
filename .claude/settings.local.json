@@ -73,7 +73,8 @@
       "Bash(then echo \"Exists\")",
       "Bash(else echo \"Not found\")",
       "Bash(ls -la \"C:\\Gearify\\gearify-web\\src\\assets\\images\"\" 2>&1 || dir \"C:Gearifygearify-websrcassetsimages\"\")",
-      "Bash(docker-compose logs:*)"
+      "Bash(docker-compose logs:*)",
+      "Bash(docker-compose:*)"
     ],
     "deny": [],
     "ask": []

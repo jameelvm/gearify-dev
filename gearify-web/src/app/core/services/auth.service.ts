@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, tap, of, catchError } from 'rxjs';
+import { Observable, tap, of, catchError, map } from 'rxjs';
 import { ApiService } from './api.service';
 import { User, AuthTokens, LoginRequest, RegisterRequest, AuthState } from '../models/user.model';
 import { STORAGE_KEYS, API_CONFIG } from '@shared/constants/api.constants';
@@ -80,15 +80,17 @@ export class AuthService {
     // Call backend logout endpoint to revoke session
     if (refreshToken) {
       return this.api.post<{ message: string }>(API_CONFIG.ENDPOINTS.LOGOUT, { refreshToken }).pipe(
-        tap(() => {
-          console.log('Session revoked successfully');
-        }),
         catchError((error) => {
           console.error('Failed to revoke session on server:', error);
-          // Return success even if server call fails (fail-safe)
-          return of(undefined);
+          // Return empty observable to continue the chain (fail-safe)
+          return of({ message: 'Logout failed but continuing' });
         }),
-        tap(() => {
+        tap((response) => {
+          if (response.message !== 'Logout failed but continuing') {
+            console.log('Session revoked successfully');
+          }
+        }),
+        map(() => {
           // Clear localStorage (with SSR check)
           if (typeof localStorage !== 'undefined') {
             localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
@@ -106,6 +108,9 @@ export class AuthService {
 
           // Navigate to login page
           this.router.navigate(['/auth/login']);
+
+          // Return void
+          return undefined;
         })
       );
     } else {

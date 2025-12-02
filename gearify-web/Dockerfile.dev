@@ -1,4 +1,4 @@
-FROM node:20
+FROM node:20-alpine
 
 WORKDIR /app
 
@@ -6,16 +6,18 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci
+# Use npm install instead of npm ci if package-lock.json doesn't exist
+RUN npm install
 
 # Copy the rest of the application
-# Note: In dev mode, this gets overridden by volume mount
+# Note: In dev mode with volumes, this gets overridden by the volume mount
 COPY . .
 
 # Expose Angular dev server port
 EXPOSE 4200
 
-# Start dev server
-# --host 0.0.0.0 allows external access from host machine
-# --poll enables file watching in Docker containers
-CMD ["npm", "start", "--", "--host", "0.0.0.0", "--poll", "2000"]
+# Start dev server with hot reload
+# --host 0.0.0.0: Allow external connections from host
+# --disable-host-check: Prevent invalid host header errors
+# --poll: Enable file watching in Docker (required for Windows/Mac)
+CMD ["npm", "start"]
