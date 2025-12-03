@@ -1,11 +1,15 @@
-import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
+import { HttpInterceptorFn, HttpErrorResponse, HttpRequest, HttpHandlerFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, throwError } from 'rxjs';
+import { catchError, throwError, switchMap, BehaviorSubject, filter, take } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { API_CONFIG } from '@shared/constants/api.constants';
+
+let isRefreshing = false;
+let refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 
 /**
- * Global error handling interceptor
+ * Global error handling interceptor with automatic token refresh
  */
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
@@ -14,9 +18,16 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
-        // Unauthorized - logout and redirect to login
-        authService.logout();
-        router.navigate(['/auth/login']);
+        // Check if this is the refresh token endpoint itself failing
+        if (req.url.includes(API_CONFIG.ENDPOINTS.REFRESH_TOKEN)) {
+          // Refresh token failed, logout user
+          authService.logout();
+          router.navigate(['/auth/login']);
+          return throwError(() => error);
+        }
+
+        // Attempt to refresh the token
+        return handle401Error(req, next, authService, router);
       } else if (error.status === 403) {
         // Forbidden - redirect to access denied
         router.navigate(['/access-denied']);
@@ -30,3 +41,63 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     })
   );
 };
+
+/**
+ * Handle 401 errors by attempting to refresh the token
+ */
+function handle401Error(
+  request: HttpRequest<any>,
+  next: HttpHandlerFn,
+  authService: AuthService,
+  router: Router
+) {
+  if (!isRefreshing) {
+    isRefreshing = true;
+    refreshTokenSubject.next(null);
+
+    return authService.refreshToken().pipe(
+      switchMap((tokens) => {
+        isRefreshing = false;
+
+        const accessToken = tokens.accessToken || tokens.token;
+        if (!accessToken) {
+          throw new Error('No access token in refresh response');
+        }
+
+        refreshTokenSubject.next(accessToken);
+
+        // Retry the failed request with the new token
+        return next(addTokenToRequest(request, accessToken));
+      }),
+      catchError((err) => {
+        isRefreshing = false;
+
+        // Refresh failed, logout user
+        authService.logout();
+        router.navigate(['/auth/login']);
+
+        return throwError(() => err);
+      })
+    );
+  } else {
+    // Wait for the token to be refreshed, then retry the request
+    return refreshTokenSubject.pipe(
+      filter(token => token !== null),
+      take(1),
+      switchMap(token => {
+        return next(addTokenToRequest(request, token!));
+      })
+    );
+  }
+}
+
+/**
+ * Add the access token to the request headers
+ */
+function addTokenToRequest(request: HttpRequest<any>, token: string): HttpRequest<any> {
+  return request.clone({
+    setHeaders: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+}

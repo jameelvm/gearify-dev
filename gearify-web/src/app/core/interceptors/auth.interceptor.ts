@@ -2,6 +2,7 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { STORAGE_KEYS } from '@shared/constants/api.constants';
+import { switchMap, catchError, of } from 'rxjs';
 
 /**
  * Extracts tenant ID from subdomain
@@ -45,7 +46,33 @@ function extractTenantFromSubdomain(): string | null {
 }
 
 /**
+ * Decode JWT token to get expiration time
+ */
+function getTokenExpiration(token: string): number | null {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.exp ? payload.exp * 1000 : null; // Convert to milliseconds
+  } catch (e) {
+    return null;
+  }
+}
+
+/**
+ * Check if token is expired or about to expire (within 5 minutes)
+ */
+function isTokenExpiringSoon(token: string): boolean {
+  const expiration = getTokenExpiration(token);
+  if (!expiration) return false;
+
+  const now = Date.now();
+  const fiveMinutes = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+  return expiration - now < fiveMinutes;
+}
+
+/**
  * HTTP interceptor to inject JWT token and tenant header into requests
+ * Also handles proactive token refresh before requests
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
@@ -71,6 +98,30 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     tenantId = extractTenantFromSubdomain();
   }
 
+  // Check if token needs refresh before making the request
+  if (token && isTokenExpiringSoon(token)) {
+    // Token is expired or about to expire, refresh it first
+    return authService.refreshToken().pipe(
+      switchMap((tokens) => {
+        const newToken = tokens.accessToken || tokens.token;
+        return next(addAuthHeaders(req, newToken || token, tenantId));
+      }),
+      catchError((error) => {
+        // If refresh fails, continue with existing token and let error interceptor handle it
+        console.warn('Proactive token refresh failed, continuing with existing token:', error);
+        return next(addAuthHeaders(req, token, tenantId));
+      })
+    );
+  }
+
+  // Token is still valid, proceed normally
+  return next(addAuthHeaders(req, token, tenantId));
+};
+
+/**
+ * Add authentication and tenant headers to request
+ */
+function addAuthHeaders(req: any, token: string | null, tenantId: string | null): any {
   const headers: { [key: string]: string } = {};
 
   // Only add tenant header if we have a valid tenant
@@ -82,9 +133,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  req = req.clone({
+  return req.clone({
     setHeaders: headers
   });
-
-  return next(req);
-};
+}
