@@ -13,7 +13,6 @@ export type BadgeSize = 'small' | 'medium' | 'large';
   imports: [CommonModule],
   templateUrl: './badge.component.html',
   styleUrls: ['./badge.component.scss']
-  styleUrl: './badge.component.scss'
 })
 export class BadgeComponent {
   @Input() variant: BadgeVariant = 'primary';
