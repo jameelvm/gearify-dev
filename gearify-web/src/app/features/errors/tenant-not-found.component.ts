@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { STORAGE_KEYS } from '@shared/constants/api.constants';
 
 @Component({
@@ -9,16 +10,19 @@ import { STORAGE_KEYS } from '@shared/constants/api.constants';
   template: `
     <div class="error-container">
       <div class="error-content">
-        <div class="error-icon">🏢</div>
-        <h1 class="error-title">Tenant Not Found</h1>
-        <p class="error-message" *ngIf="tenantId && tenantId !== 'unknown'">
-          The tenant <strong>{{ tenantId }}</strong> does not exist or is not active.
+        <div class="error-icon">🔒</div>
+        <h1 class="error-title">Access Not Available</h1>
+        <p class="error-message" *ngIf="reason === 'invalid' && tenantId">
+          We couldn't find an active store at this address.
+        </p>
+        <p class="error-message" *ngIf="reason === 'error' && tenantId">
+          We're having trouble connecting to our services. Please try again in a moment.
         </p>
         <p class="error-message" *ngIf="!tenantId || tenantId === 'unknown'">
-          No tenant found in URL. Please use a subdomain to access the application.
+          This URL doesn't appear to be valid. Please check the address and try again.
         </p>
         <p class="error-hint">
-          You must access the application using a tenant subdomain.
+          Please verify your web address or contact support for assistance.
         </p>
         <div class="error-actions">
           <button (click)="clearAndReload()" class="btn btn-secondary">
@@ -26,18 +30,7 @@ import { STORAGE_KEYS } from '@shared/constants/api.constants';
           </button>
         </div>
         <div class="error-details">
-          <p class="text-muted">Current URL: {{ currentUrl }}</p>
-          <p class="text-muted"><strong>Available tenants (development):</strong></p>
-          <ul class="tenant-list">
-            <li><a href="http://default.localhost.direct:4200">default.localhost.direct:4200</a></li>
-            <li><a href="http://acme.localhost.direct:4200">acme.localhost.direct:4200</a></li>
-            <li><a href="http://contoso.localhost.direct:4200">contoso.localhost.direct:4200</a></li>
-            <li><a href="http://fabrikam.localhost.direct:4200">fabrikam.localhost.direct:4200</a></li>
-            <li><a href="http://demo.localhost.direct:4200">demo.localhost.direct:4200</a></li>
-          </ul>
-          <p class="text-muted" style="margin-top: 1rem;">
-            ⚠️ <strong>Note:</strong> Plain <code>localhost:4200</code> will not work - you must use a subdomain.
-          </p>
+          <p class="text-muted">Need help? Contact our support team</p>
         </div>
       </div>
     </div>
@@ -158,11 +151,27 @@ import { STORAGE_KEYS } from '@shared/constants/api.constants';
 export class TenantNotFoundComponent implements OnInit {
   tenantId: string = '';
   currentUrl: string = '';
+  reason: string = '';
+  errorMessage: string = '';
+
+  constructor(private router: Router) {
+    // Get navigation state
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras?.state) {
+      this.tenantId = navigation.extras.state['tenantId'] || '';
+      this.reason = navigation.extras.state['reason'] || '';
+      this.errorMessage = navigation.extras.state['errorMessage'] || '';
+    }
+  }
 
   ngOnInit() {
     if (typeof window !== 'undefined') {
       this.currentUrl = window.location.href;
-      this.tenantId = localStorage.getItem(STORAGE_KEYS.TENANT_ID) || 'unknown';
+
+      // If no state provided, get from localStorage
+      if (!this.tenantId) {
+        this.tenantId = localStorage.getItem(STORAGE_KEYS.TENANT_ID) || 'unknown';
+      }
     }
   }
 

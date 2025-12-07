@@ -9,24 +9,8 @@ import { authInterceptor } from '@core/interceptors/auth.interceptor';
 import { errorInterceptor } from '@core/interceptors/error.interceptor';
 import { STORAGE_KEYS } from '@shared/constants/api.constants';
 
-/**
- * Initialize tenant ID from subdomain (non-blocking)
- */
-if (typeof window !== 'undefined') {
-  const hostname = window.location.hostname;
-  const parts = hostname.split('.');
-  let tenantId = 'default'; // Default fallback for localhost
-
-  // Only extract if we have a proper subdomain
-  if (parts.length >= 2 && !['localhost', 'www', 'api'].includes(parts[0])) {
-    tenantId = parts[0];
-  } else if (hostname === 'localhost' || hostname.startsWith('127.0.0.')) {
-    tenantId = 'default';
-  }
-
-  localStorage.setItem(STORAGE_KEYS.TENANT_ID, tenantId);
-  console.log(`Tenant ID set to: ${tenantId}`);
-}
+// Tenant ID will be extracted and validated by the tenant guard
+// No need to set it here
 
 /**
  * Application configuration

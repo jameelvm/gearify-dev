@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { tenantGuard } from './guards/tenant.guard';
 // import { authGuard } from '@core/guards/auth.guard';
 
 /**
@@ -12,22 +13,27 @@ export const routes: Routes = [
   },
   {
     path: 'home',
+    canActivate: [tenantGuard],
     loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent)
   },
   {
     path: 'products',
+    canActivate: [tenantGuard],
     loadComponent: () => import('./features/products/products-list.component').then(m => m.ProductsListComponent)
   },
   {
     path: 'products/:id',
+    canActivate: [tenantGuard],
     loadComponent: () => import('./features/products/product-detail.component').then(m => m.ProductDetailComponent)
   },
   {
     path: 'showcase',
+    canActivate: [tenantGuard],
     loadComponent: () => import('./features/ui-showcase/ui-showcase.component').then(m => m.UiShowcaseComponent)
   },
   {
     path: 'auth',
+    canActivate: [tenantGuard],
     loadChildren: () => import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES)
   },
   {
