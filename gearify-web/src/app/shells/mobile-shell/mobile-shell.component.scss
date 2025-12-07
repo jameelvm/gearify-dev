@@ -1,0 +1,6 @@
+
+    .mobile-shell { display: flex; flex-direction: column; height: 100vh; }
+    .mobile-header { padding: 1rem; background: #1e3a8a; color: white; }
+    .mobile-content { flex: 1; overflow-y: auto; }
+    .mobile-nav { display: flex; justify-content: space-around; padding: 0.5rem; background: #f5f5f5; }
+  

@@ -1,0 +1,26 @@
+<div class="error-container">
+  <div class="error-content">
+    <div class="error-icon">🔒</div>
+    <h1 class="error-title">Access Not Available</h1>
+    <p class="error-message" *ngIf="reason === 'invalid' && tenantId">
+      We couldn't find an active store at this address.
+    </p>
+    <p class="error-message" *ngIf="reason === 'error' && tenantId">
+      We're having trouble connecting to our services. Please try again in a moment.
+    </p>
+    <p class="error-message" *ngIf="!tenantId || tenantId === 'unknown'">
+      This URL doesn't appear to be valid. Please check the address and try again.
+    </p>
+    <p class="error-hint">
+      Please verify your web address or contact support for assistance.
+    </p>
+    <div class="error-actions">
+      <button (click)="clearAndReload()" class="btn btn-secondary">
+        Clear Cache & Reload
+      </button>
+    </div>
+    <div class="error-details">
+      <p class="text-muted">Need help? Contact our support team</p>
+    </div>
+  </div>
+</div>

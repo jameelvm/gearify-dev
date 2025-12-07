@@ -1,0 +1,8 @@
+
+    .checkout-container { max-width: 800px; margin: 0 auto; padding: 2rem; }
+    .checkout-steps { display: flex; justify-content: space-between; margin-bottom: 2rem; }
+    .step { flex: 1; padding: 1rem; background: #f5f5f5; text-align: center; }
+    .step.active { background: #1e3a8a; color: white; }
+    form input { display: block; width: 100%; padding: 0.75rem; margin-bottom: 1rem; }
+    button { padding: 0.75rem 1.5rem; background: #1e3a8a; color: white; border: none; cursor: pointer; }
+  

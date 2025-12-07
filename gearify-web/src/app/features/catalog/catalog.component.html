@@ -1,0 +1,9 @@
+
+    <h2>Cricket Gear Catalog</h2>
+    <div class="products">
+      <div *ngFor="let product of products" class="product-card">
+        <h3>{{ product.name }}</h3>
+        <p>Price: {{ product.price | currency }}</p>
+      </div>
+    </div>
+  

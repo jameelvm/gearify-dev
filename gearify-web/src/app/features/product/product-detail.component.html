@@ -1,0 +1,32 @@
+
+    <div class="product-detail">
+      <div class="product-images">
+        <img src="/assets/bat.jpg" alt="Cricket Bat" class="main-image" />
+      </div>
+
+      <div class="product-info">
+        <h1>{{ product.name }}</h1>
+        <div class="rating">â­â­â­â­â­</div>
+        <div class="price">Price: {{ product.price | currency }}</div>
+
+        <div class="specifications">
+          <h3>Specifications</h3>
+          <table>
+            <tr><td>Brand:</td><td>{{ product.brand }}</td></tr>
+            <tr><td>Weight:</td><td>{{ product.weight }}</td></tr>
+            <tr><td>Grade:</td><td>{{ product.grade }}</td></tr>
+          </table>
+        </div>
+
+        <button (click)="addToCart()">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="reviews-section">
+      <h2>Customer Reviews</h2>
+      <div class="review" *ngFor="let review of reviews">
+        <p><strong>{{ review.author }}</strong></p>
+        <p>{{ review.text }}</p>
+      </div>
+    </div>
+  

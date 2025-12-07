@@ -1,0 +1,10 @@
+
+    .product-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; padding: 2rem; }
+    .main-image { width: 100%; }
+    .price { font-size: 2rem; color: #1e3a8a; margin: 1rem 0; }
+    .specifications table { width: 100%; margin: 1rem 0; }
+    .specifications td { padding: 0.5rem; }
+    button { padding: 1rem 2rem; background: #1e3a8a; color: white; border: none; cursor: pointer; }
+    .reviews-section { padding: 2rem; }
+    .review { border-bottom: 1px solid #eee; padding: 1rem 0; }
+  

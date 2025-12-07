@@ -1,0 +1,37 @@
+
+    <div class="checkout-container">
+      <h2>Checkout</h2>
+
+      <div class="checkout-steps">
+        <div class="step" [class.active]="currentStep === 1">1. Shipping</div>
+        <div class="step" [class.active]="currentStep === 2">2. Payment</div>
+        <div class="step" [class.active]="currentStep === 3">3. Review</div>
+      </div>
+
+      <div *ngIf="currentStep === 1" class="step-content">
+        <h3>Shipping Address</h3>
+        <form [formGroup]="shippingForm">
+          <input formControlName="firstName" placeholder="First Name" />
+          <input formControlName="lastName" placeholder="Last Name" />
+          <input formControlName="street" placeholder="Street Address" />
+          <input formControlName="city" placeholder="City" />
+          <button (click)="nextStep()" [disabled]="!shippingForm.valid">Continue</button>
+        </form>
+      </div>
+
+      <div *ngIf="currentStep === 2" class="step-content">
+        <h3>Payment Method</h3>
+        <button (click)="selectPayment('stripe')">Credit Card</button>
+        <button (click)="selectPayment('paypal')">PayPal</button>
+        <button (click)="nextStep()">Review Order</button>
+      </div>
+
+      <div *ngIf="currentStep === 3" class="step-content">
+        <h3>Review Your Order</h3>
+        <div class="order-summary">
+          <p>Total: $299.99</p>
+        </div>
+        <button (click)="placeOrder()">Place Order</button>
+      </div>
+    </div>
+  
