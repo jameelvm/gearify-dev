@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { STORAGE_KEYS } from '@shared/constants/api.constants';
+import { StorageService } from '@core/services/storage.service';
 
 @Component({
   selector: 'app-tenant-not-found',
@@ -154,7 +154,10 @@ export class TenantNotFoundComponent implements OnInit {
   reason: string = '';
   errorMessage: string = '';
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private storage: StorageService
+  ) {
     // Get navigation state
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras?.state) {
@@ -170,18 +173,13 @@ export class TenantNotFoundComponent implements OnInit {
 
       // If no state provided, get from localStorage
       if (!this.tenantId) {
-        this.tenantId = localStorage.getItem(STORAGE_KEYS.TENANT_ID) || 'unknown';
+        this.tenantId = this.storage.getTenantId() || 'unknown';
       }
     }
   }
 
   clearAndReload() {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.removeItem(STORAGE_KEYS.TENANT_ID);
-      localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-      localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-      localStorage.removeItem(STORAGE_KEYS.USER);
-    }
+    this.storage.clearAllData();
     window.location.reload();
   }
 }

@@ -2,8 +2,9 @@ import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, tap, of, catchError, map } from 'rxjs';
 import { ApiService } from './api.service';
+import { StorageService } from './storage.service';
 import { User, AuthTokens, LoginRequest, RegisterRequest, AuthState } from '../models/user.model';
-import { STORAGE_KEYS, API_CONFIG } from '@shared/constants/api.constants';
+import { API_CONFIG } from '@shared/constants/api.constants';
 
 /**
  * Authentication Service
@@ -13,10 +14,11 @@ import { STORAGE_KEYS, API_CONFIG } from '@shared/constants/api.constants';
 export class AuthService {
   private api = inject(ApiService);
   private router = inject(Router);
+  private storage = inject(StorageService);
 
   private authState = signal<AuthState>({
-    user: this.loadUserFromStorage(),
-    tokens: this.loadTokensFromStorage(),
+    user: this.storage.getUser(),
+    tokens: this.storage.getTokens(),
     isAuthenticated: false,
     isLoading: false,
   });
@@ -40,7 +42,7 @@ export class AuthService {
     return this.api.post<{ user: User; token: string; refreshToken: string }>(API_CONFIG.ENDPOINTS.LOGIN, credentials).pipe(
       tap(response => {
         const tokens = { accessToken: response.token, refreshToken: response.refreshToken, expiresIn: 900 };
-        this.setAuthData(response.user, tokens);
+        this.storage.setAuthData(response.user, tokens);
         this.authState.update(state => ({
           user: response.user,
           tokens,
@@ -60,7 +62,7 @@ export class AuthService {
     return this.api.post<{ user: User; token: string; refreshToken: string }>(API_CONFIG.ENDPOINTS.REGISTER, registerData).pipe(
       tap(response => {
         const tokens = { accessToken: response.token, refreshToken: response.refreshToken, expiresIn: 900 };
-        this.setAuthData(response.user, tokens);
+        this.storage.setAuthData(response.user, tokens);
         this.authState.update(state => ({
           user: response.user,
           tokens,
@@ -91,12 +93,8 @@ export class AuthService {
           }
         }),
         map(() => {
-          // Clear localStorage (with SSR check)
-          if (typeof localStorage !== 'undefined') {
-            localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-            localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-            localStorage.removeItem(STORAGE_KEYS.USER);
-          }
+          // Clear auth data from storage
+          this.storage.clearAuthData();
 
           // Reset auth state
           this.authState.set({
@@ -115,11 +113,7 @@ export class AuthService {
       );
     } else {
       // No refresh token, just clear local data
-      if (typeof localStorage !== 'undefined') {
-        localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-        localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-        localStorage.removeItem(STORAGE_KEYS.USER);
-      }
+      this.storage.clearAuthData();
 
       this.authState.set({
         user: null,
@@ -138,16 +132,14 @@ export class AuthService {
    * Get the current access token
    */
   getAccessToken(): string | null {
-    if (typeof localStorage === 'undefined') return null;
-    return localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+    return this.storage.getAccessToken();
   }
 
   /**
    * Get the current refresh token
    */
   getRefreshToken(): string | null {
-    if (typeof localStorage === 'undefined') return null;
-    return localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+    return this.storage.getRefreshToken();
   }
 
   /**
@@ -163,48 +155,10 @@ export class AuthService {
       tap(tokens => {
         const currentUser = this.authState().user;
         if (currentUser) {
-          this.setAuthData(currentUser, tokens);
+          this.storage.setAuthData(currentUser, tokens);
           this.authState.update(state => ({ ...state, tokens }));
         }
       })
     );
-  }
-
-  /**
-   * Store auth data in localStorage
-   */
-  private setAuthData(user: User, tokens: AuthTokens): void {
-    if (typeof localStorage !== 'undefined') {
-      if (tokens.accessToken) {
-        localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, tokens.accessToken);
-      }
-      if (tokens.refreshToken) {
-        localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, tokens.refreshToken);
-      }
-      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
-    }
-  }
-
-  /**
-   * Load user from localStorage
-   */
-  private loadUserFromStorage(): User | null {
-    if (typeof localStorage === 'undefined') return null;
-    const userStr = localStorage.getItem(STORAGE_KEYS.USER);
-    return userStr ? JSON.parse(userStr) : null;
-  }
-
-  /**
-   * Load tokens from localStorage
-   */
-  private loadTokensFromStorage(): AuthTokens | null {
-    if (typeof localStorage === 'undefined') return null;
-    const accessToken = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
-    const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
-
-    if (accessToken && refreshToken) {
-      return { accessToken, refreshToken, expiresIn: 3600 };
-    }
-    return null;
   }
 }

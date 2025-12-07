@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { Router, CanActivateFn } from '@angular/router';
 import { map, catchError, of } from 'rxjs';
 import { TenantService } from '@core/services/tenant.service';
-import { STORAGE_KEYS } from '@shared/constants/api.constants';
+import { StorageService } from '@core/services/storage.service';
 
 /**
  * Extract tenant ID from subdomain
@@ -35,6 +35,7 @@ function extractTenantFromUrl(): string {
 export const tenantGuard: CanActivateFn = (route, state) => {
   const tenantService = inject(TenantService);
   const router = inject(Router);
+  const storage = inject(StorageService);
 
   // Extract tenant from URL
   const tenantId = extractTenantFromUrl();
@@ -55,7 +56,7 @@ export const tenantGuard: CanActivateFn = (route, state) => {
       }
 
       // Tenant is valid - save it to localStorage
-      localStorage.setItem(STORAGE_KEYS.TENANT_ID, tenantId);
+      storage.setTenantId(tenantId);
       console.log(`Tenant ${tenantId} validated and saved`);
       return true;
     }),
