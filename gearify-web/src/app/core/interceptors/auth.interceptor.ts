@@ -99,7 +99,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   // Check if token needs refresh before making the request
-  if (token && isTokenExpiringSoon(token)) {
+  // Only attempt refresh if we have a refresh token available
+  const refreshToken = authService.getRefreshToken();
+  if (token && refreshToken && isTokenExpiringSoon(token)) {
     // Token is expired or about to expire, refresh it first
     return authService.refreshToken().pipe(
       switchMap((tokens) => {
@@ -114,7 +116,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     );
   }
 
-  // Token is still valid, proceed normally
+  // Token is still valid or no refresh token available, proceed normally
   return next(addAuthHeaders(req, token, tenantId));
 };
 

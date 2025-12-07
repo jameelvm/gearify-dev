@@ -143,6 +143,14 @@ export class AuthService {
   }
 
   /**
+   * Get the current refresh token
+   */
+  getRefreshToken(): string | null {
+    if (typeof localStorage === 'undefined') return null;
+    return localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+  }
+
+  /**
    * Refresh the access token
    */
   refreshToken(): Observable<AuthTokens> {
