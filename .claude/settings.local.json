@@ -82,7 +82,9 @@
       "Bash(if [ ! -f \"gearify-web/src/app/ui-kit/components/badge/badge.component.scss\" ])",
       "Bash(then echo \"// Badge component styles\")",
       "Bash(else echo \"File already exists\")",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(npm test)",
+      "Bash(npm test:*)"
     ],
     "deny": [],
     "ask": []
