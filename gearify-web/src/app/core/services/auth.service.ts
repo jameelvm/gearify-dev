@@ -55,18 +55,17 @@ export class AuthService {
 
   /**
    * Register a new user
+   * Note: Does not auto-login. User must verify email first.
    */
   register(data: RegisterRequest): Observable<{ user: User; token: string; refreshToken: string }> {
     this.authState.update(state => ({ ...state, isLoading: true }));
     const registerData = { ...data, role: data.role || 'Customer' };
     return this.api.post<{ user: User; token: string; refreshToken: string }>(API_CONFIG.ENDPOINTS.REGISTER, registerData).pipe(
-      tap(response => {
-        const tokens = { accessToken: response.token, refreshToken: response.refreshToken, expiresIn: 900 };
-        this.storage.setAuthData(response.user, tokens);
+      tap(() => {
+        // Do NOT store tokens or set authenticated state
+        // User must verify email before they can login
         this.authState.update(state => ({
-          user: response.user,
-          tokens,
-          isAuthenticated: true,
+          ...state,
           isLoading: false,
         }));
       })
@@ -160,5 +159,12 @@ export class AuthService {
         }
       })
     );
+  }
+
+  /**
+   * Verify email address using verification token
+   */
+  verifyEmail(token: string): Observable<{ message: string }> {
+    return this.api.post<{ message: string }>(`${API_CONFIG.ENDPOINTS.VERIFY_EMAIL}?token=${token}`, {});
   }
 }

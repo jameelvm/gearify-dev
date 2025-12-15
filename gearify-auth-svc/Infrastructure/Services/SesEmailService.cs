@@ -43,7 +43,7 @@ public class SesEmailService : IEmailService
         string verificationToken,
         CancellationToken cancellationToken = default)
     {
-        var verificationLink = $"{_webAppUrl}/verify-email?token={verificationToken}";
+        var verificationLink = $"{_webAppUrl}/auth/verify-email?token={verificationToken}";
 
         // Prepare template data
         var templateData = new Dictionary<string, string>

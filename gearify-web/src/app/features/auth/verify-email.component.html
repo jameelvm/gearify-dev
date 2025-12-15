@@ -1,0 +1,55 @@
+<div class="verify-email-container">
+  <div class="verify-email-card">
+    <!-- Verifying State -->
+    <div *ngIf="isVerifying" class="verifying-state">
+      <div class="spinner"></div>
+      <h1>Verifying Your Email...</h1>
+      <p>Please wait while we verify your email address.</p>
+    </div>
+
+    <!-- Success State -->
+    <div *ngIf="!isVerifying && verificationSuccess" class="success-state">
+      <div class="success-icon">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+      <h1>Email Verified!</h1>
+      <p class="success-text">
+        Your email has been successfully verified. You can now log in to your account.
+      </p>
+      <p class="redirect-text">
+        Redirecting to login page in 3 seconds...
+      </p>
+      <div class="actions">
+        <a routerLink="/auth/login" class="btn-primary">Go to Login Now</a>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!isVerifying && !verificationSuccess" class="error-state">
+      <div class="error-icon">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <h1>Verification Failed</h1>
+      <p class="error-text">{{ errorMessage }}</p>
+      <div class="info-box">
+        <p>What you can do:</p>
+        <ul>
+          <li>Request a new verification email from the registration page</li>
+          <li>Make sure you're using the latest verification link sent to your email</li>
+          <li>Contact support if the problem persists</li>
+        </ul>
+      </div>
+      <div class="actions">
+        <a routerLink="/auth/register" class="btn-secondary">Back to Register</a>
+        <a routerLink="/auth/login" class="btn-primary">Go to Login</a>
+      </div>
+    </div>
+  </div>
+</div>

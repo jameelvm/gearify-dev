@@ -84,7 +84,12 @@
       "Bash(else echo \"File already exists\")",
       "Bash(ls:*)",
       "Bash(npm test)",
-      "Bash(npm test:*)"
+      "Bash(npm test:*)",
+      "Bash(aws dynamodb scan:*)",
+      "Bash(AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws dynamodb scan:*)",
+      "Bash(AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws dynamodb:*)",
+      "Bash(start http://localhost:8025)",
+      "Bash(start http://localhost:4200/auth/register)"
     ],
     "deny": [],
     "ask": []

@@ -9,6 +9,7 @@ export const API_CONFIG = {
     REFRESH_TOKEN: '/api/auth/refresh',
     LOGOUT: '/api/auth/logout',
     ME: '/api/auth/me',
+    VERIFY_EMAIL: '/api/auth/verify-email',
     
     // Products
     PRODUCTS: '/api/catalog/products',

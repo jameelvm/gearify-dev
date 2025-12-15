@@ -120,4 +120,86 @@
     .register-footer a:hover {
       text-decoration: underline;
     }
+
+    .email-sent-message {
+      text-align: center;
+      padding: 1rem 0;
+    }
+
+    .success-icon {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+
+      svg {
+        color: #48bb78;
+        width: 64px;
+        height: 64px;
+      }
+    }
+
+    .email-sent-message h1 {
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 1rem;
+    }
+
+    .email-sent-text {
+      color: #4a5568;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+
+    .instruction-text {
+      color: #718096;
+      font-size: 0.9375rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    .info-box {
+      background-color: #f7fafc;
+      border-left: 4px solid #667eea;
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin: 1.5rem 0;
+      text-align: left;
+
+      p {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 0.75rem;
+        font-size: 0.875rem;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 1.25rem;
+        color: #4a5568;
+        font-size: 0.875rem;
+
+        li {
+          margin-bottom: 0.5rem;
+          line-height: 1.4;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+
+    .actions {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center;
+
+      .btn-primary {
+        display: inline-block;
+        text-decoration: none;
+        text-align: center;
+      }
+    }
   

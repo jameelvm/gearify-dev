@@ -19,6 +19,8 @@ export class RegisterComponent {
   registerForm: FormGroup;
   isLoading = false;
   errorMessage = '';
+  emailSent = false;
+  registeredEmail = '';
 
   constructor() {
     this.registerForm = this.fb.group({
@@ -52,7 +54,8 @@ export class RegisterComponent {
     this.authService.register({ email, password, firstName, lastName, role: 'Customer' }).subscribe({
       next: () => {
         this.isLoading = false;
-        this.router.navigate(['/home']);
+        this.emailSent = true;
+        this.registeredEmail = email;
       },
       error: (error) => {
         this.isLoading = false;

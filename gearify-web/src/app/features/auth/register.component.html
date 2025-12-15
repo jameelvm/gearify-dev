@@ -1,12 +1,41 @@
 
     <div class="register-container">
       <div class="register-card">
-        <div class="register-header">
-          <h1>Create Account</h1>
-          <p>Sign up to get started</p>
+        <!-- Show email verification message after successful registration -->
+        <div *ngIf="emailSent" class="email-sent-message">
+          <div class="success-icon">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <h1>Verify Your Email</h1>
+          <p class="email-sent-text">
+            We've sent a verification email to <strong>{{ registeredEmail }}</strong>
+          </p>
+          <p class="instruction-text">
+            Please check your inbox and click the verification link to activate your account.
+          </p>
+          <div class="info-box">
+            <p>Didn't receive the email?</p>
+            <ul>
+              <li>Check your spam or junk folder</li>
+              <li>Make sure the email address is correct</li>
+              <li>The verification link expires in 24 hours</li>
+            </ul>
+          </div>
+          <div class="actions">
+            <a routerLink="/auth/login" class="btn-primary">Go to Login</a>
+          </div>
         </div>
 
-        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+        <!-- Show registration form if email not sent yet -->
+        <div *ngIf="!emailSent">
+          <div class="register-header">
+            <h1>Create Account</h1>
+            <p>Sign up to get started</p>
+          </div>
+
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
           <div class="form-row">
             <div class="form-group">
               <label for="firstName">First Name</label>
@@ -92,10 +121,11 @@
             <span *ngIf="!isLoading">Create Account</span>
             <span *ngIf="isLoading">Creating account...</span>
           </button>
-        </form>
+          </form>
 
-        <div class="register-footer">
-          <p>Already have an account? <a routerLink="/auth/login">Sign in</a></p>
+          <div class="register-footer">
+            <p>Already have an account? <a routerLink="/auth/login">Sign in</a></p>
+          </div>
         </div>
       </div>
     </div>
