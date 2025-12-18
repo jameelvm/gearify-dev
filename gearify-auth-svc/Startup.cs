@@ -178,7 +178,6 @@ public class Startup
 
         // Repositories
         services.AddScoped<IUserRepository, DynamoDbUserRepository>();
-        services.AddScoped<IMfaCodeRepository, DynamoDbMfaCodeRepository>();
         services.AddScoped<IUserSessionRepository, DynamoDbUserSessionRepository>();
 
         // Core Services
@@ -190,11 +189,6 @@ public class Startup
         // Security Services
         services.AddScoped<IPasswordPolicyService, PasswordPolicyService>();
         services.AddScoped<IAccountLockoutService, AccountLockoutService>();
-
-        // MFA Services
-        services.AddScoped<ITotpService, TotpService>();
-        services.AddScoped<IOtpService, OtpService>();
-        services.AddScoped<ISmsService, SmsService>();
 
         // Session Services
         services.AddScoped<ISessionService, SessionService>();

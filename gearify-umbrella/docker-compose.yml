@@ -28,6 +28,7 @@ services:
       - DYNAMODB_SHARE_DB=1
       - PERSISTENCE=1
       - SMTP_HOST=mailhog:1025
+      - SES_SMTP_HOST=mailhog:1025
     ports:
       - "4566:4566"
     volumes:

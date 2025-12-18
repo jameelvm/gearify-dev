@@ -90,33 +90,6 @@ public class User
     /// </summary>
     public DateTime? EmailVerificationTokenExpiry { get; set; }
 
-    // ==================== MFA Fields ====================
-
-    /// <summary>
-    /// Gets or sets whether MFA is enabled for this user
-    /// </summary>
-    public bool MfaEnabled { get; set; } = false;
-
-    /// <summary>
-    /// Gets or sets the preferred MFA method
-    /// </summary>
-    public string PreferredMfaMethod { get; set; } = "None"; // Stored as string for DynamoDB
-
-    /// <summary>
-    /// Gets or sets the TOTP secret for authenticator apps (encrypted)
-    /// </summary>
-    public string? TotpSecret { get; set; }
-
-    /// <summary>
-    /// Gets or sets the backup codes (hashed, comma-separated)
-    /// </summary>
-    public string? BackupCodes { get; set; }
-
-    /// <summary>
-    /// Gets or sets when MFA was last set up
-    /// </summary>
-    public DateTime? LastMfaSetupAt { get; set; }
-
     // ==================== Password Reset Fields ====================
 
     /// <summary>

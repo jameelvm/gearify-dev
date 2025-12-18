@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MFA QR Code Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .input-section {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        #qr-display {
+            text-align: center;
+            margin-top: 30px;
+        }
+        #qr-display img {
+            max-width: 300px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 10px;
+            background: white;
+        }
+        .manual-key {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .manual-key code {
+            font-size: 18px;
+            color: #667eea;
+            font-weight: bold;
+        }
+        .instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-left: 4px solid #2196F3;
+            margin: 20px 0;
+        }
+        .instructions ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 MFA QR Code Viewer</h1>
+
+        <div class="instructions">
+            <strong>📱 Instructions:</strong>
+            <ol>
+                <li>Copy the <code>qrCodeBase64</code> value from Swagger response</li>
+                <li>Paste it in the box below (keep the "data:image/png;base64," part)</li>
+                <li>Click "Show QR Code"</li>
+                <li>Scan with your authenticator app</li>
+            </ol>
+        </div>
+
+        <div class="input-section">
+            <label for="qr-input">Paste QR Code Base64 String:</label>
+            <textarea
+                id="qr-input"
+                placeholder="Paste the complete qrCodeBase64 value here (starting with data:image/png;base64,...)"></textarea>
+        </div>
+
+        <button onclick="displayQR()">Show QR Code</button>
+
+        <div id="qr-display"></div>
+
+        <div class="input-section" style="margin-top: 30px;">
+            <label for="manual-key">Or paste Manual Entry Key:</label>
+            <textarea
+                id="manual-key"
+                placeholder="Paste the manualEntryKey value here (e.g., JBSWY3DPEHPK3PXP)"
+                rows="2"></textarea>
+            <button onclick="displayManualKey()" style="margin-top: 10px;">Show Manual Key</button>
+        </div>
+
+        <div id="manual-display"></div>
+    </div>
+
+    <script>
+        function displayQR() {
+            const input = document.getElementById('qr-input').value.trim();
+            const display = document.getElementById('qr-display');
+
+            if (!input) {
+                alert('Please paste the QR code base64 string first!');
+                return;
+            }
+
+            if (!input.startsWith('data:image/png;base64,')) {
+                alert('The string should start with "data:image/png;base64,"');
+                return;
+            }
+
+            display.innerHTML = `
+                <h2>📱 Scan this QR Code</h2>
+                <img src="${input}" alt="MFA QR Code" />
+                <p style="color: #666; margin-top: 20px;">
+                    Open your authenticator app and scan this code
+                </p>
+            `;
+        }
+
+        function displayManualKey() {
+            const input = document.getElementById('manual-key').value.trim();
+            const display = document.getElementById('manual-display');
+
+            if (!input) {
+                alert('Please paste the manual entry key first!');
+                return;
+            }
+
+            display.innerHTML = `
+                <div class="manual-key">
+                    <h3>Manual Entry Key</h3>
+                    <code>${input}</code>
+                    <p style="color: #666; margin-top: 15px; font-size: 14px;">
+                        In your authenticator app, choose "Enter a setup key" and type this code
+                    </p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

@@ -188,29 +188,6 @@ public class DynamoDbUserRepository : IUserRepository
             item["PasswordHistory"] = new AttributeValue { S = user.PasswordHistory };
         }
 
-        // MFA Fields
-        item["MfaEnabled"] = new AttributeValue { BOOL = user.MfaEnabled };
-
-        if (!string.IsNullOrEmpty(user.PreferredMfaMethod))
-        {
-            item["PreferredMfaMethod"] = new AttributeValue { S = user.PreferredMfaMethod };
-        }
-
-        if (!string.IsNullOrEmpty(user.TotpSecret))
-        {
-            item["TotpSecret"] = new AttributeValue { S = user.TotpSecret };
-        }
-
-        if (!string.IsNullOrEmpty(user.BackupCodes))
-        {
-            item["BackupCodes"] = new AttributeValue { S = user.BackupCodes };
-        }
-
-        if (user.LastMfaSetupAt.HasValue)
-        {
-            item["LastMfaSetupAt"] = new AttributeValue { S = user.LastMfaSetupAt.Value.ToString("O") };
-        }
-
         // Password Reset Fields
         if (!string.IsNullOrEmpty(user.PasswordResetToken))
         {
@@ -289,32 +266,6 @@ public class DynamoDbUserRepository : IUserRepository
         if (item.ContainsKey("PasswordHistory"))
         {
             user.PasswordHistory = item["PasswordHistory"].S;
-        }
-
-        // MFA Fields
-        if (item.ContainsKey("MfaEnabled"))
-        {
-            user.MfaEnabled = item["MfaEnabled"].BOOL;
-        }
-
-        if (item.ContainsKey("PreferredMfaMethod"))
-        {
-            user.PreferredMfaMethod = item["PreferredMfaMethod"].S;
-        }
-
-        if (item.ContainsKey("TotpSecret"))
-        {
-            user.TotpSecret = item["TotpSecret"].S;
-        }
-
-        if (item.ContainsKey("BackupCodes"))
-        {
-            user.BackupCodes = item["BackupCodes"].S;
-        }
-
-        if (item.ContainsKey("LastMfaSetupAt"))
-        {
-            user.LastMfaSetupAt = DateTime.Parse(item["LastMfaSetupAt"].S);
         }
 
         // Password Reset Fields
