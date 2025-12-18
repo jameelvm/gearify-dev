@@ -71,8 +71,11 @@ public class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordComman
             await _repository.UpdateAsync(user);
 
             // Send password reset email
-            var webAppUrl = _configuration["WebAppUrl"] ?? "http://localhost:4200";
-            var resetLink = $"{webAppUrl}/reset-password?token={resetToken}&email={Uri.EscapeDataString(user.Email)}";
+            // Construct URL with tenant subdomain for multi-tenancy
+            var baseUrl = _configuration["WebAppBaseUrl"] ?? "localhost.direct:4200";
+            var protocol = _configuration["WebAppProtocol"] ?? "http";
+            var webAppUrl = $"{protocol}://{tenantId}.{baseUrl}";
+            var resetLink = $"{webAppUrl}/auth/reset-password?token={resetToken}&email={Uri.EscapeDataString(user.Email)}";
 
             var emailData = new Dictionary<string, string>
             {

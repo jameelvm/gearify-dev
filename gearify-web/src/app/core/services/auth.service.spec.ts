@@ -178,7 +178,7 @@ describe('AuthService', () => {
   });
 
   describe('register', () => {
-    it('should successfully register user and store auth data', (done) => {
+    it('should successfully register user without storing auth data (email verification required)', (done) => {
       const registerData: RegisterRequest = {
         email: 'newuser@example.com',
         password: 'password123',
@@ -196,8 +196,10 @@ describe('AuthService', () => {
 
       service.register(registerData).subscribe(() => {
         expect(apiService.post).toHaveBeenCalled();
-        expect(storageService.setAuthData).toHaveBeenCalled();
-        expect(service.isAuthenticated()).toBe(true);
+        // Auth data should NOT be stored - user must verify email first
+        expect(storageService.setAuthData).not.toHaveBeenCalled();
+        // User should NOT be authenticated until email is verified
+        expect(service.isAuthenticated()).toBe(false);
         done();
       });
     });

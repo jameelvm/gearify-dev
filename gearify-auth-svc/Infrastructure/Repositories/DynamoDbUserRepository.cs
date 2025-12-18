@@ -276,7 +276,7 @@ public class DynamoDbUserRepository : IUserRepository
 
         if (item.ContainsKey("PasswordResetTokenExpiry"))
         {
-            user.PasswordResetTokenExpiry = DateTime.Parse(item["PasswordResetTokenExpiry"].S);
+            user.PasswordResetTokenExpiry = DateTime.Parse(item["PasswordResetTokenExpiry"].S, null, System.Globalization.DateTimeStyles.RoundtripKind);
         }
 
         if (item.ContainsKey("LastPasswordChangeAt"))

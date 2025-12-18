@@ -167,4 +167,22 @@ export class AuthService {
   verifyEmail(token: string): Observable<{ message: string }> {
     return this.api.post<{ message: string }>(`${API_CONFIG.ENDPOINTS.VERIFY_EMAIL}?token=${token}`, {});
   }
+
+  /**
+   * Request password reset email
+   */
+  forgotPassword(email: string): Observable<{ success: boolean; message: string }> {
+    return this.api.post<{ success: boolean; message: string }>(API_CONFIG.ENDPOINTS.FORGOT_PASSWORD, { email });
+  }
+
+  /**
+   * Reset password using reset token
+   */
+  resetPassword(email: string, resetToken: string, newPassword: string): Observable<{ success: boolean; message: string }> {
+    return this.api.post<{ success: boolean; message: string }>(API_CONFIG.ENDPOINTS.RESET_PASSWORD, {
+      email,
+      resetToken,
+      newPassword
+    });
+  }
 }

@@ -10,6 +10,8 @@ export const API_CONFIG = {
     LOGOUT: '/api/auth/logout',
     ME: '/api/auth/me',
     VERIFY_EMAIL: '/api/auth/verify-email',
+    FORGOT_PASSWORD: '/api/password/forgot',
+    RESET_PASSWORD: '/api/password/reset',
     
     // Products
     PRODUCTS: '/api/catalog/products',

@@ -92,7 +92,10 @@
       "Bash(start http://localhost:4200/auth/register)",
       "Bash(start http://localhost:5011/swagger)",
       "Bash(start C:Gearifyview-qr-code.html)",
-      "Bash(cmd /c start \"\" \"C:\\Gearify\\view-qr-code.html\")"
+      "Bash(cmd /c start \"\" \"C:\\Gearify\\view-qr-code.html\")",
+      "Bash(start http://localhost:4200/auth/login)",
+      "Bash(start http://localhost:4200/auth/forgot-password)",
+      "Bash(start cmd /c \"npm start\")"
     ],
     "deny": [],
     "ask": []
