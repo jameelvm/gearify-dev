@@ -458,6 +458,7 @@ services:
       - notification-svc
 
   web:
+    profiles: ["web"]  # Only start with: docker-compose --profile web up
     build:
       context: ..
       dockerfile: gearify-web/Dockerfile
