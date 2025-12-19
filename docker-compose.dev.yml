@@ -6,6 +6,7 @@ version: '3.9'
 
 services:
   gearify-web:
+    profiles: ["web"]  # Only start with: docker-compose -f docker-compose.dev.yml --profile web up
     build:
       context: ./gearify-web
       dockerfile: Dockerfile.dev
