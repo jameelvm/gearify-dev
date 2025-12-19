@@ -64,8 +64,8 @@ public class SessionSettings
 {
     public int MaxConcurrentSessions { get; set; } = 5;
     public int SessionTimeoutMinutes { get; set; } = 60;
-    public int RefreshTokenExpiryDays { get; set; } = 7;
-    public int RefreshTokenExpiryDaysRememberMe { get; set; } = 30;
+    public int RefreshTokenExpiryDays { get; set; } = 1;
+    public int RefreshTokenExpiryDaysRememberMe { get; set; } = 7;
 }
 
 /// <summary>
