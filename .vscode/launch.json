@@ -1,0 +1,109 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Catalog Service",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-catalog",
+      "program": "${workspaceFolder}/gearify-catalog-svc/bin/Debug/net8.0/Gearify.CatalogService.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/gearify-catalog-svc",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/swagger"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:6001",
+        "DYNAMODB_ENDPOINT": "http://localhost:4566",
+        "S3_ENDPOINT": "http://localhost:4566",
+        "REDIS_URL": "localhost:6379",
+        "SEQ_URL": "http://localhost:5341",
+        "OTLP_ENDPOINT": "http://localhost:4318"
+      },
+      "sourceFileMap": {
+        "/Views": "${workspaceFolder}/Views"
+      }
+    },
+    {
+      "name": "Debug Cart Service",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-cart",
+      "program": "${workspaceFolder}/gearify-cart-svc/bin/Debug/net8.0/Gearify.CartService.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/gearify-cart-svc",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/swagger"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:6002",
+        "REDIS_URL": "localhost:6379",
+        "SEQ_URL": "http://localhost:5341",
+        "OTLP_ENDPOINT": "http://localhost:4318"
+      }
+    },
+    {
+      "name": "Debug Payment Service",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-payment",
+      "program": "${workspaceFolder}/gearify-payment-svc/bin/Debug/net8.0/Gearify.PaymentService.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/gearify-payment-svc",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/swagger"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:6005",
+        "REDIS_URL": "localhost:6379",
+        "SEQ_URL": "http://localhost:5341",
+        "OTLP_ENDPOINT": "http://localhost:4318",
+        "STRIPE_SECRET_KEY": "sk_test_your_stripe_key",
+        "PAYPAL_CLIENT_ID": "your_paypal_client_id"
+      }
+    },
+    {
+      "name": "Debug API Gateway",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-gateway",
+      "program": "${workspaceFolder}/gearify-api-gateway/bin/Debug/net8.0/Gearify.ApiGateway.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/gearify-api-gateway",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:6000",
+        "SEQ_URL": "http://localhost:5341",
+        "OTLP_ENDPOINT": "http://localhost:4318"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug All Services",
+      "configurations": [
+        "Debug Catalog Service",
+        "Debug Cart Service",
+        "Debug Payment Service"
+      ],
+      "stopAll": true
+    }
+  ]
+}
