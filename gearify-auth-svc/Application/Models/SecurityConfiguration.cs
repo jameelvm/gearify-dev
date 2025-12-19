@@ -53,7 +53,7 @@ public class MfaSettings
 /// </summary>
 public class PasswordResetSettings
 {
-    public int TokenExpiryHours { get; set; } = 24;
+    public int TokenExpiryHours { get; set; } = 1;
     public int MaxResetAttemptsPerDay { get; set; } = 3;
 }
 
