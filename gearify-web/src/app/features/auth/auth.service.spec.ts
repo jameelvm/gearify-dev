@@ -2,13 +2,13 @@ import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
-import { ApiService } from './api.service';
-import { StorageService } from './storage.service';
+import { HttpService } from '@core/services/http.service';
+import { StorageService } from '@core/services/storage.service';
 import { User, AuthTokens, LoginRequest, RegisterRequest } from '../models/user.model';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let apiService: jest.Mocked<ApiService>;
+  let httpService: jest.Mocked<HttpService>;
   let storageService: jest.Mocked<StorageService>;
   let router: jest.Mocked<Router>;
 
@@ -29,7 +29,7 @@ describe('AuthService', () => {
   };
 
   beforeEach(() => {
-    const apiServiceSpy = {
+    const httpServiceSpy = {
       post: jest.fn()
     } as any;
     const storageServiceSpy = {
@@ -47,13 +47,13 @@ describe('AuthService', () => {
     TestBed.configureTestingModule({
       providers: [
         AuthService,
-        { provide: ApiService, useValue: apiServiceSpy },
+        { provide: HttpService, useValue: httpServiceSpy },
         { provide: StorageService, useValue: storageServiceSpy },
         { provide: Router, useValue: routerSpy }
       ]
     });
 
-    apiService = TestBed.inject(ApiService) as jest.Mocked<ApiService>;
+    httpService = TestBed.inject(HttpService) as jest.Mocked<HttpService>;
     storageService = TestBed.inject(StorageService) as jest.Mocked<StorageService>;
     router = TestBed.inject(Router) as jest.Mocked<Router>;
 
@@ -78,7 +78,7 @@ describe('AuthService', () => {
     it('should initialize as authenticated when tokens exist in storage', () => {
       // Need to reset and reconfigure TestBed with tokens present before service is created
       TestBed.resetTestingModule();
-      const apiServiceSpy = {
+      const httpServiceSpy = {
         post: jest.fn()
       } as any;
       const storageServiceSpy = {
@@ -96,7 +96,7 @@ describe('AuthService', () => {
       TestBed.configureTestingModule({
         providers: [
           AuthService,
-          { provide: ApiService, useValue: apiServiceSpy },
+          { provide: HttpService, useValue: httpServiceSpy },
           { provide: StorageService, useValue: storageServiceSpy },
           { provide: Router, useValue: routerSpy }
         ]
@@ -120,10 +120,10 @@ describe('AuthService', () => {
         refreshToken: 'refresh-token'
       };
 
-      apiService.post.mockReturnValue(of(mockResponse));
+      httpService.post.mockReturnValue(of(mockResponse));
 
       service.login(credentials).subscribe(() => {
-        expect(apiService.post).toHaveBeenCalled();
+        expect(httpService.post).toHaveBeenCalled();
         expect(storageService.setAuthData).toHaveBeenCalledWith(
           mockUser,
           expect.objectContaining({
@@ -148,7 +148,7 @@ describe('AuthService', () => {
         refreshToken: 'refresh-token'
       };
 
-      apiService.post.mockReturnValue(of(mockResponse));
+      httpService.post.mockReturnValue(of(mockResponse));
 
       service.login(credentials).subscribe(() => {
         expect(service.user().user).toEqual(mockUser);
@@ -164,7 +164,7 @@ describe('AuthService', () => {
       };
 
       const error = new Error('Invalid credentials');
-      apiService.post.mockReturnValue(throwError(() => error));
+      httpService.post.mockReturnValue(throwError(() => error));
 
       service.login(credentials).subscribe({
         next: () => fail('Should have failed'),
@@ -192,10 +192,10 @@ describe('AuthService', () => {
         refreshToken: 'refresh-token'
       };
 
-      apiService.post.mockReturnValue(of(mockResponse));
+      httpService.post.mockReturnValue(of(mockResponse));
 
       service.register(registerData).subscribe(() => {
-        expect(apiService.post).toHaveBeenCalled();
+        expect(httpService.post).toHaveBeenCalled();
         // Auth data should NOT be stored - user must verify email first
         expect(storageService.setAuthData).not.toHaveBeenCalled();
         // User should NOT be authenticated until email is verified
@@ -218,10 +218,10 @@ describe('AuthService', () => {
         refreshToken: 'refresh-token'
       };
 
-      apiService.post.mockReturnValue(of(mockResponse));
+      httpService.post.mockReturnValue(of(mockResponse));
 
       service.register(registerData).subscribe(() => {
-        expect(apiService.post).toHaveBeenCalledWith(
+        expect(httpService.post).toHaveBeenCalledWith(
           expect.any(String),
           expect.objectContaining({ role: 'Customer' })
         );
@@ -244,10 +244,10 @@ describe('AuthService', () => {
         refreshToken: 'refresh-token'
       };
 
-      apiService.post.mockReturnValue(of(mockResponse));
+      httpService.post.mockReturnValue(of(mockResponse));
 
       service.register(registerData).subscribe(() => {
-        expect(apiService.post).toHaveBeenCalledWith(
+        expect(httpService.post).toHaveBeenCalledWith(
           expect.any(String),
           expect.objectContaining({ role: 'Admin' })
         );
@@ -264,7 +264,7 @@ describe('AuthService', () => {
       };
 
       const error = new Error('Email already exists');
-      apiService.post.mockReturnValue(throwError(() => error));
+      httpService.post.mockReturnValue(throwError(() => error));
 
       service.register(registerData).subscribe({
         next: () => fail('Should have failed'),
@@ -281,7 +281,7 @@ describe('AuthService', () => {
     it('should call API to revoke session when refresh token exists', (done) => {
       // Create service with tokens already in auth state
       TestBed.resetTestingModule();
-      const apiServiceSpy = {
+      const httpServiceSpy = {
         post: jest.fn().mockReturnValue(of({ message: 'Logged out successfully' }))
       } as any;
       const storageServiceSpy = {
@@ -299,7 +299,7 @@ describe('AuthService', () => {
       TestBed.configureTestingModule({
         providers: [
           AuthService,
-          { provide: ApiService, useValue: apiServiceSpy },
+          { provide: HttpService, useValue: httpServiceSpy },
           { provide: StorageService, useValue: storageServiceSpy },
           { provide: Router, useValue: routerSpy }
         ]
@@ -308,7 +308,7 @@ describe('AuthService', () => {
       const authService = TestBed.inject(AuthService);
 
       authService.logout().subscribe(() => {
-        expect(apiServiceSpy.post).toHaveBeenCalled();
+        expect(httpServiceSpy.post).toHaveBeenCalled();
         expect(storageServiceSpy.clearAuthData).toHaveBeenCalled();
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/auth/login']);
         done();
@@ -318,7 +318,7 @@ describe('AuthService', () => {
     it('should clear auth data even if API call fails', (done) => {
       // Create service with tokens
       TestBed.resetTestingModule();
-      const apiServiceSpy = {
+      const httpServiceSpy = {
         post: jest.fn().mockReturnValue(throwError(() => new Error('Network error')))
       } as any;
       const storageServiceSpy = {
@@ -336,7 +336,7 @@ describe('AuthService', () => {
       TestBed.configureTestingModule({
         providers: [
           AuthService,
-          { provide: ApiService, useValue: apiServiceSpy },
+          { provide: HttpService, useValue: httpServiceSpy },
           { provide: StorageService, useValue: storageServiceSpy },
           { provide: Router, useValue: routerSpy }
         ]
@@ -355,7 +355,7 @@ describe('AuthService', () => {
     it('should clear local data when no refresh token exists', (done) => {
       // Service already initialized with no tokens (from main beforeEach)
       service.logout().subscribe(() => {
-        expect(apiService.post).not.toHaveBeenCalled();
+        expect(httpService.post).not.toHaveBeenCalled();
         expect(storageService.clearAuthData).toHaveBeenCalled();
         expect(router.navigate).toHaveBeenCalledWith(['/auth/login']);
         done();
@@ -365,7 +365,7 @@ describe('AuthService', () => {
     it('should reset auth state after logout', (done) => {
       // Create service with tokens
       TestBed.resetTestingModule();
-      const apiServiceSpy = {
+      const httpServiceSpy = {
         post: jest.fn().mockReturnValue(of({ message: 'Logged out' }))
       } as any;
       const storageServiceSpy = {
@@ -383,7 +383,7 @@ describe('AuthService', () => {
       TestBed.configureTestingModule({
         providers: [
           AuthService,
-          { provide: ApiService, useValue: apiServiceSpy },
+          { provide: HttpService, useValue: httpServiceSpy },
           { provide: StorageService, useValue: storageServiceSpy },
           { provide: Router, useValue: routerSpy }
         ]
@@ -435,7 +435,7 @@ describe('AuthService', () => {
     it('should handle refresh token errors', (done) => {
       // Create a service with tokens by reconfiguring
       TestBed.resetTestingModule();
-      const apiServiceSpy = {
+      const httpServiceSpy = {
         post: jest.fn()
       } as any;
       const storageServiceSpy = {
@@ -453,7 +453,7 @@ describe('AuthService', () => {
       TestBed.configureTestingModule({
         providers: [
           AuthService,
-          { provide: ApiService, useValue: apiServiceSpy },
+          { provide: HttpService, useValue: httpServiceSpy },
           { provide: StorageService, useValue: storageServiceSpy },
           { provide: Router, useValue: routerSpy }
         ]
@@ -461,7 +461,7 @@ describe('AuthService', () => {
 
       const authService = TestBed.inject(AuthService);
       const error = new Error('Invalid refresh token');
-      apiServiceSpy.post.mockReturnValue(throwError(() => error));
+      httpServiceSpy.post.mockReturnValue(throwError(() => error));
 
       authService.refreshToken().subscribe({
         next: () => fail('Should have failed'),
@@ -481,7 +481,7 @@ describe('AuthService', () => {
 
       // Create a service with tokens by reconfiguring
       TestBed.resetTestingModule();
-      const apiServiceSpy = {
+      const httpServiceSpy = {
         post: jest.fn().mockReturnValue(of(newTokens))
       } as any;
       const storageServiceSpy = {
@@ -499,7 +499,7 @@ describe('AuthService', () => {
       TestBed.configureTestingModule({
         providers: [
           AuthService,
-          { provide: ApiService, useValue: apiServiceSpy },
+          { provide: HttpService, useValue: httpServiceSpy },
           { provide: StorageService, useValue: storageServiceSpy },
           { provide: Router, useValue: routerSpy }
         ]
@@ -523,7 +523,7 @@ describe('AuthService', () => {
 
       // Create a service with tokens but no user
       TestBed.resetTestingModule();
-      const apiServiceSpy = {
+      const httpServiceSpy = {
         post: jest.fn().mockReturnValue(of(newTokens))
       } as any;
       const storageServiceSpy = {
@@ -541,7 +541,7 @@ describe('AuthService', () => {
       TestBed.configureTestingModule({
         providers: [
           AuthService,
-          { provide: ApiService, useValue: apiServiceSpy },
+          { provide: HttpService, useValue: httpServiceSpy },
           { provide: StorageService, useValue: storageServiceSpy },
           { provide: Router, useValue: routerSpy }
         ]

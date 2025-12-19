@@ -1,4 +1,5 @@
 // Barrel export for auth feature module
+export * from './auth.service';
 export * from './login/login.component';
 export * from './register/register.component';
 export * from './verify-email/verify-email.component';

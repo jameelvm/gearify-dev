@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RegisterComponent } from './register.component';
-import { AuthService } from '@core/services/auth.service';
+import { AuthService } from '@features/auth/auth.service';
 import { Router, provideRouter } from '@angular/router';
 import { Component } from '@angular/core';
 

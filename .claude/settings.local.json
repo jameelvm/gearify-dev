@@ -97,7 +97,8 @@
       "Bash(start http://localhost:4200/auth/forgot-password)",
       "Bash(start cmd /c \"npm start\")",
       "Bash(git filter-branch:*)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(git mv:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,10 +1,10 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, tap, of, catchError, map } from 'rxjs';
-import { ApiService } from './api.service';
-import { StorageService } from './storage.service';
-import { User, AuthTokens, LoginRequest, RegisterRequest, AuthState } from '../models/user.model';
+import { HttpService } from '@core/services/http.service';
+import { StorageService } from '@core/services/storage.service';
 import { API_CONFIG } from '@shared/constants/api.constants';
+import { User, AuthTokens, LoginRequest, RegisterRequest, AuthState } from '@app/core/models/user.model';
 
 /**
  * Authentication Service
@@ -12,7 +12,7 @@ import { API_CONFIG } from '@shared/constants/api.constants';
  */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private api = inject(ApiService);
+  private http = inject(HttpService);
   private router = inject(Router);
   private storage = inject(StorageService);
 
@@ -39,7 +39,7 @@ export class AuthService {
    */
   login(credentials: LoginRequest): Observable<{ user: User; token: string; refreshToken: string }> {
     this.authState.update(state => ({ ...state, isLoading: true }));
-    return this.api.post<{ user: User; token: string; refreshToken: string }>(API_CONFIG.ENDPOINTS.LOGIN, credentials).pipe(
+    return this.http.post<{ user: User; token: string; refreshToken: string }>(API_CONFIG.ENDPOINTS.LOGIN, credentials).pipe(
       tap(response => {
         const tokens = { accessToken: response.token, refreshToken: response.refreshToken, expiresIn: 900 };
         this.storage.setAuthData(response.user, tokens);
@@ -60,7 +60,7 @@ export class AuthService {
   register(data: RegisterRequest): Observable<{ user: User; token: string; refreshToken: string }> {
     this.authState.update(state => ({ ...state, isLoading: true }));
     const registerData = { ...data, role: data.role || 'Customer' };
-    return this.api.post<{ user: User; token: string; refreshToken: string }>(API_CONFIG.ENDPOINTS.REGISTER, registerData).pipe(
+    return this.http.post<{ user: User; token: string; refreshToken: string }>(API_CONFIG.ENDPOINTS.REGISTER, registerData).pipe(
       tap(() => {
         // Do NOT store tokens or set authenticated state
         // User must verify email before they can login
@@ -80,7 +80,7 @@ export class AuthService {
 
     // Call backend logout endpoint to revoke session
     if (refreshToken) {
-      return this.api.post<{ message: string }>(API_CONFIG.ENDPOINTS.LOGOUT, { refreshToken }).pipe(
+      return this.http.post<{ message: string }>(API_CONFIG.ENDPOINTS.LOGOUT, { refreshToken }).pipe(
         catchError((error) => {
           console.error('Failed to revoke session on server:', error);
           // Return empty observable to continue the chain (fail-safe)
@@ -150,7 +150,7 @@ export class AuthService {
       throw new Error('No refresh token available');
     }
 
-    return this.api.post<AuthTokens>(API_CONFIG.ENDPOINTS.REFRESH_TOKEN, { refreshToken }).pipe(
+    return this.http.post<AuthTokens>(API_CONFIG.ENDPOINTS.REFRESH_TOKEN, { refreshToken }).pipe(
       tap(tokens => {
         const currentUser = this.authState().user;
         if (currentUser) {
@@ -165,21 +165,21 @@ export class AuthService {
    * Verify email address using verification token
    */
   verifyEmail(token: string): Observable<{ message: string }> {
-    return this.api.post<{ message: string }>(`${API_CONFIG.ENDPOINTS.VERIFY_EMAIL}?token=${token}`, {});
+    return this.http.post<{ message: string }>(`${API_CONFIG.ENDPOINTS.VERIFY_EMAIL}?token=${token}`, {});
   }
 
   /**
    * Request password reset email
    */
   forgotPassword(email: string): Observable<{ success: boolean; message: string }> {
-    return this.api.post<{ success: boolean; message: string }>(API_CONFIG.ENDPOINTS.FORGOT_PASSWORD, { email });
+    return this.http.post<{ success: boolean; message: string }>(API_CONFIG.ENDPOINTS.FORGOT_PASSWORD, { email });
   }
 
   /**
    * Reset password using reset token
    */
   resetPassword(email: string, resetToken: string, newPassword: string): Observable<{ success: boolean; message: string }> {
-    return this.api.post<{ success: boolean; message: string }>(API_CONFIG.ENDPOINTS.RESET_PASSWORD, {
+    return this.http.post<{ success: boolean; message: string }>(API_CONFIG.ENDPOINTS.RESET_PASSWORD, {
       email,
       resetToken,
       newPassword

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NavbarComponent } from './navbar.component';
-import { AuthService } from '@core/services/auth.service';
+import { AuthService } from '@features/auth/auth.service';
 import { Router, provideRouter, RouterLink } from '@angular/router';
 import { signal } from '@angular/core';
 import { Component } from '@angular/core';

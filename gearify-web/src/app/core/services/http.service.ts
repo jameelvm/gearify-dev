@@ -4,10 +4,10 @@ import { Observable } from 'rxjs';
 import { API_CONFIG } from '@shared/constants/api.constants';
 
 /**
- * Base API service for HTTP operations
+ * Base HTTP service for API operations
  */
 @Injectable({ providedIn: 'root' })
-export class ApiService {
+export class HttpService {
   private http = inject(HttpClient);
   private baseUrl = API_CONFIG.BASE_URL;
 

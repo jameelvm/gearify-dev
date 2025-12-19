@@ -1,6 +1,6 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { ApiService } from './api.service';
+import { HttpService } from './http.service';
 import { Cart, CartItem, AddToCartRequest, UpdateCartItemRequest } from '../models/cart.model';
 import { API_CONFIG, STORAGE_KEYS } from '@shared/constants/api.constants';
 
@@ -9,7 +9,7 @@ import { API_CONFIG, STORAGE_KEYS } from '@shared/constants/api.constants';
  */
 @Injectable({ providedIn: 'root' })
 export class CartService {
-  private api = inject(ApiService);
+  private http = inject(HttpService);
 
   private cartSubject = new BehaviorSubject<Cart | null>(null);
   public cart$ = this.cartSubject.asObservable();
@@ -31,7 +31,7 @@ export class CartService {
 
   loadCart(): void {
     const sessionId = this.getOrCreateSessionId();
-    this.api.get<Cart>(`${API_CONFIG.ENDPOINTS.CART}/${sessionId}`).pipe(
+    this.http.get<Cart>(`${API_CONFIG.ENDPOINTS.CART}/${sessionId}`).pipe(
       tap(cart => {
         this.cartSubject.next(cart);
         this.cartSignal.set(cart);
@@ -41,7 +41,7 @@ export class CartService {
 
   addToCart(request: AddToCartRequest): Observable<Cart> {
     const sessionId = this.getOrCreateSessionId();
-    return this.api.post<Cart>(`${API_CONFIG.ENDPOINTS.CART}/${sessionId}/items`, request).pipe(
+    return this.http.post<Cart>(`${API_CONFIG.ENDPOINTS.CART}/${sessionId}/items`, request).pipe(
       tap(cart => {
         this.cartSubject.next(cart);
         this.cartSignal.set(cart);
@@ -51,7 +51,7 @@ export class CartService {
 
   updateCartItem(itemId: string, request: UpdateCartItemRequest): Observable<Cart> {
     const sessionId = this.getOrCreateSessionId();
-    return this.api.put<Cart>(`${API_CONFIG.ENDPOINTS.CART}/${sessionId}/items/${itemId}`, request).pipe(
+    return this.http.put<Cart>(`${API_CONFIG.ENDPOINTS.CART}/${sessionId}/items/${itemId}`, request).pipe(
       tap(cart => {
         this.cartSubject.next(cart);
         this.cartSignal.set(cart);
@@ -61,7 +61,7 @@ export class CartService {
 
   removeFromCart(itemId: string): Observable<Cart> {
     const sessionId = this.getOrCreateSessionId();
-    return this.api.delete<Cart>(`${API_CONFIG.ENDPOINTS.CART}/${sessionId}/items/${itemId}`).pipe(
+    return this.http.delete<Cart>(`${API_CONFIG.ENDPOINTS.CART}/${sessionId}/items/${itemId}`).pipe(
       tap(cart => {
         this.cartSubject.next(cart);
         this.cartSignal.set(cart);
@@ -71,7 +71,7 @@ export class CartService {
 
   clearCart(): Observable<void> {
     const sessionId = this.getOrCreateSessionId();
-    return this.api.delete<void>(`${API_CONFIG.ENDPOINTS.CART}/${sessionId}`).pipe(
+    return this.http.delete<void>(`${API_CONFIG.ENDPOINTS.CART}/${sessionId}`).pipe(
       tap(() => {
         this.cartSubject.next(null);
         this.cartSignal.set(null);
