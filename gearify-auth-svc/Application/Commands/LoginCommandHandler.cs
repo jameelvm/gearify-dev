@@ -36,7 +36,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResult>
         IAccountLockoutService accountLockoutService,
         IEmailService emailService,
         ISessionService sessionService,
-        IOptions<SecurityConfiguration> securityConfig)
+        IOptionsSnapshot<SecurityConfiguration> securityConfig)
     {
         _repository = repository;
         _passwordHasher = passwordHasher;

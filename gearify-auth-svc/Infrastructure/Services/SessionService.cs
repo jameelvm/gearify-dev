@@ -19,7 +19,7 @@ public class SessionService : ISessionService
     public SessionService(
         IUserSessionRepository sessionRepository,
         ILogger<SessionService> logger,
-        IOptions<SecurityConfiguration> securityConfig)
+        IOptionsSnapshot<SecurityConfiguration> securityConfig)
     {
         _sessionRepository = sessionRepository;
         _logger = logger;

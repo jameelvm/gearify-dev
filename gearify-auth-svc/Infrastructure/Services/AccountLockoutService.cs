@@ -12,7 +12,7 @@ public class AccountLockoutService : IAccountLockoutService
 {
     private readonly AccountLockoutSettings _lockoutSettings;
 
-    public AccountLockoutService(IOptions<SecurityConfiguration> securityConfig)
+    public AccountLockoutService(IOptionsSnapshot<SecurityConfiguration> securityConfig)
     {
         _lockoutSettings = securityConfig.Value.AccountLockout;
     }

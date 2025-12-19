@@ -29,7 +29,7 @@ public class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordComman
         ITenantContext tenantContext,
         ILogger<ForgotPasswordCommandHandler> logger,
         IConfiguration configuration,
-        IOptions<SecurityConfiguration> securityConfig)
+        IOptionsSnapshot<SecurityConfiguration> securityConfig)
     {
         _repository = repository;
         _emailService = emailService;

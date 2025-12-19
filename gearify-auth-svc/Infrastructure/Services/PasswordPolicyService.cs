@@ -12,7 +12,7 @@ public class PasswordPolicyService : IPasswordPolicyService
 {
     private readonly PasswordPolicySettings _policySettings;
 
-    public PasswordPolicyService(IOptions<SecurityConfiguration> securityConfig)
+    public PasswordPolicyService(IOptionsSnapshot<SecurityConfiguration> securityConfig)
     {
         _policySettings = securityConfig.Value.PasswordPolicy;
     }
