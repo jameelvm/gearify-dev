@@ -1,3 +1,4 @@
+using Gearify.AuthService.Application.Models;
 using Gearify.AuthService.Application.Services;
 using Gearify.AuthService.Domain.Events;
 using Gearify.AuthService.Infrastructure.Repositories;
@@ -5,6 +6,7 @@ using Gearify.AuthService.Infrastructure.Services;
 using Gearify.SharedKernel.Multitenancy;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Gearify.AuthService.Application.Commands;
 
@@ -22,6 +24,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResult>
     private readonly IAccountLockoutService _accountLockoutService;
     private readonly IEmailService _emailService;
     private readonly ISessionService _sessionService;
+    private readonly SessionSettings _sessionSettings;
 
     public LoginCommandHandler(
         IUserRepository repository,
@@ -32,7 +35,8 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResult>
         ILogger<LoginCommandHandler> logger,
         IAccountLockoutService accountLockoutService,
         IEmailService emailService,
-        ISessionService sessionService)
+        ISessionService sessionService,
+        IOptions<SecurityConfiguration> securityConfig)
     {
         _repository = repository;
         _passwordHasher = passwordHasher;
@@ -43,6 +47,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResult>
         _accountLockoutService = accountLockoutService;
         _emailService = emailService;
         _sessionService = sessionService;
+        _sessionSettings = securityConfig.Value.Session;
     }
 
     public async Task<LoginResult> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -127,7 +132,12 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResult>
             // Update user's last login and refresh token
             user.LastLoginAt = DateTime.UtcNow;
             user.RefreshToken = refreshToken;
-            user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
+
+            // Set refresh token expiry based on remember me option
+            var expiryDays = request.RememberMe
+                ? _sessionSettings.RefreshTokenExpiryDaysRememberMe
+                : _sessionSettings.RefreshTokenExpiryDays;
+            user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(expiryDays);
             user.UpdatedAt = DateTime.UtcNow;
 
             await _repository.UpdateAsync(user);

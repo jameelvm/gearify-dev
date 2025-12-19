@@ -8,6 +8,7 @@ namespace Gearify.AuthService.Application.Commands;
 public record LoginCommand(
     string Email,
     string Password,
+    bool RememberMe = false,
     string? DeviceInfo = null,
     string? IpAddress = null
 ) : IRequest<LoginResult>;

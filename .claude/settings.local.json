@@ -95,7 +95,9 @@
       "Bash(cmd /c start \"\" \"C:\\Gearify\\view-qr-code.html\")",
       "Bash(start http://localhost:4200/auth/login)",
       "Bash(start http://localhost:4200/auth/forgot-password)",
-      "Bash(start cmd /c \"npm start\")"
+      "Bash(start cmd /c \"npm start\")",
+      "Bash(git filter-branch:*)",
+      "Bash(git stash:*)"
     ],
     "deny": [],
     "ask": []

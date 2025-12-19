@@ -34,9 +34,9 @@ export class LoginComponent {
     this.isLoading = true;
     this.errorMessage = '';
 
-    const { email, password } = this.loginForm.value;
+    const { email, password, rememberMe } = this.loginForm.value;
 
-    this.authService.login({ email, password }).subscribe({
+    this.authService.login({ email, password, rememberMe }).subscribe({
       next: () => {
         this.isLoading = false;
         this.router.navigate(['/home']);
