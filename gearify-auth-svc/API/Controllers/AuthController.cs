@@ -102,6 +102,7 @@ public class AuthController : ControllerBase
             var command = new LoginCommand(
                 request.Email,
                 request.Password,
+                request.RememberMe,
                 userAgent,
                 ipAddress
             );

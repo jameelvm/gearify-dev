@@ -5,5 +5,6 @@ namespace Gearify.AuthService.API.DTOs;
 /// </summary>
 public record LoginRequest(
     string Email,
-    string Password
+    string Password,
+    bool RememberMe = false
 );
