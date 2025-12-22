@@ -8,7 +8,6 @@ import {
   BadgeComponent
 } from '@app/ui-kit/components';
 import { Product } from '@core/models/product.model';
-import { NavbarComponent } from '@shared/components/navbar/navbar.component';
 
 /**
  * Home Page Component
@@ -23,8 +22,7 @@ import { NavbarComponent } from '@shared/components/navbar/navbar.component';
     ButtonComponent,
     ProductCardComponent,
     BrandBarComponent,
-    BadgeComponent,
-    NavbarComponent
+    BadgeComponent
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'

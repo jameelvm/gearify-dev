@@ -1,8 +1,12 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { filter } from 'rxjs';
 import { ThemeService } from '@core/services/theme.service';
 import { isMobileDevice, isTouchDevice } from '@shared/utils/device.utils';
 import { STORAGE_KEYS } from '@shared/constants/api.constants';
+import { NavbarComponent } from '@shared/components/navbar/navbar.component';
+import { FooterComponent } from '@shared/components/footer/footer.component';
 
 /**
  * Root application component
@@ -11,20 +15,36 @@ import { STORAGE_KEYS } from '@shared/constants/api.constants';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [CommonModule, RouterOutlet, NavbarComponent, FooterComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
   private themeService = inject(ThemeService);
+  private router = inject(Router);
 
   isMobile = signal(false);
   isTouch = signal(false);
+  currentRoute = signal('');
 
   ngOnInit(): void {
     this.initializeTenantId();
     this.detectDevice();
     this.setupResizeListener();
+    this.trackRoute();
+  }
+
+  private trackRoute(): void {
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        this.currentRoute.set(event.urlAfterRedirects || event.url);
+      });
+  }
+
+  shouldShowLayout(): boolean {
+    const route = this.currentRoute();
+    return !route.includes('/tenant-not-found') && !route.includes('/auth/');
   }
 
   private initializeTenantId(): void {

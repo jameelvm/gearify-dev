@@ -1,3 +1,7 @@
 <div class="app-root" [class.mobile]="isMobile()" [class.touch]="isTouch()">
-  <router-outlet></router-outlet>
+  <app-navbar *ngIf="shouldShowLayout()"></app-navbar>
+  <main class="app-content">
+    <router-outlet></router-outlet>
+  </main>
+  <app-footer *ngIf="shouldShowLayout()"></app-footer>
 </div>
