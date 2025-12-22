@@ -1,0 +1,71 @@
+<div class="category-nav" (mouseleave)="onCategoryLeave()">
+  <div class="category-nav-container">
+    <div class="categories">
+      <div
+        *ngFor="let category of categories"
+        class="category-wrapper"
+        (mouseenter)="onCategoryHover(category.id)">
+        <a
+          [routerLink]="['/products']"
+          [queryParams]="{ category: category.slug }"
+          class="category-link"
+          [class.active]="hoveredCategory() === category.id"
+          (click)="onCategoryClick(category)">
+          {{ category.name }}
+        </a>
+      </div>
+    </div>
+
+    <div class="search-container">
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search products..."
+        [(ngModel)]="searchQuery"
+        (keyup.enter)="onSearch()"
+      />
+      <button class="search-button" (click)="onSearch()" aria-label="Search">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mega Menu Dropdown (Moved outside categories) -->
+  <div
+    class="mega-menu"
+    *ngIf="hoveredCategory() && getActiveCategory()"
+    (mouseenter)="onCategoryHover(hoveredCategory()!)"
+    (mouseleave)="onCategoryLeave()">
+    <div class="mega-menu-content">
+      <div class="mega-menu-sections">
+        <div class="mega-menu-section" *ngFor="let section of getActiveCategory()?.megaMenu">
+          <h3 class="section-title">{{ section.title }}</h3>
+          <ul class="section-items">
+            <li *ngFor="let item of section.items">
+              <a
+                [routerLink]="['/products']"
+                [queryParams]="{ category: getActiveCategory()?.slug, subcategory: item.slug }"
+                class="section-item-link"
+                (click)="onSubCategoryClick(getActiveCategory()!, item)">
+                {{ item.name }}
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Featured Image Section (Optional) -->
+      <div class="mega-menu-featured">
+        <div class="featured-image">
+          <img src="https://images.unsplash.com/photo-1624526267942-ab0ff8a3e972?w=300&h=400&fit=crop" alt="Featured" />
+          <div class="featured-overlay">
+            <h4>New Season Collection</h4>
+            <p>Premium Cricket Equipment</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

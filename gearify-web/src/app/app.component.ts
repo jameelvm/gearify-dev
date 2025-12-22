@@ -6,6 +6,7 @@ import { ThemeService } from '@core/services/theme.service';
 import { isMobileDevice, isTouchDevice } from '@shared/utils/device.utils';
 import { STORAGE_KEYS } from '@shared/constants/api.constants';
 import { NavbarComponent } from '@shared/components/navbar/navbar.component';
+import { CategoryNavComponent } from '@shared/components/category-nav/category-nav.component';
 import { FooterComponent } from '@shared/components/footer/footer.component';
 
 /**
@@ -15,7 +16,7 @@ import { FooterComponent } from '@shared/components/footer/footer.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavbarComponent, FooterComponent],
+  imports: [CommonModule, RouterOutlet, NavbarComponent, CategoryNavComponent, FooterComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
