@@ -185,4 +185,16 @@ export class AuthService {
       newPassword
     });
   }
+
+  /**
+   * Refresh current user data from server
+   */
+  refreshUser(): Observable<User> {
+    return this.http.get<User>(API_CONFIG.ENDPOINTS.ME).pipe(
+      tap(user => {
+        this.storage.setUser(user);
+        this.authState.update(state => ({ ...state, user }));
+      })
+    );
+  }
 }

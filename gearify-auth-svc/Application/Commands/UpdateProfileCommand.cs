@@ -9,7 +9,13 @@ public record UpdateProfileCommand(
     string UserId,
     string? FirstName,
     string? LastName,
-    string? Phone
+    string? Phone,
+    string? AddressLine1,
+    string? AddressLine2,
+    string? City,
+    string? State,
+    string? ZipCode,
+    string? Country
 ) : IRequest<UpdateProfileResult>;
 
 /// <summary>

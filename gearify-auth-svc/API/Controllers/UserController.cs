@@ -47,7 +47,13 @@ public class UserController : ControllerBase
                 userId,
                 request.FirstName,
                 request.LastName,
-                request.Phone
+                request.Phone,
+                request.AddressLine1,
+                request.AddressLine2,
+                request.City,
+                request.State,
+                request.ZipCode,
+                request.Country
             );
 
             var result = await _mediator.Send(command);

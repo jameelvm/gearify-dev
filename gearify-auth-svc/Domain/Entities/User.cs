@@ -137,4 +137,36 @@ public class User
     /// Gets or sets the count of active sessions
     /// </summary>
     public int ActiveSessionCount { get; set; } = 0;
+
+    // ==================== Default Address ====================
+
+    /// <summary>
+    /// Gets or sets the street address line 1
+    /// </summary>
+    public string? AddressLine1 { get; set; }
+
+    /// <summary>
+    /// Gets or sets the street address line 2 (apartment, suite, etc.)
+    /// </summary>
+    public string? AddressLine2 { get; set; }
+
+    /// <summary>
+    /// Gets or sets the city
+    /// </summary>
+    public string? City { get; set; }
+
+    /// <summary>
+    /// Gets or sets the state/province
+    /// </summary>
+    public string? State { get; set; }
+
+    /// <summary>
+    /// Gets or sets the ZIP/postal code
+    /// </summary>
+    public string? ZipCode { get; set; }
+
+    /// <summary>
+    /// Gets or sets the country (defaults to USA)
+    /// </summary>
+    public string? Country { get; set; } = "USA";
 }

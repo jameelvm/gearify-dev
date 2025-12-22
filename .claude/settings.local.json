@@ -98,7 +98,12 @@
       "Bash(start cmd /c \"npm start\")",
       "Bash(git filter-branch:*)",
       "Bash(git stash:*)",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(choco:*)",
+      "Bash(C:/Gearify/lazydocker/lazydocker.exe:*)",
+      "Bash(if [ -f \"C:/Users/jamee/OneDrive/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1\" ])",
+      "Bash(then echo \"exists\")",
+      "Bash(else echo \"not found\")"
     ],
     "deny": [],
     "ask": []

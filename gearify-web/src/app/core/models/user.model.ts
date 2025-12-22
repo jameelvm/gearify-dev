@@ -13,14 +13,12 @@ export interface User {
   lastLoginAt?: string | null;
   tenantId?: string;
   isEmailVerified?: boolean;
-  defaultShippingAddress?: {
-    address1: string;
-    address2?: string;
-    city: string;
-    state: string;
-    postalCode: string;
-    country: string;
-  };
+  addressLine1?: string | null;
+  addressLine2?: string | null;
+  city?: string | null;
+  state?: string | null;
+  zipCode?: string | null;
+  country?: string | null;
   createdAt?: Date;
   updatedAt?: Date;
 }

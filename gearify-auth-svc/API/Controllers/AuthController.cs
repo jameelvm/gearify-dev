@@ -70,7 +70,13 @@ public class AuthController : ControllerBase
                     user.Role,
                     user.IsActive,
                     user.EmailVerified,
-                    user.LastLoginAt
+                    user.LastLoginAt,
+                    user.AddressLine1,
+                    user.AddressLine2,
+                    user.City,
+                    user.State,
+                    user.ZipCode,
+                    user.Country
                 )
             );
 
@@ -113,19 +119,32 @@ public class AuthController : ControllerBase
                 return Unauthorized(new { error = result.ErrorMessage });
             }
 
+            // Fetch full user object to include address fields
+            var user = await _mediator.Send(new GetUserByIdQuery(result.UserId));
+            if (user == null)
+            {
+                return Unauthorized(new { error = "User not found" });
+            }
+
             var response = new AuthResponse(
                 result.Token,
                 result.RefreshToken,
                 new UserDto(
-                    result.UserId,
-                    result.Email,
-                    result.FirstName,
-                    result.LastName,
-                    string.Empty,
-                    result.Role,
-                    true,
-                    false,
-                    DateTime.UtcNow
+                    user.Id,
+                    user.Email,
+                    user.FirstName,
+                    user.LastName,
+                    user.Phone,
+                    user.Role,
+                    user.IsActive,
+                    user.EmailVerified,
+                    user.LastLoginAt,
+                    user.AddressLine1,
+                    user.AddressLine2,
+                    user.City,
+                    user.State,
+                    user.ZipCode,
+                    user.Country
                 )
             );
 
@@ -238,7 +257,13 @@ public class AuthController : ControllerBase
                 user.Role,
                 user.IsActive,
                 user.EmailVerified,
-                user.LastLoginAt
+                user.LastLoginAt,
+                user.AddressLine1,
+                user.AddressLine2,
+                user.City,
+                user.State,
+                user.ZipCode,
+                user.Country
             );
 
             return Ok(userDto);

@@ -53,6 +53,37 @@ public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand,
                 user.Phone = request.Phone;
             }
 
+            // Update address fields if provided
+            if (request.AddressLine1 != null)
+            {
+                user.AddressLine1 = request.AddressLine1;
+            }
+
+            if (request.AddressLine2 != null)
+            {
+                user.AddressLine2 = request.AddressLine2;
+            }
+
+            if (request.City != null)
+            {
+                user.City = request.City;
+            }
+
+            if (request.State != null)
+            {
+                user.State = request.State;
+            }
+
+            if (request.ZipCode != null)
+            {
+                user.ZipCode = request.ZipCode;
+            }
+
+            if (request.Country != null)
+            {
+                user.Country = request.Country;
+            }
+
             user.UpdatedAt = DateTime.UtcNow;
 
             await _repository.UpdateAsync(user);

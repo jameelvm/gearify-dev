@@ -1,0 +1,283 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <div class="user-avatar-large">
+      {{ getUserInitials() }}
+    </div>
+    <div class="user-info">
+      <h1>{{ user?.firstName }} {{ user?.lastName }}</h1>
+      <p class="user-email">{{ user?.email }}</p>
+      <span class="user-badge">{{ user?.role }}</span>
+    </div>
+  </div>
+
+  <div class="profile-content">
+    <!-- Success/Error Messages -->
+    <div class="message success" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+    <div class="message error" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Profile Information Card -->
+    <div class="profile-card">
+      <div class="card-header">
+        <h2>Profile Information</h2>
+        <button
+          *ngIf="!isEditMode"
+          class="btn-secondary"
+          (click)="toggleEditMode()">
+          Edit Profile
+        </button>
+      </div>
+
+      <form [formGroup]="profileForm" (ngSubmit)="onSaveProfile()">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input
+              id="firstName"
+              type="text"
+              formControlName="firstName"
+              [readonly]="!isEditMode"
+              [class.readonly]="!isEditMode"
+              [class.error]="profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched"
+            />
+            <div class="error-message" *ngIf="profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched">
+              <span *ngIf="profileForm.get('firstName')?.errors?.['required']">First name is required</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input
+              id="lastName"
+              type="text"
+              formControlName="lastName"
+              [readonly]="!isEditMode"
+              [class.readonly]="!isEditMode"
+              [class.error]="profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched"
+            />
+            <div class="error-message" *ngIf="profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched">
+              <span *ngIf="profileForm.get('lastName')?.errors?.['required']">Last name is required</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              readonly
+              class="readonly"
+            />
+            <small class="help-text">Email cannot be changed</small>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input
+              id="phone"
+              type="tel"
+              formControlName="phone"
+              [readonly]="!isEditMode"
+              [class.readonly]="!isEditMode"
+              placeholder="Optional"
+            />
+          </div>
+        </div>
+
+        <!-- Address Section -->
+        <div class="address-section">
+          <h3>Default Address</h3>
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label for="addressLine1">Address Line 1</label>
+              <input
+                id="addressLine1"
+                type="text"
+                formControlName="addressLine1"
+                [readonly]="!isEditMode"
+                [class.readonly]="!isEditMode"
+                placeholder="Street address"
+              />
+            </div>
+
+            <div class="form-group full-width">
+              <label for="addressLine2">Address Line 2</label>
+              <input
+                id="addressLine2"
+                type="text"
+                formControlName="addressLine2"
+                [readonly]="!isEditMode"
+                [class.readonly]="!isEditMode"
+                placeholder="Apartment, suite, etc. (optional)"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="city">City</label>
+              <input
+                id="city"
+                type="text"
+                formControlName="city"
+                [readonly]="!isEditMode"
+                [class.readonly]="!isEditMode"
+                placeholder="City"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="state">State</label>
+              <input
+                id="state"
+                type="text"
+                formControlName="state"
+                [readonly]="!isEditMode"
+                [class.readonly]="!isEditMode"
+                placeholder="State"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="zipCode">ZIP Code</label>
+              <input
+                id="zipCode"
+                type="text"
+                formControlName="zipCode"
+                [readonly]="!isEditMode"
+                [class.readonly]="!isEditMode"
+                placeholder="ZIP Code"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="country">Country</label>
+              <input
+                id="country"
+                type="text"
+                formControlName="country"
+                [readonly]="!isEditMode"
+                [class.readonly]="!isEditMode"
+                placeholder="Country"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions" *ngIf="isEditMode">
+          <button type="button" class="btn-secondary" (click)="toggleEditMode()" [disabled]="isLoading">
+            Cancel
+          </button>
+          <button type="submit" class="btn-primary" [disabled]="profileForm.invalid || isLoading">
+            <span *ngIf="!isLoading">Save Changes</span>
+            <span *ngIf="isLoading">Saving...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Change Password Card -->
+    <div class="profile-card">
+      <div class="card-header">
+        <h2>Security</h2>
+        <button
+          *ngIf="!isChangingPassword"
+          class="btn-secondary"
+          (click)="togglePasswordChange()">
+          Change Password
+        </button>
+      </div>
+
+      <div *ngIf="!isChangingPassword" class="security-info">
+        <p>Manage your password to keep your account secure.</p>
+      </div>
+
+      <form *ngIf="isChangingPassword" [formGroup]="passwordForm" (ngSubmit)="onChangePassword()">
+        <div class="form-group">
+          <label for="currentPassword">Current Password</label>
+          <input
+            id="currentPassword"
+            type="password"
+            formControlName="currentPassword"
+            placeholder="Enter current password"
+            [class.error]="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched"
+          />
+          <div class="error-message" *ngIf="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched">
+            <span *ngIf="passwordForm.get('currentPassword')?.errors?.['required']">Current password is required</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="newPassword">New Password</label>
+          <input
+            id="newPassword"
+            type="password"
+            formControlName="newPassword"
+            placeholder="Enter new password (min 8 characters)"
+            [class.error]="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched"
+          />
+          <div class="error-message" *ngIf="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched">
+            <span *ngIf="passwordForm.get('newPassword')?.errors?.['required']">New password is required</span>
+            <span *ngIf="passwordForm.get('newPassword')?.errors?.['minlength']">Password must be at least 8 characters</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirm New Password</label>
+          <input
+            id="confirmPassword"
+            type="password"
+            formControlName="confirmPassword"
+            placeholder="Confirm new password"
+            [class.error]="passwordForm.get('confirmPassword')?.invalid && passwordForm.get('confirmPassword')?.touched"
+          />
+          <div class="error-message" *ngIf="passwordForm.get('confirmPassword')?.touched">
+            <span *ngIf="passwordForm.get('confirmPassword')?.errors?.['required']">Please confirm your password</span>
+            <span *ngIf="passwordForm.errors?.['passwordMismatch'] && !passwordForm.get('confirmPassword')?.errors?.['required']">Passwords do not match</span>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="togglePasswordChange()" [disabled]="isLoading">
+            Cancel
+          </button>
+          <button type="submit" class="btn-primary" [disabled]="passwordForm.invalid || isLoading">
+            <span *ngIf="!isLoading">Update Password</span>
+            <span *ngIf="isLoading">Updating...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Account Information -->
+    <div class="profile-card">
+      <div class="card-header">
+        <h2>Account Information</h2>
+      </div>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Account Status</span>
+          <span class="info-value">
+            <span class="status-badge" [class.active]="user?.isActive" [class.inactive]="!user?.isActive">
+              {{ user?.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Email Verified</span>
+          <span class="info-value">
+            <span class="status-badge" [class.verified]="user?.emailVerified" [class.unverified]="!user?.emailVerified">
+              {{ user?.emailVerified ? 'Verified' : 'Not Verified' }}
+            </span>
+          </span>
+        </div>
+        <div class="info-item" *ngIf="user?.lastLoginAt">
+          <span class="info-label">Last Login</span>
+          <span class="info-value">{{ user?.lastLoginAt | date:'medium' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

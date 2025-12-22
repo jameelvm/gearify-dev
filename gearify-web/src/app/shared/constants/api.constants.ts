@@ -28,7 +28,9 @@ export const API_CONFIG = {
     ORDER_BY_ID: (id: string) => `/api/orders/${id}`,
     
     // User
-    USER_PROFILE: '/api/user/profile',
+    USER_PROFILE: '/api/users/profile',
+    UPDATE_PROFILE: '/api/users/profile',
+    CHANGE_PASSWORD: '/api/users/change-password',
     USER_ADDRESSES: '/api/user/addresses',
   },
   TIMEOUT: 30000,

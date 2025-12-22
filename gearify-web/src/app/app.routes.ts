@@ -37,6 +37,11 @@ export const routes: Routes = [
     loadChildren: () => import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES)
   },
   {
+    path: 'account',
+    canActivate: [tenantGuard],
+    loadChildren: () => import('./features/account/account.routes').then(m => m.ACCOUNT_ROUTES)
+  },
+  {
     path: 'tenant-not-found',
     loadComponent: () => import('./features/errors/tenant-not-found.component').then(m => m.TenantNotFoundComponent)
   }
@@ -49,11 +54,6 @@ export const routes: Routes = [
   //   path: 'checkout',
   //   canActivate: [authGuard],
   //   loadComponent: () => import('./features/checkout/checkout.component').then(m => m.CheckoutComponent)
-  // },
-  // {
-  //   path: 'account',
-  //   canActivate: [authGuard],
-  //   loadChildren: () => import('./features/account/account.routes').then(m => m.ACCOUNT_ROUTES)
   // },
   // {
   //   path: '**',

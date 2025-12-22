@@ -216,6 +216,37 @@ public class DynamoDbUserRepository : IUserRepository
         // Session Tracking
         item["ActiveSessionCount"] = new AttributeValue { N = user.ActiveSessionCount.ToString() };
 
+        // Address Fields
+        if (!string.IsNullOrEmpty(user.AddressLine1))
+        {
+            item["AddressLine1"] = new AttributeValue { S = user.AddressLine1 };
+        }
+
+        if (!string.IsNullOrEmpty(user.AddressLine2))
+        {
+            item["AddressLine2"] = new AttributeValue { S = user.AddressLine2 };
+        }
+
+        if (!string.IsNullOrEmpty(user.City))
+        {
+            item["City"] = new AttributeValue { S = user.City };
+        }
+
+        if (!string.IsNullOrEmpty(user.State))
+        {
+            item["State"] = new AttributeValue { S = user.State };
+        }
+
+        if (!string.IsNullOrEmpty(user.ZipCode))
+        {
+            item["ZipCode"] = new AttributeValue { S = user.ZipCode };
+        }
+
+        if (!string.IsNullOrEmpty(user.Country))
+        {
+            item["Country"] = new AttributeValue { S = user.Country };
+        }
+
         return item;
     }
 
@@ -304,6 +335,37 @@ public class DynamoDbUserRepository : IUserRepository
         if (item.ContainsKey("ActiveSessionCount"))
         {
             user.ActiveSessionCount = int.Parse(item["ActiveSessionCount"].N);
+        }
+
+        // Address Fields
+        if (item.ContainsKey("AddressLine1"))
+        {
+            user.AddressLine1 = item["AddressLine1"].S;
+        }
+
+        if (item.ContainsKey("AddressLine2"))
+        {
+            user.AddressLine2 = item["AddressLine2"].S;
+        }
+
+        if (item.ContainsKey("City"))
+        {
+            user.City = item["City"].S;
+        }
+
+        if (item.ContainsKey("State"))
+        {
+            user.State = item["State"].S;
+        }
+
+        if (item.ContainsKey("ZipCode"))
+        {
+            user.ZipCode = item["ZipCode"].S;
+        }
+
+        if (item.ContainsKey("Country"))
+        {
+            user.Country = item["Country"].S;
         }
 
         return user;
