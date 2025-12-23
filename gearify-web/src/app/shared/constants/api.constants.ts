@@ -13,6 +13,9 @@ export const API_CONFIG = {
     FORGOT_PASSWORD: '/api/password/forgot',
     RESET_PASSWORD: '/api/password/reset',
     
+    // Catalog
+    CATALOG: '/api/catalog',
+
     // Products
     PRODUCTS: '/api/catalog/products',
     PRODUCT_BY_ID: (id: string) => `/api/catalog/products/${id}`,

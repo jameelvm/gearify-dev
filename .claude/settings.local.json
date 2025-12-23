@@ -103,7 +103,8 @@
       "Bash(C:/Gearify/lazydocker/lazydocker.exe:*)",
       "Bash(if [ -f \"C:/Users/jamee/OneDrive/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1\" ])",
       "Bash(then echo \"exists\")",
-      "Bash(else echo \"not found\")"
+      "Bash(else echo \"not found\")",
+      "Bash(python -m json.tool:*)"
     ],
     "deny": [],
     "ask": []

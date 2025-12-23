@@ -1,7 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { CategoryService } from '@core/services/category.service';
 
 export interface SubCategory {
   name: string;
@@ -10,6 +11,7 @@ export interface SubCategory {
 
 export interface MegaMenuSection {
   title: string;
+  showTitle?: boolean;
   items: SubCategory[];
 }
 
@@ -28,12 +30,56 @@ export interface Category {
   templateUrl: './category-nav.component.html',
   styleUrls: ['./category-nav.component.scss']
 })
-export class CategoryNavComponent {
+export class CategoryNavComponent implements OnInit {
+  private categoryService = inject(CategoryService);
+
   searchQuery = signal('');
   activeCategory = signal<string | null>(null);
   hoveredCategory = signal<string | null>(null);
+  isLoading = signal(false);
+  error = signal<string | null>(null);
 
-  categories: Category[] = [
+  categories: Category[] = [];
+
+  ngOnInit(): void {
+    this.loadCategories();
+  }
+
+  private loadCategories(): void {
+    this.isLoading.set(true);
+    this.error.set(null);
+
+    this.categoryService.getMegaMenuData().subscribe({
+      next: (data) => {
+        // Transform API response to component format
+        this.categories = data.map(item => ({
+          id: item.category.id,
+          name: item.category.name,
+          slug: item.category.slug,
+          icon: item.category.icon,
+          megaMenu: item.sections.map(section => ({
+            title: section.title,
+            showTitle: section.showTitle,
+            items: section.items.map(subItem => ({
+              name: subItem.name,
+              slug: subItem.slug
+            }))
+          }))
+        }));
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Failed to load categories:', err);
+        this.error.set('Failed to load categories');
+        this.isLoading.set(false);
+        // Fallback to empty array or show error message
+      }
+    });
+  }
+
+  // Keep original hardcoded data as fallback (commented out)
+  private get fallbackCategories(): Category[] {
+    return [
     {
       id: '1',
       name: 'Cricket Bats',
@@ -204,7 +250,8 @@ export class CategoryNavComponent {
         }
       ]
     }
-  ];
+    ];
+  }
 
   onSearch(): void {
     const query = this.searchQuery();

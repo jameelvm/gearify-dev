@@ -41,7 +41,7 @@
     <div class="mega-menu-content">
       <div class="mega-menu-sections">
         <div class="mega-menu-section" *ngFor="let section of getActiveCategory()?.megaMenu">
-          <h3 class="section-title">{{ section.title }}</h3>
+          <h3 class="section-title" *ngIf="section.showTitle !== false">{{ section.title }}</h3>
           <ul class="section-items">
             <li *ngFor="let item of section.items">
               <a

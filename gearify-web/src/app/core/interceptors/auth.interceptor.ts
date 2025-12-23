@@ -97,15 +97,19 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   } else {
     tenantId = extractTenantFromSubdomain();
   }
+  
 
-  // Skip proactive refresh for the refresh endpoint itself to avoid infinite loop
-  const isRefreshRequest = req.url.includes('/api/auth/refresh');
+  // Skip proactive refresh for auth endpoints to avoid infinite loops
+  const isAuthEndpoint = req.url.includes('/api/auth/refresh') ||
+                        req.url.includes('/api/auth/logout') ||
+                        req.url.includes('/api/auth/login') ||
+                        req.url.includes('/api/auth/register');
 
   // Check if token needs refresh before making the request
   // Only attempt refresh if we have a refresh token available
   const refreshToken = authService.getRefreshToken();
 
-  if (token && refreshToken && isTokenExpiringSoon(token) && !isRefreshRequest) {
+  if (token && refreshToken && isTokenExpiringSoon(token) && !isAuthEndpoint) {
     // Token is expired or about to expire, refresh it first
     return authService.refreshToken().pipe(
       switchMap((tokens) => {

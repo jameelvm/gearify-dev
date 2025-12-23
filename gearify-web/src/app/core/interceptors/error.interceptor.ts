@@ -20,9 +20,22 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       if (error.status === 401) {
         // Check if this is the refresh token endpoint itself failing
         if (req.url.includes(API_CONFIG.ENDPOINTS.REFRESH_TOKEN)) {
-          // Refresh token failed, logout user
-          authService.logout();
+          // Refresh token failed - clear tokens immediately and logout
+          // Clear tokens synchronously to prevent further refresh attempts
+          if (typeof localStorage !== 'undefined') {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('user');
+          }
+
+          // Navigate to login immediately
           router.navigate(['/auth/login']);
+
+          // Trigger logout to clean up (but don't wait for it)
+          authService.logout().subscribe({
+            error: (err) => console.error('Logout error:', err)
+          });
+
           return throwError(() => error);
         }
 
@@ -72,9 +85,20 @@ function handle401Error(
       catchError((err) => {
         isRefreshing = false;
 
-        // Refresh failed, logout user
-        authService.logout();
+        // Refresh failed - clear tokens immediately
+        if (typeof localStorage !== 'undefined') {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          localStorage.removeItem('user');
+        }
+
+        // Navigate to login immediately
         router.navigate(['/auth/login']);
+
+        // Trigger logout to clean up (but don't wait for it)
+        authService.logout().subscribe({
+          error: (logoutErr) => console.error('Logout error:', logoutErr)
+        });
 
         return throwError(() => err);
       })
