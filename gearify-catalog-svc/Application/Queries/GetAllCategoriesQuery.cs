@@ -1,6 +1,6 @@
-using Gearify.CatalogService.Domain.Entities;
+using Gearify.CatalogService.API.DTOs;
 using MediatR;
 
 namespace Gearify.CatalogService.Application.Queries;
 
-public record GetAllCategoriesQuery : IRequest<List<Category>>;
+public record GetAllCategoriesQuery : IRequest<List<CategoryDto>>;

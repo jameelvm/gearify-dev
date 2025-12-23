@@ -42,7 +42,13 @@ export class CategoryNavComponent implements OnInit {
   categories: Category[] = [];
 
   ngOnInit(): void {
-    this.loadCategories();
+    // Only load categories if not on auth or tenant-not-found pages
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname;
+      if (!path.includes('/auth/') && !path.includes('/tenant-not-found')) {
+        this.loadCategories();
+      }
+    }
   }
 
   private loadCategories(): void {

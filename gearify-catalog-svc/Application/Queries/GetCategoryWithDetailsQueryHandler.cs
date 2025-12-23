@@ -1,4 +1,4 @@
-using Gearify.CatalogService.Domain.Entities;
+using Gearify.CatalogService.API.DTOs;
 using Gearify.CatalogService.Infrastructure.Repositories;
 using Gearify.SharedKernel.Multitenancy;
 using MediatR;
@@ -6,7 +6,7 @@ using MediatR;
 namespace Gearify.CatalogService.Application.Queries;
 
 public class GetCategoryWithDetailsQueryHandler
-    : IRequestHandler<GetCategoryWithDetailsQuery, (Category category, List<CategorySection> sections, List<Subcategory> subcategories)>
+    : IRequestHandler<GetCategoryWithDetailsQuery, CategoryWithDetailsDto?>
 {
     private readonly ICategoryRepository _repository;
     private readonly ITenantContext _tenantContext;
@@ -17,10 +17,17 @@ public class GetCategoryWithDetailsQueryHandler
         _tenantContext = tenantContext;
     }
 
-    public async Task<(Category category, List<CategorySection> sections, List<Subcategory> subcategories)>
-        Handle(GetCategoryWithDetailsQuery request, CancellationToken cancellationToken)
+    public async Task<CategoryWithDetailsDto?> Handle(GetCategoryWithDetailsQuery request, CancellationToken cancellationToken)
     {
         var tenantId = _tenantContext.TenantId;
-        return await _repository.GetCategoryWithDetailsAsync(request.CategoryId, tenantId);
+        var (category, sections, subcategories) = await _repository.GetCategoryWithDetailsAsync(request.CategoryId, tenantId);
+
+        // Return null if category not found or has invalid data
+        if (category is null or { Id: null })
+        {
+            return null;
+        }
+
+        return CategoryWithDetailsDto.FromEntities(category, sections, subcategories);
     }
 }

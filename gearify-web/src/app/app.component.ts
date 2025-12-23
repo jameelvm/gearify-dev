@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
 
   isMobile = signal(false);
   isTouch = signal(false);
-  currentRoute = signal('');
+  currentRoute = signal(typeof window !== 'undefined' ? window.location.pathname : '');
 
   ngOnInit(): void {
     this.initializeTenantId();
