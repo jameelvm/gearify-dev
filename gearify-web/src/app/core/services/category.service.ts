@@ -49,23 +49,10 @@ export class CategoryService {
 
   /**
    * Get all categories with complete mega menu data
+   * Optimized to fetch all categories with their sections and subcategories in one request
    */
   getMegaMenuData(): Observable<CategoryWithDetailsDto[]> {
     return this.http.get<CategoryWithDetailsDto[]>(`${API_CONFIG.ENDPOINTS.CATALOG}/categories/mega-menu`);
-  }
-
-  /**
-   * Get all categories (without details)
-   */
-  getAllCategories(): Observable<CategoryDto[]> {
-    return this.http.get<CategoryDto[]>(`${API_CONFIG.ENDPOINTS.CATALOG}/categories`);
-  }
-
-  /**
-   * Get single category with details
-   */
-  getCategoryDetails(categoryId: string): Observable<CategoryWithDetailsDto> {
-    return this.http.get<CategoryWithDetailsDto>(`${API_CONFIG.ENDPOINTS.CATALOG}/categories/${categoryId}/details`);
   }
 
   /**

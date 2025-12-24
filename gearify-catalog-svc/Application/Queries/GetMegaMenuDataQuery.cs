@@ -3,5 +3,4 @@ using MediatR;
 
 namespace Gearify.CatalogService.Application.Queries;
 
-public record GetCategoryWithDetailsQuery(string CategoryId)
-    : IRequest<CategoryWithDetailsDto?>;
+public record GetMegaMenuDataQuery : IRequest<List<CategoryWithDetailsDto>>;
