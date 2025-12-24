@@ -92,24 +92,29 @@ SK:      SECTION#sec_bats_1#ITEM#sub_bats_1
 
 ---
 
-## Access Patterns
+## Current Implementation
 
-### Pattern 1: Get All Categories (List View)
-**Use Case:** Display category navigation menu
+### Get All Categories with Details (Mega Menu)
+**Repository Method:** `GetAllCategoriesWithDetailsAsync(string tenantId)`
 
-**Query:**
-```
-Index:     GSI2
-Condition: GSI2PK = "TENANT#{tenantId}#CATEGORIES"
-```
+**Use Case:** Load complete mega menu data for navigation
 
-**Returns:** All categories ordered by `displayOrder`
+**Strategy:** Parallel queries for maximum performance
 
-**Performance:** Single query, ~1 RCU per 4KB
+**Steps:**
+1. Query GSI2 to get all category IDs (1 query)
+2. Parallel queries on primary table for each category (N parallel queries)
+
+**Performance:**
+- 1 + N queries total
+- N queries execute in parallel
+- Total time ≈ time of slowest query (not sum of all queries)
+- Performance: ~100-150ms for 9 categories (vs 500-1000ms sequential)
 
 **Implementation:**
 ```csharp
-var request = new QueryRequest
+// Step 1: Get all category IDs using GSI2
+var categoriesRequest = new QueryRequest
 {
     TableName = "gearify-catalog",
     IndexName = "GSI2",
@@ -119,71 +124,41 @@ var request = new QueryRequest
         { ":gsi2pk", new AttributeValue { S = "TENANT#default#CATEGORIES" } }
     }
 };
+
+var categoriesResponse = await dynamoDb.QueryAsync(categoriesRequest);
+var categoryIds = categoriesResponse.Items
+    .Select(item => item["Id"].S)
+    .ToList();
+
+// Step 2: Fetch details for all categories in parallel
+var detailsTasks = categoryIds
+    .Select(categoryId => GetCategoryWithDetailsAsync(categoryId, tenantId))
+    .ToList();
+
+var results = await Task.WhenAll(detailsTasks);
+
+return results
+    .Where(r => r.category is { Id: not null })
+    .OrderBy(r => r.category.DisplayOrder)
+    .ToList();
 ```
 
----
-
-### Pattern 2: Get Category by Slug
-**Use Case:** Load category page from URL (e.g., `/category/bats`)
-
-**Query:**
-```
-Index:     GSI1
-Condition: GSI1PK = "TENANT#{tenantId}#SLUG" AND GSI1SK = "CATEGORY#{slug}"
-```
-
-**Returns:** Single category metadata
-
-**Performance:** Single query, ~1 RCU
-
-**Implementation:**
+**Private Helper Method:** `GetCategoryWithDetailsAsync(string categoryId, string tenantId)`
 ```csharp
-var request = new QueryRequest
-{
-    TableName = "gearify-catalog",
-    IndexName = "GSI1",
-    KeyConditionExpression = "GSI1PK = :gsi1pk AND GSI1SK = :gsi1sk",
-    ExpressionAttributeValues = new Dictionary<string, AttributeValue>
-    {
-        { ":gsi1pk", new AttributeValue { S = "TENANT#default#SLUG" } },
-        { ":gsi1sk", new AttributeValue { S = "CATEGORY#bats" } }
-    }
-};
-```
-
----
-
-### Pattern 3: Get Category with Full Details (Mega Menu)
-**Use Case:** Load complete category hierarchy for mega menu
-
-**Query:**
-```
-Table:     Primary Table
-Condition: PK = "TENANT#{tenantId}#CATEGORY#{categoryId}"
-```
-
-**Returns:**
-- 1 category (SK = METADATA)
-- N sections (SK = SECTION#{sectionId})
-- M subcategories (SK = SECTION#{sectionId}#ITEM#{subcategoryId})
-
-**Performance:** Single query fetches entire category hierarchy
-
-**Implementation:**
-```csharp
+// Query primary table by PK to get all related items
 var request = new QueryRequest
 {
     TableName = "gearify-catalog",
     KeyConditionExpression = "PK = :pk",
     ExpressionAttributeValues = new Dictionary<string, AttributeValue>
     {
-        { ":pk", new AttributeValue { S = "TENANT#default#CATEGORY#cat_bats" } }
+        { ":pk", new AttributeValue { S = $"TENANT#{tenantId}#CATEGORY#{categoryId}" } }
     }
 };
-```
 
-**Result Processing:**
-```csharp
+var response = await dynamoDb.QueryAsync(request);
+
+// Process items by SK pattern
 foreach (var item in response.Items)
 {
     var sk = item["SK"].S;
@@ -198,44 +173,24 @@ foreach (var item in response.Items)
 
 ---
 
-### Pattern 4: Get All Categories with Details (Optimized Mega Menu)
-**Use Case:** Load complete mega menu data for navigation
+## Potential Future Access Patterns
 
-**Strategy:** Parallel queries for maximum performance
+These patterns are supported by the schema but not currently implemented:
 
-**Steps:**
-1. Query GSI2 to get all category IDs (1 query)
-2. Parallel queries on primary table for each category (N parallel queries)
+### Get Category by Slug
+**Use Case:** Load category page from URL (e.g., `/category/bats`)
+```
+Index:     GSI1
+Condition: GSI1PK = "TENANT#{tenantId}#SLUG" AND GSI1SK = "CATEGORY#{slug}"
+Returns:   Single category metadata
+```
 
-**Performance:**
-- 1 + N queries total
-- N queries execute in parallel
-- Total time ≈ time of slowest query (not sum of all queries)
-
-**Implementation:**
-```csharp
-// Step 1: Get all category IDs
-var categoriesResponse = await dynamoDb.QueryAsync(new QueryRequest
-{
-    TableName = "gearify-catalog",
-    IndexName = "GSI2",
-    KeyConditionExpression = "GSI2PK = :gsi2pk",
-    ExpressionAttributeValues = new Dictionary<string, AttributeValue>
-    {
-        { ":gsi2pk", new AttributeValue { S = "TENANT#default#CATEGORIES" } }
-    }
-});
-
-var categoryIds = categoriesResponse.Items
-    .Select(item => item["Id"].S)
-    .ToList();
-
-// Step 2: Fetch details in parallel
-var detailsTasks = categoryIds
-    .Select(id => GetCategoryWithDetailsAsync(id, tenantId))
-    .ToList();
-
-var results = await Task.WhenAll(detailsTasks);
+### Get All Categories (List Only)
+**Use Case:** Display category navigation menu (without details)
+```
+Index:     GSI2
+Condition: GSI2PK = "TENANT#{tenantId}#CATEGORIES"
+Returns:   All categories ordered by displayOrder
 ```
 
 ---
@@ -274,31 +229,24 @@ Category: Bats
 
 ### Scenario: Loading Mega Menu with 9 Categories
 
-**Old Implementation (N+1 Pattern):**
+**Current Implementation (Parallel Pattern):**
 ```
-Query 1:  Get all categories         → 1 RCU
-Query 2:  Get category 1 details     → 1 RCU
-Query 3:  Get category 2 details     → 1 RCU
-...
-Query 10: Get category 9 details     → 1 RCU
--------------------------------------------
-Total: 10 RCUs, 10 sequential round trips
-Time: ~500-1000ms (sequential)
-```
-
-**New Implementation (Parallel Pattern):**
-```
-Query 1:    Get all category IDs       → 1 RCU
-Queries 2-10: Get category details (PARALLEL)
-  - Category 1 details                 → 1 RCU
-  - Category 2 details                 → 1 RCU
+Query 1:    Get all category IDs from GSI2       → 1 RCU
+Queries 2-10: Get category details from primary table (PARALLEL)
+  - Category 1 details (PK query)                → 1 RCU
+  - Category 2 details (PK query)                → 1 RCU
   - ...
-  - Category 9 details                 → 1 RCU
--------------------------------------------
+  - Category 9 details (PK query)                → 1 RCU
+-----------------------------------------------------------
 Total: 10 RCUs, 2 round trip phases
 Time: ~100-150ms (parallel execution)
-Performance Gain: 5-10x faster
 ```
+
+**Key Performance Characteristics:**
+- Round Trip 1: GSI2 query returns all category IDs
+- Round Trip 2: N parallel PK queries execute concurrently
+- Total time = Time(GSI2 query) + Time(slowest PK query)
+- NOT the sum of all query times due to parallelization
 
 ---
 
@@ -419,29 +367,42 @@ PK: CATEGORY#cat_bats  // Missing tenant ID
 
 ---
 
-## Future Access Patterns
+## Admin Operations (Not Currently Implemented)
 
-If you need to add admin functionality later, consider these patterns:
+If you need to add admin functionality for managing catalog data, consider these patterns:
 
-### Create Category
-```
-PutItem with PK = TENANT#{tenantId}#CATEGORY#{newCategoryId}
-```
+### Seeding Data
+**Current Approach:** Static JSON files loaded via `init-aws.sh` script
+- Location: `gearify-umbrella/localstack/dynamodb/data/catalog-default-tenant-batch-{n}.json`
+- Loaded on: Docker Compose startup
 
-### Update Category
-```
-UpdateItem with PK + SK = METADATA
-```
+### CRUD Operations
+Admin endpoints for category management would require additional repository methods:
 
-### Delete Category (with cascading)
-```
-1. Query all items with PK = TENANT#{tenantId}#CATEGORY#{categoryId}
-2. BatchWriteItem to delete all items (category + sections + subcategories)
+**Create Category:**
+```csharp
+PutItem with PK = TENANT#{tenantId}#CATEGORY#{categoryId}, SK = METADATA
 ```
 
-### Search Categories by Name
+**Update Category:**
+```csharp
+UpdateItem with PK = TENANT#{tenantId}#CATEGORY#{categoryId}, SK = METADATA
 ```
-Add GSI3 for text search or use DynamoDB Streams + ElasticSearch
+
+**Delete Category (cascading):**
+```csharp
+1. Query: PK = TENANT#{tenantId}#CATEGORY#{categoryId}
+2. BatchWriteItem: Delete all returned items (category + sections + subcategories)
+```
+
+**Add Section to Category:**
+```csharp
+PutItem with PK = TENANT#{tenantId}#CATEGORY#{categoryId}, SK = SECTION#{sectionId}
+```
+
+**Add Subcategory to Section:**
+```csharp
+PutItem with PK = TENANT#{tenantId}#CATEGORY#{categoryId}, SK = SECTION#{sectionId}#ITEM#{subcategoryId}
 ```
 
 ---
