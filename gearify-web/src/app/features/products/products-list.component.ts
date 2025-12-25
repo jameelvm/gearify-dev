@@ -12,6 +12,7 @@ import {
 } from '@app/ui-kit/components';
 import { PageChangeEvent } from '@app/ui-kit/components/pagination/pagination.component';
 import { SelectOption } from '@app/ui-kit/components/select/select.component';
+import { FilterComponent } from '../product/filter/filter.component';
 
 export type ViewMode = 'grid' | 'list';
 export type SortField = 'price' | 'rating' | 'newest' | 'name';
@@ -35,7 +36,8 @@ interface PriceRange {
     InputComponent,
     SelectComponent,
     ButtonComponent,
-    CheckboxComponent
+    CheckboxComponent,
+    FilterComponent
   ],
   templateUrl: './products-list.component.html',
   styleUrl: './products-list.component.scss'

@@ -1,0 +1,167 @@
+<div class="filter-bar">
+  <div class="filter-bar-container">
+    <div class="filter-left">
+    <!-- Brand Dropdown -->
+    <div class="filter-dropdown">
+      <button class="filter-dropdown-btn" (click)="toggleBrandDropdown(); $event.stopPropagation()">
+        Brand
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          [class.rotate]="showBrandDropdown"
+        >
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+
+      <ng-container *ngIf="showBrandDropdown">
+        <div class="dropdown-overlay" (click)="closeAllDropdowns()"></div>
+        <div class="dropdown-menu">
+          <!-- Search -->
+          <div class="dropdown-search">
+            <input
+              type="text"
+              placeholder="Search by brand"
+              [(ngModel)]="brandSearchQuery"
+              class="search-input"
+            />
+            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+          </div>
+
+          <!-- All Brands -->
+          <div class="dropdown-section">
+            <div class="section-title">All Brands</div>
+            <div class="checkbox-list">
+              <label class="checkbox-item" *ngFor="let brand of filteredBrands">
+                <input type="checkbox" />
+                <span class="checkbox-label">{{ brand.name }}</span>
+                <span class="checkbox-count">({{ brand.count }})</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Bottom Clear Button -->
+          <div class="dropdown-actions">
+            <button class="action-btn action-clear-solo">Clear</button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- Price Dropdown -->
+    <div class="filter-dropdown">
+      <button class="filter-dropdown-btn" (click)="togglePriceDropdown(); $event.stopPropagation()">
+        Price
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          [class.rotate]="showPriceDropdown"
+        >
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+
+      <ng-container *ngIf="showPriceDropdown">
+        <div class="dropdown-overlay" (click)="closeAllDropdowns()"></div>
+        <div class="dropdown-menu">
+          <!-- Price Ranges -->
+          <div class="checkbox-list">
+            <label class="checkbox-item" *ngFor="let range of priceRanges">
+              <input type="checkbox" />
+              <span class="checkbox-label">{{ range.label }}</span>
+              <span class="checkbox-count">({{ range.count }})</span>
+            </label>
+          </div>
+
+          <!-- Custom Range -->
+          <div class="custom-range">
+            <div class="custom-range-title">Custom Range</div>
+            <div class="custom-range-inputs">
+              <input
+                type="text"
+                placeholder="Min"
+                [(ngModel)]="customPriceMin"
+                class="range-input"
+              />
+              <span class="range-separator">to</span>
+              <input
+                type="text"
+                placeholder="Max"
+                [(ngModel)]="customPriceMax"
+                class="range-input"
+              />
+              <button class="range-go-btn">Go</button>
+            </div>
+          </div>
+
+          <!-- Bottom Clear Button -->
+          <div class="dropdown-actions">
+            <button class="action-btn action-clear-solo">Clear</button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="filter-right">
+    <!-- View Toggle -->
+    <div class="view-toggle">
+      <button
+        class="view-btn"
+        [class.active]="viewMode === 'medium'"
+        (click)="setViewMode('medium')"
+        title="Medium tiles"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <rect x="3" y="3" width="8" height="8" rx="1"></rect>
+          <rect x="13" y="3" width="8" height="8" rx="1"></rect>
+          <rect x="3" y="13" width="8" height="8" rx="1"></rect>
+          <rect x="13" y="13" width="8" height="8" rx="1"></rect>
+        </svg>
+      </button>
+      <button
+        class="view-btn"
+        [class.active]="viewMode === 'small'"
+        (click)="setViewMode('small')"
+        title="Small tiles"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <rect x="3" y="3" width="4" height="4" rx="1"></rect>
+          <rect x="10" y="3" width="4" height="4" rx="1"></rect>
+          <rect x="17" y="3" width="4" height="4" rx="1"></rect>
+          <rect x="3" y="10" width="4" height="4" rx="1"></rect>
+          <rect x="10" y="10" width="4" height="4" rx="1"></rect>
+          <rect x="17" y="10" width="4" height="4" rx="1"></rect>
+          <rect x="3" y="17" width="4" height="4" rx="1"></rect>
+          <rect x="10" y="17" width="4" height="4" rx="1"></rect>
+          <rect x="17" y="17" width="4" height="4" rx="1"></rect>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Sort Dropdown -->
+    <div class="sort-dropdown">
+      <label class="sort-label">Sort by</label>
+      <select class="sort-select" [(ngModel)]="selectedSort">
+        <option *ngFor="let option of sortOptions" [value]="option">
+          {{ option }}
+        </option>
+      </select>
+      <svg class="sort-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </div>
+  </div>
+  </div>
+</div>

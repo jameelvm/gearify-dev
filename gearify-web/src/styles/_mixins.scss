@@ -52,3 +52,18 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Container */
+@mixin container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+
+  @include mobile {
+    padding: 0 1rem;
+  }
+
+  @include tablet {
+    padding: 0 1rem;
+  }
+}
