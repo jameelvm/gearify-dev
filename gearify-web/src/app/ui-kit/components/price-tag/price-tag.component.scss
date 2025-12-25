@@ -1,38 +1,42 @@
 .price-tag {
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.price-main {
+  display: flex;
   align-items: center;
-  gap: var(--spacing-2);
-  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .price-current {
   font-weight: var(--font-weight-bold);
-  color: var(--color-primary);
+  color: #000;
+}
+
+.price-discount {
+  color: #d32f2f;
+  font-weight: 500;
+}
+
+.price-compare-line {
+  display: flex;
 }
 
 .price-compare {
   text-decoration: line-through;
-  color: var(--color-text-secondary);
-  font-size: 0.9em;
-}
-
-.price-discount {
-  background-color: var(--color-error);
-  color: white;
-  padding: 2px var(--spacing-2);
-  border-radius: var(--border-radius-sm);
-  font-size: 0.75em;
-  font-weight: var(--font-weight-bold);
+  color: #999;
 }
 
 .price-tag-small {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .price-tag-medium {
-  font-size: 18px;
+  font-size: 14px;
 }
 
 .price-tag-large {
-  font-size: 24px;
+  font-size: 18px;
 }

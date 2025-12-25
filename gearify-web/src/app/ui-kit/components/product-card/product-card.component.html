@@ -21,56 +21,6 @@
 
     <!-- Image Skeleton Loader -->
     <div class="product-card__image-skeleton" *ngIf="!imageLoaded"></div>
-
-    <!-- Badges Container -->
-    <div class="product-card__badges">
-      <!-- Discount Badge -->
-      <app-badge
-        *ngIf="hasDiscount"
-        variant="danger"
-        size="small"
-        class="product-card__discount-badge">
-        {{ ((product.compareAtPrice - product.price) / product.compareAtPrice * 100) | number:'1.0-0' }}% OFF
-      </app-badge>
-
-      <!-- Out of Stock Badge -->
-      <app-badge
-        *ngIf="isOutOfStock"
-        variant="warning"
-        size="small">
-        Out of Stock
-      </app-badge>
-
-      <!-- Low Stock Badge -->
-      <app-badge
-        *ngIf="hasLowStock"
-        variant="info"
-        size="small">
-        Only {{ product.stockQuantity }} left
-      </app-badge>
-    </div>
-
-    <!-- Wishlist Button -->
-    <button
-      class="product-card__wishlist-btn"
-      [class.product-card__wishlist-btn--active]="isWishlisted"
-      (click)="onWishlistClick($event)"
-      [attr.aria-label]="isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'"
-      type="button">
-      <svg
-        class="product-card__wishlist-icon"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg">
-        <path
-          d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-          [attr.fill]="isWishlisted ? 'currentColor' : 'none'"
-          stroke="currentColor"
-          stroke-width="2"/>
-      </svg>
-    </button>
   </div>
 
   <!-- Product Info -->
@@ -85,14 +35,6 @@
       {{ product.name }}
     </h3>
 
-    <!-- Rating -->
-    <div class="product-card__rating" *ngIf="product.rating">
-      <app-rating
-        [rating]="product.rating.average"
-        [count]="product.rating.count">
-      </app-rating>
-    </div>
-
     <!-- Price -->
     <div class="product-card__price">
       <app-price-tag
@@ -103,27 +45,12 @@
       </app-price-tag>
     </div>
 
-    <!-- Add to Cart Button -->
-    <button
-      class="product-card__cart-btn"
-      [disabled]="isOutOfStock"
-      (click)="onAddToCartClick($event)"
-      [attr.aria-label]="'Add ' + product.name + ' to cart'"
-      type="button">
-      <svg
-        class="product-card__cart-icon"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg">
-        <path
-          d="M9 2a1 1 0 0 0-1 1v1H3a1 1 0 0 0-.9 1.45l3.7 7.4a3 3 0 0 0 2.7 1.65H18a3 3 0 0 0 2.7-1.65l3.7-7.4A1 1 0 0 0 23 4h-5V3a1 1 0 0 0-1-1H9zm0 2h8v1H9V4zm-4.13 3H22.13l-3 6a1 1 0 0 1-.9.55H8.77a1 1 0 0 1-.9-.55l-3-6zM9 16a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm9 0a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"
-          fill="currentColor"/>
-      </svg>
-      <span class="product-card__cart-btn-text">
-        {{ isOutOfStock ? 'Out of Stock' : 'Add to Cart' }}
-      </span>
-    </button>
+    <!-- Rating -->
+    <div class="product-card__rating" *ngIf="product.rating">
+      <app-rating
+        [rating]="product.rating.average"
+        [count]="product.rating.count">
+      </app-rating>
+    </div>
   </div>
 </article>
