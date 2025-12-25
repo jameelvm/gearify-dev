@@ -156,6 +156,24 @@ awslocal dynamodb create-table \
   --region us-east-1 \
   2>/dev/null || echo "    Table gearify-catalog already exists, skipping..."
 
+# Brands table
+echo "  - Creating table: gearify-brands"
+awslocal dynamodb create-table \
+  --table-name gearify-brands \
+  --attribute-definitions \
+    AttributeName=PK,AttributeType=S \
+    AttributeName=SK,AttributeType=S \
+    AttributeName=GSI1PK,AttributeType=S \
+    AttributeName=GSI1SK,AttributeType=S \
+  --key-schema \
+    AttributeName=PK,KeyType=HASH \
+    AttributeName=SK,KeyType=RANGE \
+  --global-secondary-indexes \
+    "[{\"IndexName\":\"GSI1\",\"KeySchema\":[{\"AttributeName\":\"GSI1PK\",\"KeyType\":\"HASH\"},{\"AttributeName\":\"GSI1SK\",\"KeyType\":\"RANGE\"}],\"Projection\":{\"ProjectionType\":\"ALL\"}}]" \
+  --billing-mode PAY_PER_REQUEST \
+  --region us-east-1 \
+  2>/dev/null || echo "    Table gearify-brands already exists, skipping..."
+
 echo "DynamoDB tables created successfully!"
 
 # ==========================================
@@ -198,6 +216,13 @@ awslocal dynamodb batch-write-item \
   --request-items file://${CONFIG_DIR}/dynamodb/data/feature-flags-batch.json \
   --region us-east-1 \
   2>/dev/null || echo "    Failed to seed feature flags"
+
+# Seed brands for default tenant
+echo "  - Seeding brands for default tenant"
+awslocal dynamodb batch-write-item \
+  --request-items file://${CONFIG_DIR}/dynamodb/data/brands-default-tenant.json \
+  --region us-east-1 \
+  2>/dev/null || echo "    Failed to seed brands"
 
 # Seed catalog (categories, sections, subcategories) - split into 3 batches due to 25-item limit
 echo "  - Seeding catalog for default tenant (batch 1/3)"

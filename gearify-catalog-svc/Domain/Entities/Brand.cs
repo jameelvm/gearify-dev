@@ -1,22 +1,20 @@
 namespace Gearify.CatalogService.Domain.Entities;
 
 /// <summary>
-/// Represents an item/subcategory within a section (e.g., "English Willow", "SS", "Professional")
+/// Represents a brand/manufacturer in the catalog (e.g., SS, MRF, Kookaburra)
+/// Brands are independent entities that can be referenced by products and catalog filters
 /// </summary>
-public class Subcategory
+public class Brand
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
-    public string CategoryId { get; set; } = string.Empty;
-    public string SectionId { get; set; } = string.Empty;
     public string TenantId { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Slug { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
-    public string ImageUrl { get; set; } = string.Empty;
-    public string? BrandId { get; set; }  // Reference to Brand (if FilterType = BRAND)
-    public string? FilterType { get; set; }  // BRAND, PRICE, etc.
+    public string Logo { get; set; } = string.Empty;
+    public string Country { get; set; } = string.Empty;
+    public string Website { get; set; } = string.Empty;
     public int DisplayOrder { get; set; }
-    public int ProductCount { get; set; }
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;

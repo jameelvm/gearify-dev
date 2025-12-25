@@ -104,7 +104,11 @@
       "Bash(if [ -f \"C:/Users/jamee/OneDrive/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1\" ])",
       "Bash(then echo \"exists\")",
       "Bash(else echo \"not found\")",
-      "Bash(python -m json.tool:*)"
+      "Bash(python -m json.tool:*)",
+      "Bash(AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test awslocal dynamodb create-table:*)",
+      "Bash(git checkout:*)",
+      "Bash(python:*)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "ask": []

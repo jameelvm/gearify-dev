@@ -74,6 +74,8 @@ public record SubcategoryDto(
     string Slug,
     string Description,
     string ImageUrl,
+    string? BrandId,
+    string? FilterType,
     int DisplayOrder,
     int ProductCount,
     bool IsActive
@@ -92,6 +94,8 @@ public record SubcategoryDto(
             subcategory.Slug,
             subcategory.Description,
             subcategory.ImageUrl,
+            subcategory.BrandId,
+            subcategory.FilterType,
             subcategory.DisplayOrder,
             subcategory.ProductCount,
             subcategory.IsActive

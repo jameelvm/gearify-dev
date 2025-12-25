@@ -3,6 +3,7 @@ using Amazon.Runtime;
 using Amazon.S3;
 using FluentValidation;
 using Gearify.CatalogService.Application.Commands;
+using Gearify.CatalogService.Application.Mappers;
 using Gearify.CatalogService.Application.Validators;
 using Gearify.CatalogService.Infrastructure.Repositories;
 using Gearify.CatalogService.Infrastructure.Swagger;
@@ -113,6 +114,11 @@ public class Startup
         // Repositories
         services.AddScoped<IProductRepository, DynamoDbProductRepository>();
         services.AddScoped<ICategoryRepository, DynamoDbCategoryRepository>();
+        services.AddScoped<IBrandRepository, DynamoDbBrandRepository>();
+
+        // Section Mappers (Strategy Pattern)
+        services.AddScoped<ISectionMapper, BrandSectionMapper>();
+        services.AddScoped<ISectionMapperFactory, SectionMapperFactory>();
 
         // OpenTelemetry
         var otlpEndpoint = Environment.GetEnvironmentVariable("OTLP_ENDPOINT") ?? "http://otel-collector:4318";

@@ -1,0 +1,129 @@
+{
+  "gearify-brands": [
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {"S": "TENANT#default#BRAND#a1b2c3d4-e5f6-4a5b-8c9d-1e2f3a4b5c6d"},
+          "SK": {"S": "METADATA"},
+          "EntityType": {"S": "BRAND"},
+          "GSI1PK": {"S": "TENANT#default#BRANDS"},
+          "GSI1SK": {"S": "BRAND#ss"},
+          "Id": {"S": "a1b2c3d4-e5f6-4a5b-8c9d-1e2f3a4b5c6d"},
+          "TenantId": {"S": "default"},
+          "Name": {"S": "SS"},
+          "Slug": {"S": "ss"},
+          "Description": {"S": "Premium cricket equipment manufacturer from India"},
+          "Logo": {"S": ""},
+          "Country": {"S": "India"},
+          "Website": {"S": ""},
+          "DisplayOrder": {"N": "1"},
+          "IsActive": {"BOOL": true},
+          "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"},
+          "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"},
+          "CreatedBy": {"S": "system"},
+          "UpdatedBy": {"S": "system"}
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {"S": "TENANT#default#BRAND#b2c3d4e5-f6a7-4b5c-9d0e-2f3a4b5c6d7e"},
+          "SK": {"S": "METADATA"},
+          "EntityType": {"S": "BRAND"},
+          "GSI1PK": {"S": "TENANT#default#BRANDS"},
+          "GSI1SK": {"S": "BRAND#mrf"},
+          "Id": {"S": "b2c3d4e5-f6a7-4b5c-9d0e-2f3a4b5c6d7e"},
+          "TenantId": {"S": "default"},
+          "Name": {"S": "MRF"},
+          "Slug": {"S": "mrf"},
+          "Description": {"S": "Trusted name in cricket equipment"},
+          "Logo": {"S": ""},
+          "Country": {"S": "India"},
+          "Website": {"S": ""},
+          "DisplayOrder": {"N": "2"},
+          "IsActive": {"BOOL": true},
+          "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"},
+          "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"},
+          "CreatedBy": {"S": "system"},
+          "UpdatedBy": {"S": "system"}
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {"S": "TENANT#default#BRAND#c3d4e5f6-a7b8-4c5d-0e1f-3a4b5c6d7e8f"},
+          "SK": {"S": "METADATA"},
+          "EntityType": {"S": "BRAND"},
+          "GSI1PK": {"S": "TENANT#default#BRANDS"},
+          "GSI1SK": {"S": "BRAND#sg"},
+          "Id": {"S": "c3d4e5f6-a7b8-4c5d-0e1f-3a4b5c6d7e8f"},
+          "TenantId": {"S": "default"},
+          "Name": {"S": "SG"},
+          "Slug": {"S": "sg"},
+          "Description": {"S": "Quality cricket gear"},
+          "Logo": {"S": ""},
+          "Country": {"S": "India"},
+          "Website": {"S": ""},
+          "DisplayOrder": {"N": "3"},
+          "IsActive": {"BOOL": true},
+          "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"},
+          "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"},
+          "CreatedBy": {"S": "system"},
+          "UpdatedBy": {"S": "system"}
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {"S": "TENANT#default#BRAND#d4e5f6a7-b8c9-4d5e-1f2a-4b5c6d7e8f9a"},
+          "SK": {"S": "METADATA"},
+          "EntityType": {"S": "BRAND"},
+          "GSI1PK": {"S": "TENANT#default#BRANDS"},
+          "GSI1SK": {"S": "BRAND#kookaburra"},
+          "Id": {"S": "d4e5f6a7-b8c9-4d5e-1f2a-4b5c6d7e8f9a"},
+          "TenantId": {"S": "default"},
+          "Name": {"S": "Kookaburra"},
+          "Slug": {"S": "kookaburra"},
+          "Description": {"S": "Australian cricket equipment specialist"},
+          "Logo": {"S": ""},
+          "Country": {"S": "Australia"},
+          "Website": {"S": ""},
+          "DisplayOrder": {"N": "4"},
+          "IsActive": {"BOOL": true},
+          "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"},
+          "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"},
+          "CreatedBy": {"S": "system"},
+          "UpdatedBy": {"S": "system"}
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {"S": "TENANT#default#BRAND#e5f6a7b8-c9d0-4e5f-2a3b-5c6d7e8f9a0b"},
+          "SK": {"S": "METADATA"},
+          "EntityType": {"S": "BRAND"},
+          "GSI1PK": {"S": "TENANT#default#BRANDS"},
+          "GSI1SK": {"S": "BRAND#dsc"},
+          "Id": {"S": "e5f6a7b8-c9d0-4e5f-2a3b-5c6d7e8f9a0b"},
+          "TenantId": {"S": "default"},
+          "Name": {"S": "DSC"},
+          "Slug": {"S": "dsc"},
+          "Description": {"S": "Professional cricket equipment"},
+          "Logo": {"S": ""},
+          "Country": {"S": "India"},
+          "Website": {"S": ""},
+          "DisplayOrder": {"N": "5"},
+          "IsActive": {"BOOL": true},
+          "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"},
+          "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"},
+          "CreatedBy": {"S": "system"},
+          "UpdatedBy": {"S": "system"}
+        }
+      }
+    }
+  ]
+}

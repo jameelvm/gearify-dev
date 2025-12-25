@@ -1,28 +1,1177 @@
 {
   "gearify-catalog": [
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_helmets"}, "SK": {"S": "SECTION#sec_helmets_1#ITEM#sub_helmets_1"}, "EntityType": {"S": "SUBCATEGORY"}, "Id": {"S": "sub_helmets_1"}, "CategoryId": {"S": "cat_helmets"}, "SectionId": {"S": "sec_helmets_1"}, "TenantId": {"S": "default"}, "Name": {"S": "SG"}, "Slug": {"S": "sg"}, "DisplayOrder": {"N": "1"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_helmets"}, "SK": {"S": "SECTION#sec_helmets_1#ITEM#sub_helmets_2"}, "EntityType": {"S": "SUBCATEGORY"}, "Id": {"S": "sub_helmets_2"}, "CategoryId": {"S": "cat_helmets"}, "SectionId": {"S": "sec_helmets_1"}, "TenantId": {"S": "default"}, "Name": {"S": "Kookaburra"}, "Slug": {"S": "kookaburra"}, "DisplayOrder": {"N": "2"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_helmets"}, "SK": {"S": "SECTION#sec_helmets_1#ITEM#sub_helmets_3"}, "EntityType": {"S": "SUBCATEGORY"}, "Id": {"S": "sub_helmets_3"}, "CategoryId": {"S": "cat_helmets"}, "SectionId": {"S": "sec_helmets_1"}, "TenantId": {"S": "default"}, "Name": {"S": "SS"}, "Slug": {"S": "ss"}, "DisplayOrder": {"N": "3"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_bags"}, "SK": {"S": "METADATA"}, "EntityType": {"S": "CATEGORY"}, "GSI1PK": {"S": "TENANT#default#SLUG"}, "GSI1SK": {"S": "CATEGORY#bags"}, "GSI2PK": {"S": "TENANT#default#CATEGORIES"}, "GSI2SK": {"S": "ORDER#0005"}, "Id": {"S": "cat_bags"}, "TenantId": {"S": "default"}, "Name": {"S": "Bags"}, "Slug": {"S": "bags"}, "Description": {"S": "Cricket bags and kit bags"}, "Icon": {"S": "bag"}, "ImageUrl": {"S": ""}, "DisplayOrder": {"N": "5"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "CreatedBy": {"S": "system"}, "UpdatedBy": {"S": "system"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_bags"}, "SK": {"S": "SECTION#sec_bags_1"}, "EntityType": {"S": "CATEGORY_SECTION"}, "Id": {"S": "sec_bags_1"}, "CategoryId": {"S": "cat_bags"}, "TenantId": {"S": "default"}, "Title": {"S": "By Brand"}, "Slug": {"S": "by-brand"}, "ShowTitle": {"BOOL": true}, "DisplayOrder": {"N": "1"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_bags"}, "SK": {"S": "SECTION#sec_bags_1#ITEM#sub_bags_1"}, "EntityType": {"S": "SUBCATEGORY"}, "Id": {"S": "sub_bags_1"}, "CategoryId": {"S": "cat_bags"}, "SectionId": {"S": "sec_bags_1"}, "TenantId": {"S": "default"}, "Name": {"S": "SG"}, "Slug": {"S": "sg"}, "DisplayOrder": {"N": "1"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_bags"}, "SK": {"S": "SECTION#sec_bags_1#ITEM#sub_bags_2"}, "EntityType": {"S": "SUBCATEGORY"}, "Id": {"S": "sub_bags_2"}, "CategoryId": {"S": "cat_bags"}, "SectionId": {"S": "sec_bags_1"}, "TenantId": {"S": "default"}, "Name": {"S": "Kookaburra"}, "Slug": {"S": "kookaburra"}, "DisplayOrder": {"N": "2"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_bags"}, "SK": {"S": "SECTION#sec_bags_1#ITEM#sub_bags_3"}, "EntityType": {"S": "SUBCATEGORY"}, "Id": {"S": "sub_bags_3"}, "CategoryId": {"S": "cat_bags"}, "SectionId": {"S": "sec_bags_1"}, "TenantId": {"S": "default"}, "Name": {"S": "SS"}, "Slug": {"S": "ss"}, "DisplayOrder": {"N": "3"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_pads"}, "SK": {"S": "METADATA"}, "EntityType": {"S": "CATEGORY"}, "GSI1PK": {"S": "TENANT#default#SLUG"}, "GSI1SK": {"S": "CATEGORY#pads"}, "GSI2PK": {"S": "TENANT#default#CATEGORIES"}, "GSI2SK": {"S": "ORDER#0006"}, "Id": {"S": "cat_pads"}, "TenantId": {"S": "default"}, "Name": {"S": "Pads"}, "Slug": {"S": "pads"}, "Description": {"S": "Cricket batting and wicket-keeping pads"}, "Icon": {"S": "pad"}, "ImageUrl": {"S": ""}, "DisplayOrder": {"N": "6"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "CreatedBy": {"S": "system"}, "UpdatedBy": {"S": "system"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_pads"}, "SK": {"S": "SECTION#sec_pads_1"}, "EntityType": {"S": "CATEGORY_SECTION"}, "Id": {"S": "sec_pads_1"}, "CategoryId": {"S": "cat_pads"}, "TenantId": {"S": "default"}, "Title": {"S": "By Brand"}, "Slug": {"S": "by-brand"}, "ShowTitle": {"BOOL": true}, "DisplayOrder": {"N": "1"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_pads"}, "SK": {"S": "SECTION#sec_pads_1#ITEM#sub_pads_1"}, "EntityType": {"S": "SUBCATEGORY"}, "Id": {"S": "sub_pads_1"}, "CategoryId": {"S": "cat_pads"}, "SectionId": {"S": "sec_pads_1"}, "TenantId": {"S": "default"}, "Name": {"S": "SG"}, "Slug": {"S": "sg"}, "DisplayOrder": {"N": "1"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_pads"}, "SK": {"S": "SECTION#sec_pads_1#ITEM#sub_pads_2"}, "EntityType": {"S": "SUBCATEGORY"}, "Id": {"S": "sub_pads_2"}, "CategoryId": {"S": "cat_pads"}, "SectionId": {"S": "sec_pads_1"}, "TenantId": {"S": "default"}, "Name": {"S": "Kookaburra"}, "Slug": {"S": "kookaburra"}, "DisplayOrder": {"N": "2"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_pads"}, "SK": {"S": "SECTION#sec_pads_1#ITEM#sub_pads_3"}, "EntityType": {"S": "SUBCATEGORY"}, "Id": {"S": "sub_pads_3"}, "CategoryId": {"S": "cat_pads"}, "SectionId": {"S": "sec_pads_1"}, "TenantId": {"S": "default"}, "Name": {"S": "SS"}, "Slug": {"S": "ss"}, "DisplayOrder": {"N": "3"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_gloves"}, "SK": {"S": "METADATA"}, "EntityType": {"S": "CATEGORY"}, "GSI1PK": {"S": "TENANT#default#SLUG"}, "GSI1SK": {"S": "CATEGORY#gloves"}, "GSI2PK": {"S": "TENANT#default#CATEGORIES"}, "GSI2SK": {"S": "ORDER#0007"}, "Id": {"S": "cat_gloves"}, "TenantId": {"S": "default"}, "Name": {"S": "Gloves"}, "Slug": {"S": "gloves"}, "Description": {"S": "Cricket batting and wicket-keeping gloves"}, "Icon": {"S": "glove"}, "ImageUrl": {"S": ""}, "DisplayOrder": {"N": "7"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "CreatedBy": {"S": "system"}, "UpdatedBy": {"S": "system"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_gloves"}, "SK": {"S": "SECTION#sec_gloves_1"}, "EntityType": {"S": "CATEGORY_SECTION"}, "Id": {"S": "sec_gloves_1"}, "CategoryId": {"S": "cat_gloves"}, "TenantId": {"S": "default"}, "Title": {"S": "By Brand"}, "Slug": {"S": "by-brand"}, "ShowTitle": {"BOOL": true}, "DisplayOrder": {"N": "1"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_gloves"}, "SK": {"S": "SECTION#sec_gloves_1#ITEM#sub_gloves_1"}, "EntityType": {"S": "SUBCATEGORY"}, "Id": {"S": "sub_gloves_1"}, "CategoryId": {"S": "cat_gloves"}, "SectionId": {"S": "sec_gloves_1"}, "TenantId": {"S": "default"}, "Name": {"S": "SG"}, "Slug": {"S": "sg"}, "DisplayOrder": {"N": "1"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_gloves"}, "SK": {"S": "SECTION#sec_gloves_1#ITEM#sub_gloves_2"}, "EntityType": {"S": "SUBCATEGORY"}, "Id": {"S": "sub_gloves_2"}, "CategoryId": {"S": "cat_gloves"}, "SectionId": {"S": "sec_gloves_1"}, "TenantId": {"S": "default"}, "Name": {"S": "Kookaburra"}, "Slug": {"S": "kookaburra"}, "DisplayOrder": {"N": "2"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_gloves"}, "SK": {"S": "SECTION#sec_gloves_1#ITEM#sub_gloves_3"}, "EntityType": {"S": "SUBCATEGORY"}, "Id": {"S": "sub_gloves_3"}, "CategoryId": {"S": "cat_gloves"}, "SectionId": {"S": "sec_gloves_1"}, "TenantId": {"S": "default"}, "Name": {"S": "SS"}, "Slug": {"S": "ss"}, "DisplayOrder": {"N": "3"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_accessories"}, "SK": {"S": "METADATA"}, "EntityType": {"S": "CATEGORY"}, "GSI1PK": {"S": "TENANT#default#SLUG"}, "GSI1SK": {"S": "CATEGORY#accessories"}, "GSI2PK": {"S": "TENANT#default#CATEGORIES"}, "GSI2SK": {"S": "ORDER#0008"}, "Id": {"S": "cat_accessories"}, "TenantId": {"S": "default"}, "Name": {"S": "Accessories"}, "Slug": {"S": "accessories"}, "Description": {"S": "Cricket accessories and gear"}, "Icon": {"S": "accessories"}, "ImageUrl": {"S": ""}, "DisplayOrder": {"N": "8"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "CreatedBy": {"S": "system"}, "UpdatedBy": {"S": "system"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_accessories"}, "SK": {"S": "SECTION#sec_acc_1"}, "EntityType": {"S": "CATEGORY_SECTION"}, "Id": {"S": "sec_acc_1"}, "CategoryId": {"S": "cat_accessories"}, "TenantId": {"S": "default"}, "Title": {"S": "Accessories Group 1"}, "Slug": {"S": "accessories-group-1"}, "ShowTitle": {"BOOL": false}, "DisplayOrder": {"N": "1"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_accessories"}, "SK": {"S": "SECTION#sec_acc_1#ITEM#sub_acc_1"}, "EntityType": {"S": "SUBCATEGORY"}, "Id": {"S": "sub_acc_1"}, "CategoryId": {"S": "cat_accessories"}, "SectionId": {"S": "sec_acc_1"}, "TenantId": {"S": "default"}, "Name": {"S": "Grips"}, "Slug": {"S": "grips"}, "DisplayOrder": {"N": "1"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_accessories"}, "SK": {"S": "SECTION#sec_acc_1#ITEM#sub_acc_2"}, "EntityType": {"S": "SUBCATEGORY"}, "Id": {"S": "sub_acc_2"}, "CategoryId": {"S": "cat_accessories"}, "SectionId": {"S": "sec_acc_1"}, "TenantId": {"S": "default"}, "Name": {"S": "Guards"}, "Slug": {"S": "guards"}, "DisplayOrder": {"N": "2"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_accessories"}, "SK": {"S": "SECTION#sec_acc_1#ITEM#sub_acc_3"}, "EntityType": {"S": "SUBCATEGORY"}, "Id": {"S": "sub_acc_3"}, "CategoryId": {"S": "cat_accessories"}, "SectionId": {"S": "sec_acc_1"}, "TenantId": {"S": "default"}, "Name": {"S": "Bat Care"}, "Slug": {"S": "bat-care"}, "DisplayOrder": {"N": "3"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#default#CATEGORY#cat_accessories"}, "SK": {"S": "SECTION#sec_acc_2"}, "EntityType": {"S": "CATEGORY_SECTION"}, "Id": {"S": "sec_acc_2"}, "CategoryId": {"S": "cat_accessories"}, "TenantId": {"S": "default"}, "Title": {"S": "Accessories Group 2"}, "Slug": {"S": "accessories-group-2"}, "ShowTitle": {"BOOL": false}, "DisplayOrder": {"N": "2"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-21T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-21T00:00:00.000Z"}}}}
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_helmets"
+          },
+          "SK": {
+            "S": "SECTION#sec_helmets_1#ITEM#sub_helmets_1"
+          },
+          "EntityType": {
+            "S": "SUBCATEGORY"
+          },
+          "Id": {
+            "S": "sub_helmets_1"
+          },
+          "CategoryId": {
+            "S": "cat_helmets"
+          },
+          "SectionId": {
+            "S": "sec_helmets_1"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "SG"
+          },
+          "Slug": {
+            "S": "sg"
+          },
+          "DisplayOrder": {
+            "N": "1"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_helmets"
+          },
+          "SK": {
+            "S": "SECTION#sec_helmets_1#ITEM#sub_helmets_2"
+          },
+          "EntityType": {
+            "S": "SUBCATEGORY"
+          },
+          "Id": {
+            "S": "sub_helmets_2"
+          },
+          "CategoryId": {
+            "S": "cat_helmets"
+          },
+          "SectionId": {
+            "S": "sec_helmets_1"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "Kookaburra"
+          },
+          "Slug": {
+            "S": "kookaburra"
+          },
+          "DisplayOrder": {
+            "N": "2"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_helmets"
+          },
+          "SK": {
+            "S": "SECTION#sec_helmets_1#ITEM#sub_helmets_3"
+          },
+          "EntityType": {
+            "S": "SUBCATEGORY"
+          },
+          "Id": {
+            "S": "sub_helmets_3"
+          },
+          "CategoryId": {
+            "S": "cat_helmets"
+          },
+          "SectionId": {
+            "S": "sec_helmets_1"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "SS"
+          },
+          "Slug": {
+            "S": "ss"
+          },
+          "DisplayOrder": {
+            "N": "3"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_bags"
+          },
+          "SK": {
+            "S": "METADATA"
+          },
+          "EntityType": {
+            "S": "CATEGORY"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#SLUG"
+          },
+          "GSI1SK": {
+            "S": "CATEGORY#bags"
+          },
+          "GSI2PK": {
+            "S": "TENANT#default#CATEGORIES"
+          },
+          "GSI2SK": {
+            "S": "ORDER#0005"
+          },
+          "Id": {
+            "S": "cat_bags"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "Bags"
+          },
+          "Slug": {
+            "S": "bags"
+          },
+          "Description": {
+            "S": "Cricket bags and kit bags"
+          },
+          "Icon": {
+            "S": "bag"
+          },
+          "ImageUrl": {
+            "S": ""
+          },
+          "DisplayOrder": {
+            "N": "5"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "CreatedBy": {
+            "S": "system"
+          },
+          "UpdatedBy": {
+            "S": "system"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_bags"
+          },
+          "SK": {
+            "S": "SECTION#sec_bags_1"
+          },
+          "EntityType": {
+            "S": "CATEGORY_SECTION"
+          },
+          "Id": {
+            "S": "sec_bags_1"
+          },
+          "CategoryId": {
+            "S": "cat_bags"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Title": {
+            "S": "By Brand"
+          },
+          "Slug": {
+            "S": "by-brand"
+          },
+          "ShowTitle": {
+            "BOOL": true
+          },
+          "DisplayOrder": {
+            "N": "1"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "Mapping": {
+            "S": "BRAND"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_bags"
+          },
+          "SK": {
+            "S": "SECTION#sec_bags_1#ITEM#sub_bags_1"
+          },
+          "EntityType": {
+            "S": "SUBCATEGORY"
+          },
+          "Id": {
+            "S": "sub_bags_1"
+          },
+          "CategoryId": {
+            "S": "cat_bags"
+          },
+          "SectionId": {
+            "S": "sec_bags_1"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "SG"
+          },
+          "Slug": {
+            "S": "sg"
+          },
+          "DisplayOrder": {
+            "N": "1"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_bags"
+          },
+          "SK": {
+            "S": "SECTION#sec_bags_1#ITEM#sub_bags_2"
+          },
+          "EntityType": {
+            "S": "SUBCATEGORY"
+          },
+          "Id": {
+            "S": "sub_bags_2"
+          },
+          "CategoryId": {
+            "S": "cat_bags"
+          },
+          "SectionId": {
+            "S": "sec_bags_1"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "Kookaburra"
+          },
+          "Slug": {
+            "S": "kookaburra"
+          },
+          "DisplayOrder": {
+            "N": "2"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_bags"
+          },
+          "SK": {
+            "S": "SECTION#sec_bags_1#ITEM#sub_bags_3"
+          },
+          "EntityType": {
+            "S": "SUBCATEGORY"
+          },
+          "Id": {
+            "S": "sub_bags_3"
+          },
+          "CategoryId": {
+            "S": "cat_bags"
+          },
+          "SectionId": {
+            "S": "sec_bags_1"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "SS"
+          },
+          "Slug": {
+            "S": "ss"
+          },
+          "DisplayOrder": {
+            "N": "3"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_pads"
+          },
+          "SK": {
+            "S": "METADATA"
+          },
+          "EntityType": {
+            "S": "CATEGORY"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#SLUG"
+          },
+          "GSI1SK": {
+            "S": "CATEGORY#pads"
+          },
+          "GSI2PK": {
+            "S": "TENANT#default#CATEGORIES"
+          },
+          "GSI2SK": {
+            "S": "ORDER#0006"
+          },
+          "Id": {
+            "S": "cat_pads"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "Pads"
+          },
+          "Slug": {
+            "S": "pads"
+          },
+          "Description": {
+            "S": "Cricket batting and wicket-keeping pads"
+          },
+          "Icon": {
+            "S": "pad"
+          },
+          "ImageUrl": {
+            "S": ""
+          },
+          "DisplayOrder": {
+            "N": "6"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "CreatedBy": {
+            "S": "system"
+          },
+          "UpdatedBy": {
+            "S": "system"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_pads"
+          },
+          "SK": {
+            "S": "SECTION#sec_pads_1"
+          },
+          "EntityType": {
+            "S": "CATEGORY_SECTION"
+          },
+          "Id": {
+            "S": "sec_pads_1"
+          },
+          "CategoryId": {
+            "S": "cat_pads"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Title": {
+            "S": "By Brand"
+          },
+          "Slug": {
+            "S": "by-brand"
+          },
+          "ShowTitle": {
+            "BOOL": true
+          },
+          "DisplayOrder": {
+            "N": "1"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "Mapping": {
+            "S": "BRAND"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_pads"
+          },
+          "SK": {
+            "S": "SECTION#sec_pads_1#ITEM#sub_pads_1"
+          },
+          "EntityType": {
+            "S": "SUBCATEGORY"
+          },
+          "Id": {
+            "S": "sub_pads_1"
+          },
+          "CategoryId": {
+            "S": "cat_pads"
+          },
+          "SectionId": {
+            "S": "sec_pads_1"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "SG"
+          },
+          "Slug": {
+            "S": "sg"
+          },
+          "DisplayOrder": {
+            "N": "1"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_pads"
+          },
+          "SK": {
+            "S": "SECTION#sec_pads_1#ITEM#sub_pads_2"
+          },
+          "EntityType": {
+            "S": "SUBCATEGORY"
+          },
+          "Id": {
+            "S": "sub_pads_2"
+          },
+          "CategoryId": {
+            "S": "cat_pads"
+          },
+          "SectionId": {
+            "S": "sec_pads_1"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "Kookaburra"
+          },
+          "Slug": {
+            "S": "kookaburra"
+          },
+          "DisplayOrder": {
+            "N": "2"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_pads"
+          },
+          "SK": {
+            "S": "SECTION#sec_pads_1#ITEM#sub_pads_3"
+          },
+          "EntityType": {
+            "S": "SUBCATEGORY"
+          },
+          "Id": {
+            "S": "sub_pads_3"
+          },
+          "CategoryId": {
+            "S": "cat_pads"
+          },
+          "SectionId": {
+            "S": "sec_pads_1"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "SS"
+          },
+          "Slug": {
+            "S": "ss"
+          },
+          "DisplayOrder": {
+            "N": "3"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_gloves"
+          },
+          "SK": {
+            "S": "METADATA"
+          },
+          "EntityType": {
+            "S": "CATEGORY"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#SLUG"
+          },
+          "GSI1SK": {
+            "S": "CATEGORY#gloves"
+          },
+          "GSI2PK": {
+            "S": "TENANT#default#CATEGORIES"
+          },
+          "GSI2SK": {
+            "S": "ORDER#0007"
+          },
+          "Id": {
+            "S": "cat_gloves"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "Gloves"
+          },
+          "Slug": {
+            "S": "gloves"
+          },
+          "Description": {
+            "S": "Cricket batting and wicket-keeping gloves"
+          },
+          "Icon": {
+            "S": "glove"
+          },
+          "ImageUrl": {
+            "S": ""
+          },
+          "DisplayOrder": {
+            "N": "7"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "CreatedBy": {
+            "S": "system"
+          },
+          "UpdatedBy": {
+            "S": "system"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_gloves"
+          },
+          "SK": {
+            "S": "SECTION#sec_gloves_1"
+          },
+          "EntityType": {
+            "S": "CATEGORY_SECTION"
+          },
+          "Id": {
+            "S": "sec_gloves_1"
+          },
+          "CategoryId": {
+            "S": "cat_gloves"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Title": {
+            "S": "By Brand"
+          },
+          "Slug": {
+            "S": "by-brand"
+          },
+          "ShowTitle": {
+            "BOOL": true
+          },
+          "DisplayOrder": {
+            "N": "1"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "Mapping": {
+            "S": "BRAND"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_gloves"
+          },
+          "SK": {
+            "S": "SECTION#sec_gloves_1#ITEM#sub_gloves_1"
+          },
+          "EntityType": {
+            "S": "SUBCATEGORY"
+          },
+          "Id": {
+            "S": "sub_gloves_1"
+          },
+          "CategoryId": {
+            "S": "cat_gloves"
+          },
+          "SectionId": {
+            "S": "sec_gloves_1"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "SG"
+          },
+          "Slug": {
+            "S": "sg"
+          },
+          "DisplayOrder": {
+            "N": "1"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_gloves"
+          },
+          "SK": {
+            "S": "SECTION#sec_gloves_1#ITEM#sub_gloves_2"
+          },
+          "EntityType": {
+            "S": "SUBCATEGORY"
+          },
+          "Id": {
+            "S": "sub_gloves_2"
+          },
+          "CategoryId": {
+            "S": "cat_gloves"
+          },
+          "SectionId": {
+            "S": "sec_gloves_1"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "Kookaburra"
+          },
+          "Slug": {
+            "S": "kookaburra"
+          },
+          "DisplayOrder": {
+            "N": "2"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_gloves"
+          },
+          "SK": {
+            "S": "SECTION#sec_gloves_1#ITEM#sub_gloves_3"
+          },
+          "EntityType": {
+            "S": "SUBCATEGORY"
+          },
+          "Id": {
+            "S": "sub_gloves_3"
+          },
+          "CategoryId": {
+            "S": "cat_gloves"
+          },
+          "SectionId": {
+            "S": "sec_gloves_1"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "SS"
+          },
+          "Slug": {
+            "S": "ss"
+          },
+          "DisplayOrder": {
+            "N": "3"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_accessories"
+          },
+          "SK": {
+            "S": "METADATA"
+          },
+          "EntityType": {
+            "S": "CATEGORY"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#SLUG"
+          },
+          "GSI1SK": {
+            "S": "CATEGORY#accessories"
+          },
+          "GSI2PK": {
+            "S": "TENANT#default#CATEGORIES"
+          },
+          "GSI2SK": {
+            "S": "ORDER#0008"
+          },
+          "Id": {
+            "S": "cat_accessories"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "Accessories"
+          },
+          "Slug": {
+            "S": "accessories"
+          },
+          "Description": {
+            "S": "Cricket accessories and gear"
+          },
+          "Icon": {
+            "S": "accessories"
+          },
+          "ImageUrl": {
+            "S": ""
+          },
+          "DisplayOrder": {
+            "N": "8"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "CreatedBy": {
+            "S": "system"
+          },
+          "UpdatedBy": {
+            "S": "system"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_accessories"
+          },
+          "SK": {
+            "S": "SECTION#sec_acc_1"
+          },
+          "EntityType": {
+            "S": "CATEGORY_SECTION"
+          },
+          "Id": {
+            "S": "sec_acc_1"
+          },
+          "CategoryId": {
+            "S": "cat_accessories"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Title": {
+            "S": "Accessories Group 1"
+          },
+          "Slug": {
+            "S": "accessories-group-1"
+          },
+          "ShowTitle": {
+            "BOOL": false
+          },
+          "DisplayOrder": {
+            "N": "1"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_accessories"
+          },
+          "SK": {
+            "S": "SECTION#sec_acc_1#ITEM#sub_acc_1"
+          },
+          "EntityType": {
+            "S": "SUBCATEGORY"
+          },
+          "Id": {
+            "S": "sub_acc_1"
+          },
+          "CategoryId": {
+            "S": "cat_accessories"
+          },
+          "SectionId": {
+            "S": "sec_acc_1"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "Grips"
+          },
+          "Slug": {
+            "S": "grips"
+          },
+          "DisplayOrder": {
+            "N": "1"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_accessories"
+          },
+          "SK": {
+            "S": "SECTION#sec_acc_1#ITEM#sub_acc_2"
+          },
+          "EntityType": {
+            "S": "SUBCATEGORY"
+          },
+          "Id": {
+            "S": "sub_acc_2"
+          },
+          "CategoryId": {
+            "S": "cat_accessories"
+          },
+          "SectionId": {
+            "S": "sec_acc_1"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "Guards"
+          },
+          "Slug": {
+            "S": "guards"
+          },
+          "DisplayOrder": {
+            "N": "2"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_accessories"
+          },
+          "SK": {
+            "S": "SECTION#sec_acc_1#ITEM#sub_acc_3"
+          },
+          "EntityType": {
+            "S": "SUBCATEGORY"
+          },
+          "Id": {
+            "S": "sub_acc_3"
+          },
+          "CategoryId": {
+            "S": "cat_accessories"
+          },
+          "SectionId": {
+            "S": "sec_acc_1"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "Bat Care"
+          },
+          "Slug": {
+            "S": "bat-care"
+          },
+          "DisplayOrder": {
+            "N": "3"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#CATEGORY#cat_accessories"
+          },
+          "SK": {
+            "S": "SECTION#sec_acc_2"
+          },
+          "EntityType": {
+            "S": "CATEGORY_SECTION"
+          },
+          "Id": {
+            "S": "sec_acc_2"
+          },
+          "CategoryId": {
+            "S": "cat_accessories"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Title": {
+            "S": "Accessories Group 2"
+          },
+          "Slug": {
+            "S": "accessories-group-2"
+          },
+          "ShowTitle": {
+            "BOOL": false
+          },
+          "DisplayOrder": {
+            "N": "2"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          }
+        }
+      }
+    }
   ]
 }

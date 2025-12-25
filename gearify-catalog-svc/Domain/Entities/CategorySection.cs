@@ -12,6 +12,7 @@ public class CategorySection
     public string Title { get; set; } = string.Empty;
     public string Slug { get; set; } = string.Empty;
     public bool ShowTitle { get; set; } = true; // Controls if title is displayed in UI
+    public string? Mapping { get; set; } // Data source mapping (e.g., "BRAND", "CATEGORY")
     public int DisplayOrder { get; set; }
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
