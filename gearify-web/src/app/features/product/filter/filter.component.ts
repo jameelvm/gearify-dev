@@ -1,6 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { BrandService, Brand } from '@core/services/brand.service';
+import { PriceRangeService, PriceRange } from '@core/services/price-range.service';
+
+interface BrandWithCount extends Brand {
+  productCount: number;
+}
 
 @Component({
   selector: 'app-filter',
@@ -9,79 +15,24 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './filter.component.html',
   styleUrls: ['./filter.component.scss']
 })
-export class FilterComponent {
+export class FilterComponent implements OnInit {
+  private brandService = inject(BrandService);
+  private priceRangeService = inject(PriceRangeService);
+
   // Filter dropdowns state
   showBrandDropdown = false;
   showPriceDropdown = false;
 
   // Brand filter
   brandSearchQuery = '';
-  brands = [
-    { name: 'A. Veer', count: 5 },
-    { name: 'adidas', count: 11 },
-    { name: 'Akademiks', count: 10 },
-    { name: 'ALDO', count: 39 },
-    { name: 'Alfani', count: 5 },
-    { name: 'Alpine Swiss', count: 10 },
-    { name: 'Anthony Veer', count: 10 },
-    { name: 'Asics', count: 6 },
-    { name: 'Aston Marc', count: 4 },
-    { name: 'Balenciaga', count: 8 },
-    { name: 'Birkenstock', count: 22 },
-    { name: 'Brooks', count: 14 },
-    { name: 'Bruno Magli', count: 7 },
-    { name: 'Burberry', count: 6 },
-    { name: 'Calvin Klein', count: 28 },
-    { name: 'Camper', count: 13 },
-    { name: 'Clarks', count: 45 },
-    { name: 'Coach', count: 19 },
-    { name: 'Cole Haan', count: 32 },
-    { name: 'Converse', count: 41 },
-    { name: 'Crocs', count: 27 },
-    { name: 'DC Shoes', count: 16 },
-    { name: 'Diesel', count: 11 },
-    { name: 'DKNY', count: 9 },
-    { name: 'Dr. Martens', count: 24 },
-    { name: 'Ecco', count: 31 },
-    { name: 'Fila', count: 17 },
-    { name: 'Florsheim', count: 12 },
-    { name: 'Frye', count: 8 },
-    { name: 'Geox', count: 15 },
-    { name: 'Gucci', count: 5 },
-    { name: 'Guess', count: 13 },
-    { name: 'Hush Puppies', count: 20 },
-    { name: 'Johnston & Murphy', count: 14 },
-    { name: 'Kenneth Cole', count: 23 },
-    { name: 'Lacoste', count: 16 },
-    { name: 'Michael Kors', count: 26 },
-    { name: 'New Balance', count: 12 },
-    { name: 'Nike', count: 25 },
-    { name: 'Nine West', count: 18 },
-    { name: 'Prada', count: 4 },
-    { name: 'Puma', count: 18 },
-    { name: 'Reebok', count: 15 },
-    { name: 'Rockport', count: 21 },
-    { name: 'Saucony', count: 10 },
-    { name: 'Skechers', count: 38 },
-    { name: 'Sperry', count: 19 },
-    { name: 'Steve Madden', count: 29 },
-    { name: 'Timberland', count: 33 },
-    { name: 'Tommy Hilfiger', count: 22 },
-    { name: 'UGG', count: 25 },
-    { name: 'Under Armour', count: 9 },
-    { name: 'Vans', count: 35 },
-    { name: 'Versace', count: 3 },
-    { name: 'Wolverine', count: 11 }
-  ];
+  brands = signal<BrandWithCount[]>([]);
+  brandsLoading = signal(false);
+  brandsError = signal<string | null>(null);
 
   // Price filter
-  priceRanges = [
-    { label: 'Under $50', count: 172, value: '0-50' },
-    { label: '$50-$100', count: 581, value: '50-100' },
-    { label: '$100-$250', count: 520, value: '100-250' },
-    { label: '$250-$500', count: 37, value: '250-500' },
-    { label: '$500 & Above', count: 2, value: '500+' }
-  ];
+  priceRanges = signal<PriceRange[]>([]);
+  priceRangesLoading = signal(false);
+  priceRangesError = signal<string | null>(null);
   customPriceMin = '';
   customPriceMax = '';
 
@@ -97,6 +48,46 @@ export class FilterComponent {
 
   // View mode
   viewMode: 'small' | 'medium' = 'medium';
+
+  ngOnInit() {
+    console.log('[FilterComponent] ngOnInit - Loading brands and price ranges...');
+    this.loadBrands();
+    this.loadPriceRanges();
+  }
+
+  loadBrands() {
+    console.log('[FilterComponent] loadBrands - Starting to load brands');
+    this.brandsLoading.set(true);
+    this.brandsError.set(null);
+
+    console.log('[FilterComponent] Making API call to getBrands()');
+    this.brandService.getBrands().subscribe({
+      next: (brands) => {
+        console.log('[FilterComponent] Brands loaded successfully:', brands);
+        // Map the API response to include productCount
+        const brandsWithCount = brands.map(brand => ({
+          ...brand,
+          productCount: brand.productCount || 0
+        }));
+        this.brands.set(brandsWithCount);
+        this.brandsLoading.set(false);
+        console.log('[FilterComponent] Brands state updated:', this.brands());
+      },
+      error: (error) => {
+        console.error('[FilterComponent] Error loading brands:', error);
+        console.error('[FilterComponent] Error details:', {
+          message: error.message,
+          status: error.status,
+          statusText: error.statusText,
+          url: error.url
+        });
+        this.brandsError.set('Failed to load brands');
+        this.brandsLoading.set(false);
+        // Fallback to empty array or keep existing brands
+        this.brands.set([]);
+      }
+    });
+  }
 
   toggleBrandDropdown() {
     this.showBrandDropdown = !this.showBrandDropdown;
@@ -121,9 +112,38 @@ export class FilterComponent {
     this.viewMode = mode;
   }
 
+  loadPriceRanges() {
+    console.log('[FilterComponent] loadPriceRanges - Starting to load price ranges');
+    this.priceRangesLoading.set(true);
+    this.priceRangesError.set(null);
+
+    console.log('[FilterComponent] Making API call to getPriceRanges()');
+    this.priceRangeService.getPriceRanges().subscribe({
+      next: (priceRanges) => {
+        console.log('[FilterComponent] Price ranges loaded successfully:', priceRanges);
+        this.priceRanges.set(priceRanges);
+        this.priceRangesLoading.set(false);
+        console.log('[FilterComponent] Price ranges state updated:', this.priceRanges());
+      },
+      error: (error) => {
+        console.error('[FilterComponent] Error loading price ranges:', error);
+        console.error('[FilterComponent] Error details:', {
+          message: error.message,
+          status: error.status,
+          statusText: error.statusText,
+          url: error.url
+        });
+        this.priceRangesError.set('Failed to load price ranges');
+        this.priceRangesLoading.set(false);
+        // Fallback to empty array
+        this.priceRanges.set([]);
+      }
+    });
+  }
+
   get filteredBrands() {
-    if (!this.brandSearchQuery) return this.brands;
-    return this.brands.filter(b =>
+    if (!this.brandSearchQuery) return this.brands();
+    return this.brands().filter(b =>
       b.name.toLowerCase().includes(this.brandSearchQuery.toLowerCase())
     );
   }

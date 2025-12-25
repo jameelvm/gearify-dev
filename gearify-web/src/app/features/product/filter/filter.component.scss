@@ -225,6 +225,21 @@
   }
 }
 
+.loading-message,
+.error-message {
+  padding: 16px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.loading-message {
+  color: #666;
+}
+
+.error-message {
+  color: #d32f2f;
+}
+
 // Custom Price Range
 .custom-range {
   padding: 16px;

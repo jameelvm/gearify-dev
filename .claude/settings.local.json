@@ -108,7 +108,8 @@
       "Bash(AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test awslocal dynamodb create-table:*)",
       "Bash(git checkout:*)",
       "Bash(python:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(chmod:*)"
     ],
     "deny": [],
     "ask": []

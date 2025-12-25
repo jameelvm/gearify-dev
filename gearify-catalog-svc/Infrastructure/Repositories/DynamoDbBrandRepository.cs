@@ -95,7 +95,7 @@ public class DynamoDbBrandRepository(IAmazonDynamoDB dynamoDb) : IBrandRepositor
             Country = item.TryGetValue("Country", out var country) ? country.S : string.Empty,
             Website = item.TryGetValue("Website", out var website) ? website.S : string.Empty,
             DisplayOrder = item.TryGetValue("DisplayOrder", out var displayOrder) ? int.Parse(displayOrder.N) : 0,
-            IsActive = item.ContainsKey("IsActive") && item["IsActive"].BOOL,
+            IsActive = item.TryGetValue("IsActive", out var isActive) && isActive.BOOL,
             CreatedAt = DateTime.Parse(item["CreatedAt"].S),
             UpdatedAt = DateTime.Parse(item["UpdatedAt"].S),
             CreatedBy = item.TryGetValue("CreatedBy", out var createdBy) ? createdBy.S : string.Empty,

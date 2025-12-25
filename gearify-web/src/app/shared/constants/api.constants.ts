@@ -15,6 +15,8 @@ export const API_CONFIG = {
     
     // Catalog
     CATALOG: '/api/catalog',
+    BRANDS: '/api/catalog/brands',
+    PRICE_RANGES: '/api/catalog/price-ranges',
 
     // Products
     PRODUCTS: '/api/catalog/products',

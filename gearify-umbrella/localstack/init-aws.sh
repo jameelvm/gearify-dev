@@ -174,6 +174,20 @@ awslocal dynamodb create-table \
   --region us-east-1 \
   2>/dev/null || echo "    Table gearify-brands already exists, skipping..."
 
+# Price Ranges table
+echo "  - Creating table: gearify-price-ranges"
+awslocal dynamodb create-table \
+  --table-name gearify-price-ranges \
+  --attribute-definitions \
+    AttributeName=PK,AttributeType=S \
+    AttributeName=SK,AttributeType=S \
+  --key-schema \
+    AttributeName=PK,KeyType=HASH \
+    AttributeName=SK,KeyType=RANGE \
+  --billing-mode PAY_PER_REQUEST \
+  --region us-east-1 \
+  2>/dev/null || echo "    Table gearify-price-ranges already exists, skipping..."
+
 echo "DynamoDB tables created successfully!"
 
 # ==========================================
@@ -223,6 +237,13 @@ awslocal dynamodb batch-write-item \
   --request-items file://${CONFIG_DIR}/dynamodb/data/brands-default-tenant.json \
   --region us-east-1 \
   2>/dev/null || echo "    Failed to seed brands"
+
+# Seed price ranges for default tenant
+echo "  - Seeding price ranges for default tenant"
+awslocal dynamodb batch-write-item \
+  --request-items file://${CONFIG_DIR}/dynamodb/data/price-ranges-default-tenant.json \
+  --region us-east-1 \
+  2>/dev/null || echo "    Failed to seed price ranges"
 
 # Seed catalog (categories, sections, subcategories) - split into 3 batches due to 25-item limit
 echo "  - Seeding catalog for default tenant (batch 1/3)"

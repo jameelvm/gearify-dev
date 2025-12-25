@@ -83,6 +83,26 @@ public class DynamoDbProductRepository(IAmazonDynamoDB dynamoDb) : IProductRepos
         return response.Items.Select(DeserializeProduct).ToList();
     }
 
+    public async Task<int> GetProductCountByBrandAsync(string brandId, string tenantId)
+    {
+        var request = new QueryRequest
+        {
+            TableName = _tableName,
+            KeyConditionExpression = "PK = :pk AND begins_with(SK, :sk)",
+            FilterExpression = "Brand = :brandId",
+            ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+            {
+                { ":pk", new AttributeValue { S = $"TENANT#{tenantId}" } },
+                { ":sk", new AttributeValue { S = "PRODUCT#" } },
+                { ":brandId", new AttributeValue { S = brandId } }
+            },
+            Select = "COUNT"
+        };
+
+        var response = await _dynamoDb.QueryAsync(request);
+        return response.Count;
+    }
+
     public async Task CreateAsync(Product product)
     {
         var item = new Dictionary<string, AttributeValue>
@@ -155,30 +175,30 @@ public class DynamoDbProductRepository(IAmazonDynamoDB dynamoDb) : IProductRepos
             TenantId = item["TenantId"].S,
             Sku = item["Sku"].S,
             Name = item["Name"].S,
-            Description = item.ContainsKey("Description") ? item["Description"].S : string.Empty,
+            Description = item.TryGetValue("Description", out var description) ? description.S : string.Empty,
             Category = item["Category"].S,
-            Brand = item.ContainsKey("Brand") ? item["Brand"].S : string.Empty,
+            Brand = item.TryGetValue("Brand", out var brand) ? brand.S : string.Empty,
             Price = decimal.Parse(item["Price"].N),
-            CompareAtPrice = item.ContainsKey("CompareAtPrice") ? decimal.Parse(item["CompareAtPrice"].N) : 0,
-            Currency = item.ContainsKey("Currency") ? item["Currency"].S : "USD",
-            IsActive = item.ContainsKey("IsActive") && item["IsActive"].BOOL,
+            CompareAtPrice = item.TryGetValue("CompareAtPrice", out var compareAtPrice) ? decimal.Parse(compareAtPrice.N) : 0,
+            Currency = item.TryGetValue("Currency", out var currency) ? currency.S : "USD",
+            IsActive = item.TryGetValue("IsActive", out var isActive) && isActive.BOOL,
             CreatedAt = DateTime.Parse(item["CreatedAt"].S),
             UpdatedAt = DateTime.Parse(item["UpdatedAt"].S)
         };
 
-        if (item.ContainsKey("Tags") && item["Tags"].SS.Any())
+        if (item.TryGetValue("Tags", out var tags) && tags.SS.Any())
         {
-            product.Tags = item["Tags"].SS.ToList();
+            product.Tags = tags.SS.ToList();
         }
 
-        if (item.ContainsKey("ImageUrls") && item["ImageUrls"].SS.Any())
+        if (item.TryGetValue("ImageUrls", out var imageUrls) && imageUrls.SS.Any())
         {
-            product.ImageUrls = item["ImageUrls"].SS.ToList();
+            product.ImageUrls = imageUrls.SS.ToList();
         }
 
-        if (item.ContainsKey("Attributes") && !string.IsNullOrEmpty(item["Attributes"].S))
+        if (item.TryGetValue("Attributes", out var attributes) && !string.IsNullOrEmpty(attributes.S))
         {
-            product.Attributes = JsonSerializer.Deserialize<Dictionary<string, string>>(item["Attributes"].S) ?? new();
+            product.Attributes = JsonSerializer.Deserialize<Dictionary<string, string>>(attributes.S) ?? new();
         }
 
         return product;

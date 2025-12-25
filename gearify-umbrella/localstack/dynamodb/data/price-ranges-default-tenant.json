@@ -1,0 +1,103 @@
+{
+  "gearify-price-ranges": [
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {"S": "TENANT#default"},
+          "SK": {"S": "PRICERANGE#a1b2c3d4-e5f6-7890-abcd-ef1234567890"},
+          "Id": {"S": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"},
+          "TenantId": {"S": "default"},
+          "Label": {"S": "Under $50"},
+          "MinPrice": {"N": "0"},
+          "MaxPrice": {"N": "50"},
+          "Currency": {"S": "USD"},
+          "DisplayOrder": {"N": "1"},
+          "IsActive": {"BOOL": true},
+          "CreatedAt": {"S": "2025-12-25T00:00:00.000Z"},
+          "UpdatedAt": {"S": "2025-12-25T00:00:00.000Z"},
+          "CreatedBy": {"S": "system"},
+          "UpdatedBy": {"S": "system"}
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {"S": "TENANT#default"},
+          "SK": {"S": "PRICERANGE#b2c3d4e5-f6a7-8901-bcde-f12345678901"},
+          "Id": {"S": "b2c3d4e5-f6a7-8901-bcde-f12345678901"},
+          "TenantId": {"S": "default"},
+          "Label": {"S": "$50-$100"},
+          "MinPrice": {"N": "50"},
+          "MaxPrice": {"N": "100"},
+          "Currency": {"S": "USD"},
+          "DisplayOrder": {"N": "2"},
+          "IsActive": {"BOOL": true},
+          "CreatedAt": {"S": "2025-12-25T00:00:00.000Z"},
+          "UpdatedAt": {"S": "2025-12-25T00:00:00.000Z"},
+          "CreatedBy": {"S": "system"},
+          "UpdatedBy": {"S": "system"}
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {"S": "TENANT#default"},
+          "SK": {"S": "PRICERANGE#c3d4e5f6-a7b8-9012-cdef-123456789012"},
+          "Id": {"S": "c3d4e5f6-a7b8-9012-cdef-123456789012"},
+          "TenantId": {"S": "default"},
+          "Label": {"S": "$100-$250"},
+          "MinPrice": {"N": "100"},
+          "MaxPrice": {"N": "250"},
+          "Currency": {"S": "USD"},
+          "DisplayOrder": {"N": "3"},
+          "IsActive": {"BOOL": true},
+          "CreatedAt": {"S": "2025-12-25T00:00:00.000Z"},
+          "UpdatedAt": {"S": "2025-12-25T00:00:00.000Z"},
+          "CreatedBy": {"S": "system"},
+          "UpdatedBy": {"S": "system"}
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {"S": "TENANT#default"},
+          "SK": {"S": "PRICERANGE#d4e5f6a7-b8c9-0123-def1-234567890123"},
+          "Id": {"S": "d4e5f6a7-b8c9-0123-def1-234567890123"},
+          "TenantId": {"S": "default"},
+          "Label": {"S": "$250-$500"},
+          "MinPrice": {"N": "250"},
+          "MaxPrice": {"N": "500"},
+          "Currency": {"S": "USD"},
+          "DisplayOrder": {"N": "4"},
+          "IsActive": {"BOOL": true},
+          "CreatedAt": {"S": "2025-12-25T00:00:00.000Z"},
+          "UpdatedAt": {"S": "2025-12-25T00:00:00.000Z"},
+          "CreatedBy": {"S": "system"},
+          "UpdatedBy": {"S": "system"}
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {"S": "TENANT#default"},
+          "SK": {"S": "PRICERANGE#e5f6a7b8-c9d0-1234-ef12-345678901234"},
+          "Id": {"S": "e5f6a7b8-c9d0-1234-ef12-345678901234"},
+          "TenantId": {"S": "default"},
+          "Label": {"S": "$500 & Above"},
+          "MinPrice": {"N": "500"},
+          "Currency": {"S": "USD"},
+          "DisplayOrder": {"N": "5"},
+          "IsActive": {"BOOL": true},
+          "CreatedAt": {"S": "2025-12-25T00:00:00.000Z"},
+          "UpdatedAt": {"S": "2025-12-25T00:00:00.000Z"},
+          "CreatedBy": {"S": "system"},
+          "UpdatedBy": {"S": "system"}
+        }
+      }
+    }
+  ]
+}

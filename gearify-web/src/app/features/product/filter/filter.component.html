@@ -38,11 +38,23 @@
           <!-- All Brands -->
           <div class="dropdown-section">
             <div class="section-title">All Brands</div>
-            <div class="checkbox-list">
+
+            <!-- Loading State -->
+            <div class="checkbox-list" *ngIf="brandsLoading()">
+              <div class="loading-message">Loading brands...</div>
+            </div>
+
+            <!-- Error State -->
+            <div class="checkbox-list" *ngIf="brandsError() && !brandsLoading()">
+              <div class="error-message">{{ brandsError() }}</div>
+            </div>
+
+            <!-- Brands List -->
+            <div class="checkbox-list" *ngIf="!brandsLoading() && !brandsError()">
               <label class="checkbox-item" *ngFor="let brand of filteredBrands">
                 <input type="checkbox" />
                 <span class="checkbox-label">{{ brand.name }}</span>
-                <span class="checkbox-count">({{ brand.count }})</span>
+                <span class="checkbox-count" *ngIf="brand.productCount">({{ brand.productCount }})</span>
               </label>
             </div>
           </div>
@@ -75,12 +87,22 @@
       <ng-container *ngIf="showPriceDropdown">
         <div class="dropdown-overlay" (click)="closeAllDropdowns()"></div>
         <div class="dropdown-menu">
+          <!-- Loading State -->
+          <div class="checkbox-list" *ngIf="priceRangesLoading()">
+            <div class="loading-message">Loading price ranges...</div>
+          </div>
+
+          <!-- Error State -->
+          <div class="checkbox-list" *ngIf="priceRangesError() && !priceRangesLoading()">
+            <div class="error-message">{{ priceRangesError() }}</div>
+          </div>
+
           <!-- Price Ranges -->
-          <div class="checkbox-list">
-            <label class="checkbox-item" *ngFor="let range of priceRanges">
+          <div class="checkbox-list" *ngIf="!priceRangesLoading() && !priceRangesError()">
+            <label class="checkbox-item" *ngFor="let range of priceRanges()">
               <input type="checkbox" />
               <span class="checkbox-label">{{ range.label }}</span>
-              <span class="checkbox-count">({{ range.count }})</span>
+              <span class="checkbox-count">({{ range.productCount }})</span>
             </label>
           </div>
 

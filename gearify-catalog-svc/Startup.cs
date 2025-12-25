@@ -115,6 +115,7 @@ public class Startup
         services.AddScoped<IProductRepository, DynamoDbProductRepository>();
         services.AddScoped<ICategoryRepository, DynamoDbCategoryRepository>();
         services.AddScoped<IBrandRepository, DynamoDbBrandRepository>();
+        services.AddScoped<IPriceRangeRepository, DynamoDbPriceRangeRepository>();
 
         // Section Mappers (Strategy Pattern)
         services.AddScoped<ISectionMapper, BrandSectionMapper>();
