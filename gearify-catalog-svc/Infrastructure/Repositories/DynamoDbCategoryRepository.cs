@@ -51,30 +51,51 @@ public class DynamoDbCategoryRepository(IAmazonDynamoDB dynamoDb) : ICategoryRep
     private async Task<(Category category, List<CategorySection> sections, List<Subcategory> subcategories)>
         GetCategoryWithDetailsAsync(string categoryId, string tenantId)
     {
-        var request = new QueryRequest
+        // First, find the category to get its department slug
+        var categoryRequest = new ScanRequest
+        {
+            TableName = _tableName,
+            FilterExpression = "Id = :id AND TenantId = :tenantId AND EntityType = :entityType",
+            ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+            {
+                { ":id", new AttributeValue { S = categoryId } },
+                { ":tenantId", new AttributeValue { S = tenantId } },
+                { ":entityType", new AttributeValue { S = "CATEGORY" } }
+            },
+            Limit = 1
+        };
+
+        var categoryResponse = await dynamoDb.ScanAsync(categoryRequest);
+        if (!categoryResponse.Items.Any())
+            return (new Category(), new List<CategorySection>(), new List<Subcategory>());
+
+        var categoryItem = categoryResponse.Items.First();
+        var category = MapToCategory(categoryItem);
+        var departmentSlug = categoryItem.TryGetValue("DepartmentSlug", out var deptSlug) ? deptSlug.S : string.Empty;
+
+        if (string.IsNullOrEmpty(departmentSlug))
+            return (category, new List<CategorySection>(), new List<Subcategory>());
+
+        // Now query for sections and subcategories using the new PK pattern
+        var detailsRequest = new QueryRequest
         {
             TableName = _tableName,
             KeyConditionExpression = "PK = :pk",
             ExpressionAttributeValues = new Dictionary<string, AttributeValue>
             {
-                { ":pk", new AttributeValue { S = $"TENANT#{tenantId}#CATEGORY#{categoryId}" } }
+                { ":pk", new AttributeValue { S = $"TENANT#{tenantId}#DEPARTMENT#{departmentSlug}#CATEGORY#{categoryId}" } }
             }
         };
 
-        var response = await dynamoDb.QueryAsync(request);
+        var response = await dynamoDb.QueryAsync(detailsRequest);
 
-        Category? category = null;
         var sections = new List<CategorySection>();
         var subcategories = new List<Subcategory>();
 
         foreach (var item in response.Items)
         {
             var sk = item["SK"].S;
-            if (sk == "METADATA")
-            {
-                category = MapToCategory(item);
-            }
-            else if (sk.StartsWith("SECTION#") && !sk.Contains("#ITEM#"))
+            if (sk.StartsWith("SECTION#") && !sk.Contains("#ITEM#"))
             {
                 sections.Add(MapToSection(item));
             }
@@ -84,7 +105,7 @@ public class DynamoDbCategoryRepository(IAmazonDynamoDB dynamoDb) : ICategoryRep
             }
         }
 
-        return (category ?? new Category(),
+        return (category,
                 sections.OrderBy(s => s.DisplayOrder).ToList(),
                 subcategories.OrderBy(s => s.DisplayOrder).ToList());
     }
@@ -99,6 +120,8 @@ public class DynamoDbCategoryRepository(IAmazonDynamoDB dynamoDb) : ICategoryRep
         {
             Id = item["Id"].S,
             TenantId = item["TenantId"].S,
+            DepartmentId = item.TryGetValue("DepartmentId", out var deptId) ? deptId.S : string.Empty,
+            DepartmentSlug = item.TryGetValue("DepartmentSlug", out var deptSlug) ? deptSlug.S : string.Empty,
             Name = item["Name"].S,
             Slug = item["Slug"].S,
             Description = item.TryGetValue("Description", out var descriptionValue) ? descriptionValue.S : string.Empty,

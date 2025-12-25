@@ -7,6 +7,8 @@ public class Product
     public string Sku { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
+    public string Department { get; set; } = string.Empty; // e.g., "Cricket", "Perfume"
+    public string DepartmentSlug { get; set; } = string.Empty; // e.g., "cricket", "perfume"
     public string Category { get; set; } = string.Empty;
     public string Brand { get; set; } = string.Empty;
     public decimal Price { get; set; }

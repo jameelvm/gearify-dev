@@ -1,19 +1,17 @@
 namespace Gearify.CatalogService.Domain.Entities;
 
 /// <summary>
-/// Represents a category within a department (e.g., Bats, Balls within Cricket department)
-/// Categories belong to a department and organize products into logical groups
+/// Represents a top-level department/industry in the catalog (e.g., Cricket, Perfume, Electronics)
+/// Used to organize categories by business vertical for multi-department marketplaces
 /// </summary>
-public class Category
+public class Department
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
     public string TenantId { get; set; } = string.Empty;
-    public string DepartmentId { get; set; } = string.Empty; // Reference to parent Department
-    public string DepartmentSlug { get; set; } = string.Empty; // For building PK efficiently
-    public string Name { get; set; } = string.Empty;
-    public string Slug { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty; // e.g., "Cricket", "Perfume", "Electronics"
+    public string Slug { get; set; } = string.Empty; // e.g., "cricket", "perfume", "electronics"
     public string Description { get; set; } = string.Empty;
-    public string Icon { get; set; } = string.Empty;
+    public string Icon { get; set; } = string.Empty; // Icon identifier for UI
     public string ImageUrl { get; set; } = string.Empty;
     public int DisplayOrder { get; set; }
     public bool IsActive { get; set; } = true;
