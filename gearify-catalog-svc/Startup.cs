@@ -5,6 +5,7 @@ using FluentValidation;
 using Gearify.CatalogService.Application.Commands;
 using Gearify.CatalogService.Application.Mappers;
 using Gearify.CatalogService.Application.Validators;
+using Gearify.CatalogService.Infrastructure.Clients;
 using Gearify.CatalogService.Infrastructure.Repositories;
 using Gearify.CatalogService.Infrastructure.Swagger;
 using Gearify.SharedKernel.Extensions;
@@ -121,6 +122,9 @@ public class Startup
         // Section Mappers (Strategy Pattern)
         services.AddScoped<ISectionMapper, BrandSectionMapper>();
         services.AddScoped<ISectionMapperFactory, SectionMapperFactory>();
+
+        // Media Service Client with HttpClient
+        services.AddHttpClient<IMediaServiceClient, Gearify.CatalogService.Infrastructure.Clients.MediaServiceClient>();
 
         // OpenTelemetry
         var otlpEndpoint = Environment.GetEnvironmentVariable("OTLP_ENDPOINT") ?? "http://otel-collector:4318";

@@ -109,7 +109,9 @@
       "Bash(git checkout:*)",
       "Bash(python:*)",
       "Bash(grep:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(dotnet restore:*)",
+      "Bash(AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws:*)"
     ],
     "deny": [],
     "ask": []

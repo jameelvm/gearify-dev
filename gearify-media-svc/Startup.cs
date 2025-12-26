@@ -1,4 +1,13 @@
+using Amazon.DynamoDBv2;
+using Amazon.Runtime;
+using Amazon.S3;
+using Gearify.MediaService.Application.Services;
+using Gearify.MediaService.Infrastructure.Repositories;
+using Gearify.MediaService.Infrastructure.Storage;
 using Gearify.MediaService.Infrastructure.Swagger;
+using Gearify.SharedKernel.Extensions;
+using Gearify.SharedKernel.Multitenancy;
+using LocalStack.Client.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,6 +31,61 @@ public class Startup
         // Controllers
         services.AddControllers();
 
+        // CORS
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            });
+        });
+
+        // Multi-tenancy
+        services.AddHttpContextAccessor();
+        services.AddScoped<ITenantContext, TenantContext>();
+        services.AddMultitenancy();
+
+        // AWS Services with LocalStack
+        services.AddSingleton<IAmazonDynamoDB>(sp =>
+        {
+            var endpoint = Environment.GetEnvironmentVariable("DYNAMODB_ENDPOINT") ?? Configuration["AWS:DynamoDB:ServiceUrl"];
+            var config = new Amazon.DynamoDBv2.AmazonDynamoDBConfig
+            {
+                ServiceURL = endpoint
+            };
+            var accessKey = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID") ?? "test";
+            var secretKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY") ?? "test";
+            var credentials = new BasicAWSCredentials(accessKey, secretKey);
+            return new Amazon.DynamoDBv2.AmazonDynamoDBClient(credentials, config);
+        });
+
+        services.AddSingleton<IAmazonS3>(sp =>
+        {
+            var endpoint = Environment.GetEnvironmentVariable("S3_ENDPOINT") ?? Configuration["AWS:S3:ServiceUrl"];
+            var config = new Amazon.S3.AmazonS3Config
+            {
+                ServiceURL = endpoint,
+                ForcePathStyle = true
+            };
+            var accessKey = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID") ?? "test";
+            var secretKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY") ?? "test";
+            var credentials = new BasicAWSCredentials(accessKey, secretKey);
+            return new Amazon.S3.AmazonS3Client(credentials, config);
+        });
+
+        // MediatR for CQRS
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly));
+
+        // Application Services
+        services.AddScoped<IImageProcessor, ImageProcessor>();
+        services.AddScoped<IMediaUrlFactory, MediaUrlFactory>();
+
+        // Infrastructure Services
+        services.AddScoped<IStorageService, S3StorageService>();
+        services.AddScoped<IMediaRepository, DynamoDbMediaRepository>();
+
         // Swagger
         services.AddSwaggerGen(c =>
         {
@@ -38,6 +102,9 @@ public class Startup
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+        // CORS
+        app.UseCors();
+
         // Swagger
         app.UseSwagger();
         app.UseSwaggerUI();

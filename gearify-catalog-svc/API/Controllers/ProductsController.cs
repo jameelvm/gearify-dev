@@ -105,4 +105,50 @@ public class ProductsController : ControllerBase
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
+
+    /// <summary>
+    /// Upload images for a product
+    /// </summary>
+    [HttpPost("products/{id}/images")]
+    [Consumes("multipart/form-data")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> UploadProductImages(
+        string id,
+        [FromForm] IFormFileCollection images,
+        [FromForm] List<string>? altTexts = null)
+    {
+        try
+        {
+            if (images == null || !images.Any())
+            {
+                return BadRequest(new { error = "No images provided" });
+            }
+
+            var command = new UploadProductImagesCommand(
+                ProductId: id,
+                Images: images.ToList(),
+                AltTexts: altTexts);
+
+            var result = await _mediator.Send(command);
+
+            if (!result.Success)
+            {
+                return BadRequest(new { error = result.ErrorMessage });
+            }
+
+            return Ok(new
+            {
+                success = true,
+                uploadedCount = result.UploadedImages?.Count ?? 0,
+                images = result.UploadedImages
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error uploading images for product {ProductId}", id);
+            return StatusCode(500, new { error = "Internal server error" });
+        }
+    }
 }

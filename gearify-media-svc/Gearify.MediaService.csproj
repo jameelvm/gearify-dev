@@ -1,8 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-  <PropertyGroup><TargetFramework>net8.0</TargetFramework><Nullable>enable</Nullable></PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
   <ItemGroup>
+    <!-- AWS SDK -->
+    <PackageReference Include="AWSSDK.S3" Version="3.7.400" />
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.400" />
+
+    <!-- LocalStack -->
     <PackageReference Include="LocalStack.Client.Extensions" Version="1.4.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+
+    <!-- MediatR for CQRS -->
+    <PackageReference Include="MediatR" Version="12.2.0" />
+
+    <!-- ImageSharp for image processing -->
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.6" />
+
+    <!-- Logging -->
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
+
+    <!-- Swagger -->
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Shared Kernel Reference -->
+    <ProjectReference Include="..\gearify-shared-kernel\Gearify.SharedKernel.csproj" />
   </ItemGroup>
 </Project>
