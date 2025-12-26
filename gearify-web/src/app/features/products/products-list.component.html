@@ -6,8 +6,28 @@
   <div class="products-container">
     <!-- Products Grid/List -->
     <main class="products-main">
+      <!-- Loading State -->
+      <div class="loading-state" *ngIf="isLoading()">
+        <div class="spinner"></div>
+        <p>Loading products...</p>
+      </div>
+
+      <!-- Error State -->
+      <div class="error-state" *ngIf="error() && !isLoading()">
+        <svg class="error-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <h2 class="error-title">Error Loading Products</h2>
+        <p class="error-description">{{ error() }}</p>
+        <app-button variant="primary" (clicked)="loadProducts()">
+          Try Again
+        </app-button>
+      </div>
+
       <!-- Empty State -->
-      <div class="empty-state" *ngIf="paginatedProducts().length === 0">
+      <div class="empty-state" *ngIf="paginatedProducts().length === 0 && !isLoading() && !error()">
         <svg class="empty-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="11" cy="11" r="8"></circle>
           <path d="m21 21-4.35-4.35"></path>
@@ -28,7 +48,7 @@
         class="products-grid"
         [class.grid-view]="viewMode() === 'grid'"
         [class.list-view]="viewMode() === 'list'"
-        *ngIf="paginatedProducts().length > 0"
+        *ngIf="paginatedProducts().length > 0 && !isLoading() && !error()"
       >
         <app-product-card
           *ngFor="let product of paginatedProducts()"
@@ -41,7 +61,7 @@
       </div>
 
       <!-- Pagination -->
-      <div class="pagination-container" *ngIf="paginatedProducts().length > 0">
+      <div class="pagination-container" *ngIf="paginatedProducts().length > 0 && !isLoading() && !error()">
         <app-pagination
           [currentPage]="currentPage()"
           [totalPages]="totalPages()"

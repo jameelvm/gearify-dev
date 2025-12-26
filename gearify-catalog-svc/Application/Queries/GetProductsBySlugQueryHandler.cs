@@ -2,7 +2,6 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Gearify.CatalogService.Domain.Entities;
 using Gearify.CatalogService.Infrastructure.Constants;
-using Gearify.Shared.MultiTenancy;
 using Gearify.SharedKernel.Multitenancy;
 using MediatR;
 

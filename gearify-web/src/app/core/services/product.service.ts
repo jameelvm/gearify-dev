@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Product } from '@core/models/product.model';
+import { HttpService } from '@core/services/http.service';
 import { API_CONFIG } from '@shared/constants/api.constants';
 
 export interface ProductFilters {
@@ -19,7 +20,7 @@ export interface ProductListResponse {
   providedIn: 'root'
 })
 export class ProductService {
-  private http = inject(HttpClient);
+  private http = inject(HttpService);
 
   /**
    * Get products by slug-based filters
@@ -37,7 +38,7 @@ export class ProductService {
       params = params.set('subcategorySlug', filters.subcategorySlug);
     }
 
-    return this.http.get<ProductListResponse>(API_CONFIG.ENDPOINTS.PRODUCTS, { params });
+    return this.http.get<ProductListResponse>(API_CONFIG.ENDPOINTS.PRODUCTS, params);
   }
 
   /**

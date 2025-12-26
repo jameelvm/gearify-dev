@@ -34,12 +34,13 @@ public class ProductsController : ControllerBase
                 return Ok(result);
             }
 
-            // Legacy query param support
+            // Legacy query param support - wrap in ProductListResponse
             var products = string.IsNullOrEmpty(category)
                 ? await _mediator.Send(new GetAllProductsQuery())
                 : await _mediator.Send(new GetProductsByCategoryQuery(category));
 
-            return Ok(products);
+            var response = new ProductListResponse(products, products.Count);
+            return Ok(response);
         }
         catch (Exception ex)
         {

@@ -1,4 +1,4 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Product, ProductFilter } from '@core/models/product.model';
@@ -13,6 +13,7 @@ import {
 import { PageChangeEvent } from '@app/ui-kit/components/pagination/pagination.component';
 import { SelectOption } from '@app/ui-kit/components/select/select.component';
 import { FilterComponent } from '../product/filter/filter.component';
+import { ProductService } from '@core/services/product.service';
 
 export type ViewMode = 'grid' | 'list';
 export type SortField = 'price' | 'rating' | 'newest' | 'name';
@@ -42,7 +43,13 @@ interface PriceRange {
   templateUrl: './products-list.component.html',
   styleUrl: './products-list.component.scss'
 })
-export class ProductsListComponent {
+export class ProductsListComponent implements OnInit {
+  private productService = inject(ProductService);
+
+  // Loading and error states
+  isLoading = signal<boolean>(true);
+  error = signal<string | null>(null);
+
   // View state
   viewMode = signal<ViewMode>('grid');
   searchQuery = signal<string>('');
@@ -58,331 +65,32 @@ export class ProductsListComponent {
   // Filter visibility (for mobile)
   showFilters = signal<boolean>(true);
 
-  // Mock product data
-  private allProducts = signal<Product[]>([
-    {
-      id: '1',
-      tenantId: 'tenant1',
-      sku: 'LAPTOP-001',
-      name: 'UltraBook Pro 15',
-      description: 'Powerful laptop with 15-inch display, Intel Core i7, 16GB RAM, and 512GB SSD. Perfect for professionals and content creators.',
-      category: 'Electronics',
-      brand: 'TechPro',
-      price: 1299.99,
-      compareAtPrice: 1499.99,
-      currency: 'USD',
-      imageUrls: [
-        'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800',
-        'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800'
-      ],
-      tags: ['laptop', 'computer', 'portable'],
-      attributes: { processor: 'Intel Core i7', ram: '16GB', storage: '512GB SSD' },
-      isActive: true,
-      stockQuantity: 45,
-      rating: { average: 4.5, count: 127 },
-      createdAt: new Date('2024-01-15'),
-      updatedAt: new Date('2024-01-15')
-    },
-    {
-      id: '2',
-      tenantId: 'tenant1',
-      sku: 'PHONE-002',
-      name: 'SmartPhone X Pro',
-      description: 'Latest flagship smartphone with 6.7-inch OLED display, 5G connectivity, and professional-grade camera system.',
-      category: 'Electronics',
-      brand: 'MobileTech',
-      price: 999.99,
-      compareAtPrice: 1099.99,
-      currency: 'USD',
-      imageUrls: [
-        'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800',
-        'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800'
-      ],
-      tags: ['smartphone', 'mobile', '5g'],
-      attributes: { screen: '6.7-inch OLED', camera: '108MP', battery: '5000mAh' },
-      isActive: true,
-      stockQuantity: 78,
-      rating: { average: 4.7, count: 234 },
-      createdAt: new Date('2024-02-01'),
-      updatedAt: new Date('2024-02-01')
-    },
-    {
-      id: '3',
-      tenantId: 'tenant1',
-      sku: 'HEADSET-003',
-      name: 'Wireless Noise-Canceling Headphones',
-      description: 'Premium over-ear headphones with active noise cancellation, 30-hour battery life, and studio-quality sound.',
-      category: 'Audio',
-      brand: 'SoundWave',
-      price: 349.99,
-      compareAtPrice: 399.99,
-      currency: 'USD',
-      imageUrls: [
-        'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800',
-        'https://images.unsplash.com/photo-1484704849700-f032a568e944?w=800'
-      ],
-      tags: ['headphones', 'wireless', 'noise-canceling'],
-      attributes: { battery: '30 hours', connectivity: 'Bluetooth 5.0', driver: '40mm' },
-      isActive: true,
-      stockQuantity: 120,
-      rating: { average: 4.6, count: 89 },
-      createdAt: new Date('2024-01-20'),
-      updatedAt: new Date('2024-01-20')
-    },
-    {
-      id: '4',
-      tenantId: 'tenant1',
-      sku: 'WATCH-004',
-      name: 'Fitness Smartwatch Pro',
-      description: 'Advanced fitness tracker with heart rate monitoring, GPS, sleep tracking, and 7-day battery life.',
-      category: 'Wearables',
-      brand: 'FitGear',
-      price: 249.99,
-      compareAtPrice: 299.99,
-      currency: 'USD',
-      imageUrls: [
-        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800',
-        'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=800'
-      ],
-      tags: ['smartwatch', 'fitness', 'health'],
-      attributes: { display: '1.4-inch AMOLED', sensors: 'Heart Rate, GPS, SpO2', waterproof: 'IP68' },
-      isActive: true,
-      stockQuantity: 5,
-      rating: { average: 4.3, count: 156 },
-      createdAt: new Date('2024-01-25'),
-      updatedAt: new Date('2024-01-25')
-    },
-    {
-      id: '5',
-      tenantId: 'tenant1',
-      sku: 'TABLET-005',
-      name: 'Pro Tablet 12.9',
-      description: 'Professional-grade tablet with 12.9-inch Retina display, M2 chip, and support for stylus and keyboard.',
-      category: 'Electronics',
-      brand: 'TechPro',
-      price: 1099.99,
-      compareAtPrice: 1199.99,
-      currency: 'USD',
-      imageUrls: [
-        'https://images.unsplash.com/photo-1561154464-82e9adf32764?w=800',
-        'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=800'
-      ],
-      tags: ['tablet', 'creative', 'portable'],
-      attributes: { screen: '12.9-inch Retina', chip: 'M2', storage: '256GB' },
-      isActive: true,
-      stockQuantity: 0,
-      rating: { average: 4.8, count: 92 },
-      createdAt: new Date('2024-02-05'),
-      updatedAt: new Date('2024-02-05')
-    },
-    {
-      id: '6',
-      tenantId: 'tenant1',
-      sku: 'CAMERA-006',
-      name: 'Mirrorless Camera Kit',
-      description: 'Professional mirrorless camera with 24MP sensor, 4K video, and 18-55mm lens included.',
-      category: 'Photography',
-      brand: 'PhotoPro',
-      price: 1499.99,
-      compareAtPrice: 1699.99,
-      currency: 'USD',
-      imageUrls: [
-        'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800',
-        'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=800'
-      ],
-      tags: ['camera', 'photography', 'professional'],
-      attributes: { sensor: '24MP APS-C', video: '4K 60fps', lens: '18-55mm f/3.5-5.6' },
-      isActive: true,
-      stockQuantity: 32,
-      rating: { average: 4.9, count: 67 },
-      createdAt: new Date('2024-01-10'),
-      updatedAt: new Date('2024-01-10')
-    },
-    {
-      id: '7',
-      tenantId: 'tenant1',
-      sku: 'SPEAKER-007',
-      name: 'Portable Bluetooth Speaker',
-      description: 'Waterproof portable speaker with 360-degree sound, 12-hour battery, and built-in power bank.',
-      category: 'Audio',
-      brand: 'SoundWave',
-      price: 129.99,
-      compareAtPrice: 159.99,
-      currency: 'USD',
-      imageUrls: [
-        'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=800',
-        'https://images.unsplash.com/photo-1589003077984-894e133dabab?w=800'
-      ],
-      tags: ['speaker', 'bluetooth', 'portable', 'waterproof'],
-      attributes: { battery: '12 hours', waterproof: 'IPX7', power: '20W' },
-      isActive: true,
-      stockQuantity: 89,
-      rating: { average: 4.4, count: 203 },
-      createdAt: new Date('2024-02-10'),
-      updatedAt: new Date('2024-02-10')
-    },
-    {
-      id: '8',
-      tenantId: 'tenant1',
-      sku: 'KEYBOARD-008',
-      name: 'Mechanical Gaming Keyboard',
-      description: 'RGB mechanical keyboard with tactile switches, programmable keys, and aluminum frame.',
-      category: 'Gaming',
-      brand: 'GameGear',
-      price: 159.99,
-      compareAtPrice: 189.99,
-      currency: 'USD',
-      imageUrls: [
-        'https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=800',
-        'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800'
-      ],
-      tags: ['keyboard', 'gaming', 'mechanical', 'rgb'],
-      attributes: { switches: 'Cherry MX Brown', backlight: 'RGB', layout: 'Full-size' },
-      isActive: true,
-      stockQuantity: 64,
-      rating: { average: 4.5, count: 178 },
-      createdAt: new Date('2024-01-30'),
-      updatedAt: new Date('2024-01-30')
-    },
-    {
-      id: '9',
-      tenantId: 'tenant1',
-      sku: 'MOUSE-009',
-      name: 'Wireless Gaming Mouse',
-      description: 'High-precision wireless gaming mouse with 16000 DPI, 6 programmable buttons, and RGB lighting.',
-      category: 'Gaming',
-      brand: 'GameGear',
-      price: 79.99,
-      compareAtPrice: 99.99,
-      currency: 'USD',
-      imageUrls: [
-        'https://images.unsplash.com/photo-1527814050087-3793815479db?w=800',
-        'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=800'
-      ],
-      tags: ['mouse', 'gaming', 'wireless'],
-      attributes: { dpi: '16000', buttons: '6 programmable', battery: '70 hours' },
-      isActive: true,
-      stockQuantity: 156,
-      rating: { average: 4.6, count: 234 },
-      createdAt: new Date('2024-02-15'),
-      updatedAt: new Date('2024-02-15')
-    },
-    {
-      id: '10',
-      tenantId: 'tenant1',
-      sku: 'MONITOR-010',
-      name: '4K Ultra HD Monitor 27"',
-      description: '27-inch 4K IPS monitor with HDR, 99% sRGB color gamut, and USB-C connectivity.',
-      category: 'Electronics',
-      brand: 'TechPro',
-      price: 449.99,
-      compareAtPrice: 549.99,
-      currency: 'USD',
-      imageUrls: [
-        'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=800',
-        'https://images.unsplash.com/photo-1585792180666-f7347c490ee2?w=800'
-      ],
-      tags: ['monitor', 'display', '4k', 'professional'],
-      attributes: { size: '27-inch', resolution: '3840x2160', panel: 'IPS', refresh: '60Hz' },
-      isActive: true,
-      stockQuantity: 28,
-      rating: { average: 4.7, count: 145 },
-      createdAt: new Date('2024-01-05'),
-      updatedAt: new Date('2024-01-05')
-    },
-    {
-      id: '11',
-      tenantId: 'tenant1',
-      sku: 'DRONE-011',
-      name: 'Camera Drone 4K Pro',
-      description: 'Professional quadcopter drone with 4K camera, 30-minute flight time, and GPS return-to-home.',
-      category: 'Photography',
-      brand: 'SkyTech',
-      price: 899.99,
-      compareAtPrice: 999.99,
-      currency: 'USD',
-      imageUrls: [
-        'https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=800',
-        'https://images.unsplash.com/photo-1507582020474-9a35b7d455d9?w=800'
-      ],
-      tags: ['drone', 'camera', 'aerial', 'photography'],
-      attributes: { camera: '4K 30fps', flight: '30 minutes', range: '4km', gps: 'Yes' },
-      isActive: true,
-      stockQuantity: 18,
-      rating: { average: 4.5, count: 87 },
-      createdAt: new Date('2024-02-20'),
-      updatedAt: new Date('2024-02-20')
-    },
-    {
-      id: '12',
-      tenantId: 'tenant1',
-      sku: 'CONSOLE-012',
-      name: 'Gaming Console Next Gen',
-      description: 'Next-generation gaming console with 4K 120fps gaming, ray tracing, and 1TB SSD storage.',
-      category: 'Gaming',
-      brand: 'GameGear',
-      price: 499.99,
-      compareAtPrice: 549.99,
-      currency: 'USD',
-      imageUrls: [
-        'https://images.unsplash.com/photo-1486401899868-0e435ed85128?w=800',
-        'https://images.unsplash.com/photo-1622297845775-5ff3fef71d13?w=800'
-      ],
-      tags: ['console', 'gaming', 'entertainment'],
-      attributes: { resolution: '4K 120fps', storage: '1TB SSD', raytracing: 'Yes' },
-      isActive: true,
-      stockQuantity: 12,
-      rating: { average: 4.8, count: 312 },
-      createdAt: new Date('2024-01-12'),
-      updatedAt: new Date('2024-01-12')
-    },
-    {
-      id: '13',
-      tenantId: 'tenant1',
-      sku: 'EARBUDS-013',
-      name: 'True Wireless Earbuds Pro',
-      description: 'Premium wireless earbuds with active noise cancellation, 8-hour battery, and wireless charging.',
-      category: 'Audio',
-      brand: 'SoundWave',
-      price: 199.99,
-      compareAtPrice: 249.99,
-      currency: 'USD',
-      imageUrls: [
-        'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800',
-        'https://images.unsplash.com/photo-1606841837239-c5a1a4a07af7?w=800'
-      ],
-      tags: ['earbuds', 'wireless', 'noise-canceling'],
-      attributes: { battery: '8 hours + 24h case', anc: 'Yes', charging: 'Wireless' },
-      isActive: true,
-      stockQuantity: 203,
-      rating: { average: 4.6, count: 456 },
-      createdAt: new Date('2024-02-08'),
-      updatedAt: new Date('2024-02-08')
-    },
-    {
-      id: '14',
-      tenantId: 'tenant1',
-      sku: 'ROUTER-014',
-      name: 'WiFi 6 Gaming Router',
-      description: 'Tri-band WiFi 6 router with 6000 Mbps speeds, gaming prioritization, and parental controls.',
-      category: 'Networking',
-      brand: 'NetPro',
-      price: 299.99,
-      compareAtPrice: 349.99,
-      currency: 'USD',
-      imageUrls: [
-        'https://images.unsplash.com/photo-1606904825846-647eb07f5be2?w=800',
-        'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=800'
-      ],
-      tags: ['router', 'wifi', 'gaming', 'networking'],
-      attributes: { speed: '6000 Mbps', bands: 'Tri-band', standard: 'WiFi 6' },
-      isActive: true,
-      stockQuantity: 47,
-      rating: { average: 4.4, count: 98 },
-      createdAt: new Date('2024-01-18'),
-      updatedAt: new Date('2024-01-18')
-    }
-  ]);
+  // Products data
+  private allProducts = signal<Product[]>([]);
+
+  ngOnInit(): void {
+    this.loadProducts();
+  }
+
+  /**
+   * Load products from API
+   */
+  loadProducts(): void {
+    this.isLoading.set(true);
+    this.error.set(null);
+
+    this.productService.getProductsBySlug({}).subscribe({
+      next: (response) => {
+        this.allProducts.set(response.products);
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Error loading products:', err);
+        this.error.set('Failed to load products. Please try again later.');
+        this.isLoading.set(false);
+      }
+    });
+  }
 
   // Available filter options
   categories = computed(() => {
