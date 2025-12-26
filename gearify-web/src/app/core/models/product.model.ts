@@ -7,10 +7,24 @@ export interface Product {
   sku: string;
   name: string;
   description: string;
+
+  // Catalog hierarchy fields
+  department?: string;
+  departmentSlug?: string;
   category: string;
+  categorySlug?: string;
+  subcategory?: string;
+  subcategorySlug?: string;
+
+  // Brand fields
   brand: string;
-  price: number;
-  compareAtPrice: number;
+  brandSlug?: string;
+
+  // Pricing fields
+  price: number;                    // Current selling price
+  compareAtPrice: number;           // Original price for strikethrough
+  discountPercentage?: number;      // Discount percentage (e.g., 20 for "20% off")
+  offerBadge?: string;              // Offer label (e.g., "SALE", "20% OFF", "HOT DEAL")
   currency: string;
   imageUrls: string[];
   tags: string[];

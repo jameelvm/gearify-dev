@@ -44,6 +44,22 @@ export const routes: Routes = [
   {
     path: 'tenant-not-found',
     loadComponent: () => import('./features/errors/tenant-not-found.component').then(m => m.TenantNotFoundComponent)
+  },
+  // Catalog navigation routes (slug-based, clean URLs)
+  {
+    path: ':departmentSlug/:categorySlug/:subcategorySlug',
+    canActivate: [tenantGuard],
+    loadComponent: () => import('./features/products/products-list.component').then(m => m.ProductsListComponent)
+  },
+  {
+    path: ':departmentSlug/:categorySlug',
+    canActivate: [tenantGuard],
+    loadComponent: () => import('./features/products/products-list.component').then(m => m.ProductsListComponent)
+  },
+  {
+    path: ':departmentSlug',
+    canActivate: [tenantGuard],
+    loadComponent: () => import('./features/products/products-list.component').then(m => m.ProductsListComponent)
   }
   // Future routes to be implemented:
   // {

@@ -6,8 +6,7 @@
         class="category-wrapper"
         (mouseenter)="onCategoryHover(category.id)">
         <a
-          [routerLink]="['/products']"
-          [queryParams]="{ category: category.slug }"
+          [routerLink]="['/', category.departmentSlug, category.slug]"
           class="category-link"
           [class.active]="hoveredCategory() === category.id"
           (click)="onCategoryClick(category)">
@@ -45,8 +44,7 @@
           <ul class="section-items">
             <li *ngFor="let item of section.items">
               <a
-                [routerLink]="['/products']"
-                [queryParams]="{ category: getActiveCategory()?.slug, subcategory: item.slug }"
+                [routerLink]="['/', getActiveCategory()?.departmentSlug, getActiveCategory()?.slug, item.slug]"
                 class="section-item-link"
                 (click)="onSubCategoryClick(getActiveCategory()!, item)">
                 {{ item.name }}

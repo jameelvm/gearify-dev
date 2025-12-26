@@ -120,7 +120,11 @@ public class DynamoDbProductRepository(IAmazonDynamoDB dynamoDb) : IProductRepos
             { "Department", new AttributeValue { S = product.Department } },
             { "DepartmentSlug", new AttributeValue { S = product.DepartmentSlug } },
             { "Category", new AttributeValue { S = product.Category } },
+            { "CategorySlug", new AttributeValue { S = product.CategorySlug } },
+            { "Subcategory", new AttributeValue { S = product.Subcategory } },
+            { "SubcategorySlug", new AttributeValue { S = product.SubcategorySlug } },
             { "Brand", new AttributeValue { S = product.Brand } },
+            { "BrandSlug", new AttributeValue { S = product.BrandSlug } },
             { "Price", new AttributeValue { N = product.Price.ToString() } },
             { "CompareAtPrice", new AttributeValue { N = product.CompareAtPrice.ToString() } },
             { "Currency", new AttributeValue { S = product.Currency } },
@@ -142,6 +146,27 @@ public class DynamoDbProductRepository(IAmazonDynamoDB dynamoDb) : IProductRepos
         if (product.Attributes.Any())
         {
             item["Attributes"] = new AttributeValue { S = JsonSerializer.Serialize(product.Attributes) };
+        }
+
+        // Optional discount/offer fields
+        if (product.DiscountPercentage.HasValue)
+        {
+            item["DiscountPercentage"] = new AttributeValue { N = product.DiscountPercentage.Value.ToString() };
+        }
+
+        if (!string.IsNullOrEmpty(product.OfferBadge))
+        {
+            item["OfferBadge"] = new AttributeValue { S = product.OfferBadge };
+        }
+
+        if (product.RatingAverage.HasValue)
+        {
+            item["RatingAverage"] = new AttributeValue { N = product.RatingAverage.Value.ToString() };
+        }
+
+        if (product.RatingCount.HasValue)
+        {
+            item["RatingCount"] = new AttributeValue { N = product.RatingCount.Value.ToString() };
         }
 
         await _dynamoDb.PutItemAsync(new PutItemRequest
@@ -182,10 +207,18 @@ public class DynamoDbProductRepository(IAmazonDynamoDB dynamoDb) : IProductRepos
             Department = item.TryGetValue("Department", out var department) ? department.S : string.Empty,
             DepartmentSlug = item.TryGetValue("DepartmentSlug", out var departmentSlug) ? departmentSlug.S : string.Empty,
             Category = item["Category"].S,
+            CategorySlug = item.TryGetValue("CategorySlug", out var categorySlug) ? categorySlug.S : string.Empty,
+            Subcategory = item.TryGetValue("Subcategory", out var subcategory) ? subcategory.S : string.Empty,
+            SubcategorySlug = item.TryGetValue("SubcategorySlug", out var subcategorySlug) ? subcategorySlug.S : string.Empty,
             Brand = item.TryGetValue("Brand", out var brand) ? brand.S : string.Empty,
+            BrandSlug = item.TryGetValue("BrandSlug", out var brandSlug) ? brandSlug.S : string.Empty,
             Price = decimal.Parse(item["Price"].N),
             CompareAtPrice = item.TryGetValue("CompareAtPrice", out var compareAtPrice) ? decimal.Parse(compareAtPrice.N) : 0,
             Currency = item.TryGetValue("Currency", out var currency) ? currency.S : "USD",
+            DiscountPercentage = item.TryGetValue("DiscountPercentage", out var discountPct) ? decimal.Parse(discountPct.N) : null,
+            OfferBadge = item.TryGetValue("OfferBadge", out var offerBadge) ? offerBadge.S : null,
+            RatingAverage = item.TryGetValue("RatingAverage", out var ratingAvg) ? decimal.Parse(ratingAvg.N) : null,
+            RatingCount = item.TryGetValue("RatingCount", out var ratingCnt) ? int.Parse(ratingCnt.N) : null,
             IsActive = item.TryGetValue("IsActive", out var isActive) && isActive.BOOL,
             CreatedAt = DateTime.Parse(item["CreatedAt"].S),
             UpdatedAt = DateTime.Parse(item["UpdatedAt"].S)

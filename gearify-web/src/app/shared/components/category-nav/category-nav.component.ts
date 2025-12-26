@@ -20,6 +20,7 @@ export interface Category {
   name: string;
   slug: string;
   icon?: string;
+  departmentSlug: string; // Added to track department for URL construction
   megaMenu?: MegaMenuSection[];
 }
 
@@ -57,26 +58,26 @@ export class CategoryNavComponent implements OnInit {
 
     this.categoryService.getMegaMenuData().subscribe({
       next: (megaMenu) => {
-        // Extract categories from departments
+        // Extract categories from departments and preserve department slug for routing
         // For single-department tenants, get categories from the first department
         // For multi-department, this would need UI to select department
-        const allCategories = megaMenu.departments.flatMap(dept => dept.categories);
-
-        // Transform API response to component format
-        this.categories = allCategories.map(item => ({
-          id: item.category.id,
-          name: item.category.name,
-          slug: item.category.slug,
-          icon: item.category.icon,
-          megaMenu: item.sections.map(section => ({
-            title: section.title,
-            showTitle: section.showTitle,
-            items: section.items.map(subItem => ({
-              name: subItem.name,
-              slug: subItem.slug
+        this.categories = megaMenu.departments.flatMap(dept =>
+          dept.categories.map(item => ({
+            id: item.category.id,
+            name: item.category.name,
+            slug: item.category.slug,
+            icon: item.category.icon,
+            departmentSlug: dept.slug, // Preserve department slug for clean URL routing
+            megaMenu: item.sections.map(section => ({
+              title: section.title,
+              showTitle: section.showTitle,
+              items: section.items.map(subItem => ({
+                name: subItem.name,
+                slug: subItem.slug
+              }))
             }))
           }))
-        }));
+        );
         this.isLoading.set(false);
       },
       error: (err) => {
@@ -95,6 +96,7 @@ export class CategoryNavComponent implements OnInit {
       id: '1',
       name: 'Cricket Bats',
       slug: 'cricket-bats',
+      departmentSlug: 'cricket',
       megaMenu: [
         {
           title: 'Shop New Arrivals',
@@ -129,6 +131,7 @@ export class CategoryNavComponent implements OnInit {
       id: '2',
       name: 'Cricket Balls',
       slug: 'cricket-balls',
+      departmentSlug: 'cricket',
       megaMenu: [
         {
           title: 'Shop New Arrivals',
@@ -154,6 +157,7 @@ export class CategoryNavComponent implements OnInit {
       id: '3',
       name: 'Protective Gear',
       slug: 'protective-gear',
+      departmentSlug: 'cricket',
       megaMenu: [
         {
           title: 'Shop New Arrivals',
@@ -179,6 +183,7 @@ export class CategoryNavComponent implements OnInit {
       id: '4',
       name: 'Clothing',
       slug: 'clothing',
+      departmentSlug: 'cricket',
       megaMenu: [
         {
           title: 'Shop New Arrivals',
@@ -203,6 +208,7 @@ export class CategoryNavComponent implements OnInit {
       id: '5',
       name: 'Footwear',
       slug: 'footwear',
+      departmentSlug: 'cricket',
       megaMenu: [
         {
           title: 'Shop New Arrivals',
@@ -218,6 +224,7 @@ export class CategoryNavComponent implements OnInit {
       id: '6',
       name: 'Accessories',
       slug: 'accessories',
+      departmentSlug: 'cricket',
       megaMenu: [
         {
           title: 'Shop New Arrivals',
@@ -234,6 +241,7 @@ export class CategoryNavComponent implements OnInit {
       id: '7',
       name: 'Training Equipment',
       slug: 'training-equipment',
+      departmentSlug: 'cricket',
       megaMenu: [
         {
           title: 'Shop New Arrivals',
@@ -250,6 +258,7 @@ export class CategoryNavComponent implements OnInit {
       id: '8',
       name: 'Team Kits',
       slug: 'team-kits',
+      departmentSlug: 'cricket',
       megaMenu: [
         {
           title: 'Shop Team Kits',

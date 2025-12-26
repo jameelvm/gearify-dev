@@ -19,10 +19,22 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("products")]
-    public async Task<IActionResult> GetProducts([FromQuery] string? category)
+    public async Task<IActionResult> GetProducts(
+        [FromQuery] string? departmentSlug,
+        [FromQuery] string? categorySlug,
+        [FromQuery] string? subcategorySlug,
+        [FromQuery] string? category)
     {
         try
         {
+            // If any slug parameters are provided, use slug-based query
+            if (!string.IsNullOrEmpty(departmentSlug) || !string.IsNullOrEmpty(categorySlug) || !string.IsNullOrEmpty(subcategorySlug))
+            {
+                var result = await _mediator.Send(new GetProductsBySlugQuery(departmentSlug, categorySlug, subcategorySlug));
+                return Ok(result);
+            }
+
+            // Legacy query param support
             var products = string.IsNullOrEmpty(category)
                 ? await _mediator.Send(new GetAllProductsQuery())
                 : await _mediator.Send(new GetProductsByCategoryQuery(category));

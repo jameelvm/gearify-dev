@@ -15,3 +15,5 @@ export class CatalogComponent {
     { name: 'GM Diamond Bat', price: 279.99 }
   ];
 }
+
+
