@@ -1,6 +1,7 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Gearify.CatalogService.Domain.Entities;
+using Gearify.CatalogService.Infrastructure.Constants;
 
 namespace Gearify.CatalogService.Infrastructure.Repositories;
 
@@ -14,7 +15,7 @@ namespace Gearify.CatalogService.Infrastructure.Repositories;
 /// </summary>
 public class DynamoDbBrandRepository(IAmazonDynamoDB dynamoDb) : IBrandRepository
 {
-    private readonly string _tableName = "gearify-brands";
+    private readonly string _tableName = DynamoDbTableNames.BRANDS;
 
     public async Task<List<Brand>> GetAllBrandsAsync(string tenantId)
     {

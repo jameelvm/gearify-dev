@@ -41,6 +41,19 @@ export interface CategoryWithDetailsDto {
   sections: SectionWithItemsDto[];
 }
 
+export interface DepartmentMenuDto {
+  id: string;
+  name: string;
+  slug: string;
+  icon: string;
+  displayOrder: number;
+  categories: CategoryWithDetailsDto[];
+}
+
+export interface MegaMenuDto {
+  departments: DepartmentMenuDto[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -49,10 +62,10 @@ export class CategoryService {
 
   /**
    * Get all categories with complete mega menu data
-   * Optimized to fetch all categories with their sections and subcategories in one request
+   * Returns department-aware structure that supports both single and multi-department tenants
    */
-  getMegaMenuData(): Observable<CategoryWithDetailsDto[]> {
-    return this.http.get<CategoryWithDetailsDto[]>(`${API_CONFIG.ENDPOINTS.CATALOG}/categories/mega-menu`);
+  getMegaMenuData(): Observable<MegaMenuDto> {
+    return this.http.get<MegaMenuDto>(`${API_CONFIG.ENDPOINTS.CATALOG}/categories/mega-menu`);
   }
 
   /**

@@ -245,6 +245,13 @@ awslocal dynamodb batch-write-item \
   --region us-east-1 \
   2>/dev/null || echo "    Failed to seed price ranges"
 
+# Seed departments for default tenant
+echo "  - Seeding departments for default tenant"
+awslocal dynamodb batch-write-item \
+  --request-items '{"gearify-catalog": [{"PutRequest": {"Item": {"PK": {"S": "TENANT#default#DEPARTMENT#cricket"}, "SK": {"S": "METADATA"}, "EntityType": {"S": "DEPARTMENT"}, "GSI1PK": {"S": "TENANT#default#SLUG"}, "GSI1SK": {"S": "DEPARTMENT#cricket"}, "GSI2PK": {"S": "TENANT#default#DEPARTMENTS"}, "GSI2SK": {"S": "ORDER#0001"}, "Id": {"S": "dept_cricket"}, "TenantId": {"S": "default"}, "Name": {"S": "Cricket"}, "Slug": {"S": "cricket"}, "Description": {"S": "Cricket equipment and gear for all levels"}, "Icon": {"S": "cricket"}, "ImageUrl": {"S": ""}, "DisplayOrder": {"N": "1"}, "IsActive": {"BOOL": true}, "CreatedAt": {"S": "2025-12-25T00:00:00.000Z"}, "UpdatedAt": {"S": "2025-12-25T00:00:00.000Z"}, "CreatedBy": {"S": "system"}, "UpdatedBy": {"S": "system"}}}}]}' \
+  --region us-east-1 \
+  2>/dev/null || echo "    Failed to seed departments"
+
 # Seed catalog (categories, sections, subcategories) - split into 3 batches due to 25-item limit
 echo "  - Seeding catalog for default tenant (batch 1/3)"
 awslocal dynamodb batch-write-item \

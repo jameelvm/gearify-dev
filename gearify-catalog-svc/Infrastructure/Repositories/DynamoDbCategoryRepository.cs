@@ -1,6 +1,7 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Gearify.CatalogService.Domain.Entities;
+using Gearify.CatalogService.Infrastructure.Constants;
 
 namespace Gearify.CatalogService.Infrastructure.Repositories;
 
@@ -11,7 +12,7 @@ namespace Gearify.CatalogService.Infrastructure.Repositories;
 /// </summary>
 public class DynamoDbCategoryRepository(IAmazonDynamoDB dynamoDb) : ICategoryRepository
 {
-    private readonly string _tableName = "gearify-catalog";
+    private readonly string _tableName = DynamoDbTableNames.CATALOG;
 
     #region Mega Menu Operations
 

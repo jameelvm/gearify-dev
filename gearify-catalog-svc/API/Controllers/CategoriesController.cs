@@ -19,11 +19,12 @@ public class CategoriesController : ControllerBase
     }
 
     /// <summary>
-    /// Get all categories with their sections and items (complete mega menu data)
-    /// Optimized to fetch all data in parallel for better performance
+    /// Get complete mega menu data with department hierarchy
+    /// Returns: Departments → Categories → Sections → Subcategories
+    /// Adaptive: For single-department tenants, frontend can show categories directly
     /// </summary>
     [HttpGet("mega-menu")]
-    [ProducesResponseType(typeof(List<CategoryWithDetailsDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(MegaMenuDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetMegaMenuData()
     {
         try

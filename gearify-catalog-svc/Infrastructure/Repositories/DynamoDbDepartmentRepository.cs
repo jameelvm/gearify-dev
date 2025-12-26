@@ -1,6 +1,7 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Gearify.CatalogService.Domain.Entities;
+using Gearify.CatalogService.Infrastructure.Constants;
 
 namespace Gearify.CatalogService.Infrastructure.Repositories;
 
@@ -12,7 +13,7 @@ namespace Gearify.CatalogService.Infrastructure.Repositories;
 /// </summary>
 public class DynamoDbDepartmentRepository(IAmazonDynamoDB dynamoDb) : IDepartmentRepository
 {
-    private readonly string _tableName = "gearify-catalog";
+    private readonly string _tableName = DynamoDbTableNames.CATALOG;
 
     public async Task<List<Department>> GetAllAsync(string tenantId)
     {
@@ -78,16 +79,17 @@ public class DynamoDbDepartmentRepository(IAmazonDynamoDB dynamoDb) : IDepartmen
 
     public async Task<List<Category>> GetCategoriesAsync(string departmentSlug, string tenantId)
     {
-        // Query all categories for this department
+        // Query all categories using GSI2, then filter by department
         var request = new QueryRequest
         {
             TableName = _tableName,
-            KeyConditionExpression = "PK = :pk AND begins_with(SK, :sk)",
-            FilterExpression = "EntityType = :entityType",
+            IndexName = "GSI2",
+            KeyConditionExpression = "GSI2PK = :gsi2pk",
+            FilterExpression = "DepartmentSlug = :deptSlug AND EntityType = :entityType",
             ExpressionAttributeValues = new Dictionary<string, AttributeValue>
             {
-                { ":pk", new AttributeValue { S = $"TENANT#{tenantId}#DEPARTMENT#{departmentSlug}" } },
-                { ":sk", new AttributeValue { S = "CATEGORY#" } },
+                { ":gsi2pk", new AttributeValue { S = $"TENANT#{tenantId}#CATEGORIES" } },
+                { ":deptSlug", new AttributeValue { S = departmentSlug } },
                 { ":entityType", new AttributeValue { S = "CATEGORY" } }
             }
         };

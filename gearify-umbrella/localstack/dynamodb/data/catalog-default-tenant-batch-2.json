@@ -4,52 +4,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_helmets"
-          },
-          "SK": {
-            "S": "SECTION#sec_helmets_1#ITEM#sub_helmets_1"
-          },
-          "EntityType": {
-            "S": "SUBCATEGORY"
-          },
-          "Id": {
-            "S": "sub_helmets_1"
-          },
-          "CategoryId": {
-            "S": "cat_helmets"
-          },
-          "SectionId": {
-            "S": "sec_helmets_1"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Name": {
-            "S": "SG"
-          },
-          "Slug": {
-            "S": "sg"
-          },
-          "DisplayOrder": {
-            "N": "1"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "CreatedAt": {
-            "S": "2025-12-21T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-21T00:00:00.000Z"
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default#CATEGORY#cat_helmets"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_helmets"
           },
           "SK": {
             "S": "SECTION#sec_helmets_1#ITEM#sub_helmets_2"
@@ -94,7 +49,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_helmets"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_helmets"
           },
           "SK": {
             "S": "SECTION#sec_helmets_1#ITEM#sub_helmets_3"
@@ -139,7 +94,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_bags"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bags"
           },
           "SK": {
             "S": "METADATA"
@@ -197,6 +152,12 @@
           },
           "UpdatedBy": {
             "S": "system"
+          },
+          "DepartmentId": {
+            "S": "dept_cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
           }
         }
       }
@@ -205,7 +166,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_bags"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bags"
           },
           "SK": {
             "S": "SECTION#sec_bags_1"
@@ -242,9 +203,6 @@
           },
           "UpdatedAt": {
             "S": "2025-12-21T00:00:00.000Z"
-          },
-          "Mapping": {
-            "S": "BRAND"
           }
         }
       }
@@ -253,7 +211,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_bags"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bags"
           },
           "SK": {
             "S": "SECTION#sec_bags_1#ITEM#sub_bags_1"
@@ -298,7 +256,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_bags"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bags"
           },
           "SK": {
             "S": "SECTION#sec_bags_1#ITEM#sub_bags_2"
@@ -343,7 +301,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_bags"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bags"
           },
           "SK": {
             "S": "SECTION#sec_bags_1#ITEM#sub_bags_3"
@@ -388,7 +346,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_pads"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_pads"
           },
           "SK": {
             "S": "METADATA"
@@ -446,6 +404,12 @@
           },
           "UpdatedBy": {
             "S": "system"
+          },
+          "DepartmentId": {
+            "S": "dept_cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
           }
         }
       }
@@ -454,7 +418,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_pads"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_pads"
           },
           "SK": {
             "S": "SECTION#sec_pads_1"
@@ -491,9 +455,6 @@
           },
           "UpdatedAt": {
             "S": "2025-12-21T00:00:00.000Z"
-          },
-          "Mapping": {
-            "S": "BRAND"
           }
         }
       }
@@ -502,7 +463,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_pads"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_pads"
           },
           "SK": {
             "S": "SECTION#sec_pads_1#ITEM#sub_pads_1"
@@ -547,7 +508,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_pads"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_pads"
           },
           "SK": {
             "S": "SECTION#sec_pads_1#ITEM#sub_pads_2"
@@ -592,7 +553,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_pads"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_pads"
           },
           "SK": {
             "S": "SECTION#sec_pads_1#ITEM#sub_pads_3"
@@ -637,7 +598,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_gloves"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_gloves"
           },
           "SK": {
             "S": "METADATA"
@@ -695,6 +656,12 @@
           },
           "UpdatedBy": {
             "S": "system"
+          },
+          "DepartmentId": {
+            "S": "dept_cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
           }
         }
       }
@@ -703,7 +670,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_gloves"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_gloves"
           },
           "SK": {
             "S": "SECTION#sec_gloves_1"
@@ -740,9 +707,6 @@
           },
           "UpdatedAt": {
             "S": "2025-12-21T00:00:00.000Z"
-          },
-          "Mapping": {
-            "S": "BRAND"
           }
         }
       }
@@ -751,7 +715,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_gloves"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_gloves"
           },
           "SK": {
             "S": "SECTION#sec_gloves_1#ITEM#sub_gloves_1"
@@ -796,7 +760,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_gloves"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_gloves"
           },
           "SK": {
             "S": "SECTION#sec_gloves_1#ITEM#sub_gloves_2"
@@ -841,7 +805,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_gloves"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_gloves"
           },
           "SK": {
             "S": "SECTION#sec_gloves_1#ITEM#sub_gloves_3"
@@ -886,7 +850,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_accessories"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_accessories"
           },
           "SK": {
             "S": "METADATA"
@@ -944,6 +908,12 @@
           },
           "UpdatedBy": {
             "S": "system"
+          },
+          "DepartmentId": {
+            "S": "dept_cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
           }
         }
       }
@@ -952,7 +922,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_accessories"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_accessories"
           },
           "SK": {
             "S": "SECTION#sec_acc_1"
@@ -997,7 +967,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_accessories"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_accessories"
           },
           "SK": {
             "S": "SECTION#sec_acc_1#ITEM#sub_acc_1"
@@ -1042,7 +1012,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_accessories"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_accessories"
           },
           "SK": {
             "S": "SECTION#sec_acc_1#ITEM#sub_acc_2"
@@ -1087,7 +1057,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_accessories"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_accessories"
           },
           "SK": {
             "S": "SECTION#sec_acc_1#ITEM#sub_acc_3"
@@ -1132,7 +1102,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_accessories"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_accessories"
           },
           "SK": {
             "S": "SECTION#sec_acc_2"
@@ -1157,6 +1127,96 @@
           },
           "ShowTitle": {
             "BOOL": false
+          },
+          "DisplayOrder": {
+            "N": "2"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_accessories"
+          },
+          "SK": {
+            "S": "SECTION#sec_acc_2#ITEM#sub_acc_4"
+          },
+          "EntityType": {
+            "S": "SUBCATEGORY"
+          },
+          "Id": {
+            "S": "sub_acc_4"
+          },
+          "CategoryId": {
+            "S": "cat_accessories"
+          },
+          "SectionId": {
+            "S": "sec_acc_2"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "Stumps"
+          },
+          "Slug": {
+            "S": "stumps"
+          },
+          "DisplayOrder": {
+            "N": "1"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-21T00:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_accessories"
+          },
+          "SK": {
+            "S": "SECTION#sec_acc_2#ITEM#sub_acc_5"
+          },
+          "EntityType": {
+            "S": "SUBCATEGORY"
+          },
+          "Id": {
+            "S": "sub_acc_5"
+          },
+          "CategoryId": {
+            "S": "cat_accessories"
+          },
+          "SectionId": {
+            "S": "sec_acc_2"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "Clothing"
+          },
+          "Slug": {
+            "S": "clothing"
           },
           "DisplayOrder": {
             "N": "2"

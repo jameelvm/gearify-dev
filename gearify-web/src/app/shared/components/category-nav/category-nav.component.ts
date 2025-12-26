@@ -56,9 +56,14 @@ export class CategoryNavComponent implements OnInit {
     this.error.set(null);
 
     this.categoryService.getMegaMenuData().subscribe({
-      next: (data) => {
+      next: (megaMenu) => {
+        // Extract categories from departments
+        // For single-department tenants, get categories from the first department
+        // For multi-department, this would need UI to select department
+        const allCategories = megaMenu.departments.flatMap(dept => dept.categories);
+
         // Transform API response to component format
-        this.categories = data.map(item => ({
+        this.categories = allCategories.map(item => ({
           id: item.category.id,
           name: item.category.name,
           slug: item.category.slug,

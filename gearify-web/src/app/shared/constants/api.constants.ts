@@ -15,6 +15,9 @@ export const API_CONFIG = {
     
     // Catalog
     CATALOG: '/api/catalog',
+    DEPARTMENTS: '/api/catalog/departments',
+    DEPARTMENT_BY_SLUG: (slug: string) => `/api/catalog/departments/${slug}`,
+    DEPARTMENT_CATEGORIES: (slug: string) => `/api/catalog/departments/${slug}/categories`,
     BRANDS: '/api/catalog/brands',
     PRICE_RANGES: '/api/catalog/price-ranges',
 

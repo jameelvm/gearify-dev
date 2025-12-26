@@ -1,6 +1,7 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Gearify.CatalogService.Domain.Entities;
+using Gearify.CatalogService.Infrastructure.Constants;
 
 namespace Gearify.CatalogService.Infrastructure.Repositories;
 
@@ -14,7 +15,7 @@ namespace Gearify.CatalogService.Infrastructure.Repositories;
 /// </summary>
 public class DynamoDbPriceRangeRepository(IAmazonDynamoDB dynamoDb) : IPriceRangeRepository
 {
-    private readonly string _tableName = "gearify-price-ranges";
+    private readonly string _tableName = DynamoDbTableNames.PRICE_RANGES;
 
     public async Task<List<PriceRange>> GetPriceRangesAsync(string tenantId, string? category = null, bool onlyCategorySpecific = false)
     {

@@ -3,4 +3,8 @@ using MediatR;
 
 namespace Gearify.CatalogService.Application.Queries;
 
-public record GetMegaMenuDataQuery : IRequest<List<CategoryWithDetailsDto>>;
+/// <summary>
+/// Query to get complete mega menu data with department hierarchy
+/// Returns all departments with their categories, sections, and subcategories
+/// </summary>
+public record GetMegaMenuDataQuery : IRequest<MegaMenuDto>;

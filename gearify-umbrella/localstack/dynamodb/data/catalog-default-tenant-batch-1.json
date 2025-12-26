@@ -4,7 +4,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_bats"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bats"
           },
           "SK": {
             "S": "METADATA"
@@ -62,6 +62,12 @@
           },
           "UpdatedBy": {
             "S": "system"
+          },
+          "DepartmentId": {
+            "S": "dept_cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
           }
         }
       }
@@ -70,7 +76,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_bats"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bats"
           },
           "SK": {
             "S": "SECTION#sec_bats_1"
@@ -107,9 +113,6 @@
           },
           "UpdatedAt": {
             "S": "2025-12-21T00:00:00.000Z"
-          },
-          "Mapping": {
-            "S": "BRAND"
           }
         }
       }
@@ -118,7 +121,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_bats"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bats"
           },
           "SK": {
             "S": "SECTION#sec_bats_1#ITEM#sub_bats_1"
@@ -144,12 +147,6 @@
           "Slug": {
             "S": "ss"
           },
-          "BrandId": {
-            "S": "a1b2c3d4-e5f6-4a5b-8c9d-1e2f3a4b5c6d"
-          },
-          "FilterType": {
-            "S": "BRAND"
-          },
           "DisplayOrder": {
             "N": "1"
           },
@@ -169,7 +166,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_bats"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bats"
           },
           "SK": {
             "S": "SECTION#sec_bats_1#ITEM#sub_bats_2"
@@ -195,12 +192,6 @@
           "Slug": {
             "S": "mrf"
           },
-          "BrandId": {
-            "S": "b2c3d4e5-f6a7-4b5c-9d0e-2f3a4b5c6d7e"
-          },
-          "FilterType": {
-            "S": "BRAND"
-          },
           "DisplayOrder": {
             "N": "2"
           },
@@ -220,7 +211,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_bats"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bats"
           },
           "SK": {
             "S": "SECTION#sec_bats_1#ITEM#sub_bats_3"
@@ -246,12 +237,6 @@
           "Slug": {
             "S": "sg"
           },
-          "BrandId": {
-            "S": "c3d4e5f6-a7b8-4c5d-0e1f-3a4b5c6d7e8f"
-          },
-          "FilterType": {
-            "S": "BRAND"
-          },
           "DisplayOrder": {
             "N": "3"
           },
@@ -271,7 +256,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_bats"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bats"
           },
           "SK": {
             "S": "SECTION#sec_bats_1#ITEM#sub_bats_4"
@@ -316,7 +301,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_bats"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bats"
           },
           "SK": {
             "S": "SECTION#sec_bats_1#ITEM#sub_bats_5"
@@ -361,7 +346,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_bats"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bats"
           },
           "SK": {
             "S": "SECTION#sec_bats_2"
@@ -406,7 +391,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_bats"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bats"
           },
           "SK": {
             "S": "SECTION#sec_bats_2#ITEM#sub_bats_6"
@@ -427,7 +412,7 @@
             "S": "default"
           },
           "Name": {
-            "S": "Under \u00e2\u201a\u00b95000"
+            "S": "Under \u20b95000"
           },
           "Slug": {
             "S": "under-5000"
@@ -451,7 +436,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_bats"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bats"
           },
           "SK": {
             "S": "SECTION#sec_bats_2#ITEM#sub_bats_7"
@@ -472,10 +457,10 @@
             "S": "default"
           },
           "Name": {
-            "S": "500 - 1000"
+            "S": "\u20b95000 - \u20b910000"
           },
           "Slug": {
-            "S": "500-1000"
+            "S": "5000-10000"
           },
           "DisplayOrder": {
             "N": "2"
@@ -496,7 +481,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_bats"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bats"
           },
           "SK": {
             "S": "SECTION#sec_bats_2#ITEM#sub_bats_8"
@@ -517,7 +502,7 @@
             "S": "default"
           },
           "Name": {
-            "S": "Above 10000"
+            "S": "Above \u20b910000"
           },
           "Slug": {
             "S": "above-10000"
@@ -541,7 +526,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_balls"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_balls"
           },
           "SK": {
             "S": "METADATA"
@@ -599,6 +584,12 @@
           },
           "UpdatedBy": {
             "S": "system"
+          },
+          "DepartmentId": {
+            "S": "dept_cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
           }
         }
       }
@@ -607,7 +598,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_balls"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_balls"
           },
           "SK": {
             "S": "SECTION#sec_balls_1"
@@ -644,9 +635,6 @@
           },
           "UpdatedAt": {
             "S": "2025-12-21T00:00:00.000Z"
-          },
-          "Mapping": {
-            "S": "BRAND"
           }
         }
       }
@@ -655,7 +643,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_balls"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_balls"
           },
           "SK": {
             "S": "SECTION#sec_balls_1#ITEM#sub_balls_1"
@@ -681,12 +669,6 @@
           "Slug": {
             "S": "sg"
           },
-          "BrandId": {
-            "S": "c3d4e5f6-a7b8-4c5d-0e1f-3a4b5c6d7e8f"
-          },
-          "FilterType": {
-            "S": "BRAND"
-          },
           "DisplayOrder": {
             "N": "1"
           },
@@ -706,7 +688,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_balls"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_balls"
           },
           "SK": {
             "S": "SECTION#sec_balls_1#ITEM#sub_balls_2"
@@ -732,12 +714,6 @@
           "Slug": {
             "S": "kookaburra"
           },
-          "BrandId": {
-            "S": "d4e5f6a7-b8c9-4d5e-1f2a-4b5c6d7e8f9a"
-          },
-          "FilterType": {
-            "S": "BRAND"
-          },
           "DisplayOrder": {
             "N": "2"
           },
@@ -757,7 +733,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_balls"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_balls"
           },
           "SK": {
             "S": "SECTION#sec_balls_1#ITEM#sub_balls_3"
@@ -802,7 +778,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_balls"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_balls"
           },
           "SK": {
             "S": "SECTION#sec_balls_1#ITEM#sub_balls_4"
@@ -847,7 +823,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_shoes"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_shoes"
           },
           "SK": {
             "S": "METADATA"
@@ -905,6 +881,12 @@
           },
           "UpdatedBy": {
             "S": "system"
+          },
+          "DepartmentId": {
+            "S": "dept_cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
           }
         }
       }
@@ -913,7 +895,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_shoes"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_shoes"
           },
           "SK": {
             "S": "SECTION#sec_shoes_1"
@@ -950,9 +932,6 @@
           },
           "UpdatedAt": {
             "S": "2025-12-21T00:00:00.000Z"
-          },
-          "Mapping": {
-            "S": "BRAND"
           }
         }
       }
@@ -961,7 +940,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_shoes"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_shoes"
           },
           "SK": {
             "S": "SECTION#sec_shoes_1#ITEM#sub_shoes_1"
@@ -987,12 +966,6 @@
           "Slug": {
             "S": "sg"
           },
-          "BrandId": {
-            "S": "c3d4e5f6-a7b8-4c5d-0e1f-3a4b5c6d7e8f"
-          },
-          "FilterType": {
-            "S": "BRAND"
-          },
           "DisplayOrder": {
             "N": "1"
           },
@@ -1012,7 +985,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_shoes"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_shoes"
           },
           "SK": {
             "S": "SECTION#sec_shoes_1#ITEM#sub_shoes_2"
@@ -1038,12 +1011,6 @@
           "Slug": {
             "S": "kookaburra"
           },
-          "BrandId": {
-            "S": "d4e5f6a7-b8c9-4d5e-1f2a-4b5c6d7e8f9a"
-          },
-          "FilterType": {
-            "S": "BRAND"
-          },
           "DisplayOrder": {
             "N": "2"
           },
@@ -1063,7 +1030,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_shoes"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_shoes"
           },
           "SK": {
             "S": "SECTION#sec_shoes_1#ITEM#sub_shoes_3"
@@ -1108,7 +1075,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_helmets"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_helmets"
           },
           "SK": {
             "S": "METADATA"
@@ -1166,6 +1133,12 @@
           },
           "UpdatedBy": {
             "S": "system"
+          },
+          "DepartmentId": {
+            "S": "dept_cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
           }
         }
       }
@@ -1174,7 +1147,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_helmets"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_helmets"
           },
           "SK": {
             "S": "SECTION#sec_helmets_1"
@@ -1211,9 +1184,6 @@
           },
           "UpdatedAt": {
             "S": "2025-12-21T00:00:00.000Z"
-          },
-          "Mapping": {
-            "S": "BRAND"
           }
         }
       }
@@ -1222,7 +1192,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#CATEGORY#cat_helmets"
+            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_helmets"
           },
           "SK": {
             "S": "SECTION#sec_helmets_1#ITEM#sub_helmets_1"
@@ -1243,16 +1213,10 @@
             "S": "default"
           },
           "Name": {
-            "S": "DSC"
+            "S": "SG"
           },
           "Slug": {
-            "S": "dsc"
-          },
-          "BrandId": {
-            "S": "e5f6a7b8-c9d0-4e5f-2a3b-5c6d7e8f9a0b"
-          },
-          "FilterType": {
-            "S": "BRAND"
+            "S": "sg"
           },
           "DisplayOrder": {
             "N": "1"

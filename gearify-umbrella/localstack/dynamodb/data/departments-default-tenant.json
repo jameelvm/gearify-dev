@@ -1,0 +1,24 @@
+[
+  {
+    "PK": {"S": "TENANT#default#DEPARTMENT#cricket"},
+    "SK": {"S": "METADATA"},
+    "EntityType": {"S": "DEPARTMENT"},
+    "GSI1PK": {"S": "TENANT#default#SLUG"},
+    "GSI1SK": {"S": "DEPARTMENT#cricket"},
+    "GSI2PK": {"S": "TENANT#default#DEPARTMENTS"},
+    "GSI2SK": {"S": "ORDER#0001"},
+    "Id": {"S": "dept_cricket"},
+    "TenantId": {"S": "default"},
+    "Name": {"S": "Cricket"},
+    "Slug": {"S": "cricket"},
+    "Description": {"S": "Cricket equipment and gear for all levels - from beginner to professional"},
+    "Icon": {"S": "cricket"},
+    "ImageUrl": {"S": ""},
+    "DisplayOrder": {"N": "1"},
+    "IsActive": {"BOOL": true},
+    "CreatedAt": {"S": "2025-12-25T00:00:00.000Z"},
+    "UpdatedAt": {"S": "2025-12-25T00:00:00.000Z"},
+    "CreatedBy": {"S": "system"},
+    "UpdatedBy": {"S": "system"}
+  }
+]
