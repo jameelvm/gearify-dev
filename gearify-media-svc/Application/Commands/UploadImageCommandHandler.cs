@@ -1,3 +1,4 @@
+using Gearify.MediaService.Application.Events;
 using Gearify.MediaService.Application.Services;
 using Gearify.MediaService.Domain.Entities;
 using Gearify.MediaService.Domain.Enums;
@@ -18,6 +19,7 @@ public class UploadImageCommandHandler : IRequestHandler<UploadImageCommand, Upl
     private readonly IImageProcessor _imageProcessor;
     private readonly IMediaRepository _mediaRepository;
     private readonly IMediaUrlFactory _urlFactory;
+    private readonly IEventPublisher _eventPublisher;
     private readonly ILogger<UploadImageCommandHandler> _logger;
 
     public UploadImageCommandHandler(
@@ -25,12 +27,14 @@ public class UploadImageCommandHandler : IRequestHandler<UploadImageCommand, Upl
         IImageProcessor imageProcessor,
         IMediaRepository mediaRepository,
         IMediaUrlFactory urlFactory,
+        IEventPublisher eventPublisher,
         ILogger<UploadImageCommandHandler> logger)
     {
         _storageService = storageService;
         _imageProcessor = imageProcessor;
         _mediaRepository = mediaRepository;
         _urlFactory = urlFactory;
+        _eventPublisher = eventPublisher;
         _logger = logger;
     }
 
@@ -72,40 +76,20 @@ public class UploadImageCommandHandler : IRequestHandler<UploadImageCommand, Upl
             var mediaId = $"media-{Guid.NewGuid():N}";
             var sanitizedFileName = SanitizeFileName(request.FileName);
 
-            // Generate all image variants
+            // Generate S3 key for original image only
+            var originalKey = string.Format(
+                StorageConstants.S3PathTemplate,
+                request.TenantId,
+                request.EntityType.ToLower(),
+                request.EntityId,
+                "original",
+                sanitizedFileName);
+
+            // Upload ONLY original to S3 (variants will be generated asynchronously)
             request.FileStream.Position = 0;
-            var variants = await _imageProcessor.GenerateVariantsAsync(request.FileStream, request.ContentType);
+            await _storageService.UploadAsync(request.FileStream, originalKey, request.ContentType, cancellationToken);
 
-            // Prepare S3 keys for each variant
-            var keys = new Dictionary<ImageSize, string>();
-            foreach (var size in variants.Keys)
-            {
-                var key = string.Format(
-                    StorageConstants.S3PathTemplate,
-                    request.TenantId,
-                    request.EntityType.ToLower(),
-                    request.EntityId,
-                    size.ToString().ToLower(),
-                    sanitizedFileName);
-
-                keys[size] = key;
-            }
-
-            // Upload all variants to S3
-            try
-            {
-                await _storageService.UploadVariantsAsync(variants, keys[ImageSize.Original], request.ContentType, cancellationToken);
-            }
-            finally
-            {
-                // Cleanup streams
-                foreach (var stream in variants.Values)
-                {
-                    await stream.DisposeAsync();
-                }
-            }
-
-            // Create media metadata
+            // Create media metadata with PROCESSING status
             var media = new MediaMetadata
             {
                 PK = $"TENANT#{request.TenantId}",
@@ -122,12 +106,13 @@ public class UploadImageCommandHandler : IRequestHandler<UploadImageCommand, Upl
                 SizeInBytes = request.SizeInBytes,
                 Width = width,
                 Height = height,
-                OriginalKey = keys[ImageSize.Original],
-                ThumbnailKey = keys[ImageSize.Thumbnail],
-                MediumKey = keys[ImageSize.Medium],
-                LargeKey = keys[ImageSize.Large],
+                OriginalKey = originalKey,
+                ThumbnailKey = string.Empty,  // Will be set by background processor
+                MediumKey = string.Empty,      // Will be set by background processor
+                LargeKey = string.Empty,       // Will be set by background processor
                 DisplayOrder = request.DisplayOrder,
                 AltText = request.AltText,
+                Status = ProcessingStatus.Processing.ToString(),
                 UploadedAt = DateTime.UtcNow,
                 UploadedBy = request.UploadedBy,
                 IsDeleted = false
@@ -136,11 +121,25 @@ public class UploadImageCommandHandler : IRequestHandler<UploadImageCommand, Upl
             // Save metadata to DynamoDB
             await _mediaRepository.CreateAsync(media);
 
-            // Generate URLs
+            // Publish event for async processing
+            var uploadEvent = new MediaUploadedEvent(
+                MediaId: mediaId,
+                TenantId: request.TenantId,
+                EntityType: request.EntityType,
+                EntityId: request.EntityId,
+                OriginalKey: originalKey,
+                ContentType: request.ContentType,
+                Width: width,
+                Height: height,
+                UploadedAt: DateTime.UtcNow);
+
+            await _eventPublisher.PublishAsync(uploadEvent, "gearify-media-upload-events", cancellationToken);
+
+            // Generate URLs (only original is available now)
             var urls = _urlFactory.GetUrls(media);
 
             _logger.LogInformation(
-                "Successfully uploaded image {MediaId} for {EntityType} {EntityId}",
+                "Successfully uploaded original image {MediaId} for {EntityType} {EntityId}. Processing variants asynchronously.",
                 mediaId, request.EntityType, request.EntityId);
 
             return new UploadImageResult(

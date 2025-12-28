@@ -188,6 +188,24 @@ awslocal dynamodb create-table \
   --region us-east-1 \
   2>/dev/null || echo "    Table gearify-price-ranges already exists, skipping..."
 
+# Media table
+echo "  - Creating table: gearify-media"
+awslocal dynamodb create-table \
+  --table-name gearify-media \
+  --attribute-definitions \
+    AttributeName=PK,AttributeType=S \
+    AttributeName=SK,AttributeType=S \
+    AttributeName=GSI1PK,AttributeType=S \
+    AttributeName=GSI1SK,AttributeType=S \
+  --key-schema \
+    AttributeName=PK,KeyType=HASH \
+    AttributeName=SK,KeyType=RANGE \
+  --global-secondary-indexes \
+    "[{\"IndexName\":\"GSI1\",\"KeySchema\":[{\"AttributeName\":\"GSI1PK\",\"KeyType\":\"HASH\"},{\"AttributeName\":\"GSI1SK\",\"KeyType\":\"RANGE\"}],\"Projection\":{\"ProjectionType\":\"ALL\"}}]" \
+  --billing-mode PAY_PER_REQUEST \
+  --region us-east-1 \
+  2>/dev/null || echo "    Table gearify-media already exists, skipping..."
+
 echo "DynamoDB tables created successfully!"
 
 # ==========================================
@@ -314,6 +332,7 @@ awslocal sqs create-queue --queue-name gearify-payment-processed --region us-eas
 awslocal sqs create-queue --queue-name gearify-inventory-updated --region us-east-1 2>/dev/null || echo "  - Queue gearify-inventory-updated already exists"
 awslocal sqs create-queue --queue-name gearify-notification-requested --region us-east-1 2>/dev/null || echo "  - Queue gearify-notification-requested already exists"
 awslocal sqs create-queue --queue-name gearify-shipping-requested --region us-east-1 2>/dev/null || echo "  - Queue gearify-shipping-requested already exists"
+awslocal sqs create-queue --queue-name gearify-image-processing-queue --region us-east-1 2>/dev/null || echo "  - Queue gearify-image-processing-queue already exists"
 
 echo "SQS queues created successfully!"
 
@@ -326,10 +345,21 @@ echo "Creating SNS topics..."
 ORDER_TOPIC_ARN=$(awslocal sns create-topic --name gearify-order-events --region us-east-1 --output text 2>/dev/null || echo "")
 PAYMENT_TOPIC_ARN=$(awslocal sns create-topic --name gearify-payment-events --region us-east-1 --output text 2>/dev/null || echo "")
 INVENTORY_TOPIC_ARN=$(awslocal sns create-topic --name gearify-inventory-events --region us-east-1 --output text 2>/dev/null || echo "")
+MEDIA_TOPIC_ARN=$(awslocal sns create-topic --name gearify-media-upload-events --region us-east-1 --output text 2>/dev/null || echo "")
 
 echo "  - Created topic: gearify-order-events"
 echo "  - Created topic: gearify-payment-events"
 echo "  - Created topic: gearify-inventory-events"
+echo "  - Created topic: gearify-media-upload-events"
+
+# Subscribe SQS queue to SNS topic for media processing
+if [ ! -z "$MEDIA_TOPIC_ARN" ]; then
+  MEDIA_QUEUE_ARN=$(awslocal sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/gearify-image-processing-queue --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn' 2>/dev/null || echo "")
+  if [ ! -z "$MEDIA_QUEUE_ARN" ]; then
+    awslocal sns subscribe --topic-arn $MEDIA_TOPIC_ARN --protocol sqs --notification-endpoint $MEDIA_QUEUE_ARN --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
+    echo "  - Subscribed gearify-image-processing-queue to gearify-media-upload-events"
+  fi
+fi
 
 echo "SNS topics created successfully!"
 

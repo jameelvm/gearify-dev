@@ -41,7 +41,7 @@ public class MediaController : ControllerBase
     [ProducesResponseType(typeof(MediaMetadataDto), 200)]
     [ProducesResponseType(400)]
     public async Task<IActionResult> UploadImage(
-        [FromForm] IFormFile file,
+        [FromForm] IFormFile? file,
         [FromForm] string entityType,
         [FromForm] string entityId,
         [FromForm] int displayOrder = 0,
@@ -127,6 +127,9 @@ public class MediaController : ControllerBase
                 Urls: urls,
                 DisplayOrder: media.DisplayOrder,
                 AltText: media.AltText,
+                Status: media.Status,
+                ProcessedAt: media.ProcessedAt,
+                ProcessingError: media.ProcessingError,
                 UploadedAt: media.UploadedAt,
                 UploadedBy: media.UploadedBy);
 
@@ -169,6 +172,9 @@ public class MediaController : ControllerBase
                     Urls: urls,
                     DisplayOrder: media.DisplayOrder,
                     AltText: media.AltText,
+                    Status: media.Status,
+                    ProcessedAt: media.ProcessedAt,
+                    ProcessingError: media.ProcessingError,
                     UploadedAt: media.UploadedAt,
                     UploadedBy: media.UploadedBy);
             }).ToList();

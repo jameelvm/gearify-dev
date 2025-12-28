@@ -1,0 +1,13 @@
+{
+  "QueueName": "gearify-image-processing-queue",
+  "Attributes": {
+    "DelaySeconds": "0",
+    "MessageRetentionPeriod": "1209600",
+    "ReceiveMessageWaitTimeSeconds": "20",
+    "VisibilityTimeout": "300"
+  },
+  "Tags": {
+    "Service": "MediaService",
+    "Environment": "Development"
+  }
+}

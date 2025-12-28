@@ -116,7 +116,7 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<IActionResult> UploadProductImages(
         string id,
-        [FromForm] IFormFileCollection images,
+        [FromForm] List<IFormFile>? images,
         [FromForm] List<string>? altTexts = null)
     {
         try
@@ -128,7 +128,7 @@ public class ProductsController : ControllerBase
 
             var command = new UploadProductImagesCommand(
                 ProductId: id,
-                Images: images.ToList(),
+                Images: images,
                 AltTexts: altTexts);
 
             var result = await _mediator.Send(command);

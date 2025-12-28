@@ -9,6 +9,8 @@
     <!-- AWS SDK -->
     <PackageReference Include="AWSSDK.S3" Version="3.7.400" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.400" />
+    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.400" />
+    <PackageReference Include="AWSSDK.SQS" Version="3.7.400" />
 
     <!-- LocalStack -->
     <PackageReference Include="LocalStack.Client.Extensions" Version="1.4.0" />

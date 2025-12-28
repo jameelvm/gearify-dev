@@ -1,7 +1,12 @@
 using Amazon.DynamoDBv2;
 using Amazon.Runtime;
 using Amazon.S3;
+using Amazon.SimpleNotificationService;
+using Amazon.SQS;
+using Gearify.MediaService.Application.BackgroundJobs;
+using Gearify.MediaService.Application.Events;
 using Gearify.MediaService.Application.Services;
+using Gearify.MediaService.Infrastructure.Messaging;
 using Gearify.MediaService.Infrastructure.Repositories;
 using Gearify.MediaService.Infrastructure.Storage;
 using Gearify.MediaService.Infrastructure.Swagger;
@@ -75,6 +80,32 @@ public class Startup
             return new Amazon.S3.AmazonS3Client(credentials, config);
         });
 
+        services.AddSingleton<IAmazonSimpleNotificationService>(sp =>
+        {
+            var endpoint = Environment.GetEnvironmentVariable("SNS_ENDPOINT") ?? "http://localstack:4566";
+            var config = new Amazon.SimpleNotificationService.AmazonSimpleNotificationServiceConfig
+            {
+                ServiceURL = endpoint
+            };
+            var accessKey = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID") ?? "test";
+            var secretKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY") ?? "test";
+            var credentials = new BasicAWSCredentials(accessKey, secretKey);
+            return new Amazon.SimpleNotificationService.AmazonSimpleNotificationServiceClient(credentials, config);
+        });
+
+        services.AddSingleton<IAmazonSQS>(sp =>
+        {
+            var endpoint = Environment.GetEnvironmentVariable("SQS_ENDPOINT") ?? "http://localstack:4566";
+            var config = new Amazon.SQS.AmazonSQSConfig
+            {
+                ServiceURL = endpoint
+            };
+            var accessKey = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID") ?? "test";
+            var secretKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY") ?? "test";
+            var credentials = new BasicAWSCredentials(accessKey, secretKey);
+            return new Amazon.SQS.AmazonSQSClient(credentials, config);
+        });
+
         // MediatR for CQRS
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly));
 
@@ -85,6 +116,13 @@ public class Startup
         // Infrastructure Services
         services.AddScoped<IStorageService, S3StorageService>();
         services.AddScoped<IMediaRepository, DynamoDbMediaRepository>();
+
+        // Messaging Services (for async image processing)
+        services.AddScoped<IEventPublisher, SnsEventPublisher>();
+        services.AddScoped<IImageProcessingQueue, SqsImageProcessingQueue>();
+
+        // Background Services
+        services.AddHostedService<ImageProcessingBackgroundService>();
 
         // Swagger
         services.AddSwaggerGen(c =>
@@ -102,6 +140,9 @@ public class Startup
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+        // Tenant resolution middleware (must be before controllers)
+        app.UseMultitenancy();
+
         // CORS
         app.UseCors();
 

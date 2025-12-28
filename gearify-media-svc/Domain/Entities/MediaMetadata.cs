@@ -46,6 +46,11 @@ public class MediaMetadata
     // Alt text for accessibility
     public string? AltText { get; set; }
 
+    // Processing status
+    public string Status { get; set; } = ProcessingStatus.Processing.ToString();
+    public DateTime? ProcessedAt { get; set; }
+    public string? ProcessingError { get; set; }
+
     // Metadata
     public DateTime UploadedAt { get; set; }
     public string UploadedBy { get; set; } = string.Empty;

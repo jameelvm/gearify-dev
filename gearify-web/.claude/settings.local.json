@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(test:*)",
+      "Bash(curl:*)",
+      "Bash(cat:*)",
+      "Bash(docker-compose stop:*)",
+      "Bash(docker-compose restart:*)",
+      "Bash(aws dynamodb list-tables:*)",
+      "Bash(aws dynamodb create-table:*)",
+      "Bash(AttributeName=PK,AttributeType=S )",
+      "Bash(AttributeName=SK,AttributeType=S )",
+      "Bash(AttributeName=GSI1PK,AttributeType=S )",
+      "Bash(AttributeName=GSI1SK,AttributeType=S )",
+      "Bash(AttributeName=PK,KeyType=HASH )",
+      "Bash(AttributeName=SK,KeyType=RANGE )",
+      "Bash(\"[{\"\"IndexName\"\":\"\"GSI1\"\",\"\"KeySchema\"\":[{\"\"AttributeName\"\":\"\"GSI1PK\"\",\"\"KeyType\"\":\"\"HASH\"\"},{\"\"AttributeName\"\":\"\"GSI1SK\"\",\"\"KeyType\"\":\"\"RANGE\"\"}],\"\"Projection\"\":{\"\"ProjectionType\"\":\"\"ALL\"\"}}]\" )",
+      "Bash(AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws dynamodb create-table:*)",
+      "Bash(AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws dynamodb list-tables:*)",
+      "Bash(AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws sqs create-queue:*)",
+      "Bash(AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws sns create-topic:*)",
+      "Bash(AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws sns subscribe:*)",
+      "Bash(AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws s3:*)"
+    ]
+  }
+}

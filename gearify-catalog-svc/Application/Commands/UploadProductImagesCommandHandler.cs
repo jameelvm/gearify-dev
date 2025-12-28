@@ -54,7 +54,7 @@ public class UploadProductImagesCommandHandler : IRequestHandler<UploadProductIm
             }
 
             // Validate images
-            if (request.Images == null || !request.Images.Any())
+            if (!request.Images.Any())
             {
                 return new UploadProductImagesResult(
                     Success: false,

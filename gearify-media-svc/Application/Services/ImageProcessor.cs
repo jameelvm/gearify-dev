@@ -27,10 +27,10 @@ public class ImageProcessor : IImageProcessor
 
         try
         {
-            // Save original stream to memory
-            var originalBytes = new byte[originalStream.Length];
-            originalStream.Position = 0;
-            await originalStream.ReadAsync(originalBytes);
+            // Copy original stream to memory (handles non-seekable streams from S3)
+            using var memoryStream = new MemoryStream();
+            await originalStream.CopyToAsync(memoryStream);
+            var originalBytes = memoryStream.ToArray();
 
             // Original (just copy)
             var originalCopy = new MemoryStream(originalBytes);
