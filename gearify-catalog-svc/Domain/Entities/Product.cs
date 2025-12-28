@@ -42,6 +42,9 @@ public class Product
     public decimal? RatingAverage { get; set; }    // e.g., 4.5
     public int? RatingCount { get; set; }          // e.g., 127 reviews
 
+    // Primary image URL for list views (thumbnail variant for performance)
+    public string? ThumbnailUrl { get; set; }
+
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;

@@ -26,7 +26,11 @@ export interface Product {
   discountPercentage?: number;      // Discount percentage (e.g., 20 for "20% off")
   offerBadge?: string;              // Offer label (e.g., "SALE", "20% OFF", "HOT DEAL")
   currency: string;
-  imageUrls: string[];
+
+  // Image fields
+  thumbnailUrl?: string;            // Primary thumbnail URL for list views (updated by Media Service)
+  imageUrls: string[];              // Legacy field for backward compatibility
+
   tags: string[];
   attributes: Record<string, string>;
   isActive: boolean;

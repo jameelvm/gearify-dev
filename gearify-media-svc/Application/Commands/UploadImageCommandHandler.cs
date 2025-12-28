@@ -133,7 +133,7 @@ public class UploadImageCommandHandler : IRequestHandler<UploadImageCommand, Upl
                 Height: height,
                 UploadedAt: DateTime.UtcNow);
 
-            await _eventPublisher.PublishAsync(uploadEvent, "gearify-media-upload-events", cancellationToken);
+            await _eventPublisher.PublishAsync(uploadEvent, MediaUploadedEvent.TopicName, cancellationToken);
 
             // Generate URLs (only original is available now)
             var urls = _urlFactory.GetUrls(media);

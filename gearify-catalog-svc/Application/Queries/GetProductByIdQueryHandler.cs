@@ -1,5 +1,4 @@
 using Gearify.CatalogService.Application.DTOs;
-using Gearify.CatalogService.Domain.Entities;
 using Gearify.CatalogService.Infrastructure.Clients;
 using Gearify.CatalogService.Infrastructure.Repositories;
 using Gearify.SharedKernel.Multitenancy;
@@ -53,41 +52,5 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
             // Return product without images if Media Service call fails
             return ProductDto.FromProduct(product);
         }
-    }
-}
-
-public class GetProductsByCategoryQueryHandler : IRequestHandler<GetProductsByCategoryQuery, List<Product>>
-{
-    private readonly IProductRepository _repository;
-    private readonly ITenantContext _tenantContext;
-
-    public GetProductsByCategoryQueryHandler(IProductRepository repository, ITenantContext tenantContext)
-    {
-        _repository = repository;
-        _tenantContext = tenantContext;
-    }
-
-    public async Task<List<Product>> Handle(GetProductsByCategoryQuery request, CancellationToken cancellationToken)
-    {
-        var tenantId = _tenantContext.TenantId;
-        return await _repository.GetByCategoryAsync(request.Category, tenantId);
-    }
-}
-
-public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, List<Product>>
-{
-    private readonly IProductRepository _repository;
-    private readonly ITenantContext _tenantContext;
-
-    public GetAllProductsQueryHandler(IProductRepository repository, ITenantContext tenantContext)
-    {
-        _repository = repository;
-        _tenantContext = tenantContext;
-    }
-
-    public async Task<List<Product>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
-    {
-        var tenantId = _tenantContext.TenantId;
-        return await _repository.GetAllAsync(tenantId, request.Skip, request.Take);
     }
 }

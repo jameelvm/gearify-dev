@@ -1,11 +1,14 @@
 using Amazon.DynamoDBv2;
 using Amazon.Runtime;
 using Amazon.S3;
+using Amazon.SQS;
 using FluentValidation;
 using Gearify.CatalogService.Application.Commands;
 using Gearify.CatalogService.Application.Mappers;
 using Gearify.CatalogService.Application.Validators;
+using Gearify.CatalogService.Infrastructure.BackgroundJobs;
 using Gearify.CatalogService.Infrastructure.Clients;
+using Gearify.CatalogService.Infrastructure.Messaging;
 using Gearify.CatalogService.Infrastructure.Repositories;
 using Gearify.CatalogService.Infrastructure.Swagger;
 using Gearify.SharedKernel.Extensions;
@@ -103,6 +106,20 @@ public class Startup
             services.AddAWSService<IAmazonDynamoDB>();
             services.AddAWSService<IAmazonS3>();
 
+            // Add SQS for receiving image processing events
+            services.AddSingleton<IAmazonSQS>(sp =>
+            {
+                var endpoint = Environment.GetEnvironmentVariable("SQS_ENDPOINT") ?? Configuration["AWS:SQS:ServiceUrl"] ?? "http://localhost:4566";
+                var config = new Amazon.SQS.AmazonSQSConfig
+                {
+                    ServiceURL = endpoint
+                };
+                var accessKey = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID") ?? "test";
+                var secretKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY") ?? "test";
+                var credentials = new BasicAWSCredentials(accessKey, secretKey);
+                return new Amazon.SQS.AmazonSQSClient(credentials, config);
+            });
+
             Console.WriteLine("AWS services registered successfully");
         }
         catch (Exception ex)
@@ -125,6 +142,12 @@ public class Startup
 
         // Media Service Client with HttpClient
         services.AddHttpClient<IMediaServiceClient, Gearify.CatalogService.Infrastructure.Clients.MediaServiceClient>();
+
+        // Messaging Services (for receiving image processing events)
+        services.AddScoped<IProductThumbnailUpdateQueue, SqsProductThumbnailUpdateQueue>();
+
+        // Background Services
+        services.AddHostedService<ProductThumbnailUpdateBackgroundService>();
 
         // OpenTelemetry
         var otlpEndpoint = Environment.GetEnvironmentVariable("OTLP_ENDPOINT") ?? "http://otel-collector:4318";

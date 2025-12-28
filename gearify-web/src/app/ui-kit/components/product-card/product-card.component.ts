@@ -47,9 +47,10 @@ export class ProductCardComponent {
 
   /**
    * Get the primary image URL for the product
+   * Prefers thumbnailUrl (updated by Media Service), falls back to imageUrls[0] for backward compatibility
    */
   get primaryImageUrl(): string {
-    return this.product.imageUrls?.[0] || this.placeholderImage;
+    return this.product.thumbnailUrl || this.product.imageUrls?.[0] || this.placeholderImage;
   }
 
   /**

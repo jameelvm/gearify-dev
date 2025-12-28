@@ -1,4 +1,5 @@
 using Gearify.MediaService.Application.BackgroundJobs.Models;
+using Gearify.MediaService.Application.Events;
 using Gearify.MediaService.Application.Services;
 using Gearify.MediaService.Domain.Enums;
 using Gearify.MediaService.Infrastructure.Constants;
@@ -58,6 +59,8 @@ public class ImageProcessingBackgroundService : BackgroundService
         var storageService = scope.ServiceProvider.GetRequiredService<IStorageService>();
         var imageProcessor = scope.ServiceProvider.GetRequiredService<IImageProcessor>();
         var mediaRepository = scope.ServiceProvider.GetRequiredService<IMediaRepository>();
+        var eventPublisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+        var urlFactory = scope.ServiceProvider.GetRequiredService<IMediaUrlFactory>();
 
         // Receive messages from queue (long polling)
         var messages = await queue.ReceiveMessagesAsync(
@@ -79,6 +82,8 @@ public class ImageProcessingBackgroundService : BackgroundService
             storageService,
             imageProcessor,
             mediaRepository,
+            eventPublisher,
+            urlFactory,
             cancellationToken));
 
         await Task.WhenAll(tasks);
@@ -90,6 +95,8 @@ public class ImageProcessingBackgroundService : BackgroundService
         IStorageService storageService,
         IImageProcessor imageProcessor,
         IMediaRepository mediaRepository,
+        IEventPublisher eventPublisher,
+        IMediaUrlFactory urlFactory,
         CancellationToken cancellationToken)
     {
         var message = queueMessage.Body;
@@ -129,6 +136,7 @@ public class ImageProcessingBackgroundService : BackgroundService
                     Path.GetFileName(message.OriginalKey));
 
                 keys[size] = key;
+                _logger.LogInformation("Generated S3 key for {Size}: {Key}", size, key);
             }
 
             // Upload variant images to S3
@@ -139,10 +147,20 @@ public class ImageProcessingBackgroundService : BackgroundService
                     var stream = variant.Value;
                     var key = keys[variant.Key];
 
-                    stream.Position = 0;
-                    await storageService.UploadAsync(stream, key, message.ContentType, cancellationToken);
+                    _logger.LogInformation("Uploading {Size} variant to S3: {Key}", variant.Key, key);
 
-                    _logger.LogDebug("Uploaded {Size} variant for {MediaId}", variant.Key, message.MediaId);
+                    try
+                    {
+                        stream.Position = 0;
+                        await storageService.UploadAsync(stream, key, message.ContentType, cancellationToken);
+                        _logger.LogInformation("Successfully uploaded {Size} variant for {MediaId}", variant.Key, message.MediaId);
+                    }
+                    catch (Exception uploadEx)
+                    {
+                        _logger.LogError(uploadEx, "Failed to upload {Size} variant to S3. Key: {Key}, ContentType: {ContentType}",
+                            variant.Key, key, message.ContentType);
+                        throw;
+                    }
                 }
             }
             finally
@@ -169,6 +187,27 @@ public class ImageProcessingBackgroundService : BackgroundService
                 _logger.LogInformation(
                     "Successfully processed image {MediaId}. All variants ready.",
                     message.MediaId);
+
+                // Publish event to notify other services (e.g., Catalog Service to update Product.ThumbnailUrl)
+                var completedEvent = new ImageProcessingCompletedEvent(
+                    MediaId: message.MediaId,
+                    EntityType: message.EntityType,
+                    EntityId: message.EntityId,
+                    TenantId: message.TenantId,
+                    ThumbnailUrl: urlFactory.GetUrl(keys[ImageSize.Thumbnail]),
+                    MediumUrl: urlFactory.GetUrl(keys[ImageSize.Medium]),
+                    LargeUrl: urlFactory.GetUrl(keys[ImageSize.Large]),
+                    OriginalUrl: urlFactory.GetUrl(message.OriginalKey),
+                    DisplayOrder: media.DisplayOrder,
+                    AltText: media.AltText
+                );
+
+                await eventPublisher.PublishAsync(completedEvent, ImageProcessingCompletedEvent.TopicName, cancellationToken);
+
+                _logger.LogInformation(
+                    "Published ImageProcessingCompletedEvent for {EntityType} {EntityId}",
+                    message.EntityType,
+                    message.EntityId);
             }
             else
             {

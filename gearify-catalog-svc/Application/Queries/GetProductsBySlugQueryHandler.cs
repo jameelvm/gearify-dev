@@ -1,5 +1,6 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
+using Gearify.CatalogService.Application.DTOs;
 using Gearify.CatalogService.Domain.Entities;
 using Gearify.CatalogService.Infrastructure.Constants;
 using Gearify.SharedKernel.Multitenancy;
@@ -72,12 +73,13 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
             var response = await _dynamoDb.QueryAsync(queryRequest, cancellationToken);
 
             var products = response.Items.Select(MapToProduct).ToList();
+            var productDtos = products.Select(ProductListDto.FromProduct).ToList();
 
             _logger.LogInformation(
                 "Retrieved {Count} products for tenant {TenantId} with filters: Dept={Dept}, Cat={Cat}, Subcat={Subcat}",
                 products.Count, tenantId, request.DepartmentSlug, request.CategorySlug, request.SubcategorySlug);
 
-            return new ProductListResponse(products, products.Count);
+            return new ProductListResponse(productDtos, productDtos.Count);
         }
         catch (Exception ex)
         {
@@ -110,6 +112,7 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
             SubcategorySlug = item.TryGetValue("SubcategorySlug", out var subcatSlug) ? subcatSlug.S : string.Empty,
             Brand = item.TryGetValue("Brand", out var brand) ? brand.S : string.Empty,
             BrandSlug = item.TryGetValue("BrandSlug", out var brandSlug) ? brandSlug.S : string.Empty,
+            ThumbnailUrl = item.TryGetValue("ThumbnailUrl", out var thumbnailUrl) ? thumbnailUrl.S : null,
             ImageUrls = item.TryGetValue("ImageUrls", out var images) ? images.SS : new List<string>(),
             Tags = item.TryGetValue("Tags", out var tags) ? tags.SS : new List<string>(),
             IsActive = item.TryGetValue("IsActive", out var active) && active.BOOL,

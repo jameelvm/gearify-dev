@@ -333,6 +333,7 @@ awslocal sqs create-queue --queue-name gearify-inventory-updated --region us-eas
 awslocal sqs create-queue --queue-name gearify-notification-requested --region us-east-1 2>/dev/null || echo "  - Queue gearify-notification-requested already exists"
 awslocal sqs create-queue --queue-name gearify-shipping-requested --region us-east-1 2>/dev/null || echo "  - Queue gearify-shipping-requested already exists"
 awslocal sqs create-queue --queue-name gearify-image-processing-queue --region us-east-1 2>/dev/null || echo "  - Queue gearify-image-processing-queue already exists"
+awslocal sqs create-queue --queue-name gearify-product-thumbnail-update-queue --region us-east-1 2>/dev/null || echo "  - Queue gearify-product-thumbnail-update-queue already exists"
 
 echo "SQS queues created successfully!"
 
@@ -346,11 +347,13 @@ ORDER_TOPIC_ARN=$(awslocal sns create-topic --name gearify-order-events --region
 PAYMENT_TOPIC_ARN=$(awslocal sns create-topic --name gearify-payment-events --region us-east-1 --output text 2>/dev/null || echo "")
 INVENTORY_TOPIC_ARN=$(awslocal sns create-topic --name gearify-inventory-events --region us-east-1 --output text 2>/dev/null || echo "")
 MEDIA_TOPIC_ARN=$(awslocal sns create-topic --name gearify-media-upload-events --region us-east-1 --output text 2>/dev/null || echo "")
+IMAGE_PROCESSING_COMPLETED_TOPIC_ARN=$(awslocal sns create-topic --name gearify-image-processing-completed --region us-east-1 --output text 2>/dev/null || echo "")
 
 echo "  - Created topic: gearify-order-events"
 echo "  - Created topic: gearify-payment-events"
 echo "  - Created topic: gearify-inventory-events"
 echo "  - Created topic: gearify-media-upload-events"
+echo "  - Created topic: gearify-image-processing-completed"
 
 # Subscribe SQS queue to SNS topic for media processing
 if [ ! -z "$MEDIA_TOPIC_ARN" ]; then
@@ -358,6 +361,15 @@ if [ ! -z "$MEDIA_TOPIC_ARN" ]; then
   if [ ! -z "$MEDIA_QUEUE_ARN" ]; then
     awslocal sns subscribe --topic-arn $MEDIA_TOPIC_ARN --protocol sqs --notification-endpoint $MEDIA_QUEUE_ARN --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
     echo "  - Subscribed gearify-image-processing-queue to gearify-media-upload-events"
+  fi
+fi
+
+# Subscribe SQS queue to SNS topic for product thumbnail updates
+if [ ! -z "$IMAGE_PROCESSING_COMPLETED_TOPIC_ARN" ]; then
+  PRODUCT_THUMBNAIL_QUEUE_ARN=$(awslocal sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/gearify-product-thumbnail-update-queue --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn' 2>/dev/null || echo "")
+  if [ ! -z "$PRODUCT_THUMBNAIL_QUEUE_ARN" ]; then
+    awslocal sns subscribe --topic-arn $IMAGE_PROCESSING_COMPLETED_TOPIC_ARN --protocol sqs --notification-endpoint $PRODUCT_THUMBNAIL_QUEUE_ARN --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
+    echo "  - Subscribed gearify-product-thumbnail-update-queue to gearify-image-processing-completed"
   fi
 fi
 

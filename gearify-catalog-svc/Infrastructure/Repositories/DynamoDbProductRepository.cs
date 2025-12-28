@@ -143,6 +143,11 @@ public class DynamoDbProductRepository(IAmazonDynamoDB dynamoDb) : IProductRepos
             item["ImageUrls"] = new AttributeValue { SS = product.ImageUrls };
         }
 
+        if (!string.IsNullOrEmpty(product.ThumbnailUrl))
+        {
+            item["ThumbnailUrl"] = new AttributeValue { S = product.ThumbnailUrl };
+        }
+
         if (product.Attributes.Any())
         {
             item["Attributes"] = new AttributeValue { S = JsonSerializer.Serialize(product.Attributes) };
@@ -204,6 +209,7 @@ public class DynamoDbProductRepository(IAmazonDynamoDB dynamoDb) : IProductRepos
             Sku = item["Sku"].S,
             Name = item["Name"].S,
             Description = item.TryGetValue("Description", out var description) ? description.S : string.Empty,
+            ThumbnailUrl = item.TryGetValue("ThumbnailUrl", out var thumbnailValue) ? thumbnailValue.S : string.Empty,
             Department = item.TryGetValue("Department", out var department) ? department.S : string.Empty,
             DepartmentSlug = item.TryGetValue("DepartmentSlug", out var departmentSlug) ? departmentSlug.S : string.Empty,
             Category = item["Category"].S,
