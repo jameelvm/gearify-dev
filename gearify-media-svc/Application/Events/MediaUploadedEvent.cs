@@ -12,10 +12,4 @@ public record MediaUploadedEvent(
     string ContentType,
     int Width,
     int Height,
-    DateTime UploadedAt)
-{
-    /// <summary>
-    /// SNS Topic name for this event
-    /// </summary>
-    public const string TopicName = "gearify-media-upload-events";
-}
+    DateTime UploadedAt);

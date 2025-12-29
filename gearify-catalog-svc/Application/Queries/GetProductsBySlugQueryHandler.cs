@@ -2,9 +2,10 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Gearify.CatalogService.Application.DTOs;
 using Gearify.CatalogService.Domain.Entities;
-using Gearify.CatalogService.Infrastructure.Constants;
+using Gearify.CatalogService.Infrastructure.Configuration;
 using Gearify.SharedKernel.Multitenancy;
 using MediatR;
+using Microsoft.Extensions.Options;
 
 namespace Gearify.CatalogService.Application.Queries;
 
@@ -14,15 +15,18 @@ namespace Gearify.CatalogService.Application.Queries;
 public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQuery, ProductListResponse>
 {
     private readonly IAmazonDynamoDB _dynamoDb;
+    private readonly string _tableName;
     private readonly ITenantContext _tenantContext;
     private readonly ILogger<GetProductsBySlugQueryHandler> _logger;
 
     public GetProductsBySlugQueryHandler(
         IAmazonDynamoDB dynamoDb,
+        IOptions<CatalogDataSettings> catalogDataSettings,
         ITenantContext tenantContext,
         ILogger<GetProductsBySlugQueryHandler> logger)
     {
         _dynamoDb = dynamoDb;
+        _tableName = catalogDataSettings.Value.ProductsTableName;
         _tenantContext = tenantContext;
         _logger = logger;
     }
@@ -33,7 +37,7 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
 
         var queryRequest = new QueryRequest
         {
-            TableName = DynamoDbTableNames.PRODUCTS,
+            TableName = _tableName,
             IndexName = "GSI1",
             KeyConditionExpression = "GSI1PK = :gsi1pk",
             ExpressionAttributeValues = new Dictionary<string, AttributeValue>

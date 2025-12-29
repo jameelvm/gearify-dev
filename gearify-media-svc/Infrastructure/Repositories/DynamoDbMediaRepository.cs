@@ -1,8 +1,10 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Gearify.MediaService.Domain.Entities;
-using Gearify.MediaService.Infrastructure.Constants;
+using Gearify.MediaService.Domain.Enums;
+using Gearify.MediaService.Infrastructure.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Gearify.MediaService.Infrastructure.Repositories;
 
@@ -12,13 +14,16 @@ namespace Gearify.MediaService.Infrastructure.Repositories;
 public class DynamoDbMediaRepository : IMediaRepository
 {
     private readonly IAmazonDynamoDB _dynamoDb;
+    private readonly string _tableName;
     private readonly ILogger<DynamoDbMediaRepository> _logger;
 
     public DynamoDbMediaRepository(
         IAmazonDynamoDB dynamoDb,
+        IOptions<StorageSettings> storageSettings,
         ILogger<DynamoDbMediaRepository> logger)
     {
         _dynamoDb = dynamoDb;
+        _tableName = storageSettings.Value.DynamoDb.MediaTableName;
         _logger = logger;
     }
 
@@ -26,7 +31,7 @@ public class DynamoDbMediaRepository : IMediaRepository
     {
         var request = new GetItemRequest
         {
-            TableName = DynamoDbTableNames.MEDIA,
+            TableName = _tableName,
             Key = new Dictionary<string, AttributeValue>
             {
                 { "PK", new AttributeValue { S = $"TENANT#{tenantId}" } },
@@ -46,7 +51,7 @@ public class DynamoDbMediaRepository : IMediaRepository
     {
         var request = new QueryRequest
         {
-            TableName = DynamoDbTableNames.MEDIA,
+            TableName = _tableName,
             IndexName = "GSI1",
             KeyConditionExpression = "GSI1PK = :gsi1pk",
             FilterExpression = "IsDeleted = :isDeleted",
@@ -81,7 +86,7 @@ public class DynamoDbMediaRepository : IMediaRepository
                 RequestItems = new Dictionary<string, KeysAndAttributes>
                 {
                     {
-                        DynamoDbTableNames.MEDIA,
+                        _tableName,
                         new KeysAndAttributes
                         {
                             Keys = batch.Select(id => new Dictionary<string, AttributeValue>
@@ -96,7 +101,7 @@ public class DynamoDbMediaRepository : IMediaRepository
 
             var response = await _dynamoDb.BatchGetItemAsync(request);
 
-            if (response.Responses.TryGetValue(DynamoDbTableNames.MEDIA, out var items))
+            if (response.Responses.TryGetValue(_tableName, out var items))
             {
                 results.AddRange(items.Select(MapToMediaMetadata));
             }
@@ -111,7 +116,7 @@ public class DynamoDbMediaRepository : IMediaRepository
 
         var request = new PutItemRequest
         {
-            TableName = DynamoDbTableNames.MEDIA,
+            TableName = _tableName,
             Item = item
         };
 
@@ -127,7 +132,7 @@ public class DynamoDbMediaRepository : IMediaRepository
 
         var request = new PutItemRequest
         {
-            TableName = DynamoDbTableNames.MEDIA,
+            TableName = _tableName,
             Item = item
         };
 
@@ -140,7 +145,7 @@ public class DynamoDbMediaRepository : IMediaRepository
     {
         var request = new UpdateItemRequest
         {
-            TableName = DynamoDbTableNames.MEDIA,
+            TableName = _tableName,
             Key = new Dictionary<string, AttributeValue>
             {
                 { "PK", new AttributeValue { S = $"TENANT#{tenantId}" } },
@@ -163,7 +168,7 @@ public class DynamoDbMediaRepository : IMediaRepository
     {
         var request = new DeleteItemRequest
         {
-            TableName = DynamoDbTableNames.MEDIA,
+            TableName = _tableName,
             Key = new Dictionary<string, AttributeValue>
             {
                 { "PK", new AttributeValue { S = $"TENANT#{tenantId}" } },
@@ -200,6 +205,9 @@ public class DynamoDbMediaRepository : IMediaRepository
             LargeKey = item.TryGetValue("LargeKey", out var largeKey) ? largeKey.S : string.Empty,
             DisplayOrder = item.TryGetValue("DisplayOrder", out var displayOrder) ? int.Parse(displayOrder.N) : 0,
             AltText = item.TryGetValue("AltText", out var altText) ? altText.S : null,
+            Status = item.TryGetValue("Status", out var status) ? status.S : ProcessingStatus.Processing.ToString(),
+            ProcessedAt = item.TryGetValue("ProcessedAt", out var processedAt) ? DateTime.Parse(processedAt.S) : null,
+            ProcessingError = item.TryGetValue("ProcessingError", out var processingError) ? processingError.S : null,
             UploadedAt = DateTime.Parse(item["UploadedAt"].S),
             UploadedBy = item.TryGetValue("UploadedBy", out var uploadedBy) ? uploadedBy.S : string.Empty,
             IsDeleted = item.TryGetValue("IsDeleted", out var isDeleted) && isDeleted.BOOL,
@@ -228,6 +236,7 @@ public class DynamoDbMediaRepository : IMediaRepository
             { "MediumKey", new AttributeValue { S = media.MediumKey } },
             { "LargeKey", new AttributeValue { S = media.LargeKey } },
             { "DisplayOrder", new AttributeValue { N = media.DisplayOrder.ToString() } },
+            { "Status", new AttributeValue { S = media.Status } },
             { "UploadedAt", new AttributeValue { S = media.UploadedAt.ToString("o") } },
             { "UploadedBy", new AttributeValue { S = media.UploadedBy } },
             { "IsDeleted", new AttributeValue { BOOL = media.IsDeleted } }
@@ -241,6 +250,12 @@ public class DynamoDbMediaRepository : IMediaRepository
 
         if (!string.IsNullOrEmpty(media.AltText))
             item["AltText"] = new AttributeValue { S = media.AltText };
+
+        if (media.ProcessedAt.HasValue)
+            item["ProcessedAt"] = new AttributeValue { S = media.ProcessedAt.Value.ToString("o") };
+
+        if (!string.IsNullOrEmpty(media.ProcessingError))
+            item["ProcessingError"] = new AttributeValue { S = media.ProcessingError };
 
         if (media.DeletedAt.HasValue)
             item["DeletedAt"] = new AttributeValue { S = media.DeletedAt.Value.ToString("o") };

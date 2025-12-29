@@ -2,15 +2,18 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
 using Gearify.CatalogService.Domain.Entities;
-using Gearify.CatalogService.Infrastructure.Constants;
+using Gearify.CatalogService.Infrastructure.Configuration;
+using Microsoft.Extensions.Options;
 using System.Text.Json;
 
 namespace Gearify.CatalogService.Infrastructure.Repositories;
 
-public class DynamoDbProductRepository(IAmazonDynamoDB dynamoDb) : IProductRepository
+public class DynamoDbProductRepository(
+    IAmazonDynamoDB dynamoDb,
+    IOptions<CatalogDataSettings> catalogDataSettings) : IProductRepository
 {
     private readonly IAmazonDynamoDB _dynamoDb = dynamoDb;
-    private readonly string _tableName = DynamoDbTableNames.PRODUCTS;
+    private readonly string _tableName = catalogDataSettings.Value.ProductsTableName;
 
     public async Task<Product?> GetByIdAsync(string productId, string tenantId)
     {

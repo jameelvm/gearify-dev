@@ -3,8 +3,9 @@ using Amazon.SQS;
 using Amazon.SQS.Model;
 using Gearify.MediaService.Application.BackgroundJobs;
 using Gearify.MediaService.Application.BackgroundJobs.Models;
-using Microsoft.Extensions.Configuration;
+using Gearify.MediaService.Infrastructure.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Gearify.MediaService.Infrastructure.Messaging;
 
@@ -14,18 +15,26 @@ namespace Gearify.MediaService.Infrastructure.Messaging;
 public class SqsImageProcessingQueue : IImageProcessingQueue
 {
     private readonly IAmazonSQS _sqsClient;
-    private readonly IConfiguration _configuration;
     private readonly ILogger<SqsImageProcessingQueue> _logger;
-    private string? _queueUrl;
+    private readonly string _queueUrl;
 
     public SqsImageProcessingQueue(
         IAmazonSQS sqsClient,
-        IConfiguration configuration,
+        IOptions<MessagingSettings> messagingSettings,
         ILogger<SqsImageProcessingQueue> logger)
     {
         _sqsClient = sqsClient;
-        _configuration = configuration;
         _logger = logger;
+
+        // Use configured queue URL
+        _queueUrl = messagingSettings.Value.SQS.ImageProcessingQueueUrl;
+
+        if (string.IsNullOrEmpty(_queueUrl))
+        {
+            throw new InvalidOperationException("ImageProcessingQueueUrl is not configured in Messaging:SQS section");
+        }
+
+        _logger.LogInformation("Using configured queue URL: {QueueUrl}", _queueUrl);
     }
 
     public async Task<List<QueueMessage<ImageProcessingMessage>>> ReceiveMessagesAsync(
@@ -35,11 +44,9 @@ public class SqsImageProcessingQueue : IImageProcessingQueue
     {
         try
         {
-            var queueUrl = await GetQueueUrlAsync(cancellationToken);
-
             var request = new ReceiveMessageRequest
             {
-                QueueUrl = queueUrl,
+                QueueUrl = _queueUrl,
                 MaxNumberOfMessages = maxMessages,
                 WaitTimeSeconds = waitTimeSeconds,
                 MessageAttributeNames = new List<string> { "All" }
@@ -72,9 +79,7 @@ public class SqsImageProcessingQueue : IImageProcessingQueue
     {
         try
         {
-            var queueUrl = await GetQueueUrlAsync(cancellationToken);
-
-            await _sqsClient.DeleteMessageAsync(queueUrl, receiptHandle, cancellationToken);
+            await _sqsClient.DeleteMessageAsync(_queueUrl, receiptHandle, cancellationToken);
 
             _logger.LogDebug("Deleted message from queue. ReceiptHandle: {ReceiptHandle}", receiptHandle);
         }
@@ -89,11 +94,9 @@ public class SqsImageProcessingQueue : IImageProcessingQueue
     {
         try
         {
-            var queueUrl = await GetQueueUrlAsync(cancellationToken);
-
             var request = new ChangeMessageVisibilityRequest
             {
-                QueueUrl = queueUrl,
+                QueueUrl = _queueUrl,
                 ReceiptHandle = receiptHandle,
                 VisibilityTimeout = visibilityTimeoutSeconds
             };
@@ -106,44 +109,6 @@ public class SqsImageProcessingQueue : IImageProcessingQueue
         {
             _logger.LogError(ex, "Error returning message to SQS queue");
             throw;
-        }
-    }
-
-    private async Task<string> GetQueueUrlAsync(CancellationToken cancellationToken)
-    {
-        if (!string.IsNullOrEmpty(_queueUrl))
-        {
-            return _queueUrl;
-        }
-
-        var queueName = _configuration["AWS:SQS:ImageProcessingQueue"] ?? "gearify-image-processing-queue";
-
-        try
-        {
-            // Try to get existing queue
-            var response = await _sqsClient.GetQueueUrlAsync(queueName, cancellationToken);
-            _queueUrl = response.QueueUrl;
-            return _queueUrl;
-        }
-        catch (QueueDoesNotExistException)
-        {
-            // Create queue if it doesn't exist
-            _logger.LogInformation("Creating SQS queue: {QueueName}", queueName);
-
-            var createRequest = new CreateQueueRequest
-            {
-                QueueName = queueName,
-                Attributes = new Dictionary<string, string>
-                {
-                    { "VisibilityTimeout", "300" }, // 5 minutes
-                    { "MessageRetentionPeriod", "1209600" }, // 14 days
-                    { "ReceiveMessageWaitTimeSeconds", "20" } // Long polling
-                }
-            };
-
-            var createResponse = await _sqsClient.CreateQueueAsync(createRequest, cancellationToken);
-            _queueUrl = createResponse.QueueUrl;
-            return _queueUrl;
         }
     }
 

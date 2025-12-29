@@ -1,7 +1,8 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Gearify.CatalogService.Domain.Entities;
-using Gearify.CatalogService.Infrastructure.Constants;
+using Gearify.CatalogService.Infrastructure.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace Gearify.CatalogService.Infrastructure.Repositories;
 
@@ -13,9 +14,11 @@ namespace Gearify.CatalogService.Infrastructure.Repositories;
 /// 2. Get price ranges by category (filter on Category attribute)
 /// 3. Get price range by ID (PK + SK)
 /// </summary>
-public class DynamoDbPriceRangeRepository(IAmazonDynamoDB dynamoDb) : IPriceRangeRepository
+public class DynamoDbPriceRangeRepository(
+    IAmazonDynamoDB dynamoDb,
+    IOptions<CatalogDataSettings> catalogDataSettings) : IPriceRangeRepository
 {
-    private readonly string _tableName = DynamoDbTableNames.PRICE_RANGES;
+    private readonly string _tableName = catalogDataSettings.Value.PriceRangesTableName;
 
     public async Task<List<PriceRange>> GetPriceRangesAsync(string tenantId, string? category = null, bool onlyCategorySpecific = false)
     {

@@ -2,11 +2,12 @@ using Gearify.MediaService.Application.Events;
 using Gearify.MediaService.Application.Services;
 using Gearify.MediaService.Domain.Entities;
 using Gearify.MediaService.Domain.Enums;
+using Gearify.MediaService.Infrastructure.Configuration;
 using Gearify.MediaService.Infrastructure.Constants;
 using Gearify.MediaService.Infrastructure.Repositories;
 using Gearify.MediaService.Infrastructure.Storage;
 using MediatR;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Gearify.MediaService.Application.Commands;
 
@@ -20,6 +21,7 @@ public class UploadImageCommandHandler : IRequestHandler<UploadImageCommand, Upl
     private readonly IMediaRepository _mediaRepository;
     private readonly IMediaUrlFactory _urlFactory;
     private readonly IEventPublisher _eventPublisher;
+    private readonly ProductUploadSettings _uploadSettings;
     private readonly ILogger<UploadImageCommandHandler> _logger;
 
     public UploadImageCommandHandler(
@@ -28,6 +30,7 @@ public class UploadImageCommandHandler : IRequestHandler<UploadImageCommand, Upl
         IMediaRepository mediaRepository,
         IMediaUrlFactory urlFactory,
         IEventPublisher eventPublisher,
+        IOptions<ProductUploadSettings> uploadSettings,
         ILogger<UploadImageCommandHandler> logger)
     {
         _storageService = storageService;
@@ -35,6 +38,7 @@ public class UploadImageCommandHandler : IRequestHandler<UploadImageCommand, Upl
         _mediaRepository = mediaRepository;
         _urlFactory = urlFactory;
         _eventPublisher = eventPublisher;
+        _uploadSettings = uploadSettings.Value;
         _logger = logger;
     }
 
@@ -43,19 +47,19 @@ public class UploadImageCommandHandler : IRequestHandler<UploadImageCommand, Upl
         try
         {
             // Validate file size
-            if (request.SizeInBytes > StorageConstants.MaxFileSizeBytes)
+            if (request.SizeInBytes > _uploadSettings.MaxFileSizeBytes)
             {
                 return new UploadImageResult(
                     Success: false,
-                    ErrorMessage: $"File size exceeds maximum allowed size of {StorageConstants.MaxFileSizeBytes / 1024 / 1024}MB");
+                    ErrorMessage: $"File size exceeds maximum allowed size of {_uploadSettings.MaxFileSizeBytes / 1024 / 1024}MB");
             }
 
             // Validate content type
-            if (!StorageConstants.AllowedContentTypes.Contains(request.ContentType))
+            if (!_uploadSettings.AllowedContentTypes.Contains(request.ContentType))
             {
                 return new UploadImageResult(
                     Success: false,
-                    ErrorMessage: "Invalid file type. Only JPEG, PNG, and WebP images are allowed");
+                    ErrorMessage: $"Invalid file type. Allowed types: {string.Join(", ", _uploadSettings.AllowedContentTypes)}");
             }
 
             // Validate image
@@ -73,7 +77,7 @@ public class UploadImageCommandHandler : IRequestHandler<UploadImageCommand, Upl
             var (width, height) = await _imageProcessor.GetDimensionsAsync(request.FileStream);
 
             // Generate unique media ID
-            var mediaId = $"media-{Guid.NewGuid():N}";
+            var mediaId = Guid.NewGuid().ToString();
             var sanitizedFileName = SanitizeFileName(request.FileName);
 
             // Generate S3 key for original image only
@@ -133,7 +137,7 @@ public class UploadImageCommandHandler : IRequestHandler<UploadImageCommand, Upl
                 Height: height,
                 UploadedAt: DateTime.UtcNow);
 
-            await _eventPublisher.PublishAsync(uploadEvent, MediaUploadedEvent.TopicName, cancellationToken);
+            await _eventPublisher.PublishAsync(uploadEvent, cancellationToken);
 
             // Generate URLs (only original is available now)
             var urls = _urlFactory.GetUrls(media);

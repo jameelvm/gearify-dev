@@ -1,8 +1,10 @@
 using Gearify.CatalogService.Infrastructure.Clients;
+using Gearify.CatalogService.Infrastructure.Configuration;
 using Gearify.CatalogService.Infrastructure.Repositories;
 using Gearify.SharedKernel.Multitenancy;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Gearify.CatalogService.Application.Commands;
 
@@ -14,27 +16,20 @@ public class UploadProductImagesCommandHandler : IRequestHandler<UploadProductIm
     private readonly IMediaServiceClient _mediaServiceClient;
     private readonly IProductRepository _productRepository;
     private readonly ITenantContext _tenantContext;
+    private readonly ProductImageUploadSettings _uploadSettings;
     private readonly ILogger<UploadProductImagesCommandHandler> _logger;
-
-    private static readonly string[] AllowedContentTypes = new[]
-    {
-        "image/jpeg",
-        "image/jpg",
-        "image/png",
-        "image/webp"
-    };
-
-    private const long MaxFileSizeBytes = 10 * 1024 * 1024; // 10 MB
 
     public UploadProductImagesCommandHandler(
         IMediaServiceClient mediaServiceClient,
         IProductRepository productRepository,
         ITenantContext tenantContext,
+        IOptions<ProductImageUploadSettings> uploadSettings,
         ILogger<UploadProductImagesCommandHandler> logger)
     {
         _mediaServiceClient = mediaServiceClient;
         _productRepository = productRepository;
         _tenantContext = tenantContext;
+        _uploadSettings = uploadSettings.Value;
         _logger = logger;
     }
 
@@ -71,18 +66,18 @@ public class UploadProductImagesCommandHandler : IRequestHandler<UploadProductIm
                         ErrorMessage: "One or more images are empty");
                 }
 
-                if (image.Length > MaxFileSizeBytes)
+                if (image.Length > _uploadSettings.MaxFileSizeBytes)
                 {
                     return new UploadProductImagesResult(
                         Success: false,
-                        ErrorMessage: $"Image {image.FileName} exceeds maximum size of {MaxFileSizeBytes / 1024 / 1024}MB");
+                        ErrorMessage: $"Image {image.FileName} exceeds maximum size of {_uploadSettings.MaxFileSizeBytes / 1024 / 1024}MB");
                 }
 
-                if (!AllowedContentTypes.Contains(image.ContentType.ToLower()))
+                if (!_uploadSettings.AllowedContentTypes.Contains(image.ContentType.ToLower()))
                 {
                     return new UploadProductImagesResult(
                         Success: false,
-                        ErrorMessage: $"Image {image.FileName} has invalid content type. Allowed: {string.Join(", ", AllowedContentTypes)}");
+                        ErrorMessage: $"Image {image.FileName} has invalid content type. Allowed: {string.Join(", ", _uploadSettings.AllowedContentTypes)}");
                 }
             }
 

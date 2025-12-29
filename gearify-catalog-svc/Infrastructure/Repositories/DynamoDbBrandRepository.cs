@@ -1,7 +1,8 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Gearify.CatalogService.Domain.Entities;
-using Gearify.CatalogService.Infrastructure.Constants;
+using Gearify.CatalogService.Infrastructure.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace Gearify.CatalogService.Infrastructure.Repositories;
 
@@ -13,9 +14,11 @@ namespace Gearify.CatalogService.Infrastructure.Repositories;
 /// 2. Get brand by ID (Primary: PK + SK)
 /// 3. Get brand by slug (GSI1: slug lookup)
 /// </summary>
-public class DynamoDbBrandRepository(IAmazonDynamoDB dynamoDb) : IBrandRepository
+public class DynamoDbBrandRepository(
+    IAmazonDynamoDB dynamoDb,
+    IOptions<CatalogDataSettings> catalogDataSettings) : IBrandRepository
 {
-    private readonly string _tableName = DynamoDbTableNames.BRANDS;
+    private readonly string _tableName = catalogDataSettings.Value.BrandsTableName;
 
     public async Task<List<Brand>> GetAllBrandsAsync(string tenantId)
     {

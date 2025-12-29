@@ -1,7 +1,8 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Gearify.CatalogService.Domain.Entities;
-using Gearify.CatalogService.Infrastructure.Constants;
+using Gearify.CatalogService.Infrastructure.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace Gearify.CatalogService.Infrastructure.Repositories;
 
@@ -10,9 +11,11 @@ namespace Gearify.CatalogService.Infrastructure.Repositories;
 /// Table: gearify-catalog
 /// Uses single-table design with parallel queries for optimal performance
 /// </summary>
-public class DynamoDbCategoryRepository(IAmazonDynamoDB dynamoDb) : ICategoryRepository
+public class DynamoDbCategoryRepository(
+    IAmazonDynamoDB dynamoDb,
+    IOptions<CatalogDataSettings> catalogDataSettings) : ICategoryRepository
 {
-    private readonly string _tableName = DynamoDbTableNames.CATALOG;
+    private readonly string _tableName = catalogDataSettings.Value.CatalogTableName;
 
     #region Mega Menu Operations
 

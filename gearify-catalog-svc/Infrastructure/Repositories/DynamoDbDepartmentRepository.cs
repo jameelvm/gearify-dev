@@ -1,7 +1,8 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Gearify.CatalogService.Domain.Entities;
-using Gearify.CatalogService.Infrastructure.Constants;
+using Gearify.CatalogService.Infrastructure.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace Gearify.CatalogService.Infrastructure.Repositories;
 
@@ -11,9 +12,11 @@ namespace Gearify.CatalogService.Infrastructure.Repositories;
 /// PK Pattern: TENANT#{tenantId}#DEPARTMENT#{departmentSlug}
 /// SK Pattern: METADATA
 /// </summary>
-public class DynamoDbDepartmentRepository(IAmazonDynamoDB dynamoDb) : IDepartmentRepository
+public class DynamoDbDepartmentRepository(
+    IAmazonDynamoDB dynamoDb,
+    IOptions<CatalogDataSettings> catalogDataSettings) : IDepartmentRepository
 {
-    private readonly string _tableName = DynamoDbTableNames.CATALOG;
+    private readonly string _tableName = catalogDataSettings.Value.CatalogTableName;
 
     public async Task<List<Department>> GetAllAsync(string tenantId)
     {

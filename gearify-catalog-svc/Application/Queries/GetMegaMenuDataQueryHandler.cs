@@ -1,10 +1,11 @@
 using Gearify.CatalogService.API.DTOs;
 using Gearify.CatalogService.Application.Mappers;
 using Gearify.CatalogService.Domain.Entities;
-using Gearify.CatalogService.Infrastructure.Constants;
+using Gearify.CatalogService.Infrastructure.Configuration;
 using Gearify.CatalogService.Infrastructure.Repositories;
 using Gearify.SharedKernel.Multitenancy;
 using MediatR;
+using Microsoft.Extensions.Options;
 
 namespace Gearify.CatalogService.Application.Queries;
 
@@ -16,6 +17,7 @@ public class GetMegaMenuDataQueryHandler : IRequestHandler<GetMegaMenuDataQuery,
 {
     private readonly IDepartmentRepository _departmentRepository;
     private readonly Amazon.DynamoDBv2.IAmazonDynamoDB _dynamoDb;
+    private readonly string _tableName;
     private readonly ISectionMapperFactory _sectionMapperFactory;
     private readonly ITenantContext _tenantContext;
     private readonly ILogger<GetMegaMenuDataQueryHandler> _logger;
@@ -24,12 +26,14 @@ public class GetMegaMenuDataQueryHandler : IRequestHandler<GetMegaMenuDataQuery,
         IDepartmentRepository departmentRepository,
         ICategoryRepository categoryRepository,
         Amazon.DynamoDBv2.IAmazonDynamoDB dynamoDb,
+        IOptions<CatalogDataSettings> catalogDataSettings,
         ISectionMapperFactory sectionMapperFactory,
         ITenantContext tenantContext,
         ILogger<GetMegaMenuDataQueryHandler> logger)
     {
         _departmentRepository = departmentRepository;
         _dynamoDb = dynamoDb;
+        _tableName = catalogDataSettings.Value.CatalogTableName;
         _sectionMapperFactory = sectionMapperFactory;
         _tenantContext = tenantContext;
         _logger = logger;
@@ -97,7 +101,7 @@ public class GetMegaMenuDataQueryHandler : IRequestHandler<GetMegaMenuDataQuery,
     {
         var request = new Amazon.DynamoDBv2.Model.QueryRequest
         {
-            TableName = DynamoDbTableNames.CATALOG,
+            TableName = _tableName,
             KeyConditionExpression = "PK = :pk",
             ExpressionAttributeValues = new Dictionary<string, Amazon.DynamoDBv2.Model.AttributeValue>
             {

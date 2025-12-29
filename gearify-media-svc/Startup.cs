@@ -52,6 +52,11 @@ public class Startup
         services.AddScoped<ITenantContext, TenantContext>();
         services.AddMultitenancy();
 
+        // Configuration
+        services.Configure<Infrastructure.Configuration.ProductUploadSettings>(Configuration.GetSection("ProductUpload"));
+        services.Configure<Infrastructure.Configuration.MessagingSettings>(Configuration.GetSection("Messaging"));
+        services.Configure<Infrastructure.Configuration.StorageSettings>(Configuration.GetSection("Storage"));
+
         // AWS Services with LocalStack
         services.AddSingleton<IAmazonDynamoDB>(sp =>
         {
@@ -114,7 +119,7 @@ public class Startup
         services.AddScoped<IMediaUrlFactory, MediaUrlFactory>();
 
         // Infrastructure Services
-        services.AddScoped<IStorageService, S3StorageService>();
+        services.AddScoped<IStorageService, ProductImageS3StorageService>();
         services.AddScoped<IMediaRepository, DynamoDbMediaRepository>();
 
         // Messaging Services (for async image processing)

@@ -202,7 +202,7 @@ public class ImageProcessingBackgroundService : BackgroundService
                     AltText: media.AltText
                 );
 
-                await eventPublisher.PublishAsync(completedEvent, ImageProcessingCompletedEvent.TopicName, cancellationToken);
+                await eventPublisher.PublishAsync(completedEvent, cancellationToken);
 
                 _logger.LogInformation(
                     "Published ImageProcessingCompletedEvent for {EntityType} {EntityId}",

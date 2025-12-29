@@ -6,5 +6,5 @@ namespace Gearify.MediaService.Application.Events;
 /// </summary>
 public interface IEventPublisher
 {
-    Task PublishAsync<T>(T eventData, string topicName, CancellationToken cancellationToken = default) where T : class;
+    Task PublishAsync<T>(T eventData, CancellationToken cancellationToken = default) where T : class;
 }

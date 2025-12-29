@@ -1,31 +1,31 @@
 using Amazon.S3;
 using Amazon.S3.Model;
 using Gearify.MediaService.Domain.Enums;
-using Gearify.MediaService.Infrastructure.Constants;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Gearify.MediaService.Infrastructure.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace Gearify.MediaService.Infrastructure.Storage;
 
 /// <summary>
 /// S3 implementation of storage service
 /// </summary>
-public class S3StorageService : IStorageService
+public class ProductImageS3StorageService : IStorageService
 {
     private readonly IAmazonS3 _s3Client;
     private readonly IConfiguration _configuration;
-    private readonly ILogger<S3StorageService> _logger;
+    private readonly ILogger<ProductImageS3StorageService> _logger;
     private readonly string _bucketName;
 
-    public S3StorageService(
+    public ProductImageS3StorageService(
         IAmazonS3 s3Client,
         IConfiguration configuration,
-        ILogger<S3StorageService> logger)
+        IOptions<StorageSettings> storageSettings,
+        ILogger<ProductImageS3StorageService> logger)
     {
         _s3Client = s3Client;
         _configuration = configuration;
         _logger = logger;
-        _bucketName = configuration["AWS:S3:BucketName"] ?? StorageConstants.BucketName;
+        _bucketName = storageSettings.Value.AmazonS3.ProductImageBucketName;
     }
 
     public async Task<string> UploadAsync(Stream fileStream, string key, string contentType, CancellationToken cancellationToken = default)

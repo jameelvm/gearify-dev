@@ -332,8 +332,30 @@ awslocal sqs create-queue --queue-name gearify-payment-processed --region us-eas
 awslocal sqs create-queue --queue-name gearify-inventory-updated --region us-east-1 2>/dev/null || echo "  - Queue gearify-inventory-updated already exists"
 awslocal sqs create-queue --queue-name gearify-notification-requested --region us-east-1 2>/dev/null || echo "  - Queue gearify-notification-requested already exists"
 awslocal sqs create-queue --queue-name gearify-shipping-requested --region us-east-1 2>/dev/null || echo "  - Queue gearify-shipping-requested already exists"
-awslocal sqs create-queue --queue-name gearify-image-processing-queue --region us-east-1 2>/dev/null || echo "  - Queue gearify-image-processing-queue already exists"
-awslocal sqs create-queue --queue-name gearify-product-thumbnail-update-queue --region us-east-1 2>/dev/null || echo "  - Queue gearify-product-thumbnail-update-queue already exists"
+
+# Image processing queue with attributes
+echo "  - Creating queue: gearify-image-processing-queue"
+awslocal sqs create-queue \
+  --queue-name gearify-image-processing-queue \
+  --attributes '{
+    "VisibilityTimeout":"300",
+    "MessageRetentionPeriod":"1209600",
+    "ReceiveMessageWaitTimeSeconds":"20"
+  }' \
+  --region us-east-1 \
+  2>/dev/null || echo "    Queue gearify-image-processing-queue already exists"
+
+# Product thumbnail update queue with attributes
+echo "  - Creating queue: gearify-product-thumbnail-update-queue"
+awslocal sqs create-queue \
+  --queue-name gearify-product-thumbnail-update-queue \
+  --attributes '{
+    "VisibilityTimeout":"300",
+    "MessageRetentionPeriod":"1209600",
+    "ReceiveMessageWaitTimeSeconds":"20"
+  }' \
+  --region us-east-1 \
+  2>/dev/null || echo "    Queue gearify-product-thumbnail-update-queue already exists"
 
 echo "SQS queues created successfully!"
 

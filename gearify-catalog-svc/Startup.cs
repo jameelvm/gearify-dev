@@ -69,6 +69,11 @@ public class Startup
         // Multitenancy
         services.AddMultitenancy();
 
+        // Configuration
+        services.Configure<Infrastructure.Configuration.ProductImageUploadSettings>(Configuration.GetSection("ProductImageUpload"));
+        services.Configure<Infrastructure.Configuration.MessagingSettings>(Configuration.GetSection("Messaging"));
+        services.Configure<Infrastructure.Configuration.CatalogDataSettings>(Configuration.GetSection("CatalogData"));
+
         // CORS
         services.AddCors(options =>
         {

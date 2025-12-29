@@ -15,10 +15,4 @@ public record ImageProcessingCompletedEvent(
     string OriginalUrl,
     int DisplayOrder,
     string? AltText
-)
-{
-    /// <summary>
-    /// SNS Topic name for this event
-    /// </summary>
-    public const string TopicName = "gearify-image-processing-completed";
-}
+);

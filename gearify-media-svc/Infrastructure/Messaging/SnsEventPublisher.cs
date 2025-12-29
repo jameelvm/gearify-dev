@@ -2,8 +2,8 @@ using System.Text.Json;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
 using Gearify.MediaService.Application.Events;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Gearify.MediaService.Infrastructure.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace Gearify.MediaService.Infrastructure.Messaging;
 
@@ -13,25 +13,24 @@ namespace Gearify.MediaService.Infrastructure.Messaging;
 public class SnsEventPublisher : IEventPublisher
 {
     private readonly IAmazonSimpleNotificationService _snsClient;
-    private readonly IConfiguration _configuration;
+    private readonly MessagingSettings _messagingSettings;
     private readonly ILogger<SnsEventPublisher> _logger;
-    private readonly Dictionary<string, string> _topicArns = new();
 
     public SnsEventPublisher(
         IAmazonSimpleNotificationService snsClient,
-        IConfiguration configuration,
-        ILogger<SnsEventPublisher> _logger)
+        IOptions<MessagingSettings> messagingSettings,
+        ILogger<SnsEventPublisher> logger)
     {
         _snsClient = snsClient;
-        _configuration = configuration;
-        this._logger = _logger;
+        _messagingSettings = messagingSettings.Value;
+        _logger = logger;
     }
 
-    public async Task PublishAsync<T>(T eventData, string topicName, CancellationToken cancellationToken = default) where T : class
+    public async Task PublishAsync<T>(T eventData, CancellationToken cancellationToken = default) where T : class
     {
         try
         {
-            var topicArn = await GetTopicArnAsync(topicName, cancellationToken);
+            var topicArn = GetTopicArnForEventType<T>();
             var message = JsonSerializer.Serialize(eventData);
 
             var request = new PublishRequest
@@ -44,37 +43,33 @@ public class SnsEventPublisher : IEventPublisher
             var response = await _snsClient.PublishAsync(request, cancellationToken);
 
             _logger.LogInformation(
-                "Published event {EventType} to topic {TopicName}. MessageId: {MessageId}",
+                "Published event {EventType} to topic ARN {TopicArn}. MessageId: {MessageId}",
                 typeof(T).Name,
-                topicName,
+                topicArn,
                 response.MessageId);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error publishing event {EventType} to topic {TopicName}", typeof(T).Name, topicName);
+            _logger.LogError(ex, "Error publishing event {EventType}", typeof(T).Name);
             throw;
         }
     }
 
-    private async Task<string> GetTopicArnAsync(string topicName, CancellationToken cancellationToken)
+    private string GetTopicArnForEventType<T>()
     {
-        // Cache topic ARNs
-        if (_topicArns.TryGetValue(topicName, out var cachedArn))
+        // Map event type to configured topic ARN
+        var topicArn = typeof(T).Name switch
         {
-            return cachedArn;
+            nameof(MediaUploadedEvent) => _messagingSettings.SNS.MediaUploadedTopicArn,
+            nameof(ImageProcessingCompletedEvent) => _messagingSettings.SNS.ImageProcessingCompletedTopicArn,
+            _ => throw new InvalidOperationException($"No topic ARN configured for event type {typeof(T).Name}")
+        };
+
+        if (string.IsNullOrEmpty(topicArn))
+        {
+            throw new InvalidOperationException($"Topic ARN for event type {typeof(T).Name} is not configured in appsettings");
         }
 
-        // Find or create topic
-        try
-        {
-            var response = await _snsClient.CreateTopicAsync(topicName, cancellationToken);
-            _topicArns[topicName] = response.TopicArn;
-            return response.TopicArn;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error getting/creating SNS topic {TopicName}", topicName);
-            throw;
-        }
+        return topicArn;
     }
 }

@@ -1,6 +1,7 @@
 using Gearify.MediaService.Domain.Enums;
-using Gearify.MediaService.Infrastructure.Constants;
+using Gearify.MediaService.Infrastructure.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
@@ -14,10 +15,14 @@ namespace Gearify.MediaService.Application.Services;
 /// </summary>
 public class ImageProcessor : IImageProcessor
 {
+    private readonly ProductUploadSettings _uploadSettings;
     private readonly ILogger<ImageProcessor> _logger;
 
-    public ImageProcessor(ILogger<ImageProcessor> logger)
+    public ImageProcessor(
+        IOptions<ProductUploadSettings> uploadSettings,
+        ILogger<ImageProcessor> logger)
     {
+        _uploadSettings = uploadSettings.Value;
         _logger = logger;
     }
 
@@ -36,36 +41,36 @@ public class ImageProcessor : IImageProcessor
             var originalCopy = new MemoryStream(originalBytes);
             variants[ImageSize.Original] = originalCopy;
 
-            // Thumbnail (150x150)
+            // Thumbnail (configurable size)
             using (var imageStream = new MemoryStream(originalBytes))
             using (var image = await Image.LoadAsync(imageStream))
             {
                 variants[ImageSize.Thumbnail] = await ResizeImageAsync(
                     image,
-                    StorageConstants.ImageSizes.ThumbnailSize,
-                    StorageConstants.ImageQuality.Thumbnail,
+                    _uploadSettings.ImageSizes.ThumbnailSize,
+                    _uploadSettings.ImageQuality.Thumbnail,
                     contentType);
             }
 
-            // Medium (600x600)
+            // Medium (configurable size)
             using (var imageStream = new MemoryStream(originalBytes))
             using (var image = await Image.LoadAsync(imageStream))
             {
                 variants[ImageSize.Medium] = await ResizeImageAsync(
                     image,
-                    StorageConstants.ImageSizes.MediumSize,
-                    StorageConstants.ImageQuality.Medium,
+                    _uploadSettings.ImageSizes.MediumSize,
+                    _uploadSettings.ImageQuality.Medium,
                     contentType);
             }
 
-            // Large (1200x1200)
+            // Large (configurable size)
             using (var imageStream = new MemoryStream(originalBytes))
             using (var image = await Image.LoadAsync(imageStream))
             {
                 variants[ImageSize.Large] = await ResizeImageAsync(
                     image,
-                    StorageConstants.ImageSizes.LargeSize,
-                    StorageConstants.ImageQuality.Large,
+                    _uploadSettings.ImageSizes.LargeSize,
+                    _uploadSettings.ImageQuality.Large,
                     contentType);
             }
 

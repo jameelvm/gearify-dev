@@ -1,6 +1,8 @@
 using Amazon.SQS;
 using Amazon.SQS.Model;
+using Gearify.CatalogService.Infrastructure.Configuration;
 using Gearify.CatalogService.Infrastructure.Messaging.Models;
+using Microsoft.Extensions.Options;
 using System.Text.Json;
 
 namespace Gearify.CatalogService.Infrastructure.Messaging;
@@ -11,24 +13,26 @@ namespace Gearify.CatalogService.Infrastructure.Messaging;
 public class SqsProductThumbnailUpdateQueue : IProductThumbnailUpdateQueue
 {
     private readonly IAmazonSQS _sqsClient;
-    private readonly IConfiguration _configuration;
     private readonly ILogger<SqsProductThumbnailUpdateQueue> _logger;
     private readonly string _queueUrl;
 
     public SqsProductThumbnailUpdateQueue(
         IAmazonSQS sqsClient,
-        IConfiguration configuration,
+        IOptions<MessagingSettings> messagingSettings,
         ILogger<SqsProductThumbnailUpdateQueue> logger)
     {
         _sqsClient = sqsClient;
-        _configuration = configuration;
         _logger = logger;
 
-        var queueName = configuration["AWS:SQS:ProductThumbnailUpdateQueueName"] ?? "gearify-product-thumbnail-update-queue";
-        var endpoint = configuration["AWS:SQS:ServiceUrl"] ?? "http://localhost:4566";
+        // Use configured queue URL
+        _queueUrl = messagingSettings.Value.SQS.ProductThumbnailUpdateQueueUrl;
 
-        // Construct queue URL for LocalStack
-        _queueUrl = $"{endpoint}/000000000000/{queueName}";
+        if (string.IsNullOrEmpty(_queueUrl))
+        {
+            throw new InvalidOperationException("ProductThumbnailUpdateQueueUrl is not configured in Messaging:SQS section");
+        }
+
+        _logger.LogInformation("Using configured queue URL: {QueueUrl}", _queueUrl);
     }
 
     public async Task<List<QueueMessage<ImageProcessingCompletedEvent>>> ReceiveMessagesAsync(
