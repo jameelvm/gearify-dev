@@ -1,10 +1,13 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Amazon.SimpleEmail;
 using Amazon.SimpleEmail.Model;
-using Gearify.AuthService.Application.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Gearify.AuthService.Infrastructure.Services;
+namespace Gearify.NotificationService.Infrastructure.Email;
 
 /// <summary>
 /// Implementation of email service using AWS SES with template support

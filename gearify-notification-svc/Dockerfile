@@ -1,14 +1,28 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 5010
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY *.csproj .
-RUN dotnet restore
-COPY . .
+
+# Copy notification service project
+COPY gearify-notification-svc/Gearify.NotificationService.csproj gearify-notification-svc/
+
+# Restore dependencies
+RUN dotnet restore gearify-notification-svc/Gearify.NotificationService.csproj
+
+# Copy all source files
+COPY gearify-notification-svc/ gearify-notification-svc/
+
+# Build the project
+WORKDIR /src/gearify-notification-svc
+RUN dotnet build -c Release -o /app/build
+
+FROM build AS publish
 RUN dotnet publish -c Release -o /app/publish
+
 FROM base AS final
 WORKDIR /app
-COPY --from=build /app/publish .
-ENV ASPNETCORE_URLS=http://+:5010
+COPY --from=publish /app/publish .
+ENV ASPNETCORE_URLS=http://+:80
 ENTRYPOINT ["dotnet", "Gearify.NotificationService.dll"]

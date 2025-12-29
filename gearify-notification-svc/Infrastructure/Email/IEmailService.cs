@@ -1,29 +1,27 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 
 namespace Gearify.NotificationService.Infrastructure.Email;
 
+/// <summary>
+/// Service for sending emails
+/// </summary>
 public interface IEmailService
 {
-    Task SendEmailAsync(string to, string subject, string body);
-}
+    /// <summary>
+    /// Sends a welcome email with verification link to a new user
+    /// </summary>
+    Task SendWelcomeEmailAsync(string email, string firstName, string verificationToken, CancellationToken cancellationToken = default);
 
-public class MailHogEmailService : IEmailService
-{
-    private readonly IConfiguration _configuration;
+    /// <summary>
+    /// Sends a generic email
+    /// </summary>
+    Task SendEmailAsync(string to, string subject, string body, CancellationToken cancellationToken = default);
 
-    public MailHogEmailService(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
-
-    public async Task SendEmailAsync(string to, string subject, string body)
-    {
-        // MailHog SMTP integration
-        var smtpHost = _configuration["MailHog:Host"] ?? "mailhog";
-        var smtpPort = _configuration.GetValue<int>("MailHog:Port", 1025);
-
-        // TODO: Implement SMTP client
-        await Task.CompletedTask;
-    }
+    /// <summary>
+    /// Sends a templated email with placeholder data
+    /// </summary>
+    Task SendTemplatedEmailAsync(string to, string templateName, Dictionary<string, string> templateData, CancellationToken cancellationToken = default);
 }

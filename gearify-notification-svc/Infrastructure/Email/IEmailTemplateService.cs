@@ -1,4 +1,7 @@
-namespace Gearify.AuthService.Application.Services;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace Gearify.NotificationService.Infrastructure.Email;
 
 /// <summary>
 /// Result of rendering an email template

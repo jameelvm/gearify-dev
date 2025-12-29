@@ -5,6 +5,7 @@ using Gearify.AuthService.Application.Commands;
 using Gearify.AuthService.Application.Models;
 using Gearify.AuthService.Application.Services;
 using Gearify.AuthService.Application.Validators;
+using Gearify.AuthService.Infrastructure.Clients;
 using Gearify.AuthService.Infrastructure.Repositories;
 using Gearify.AuthService.Infrastructure.Services;
 using Gearify.AuthService.Infrastructure.Swagger;
@@ -161,7 +162,8 @@ public class Startup
             services.AddLocalStack(Configuration);
 
             services.AddAWSService<IAmazonDynamoDB>();
-            services.AddAWSService<Amazon.SimpleEmail.IAmazonSimpleEmailService>();
+            // SES moved to notification-svc
+            // services.AddAWSService<Amazon.SimpleEmail.IAmazonSimpleEmailService>();
             services.AddAWSService<Amazon.SimpleNotificationService.IAmazonSimpleNotificationService>();
 
             Console.WriteLine("AWS services registered successfully");
@@ -183,8 +185,13 @@ public class Startup
         // Core Services
         services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
         services.AddScoped<IJwtService, JwtService>();
-        services.AddScoped<IEmailTemplateService, EmailTemplateService>();
-        services.AddScoped<IEmailService, SesEmailService>();
+
+        // Email Service - via Notification Service HTTP client
+        services.AddHttpClient<IEmailService, NotificationServiceClient>(client =>
+        {
+            var notificationServiceUrl = Configuration["NotificationService:BaseUrl"] ?? "http://localhost:5010";
+            client.BaseAddress = new Uri(notificationServiceUrl);
+        });
 
         // Security Services
         services.AddScoped<IPasswordPolicyService, PasswordPolicyService>();

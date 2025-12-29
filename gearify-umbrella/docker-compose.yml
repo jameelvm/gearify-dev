@@ -405,6 +405,11 @@ services:
     container_name: gearify-notification-svc
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - LocalStack__Config__LocalStackHost=localstack:4566
+      - SES_ENDPOINT=http://localstack:4566
       - SQS_ENDPOINT=${SQS_ENDPOINT}
       - SMTP_HOST=mailhog
       - SMTP_PORT=1025

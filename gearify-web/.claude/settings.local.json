@@ -23,7 +23,19 @@
       "Bash(AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws s3:*)",
       "Bash(docker-compose:*)",
       "Bash(dotnet restore:*)",
-      "Bash(dotnet build:*)"
+      "Bash(dotnet build:*)",
+      "Bash(dir \"C:\\\\Gearify\")",
+      "Bash(findstr:*)",
+      "Bash(robocopy:*)",
+      "Bash(powershell:*)",
+      "Bash(dotnet run)",
+      "Bash(timeout /t 3)",
+      "Bash(netstat:*)",
+      "Bash(dir \"C:\\\\Gearify\\\\gearify-umbrella\" /B)",
+      "Bash(docker ps:*)",
+      "Bash(docker logs:*)",
+      "Bash(docker exec:*)",
+      "Bash(docker inspect:*)"
     ]
   }
 }

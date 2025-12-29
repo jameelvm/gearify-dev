@@ -1,9 +1,11 @@
-using Gearify.AuthService.Application.Services;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.Text;
 
-namespace Gearify.AuthService.Infrastructure.Services;
+namespace Gearify.NotificationService.Infrastructure.Email;
 
 /// <summary>
 /// Service for loading and rendering email templates from HTML files
