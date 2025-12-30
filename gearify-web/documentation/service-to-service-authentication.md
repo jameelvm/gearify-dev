@@ -511,7 +511,7 @@ curl -X POST http://localhost:5011/api/auth/token \
 
 ```bash
 # Upload image with service token
-curl -X POST http://localhost:6007/api/media/upload \
+curl -X POST http://localhost:5009/api/media/upload \
   -H "Authorization: Bearer {token}" \
   -H "X-Tenant-Id: tenant-123" \
   -F "file=@test.jpg" \
@@ -524,7 +524,7 @@ curl -X POST http://localhost:6007/api/media/upload \
 ### Test 3: Call Without Token (Should Fail)
 
 ```bash
-curl -X POST http://localhost:6007/api/media/upload \
+curl -X POST http://localhost:5009/api/media/upload \
   -H "X-Tenant-Id: tenant-123" \
   -F "file=@test.jpg"
 
