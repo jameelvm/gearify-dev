@@ -214,12 +214,19 @@ echo "DynamoDB tables created successfully!"
 echo ""
 echo "Seeding DynamoDB data..."
 
-# Seed products for default-tenant
-echo "  - Seeding products for default-tenant"
+# Seed products for default-tenant (batch 1/2)
+echo "  - Seeding products for default-tenant (batch 1/2)"
 awslocal dynamodb batch-write-item \
   --request-items file://${CONFIG_DIR}/dynamodb/data/products-default-tenant-batch.json \
   --region us-east-1 \
-  2>/dev/null || echo "    Failed to seed default-tenant products"
+  2>/dev/null || echo "    Failed to seed default-tenant products batch 1"
+
+# Seed products for default-tenant (batch 2/2)
+echo "  - Seeding products for default-tenant (batch 2/2)"
+awslocal dynamodb batch-write-item \
+  --request-items file://${CONFIG_DIR}/dynamodb/data/products-default-tenant-batch-2.json \
+  --region us-east-1 \
+  2>/dev/null || echo "    Failed to seed default-tenant products batch 2"
 
 # Seed products for test-tenant
 echo "  - Seeding products for test-tenant"
