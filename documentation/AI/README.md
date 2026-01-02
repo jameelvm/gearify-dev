@@ -26,28 +26,34 @@ All AI features are designed to integrate seamlessly with this stack.
 2. **[Technology Stack](./02-technology-stack.md)** - Recommended AI/ML services for .NET & AWS
 3. **[Implementation Roadmap](./03-implementation-roadmap.md)** - Phased rollout plan
 4. **[Product Recommendations](./features/product-recommendations.md)** - Recommendation engine design
-5. **[Smart Search](./features/smart-search.md)** - NLP-powered search
-6. **[Customer Support AI](./features/customer-support-ai.md)** - Chatbot and automation
-7. **[Pricing & Forecasting](./features/pricing-forecasting.md)** - Dynamic pricing and demand prediction
-8. **[Computer Vision](./features/computer-vision.md)** - Visual search and image processing
-9. **[Architecture Patterns](./architecture/patterns.md)** - Integration patterns for AI services
+5. **[Bedrock Generative AI](./features/bedrock-generative-ai.md)** - Content generation, chatbot, and AI automation
+6. **[Smart Search](./features/smart-search.md)** - NLP-powered search
+7. **[Customer Support AI](./features/customer-support-ai.md)** - Chatbot and automation
+8. **[Pricing & Forecasting](./features/pricing-forecasting.md)** - Dynamic pricing and demand prediction
+9. **[Computer Vision](./features/computer-vision.md)** - Visual search and image processing
+10. **[Architecture Patterns](./architecture/patterns.md)** - Integration patterns for AI services
 
 ## Quick Start
 
+### New to AI Features?
+Start here: **[Bedrock Quick Reference](./bedrock-quick-reference.md)** - Fast intro to generative AI capabilities
+
 ### Phase 1: Essential Features (Recommended Start)
-1. Product Recommendations
-2. Smart Search
-3. Customer Support Chatbot
+1. **Amazon Bedrock** - Content generation & intelligent chatbot (NEW!)
+2. Product Recommendations
+3. Smart Search
+4. Customer Support Automation
 
 See [Implementation Roadmap](./03-implementation-roadmap.md) for detailed guidance.
 
 ## AWS Services Used
 
+- **Amazon Bedrock** - Generative AI (Claude, Llama, Stable Diffusion) for content generation, chatbot, and automation
 - **AWS Personalize** - Product recommendations
 - **AWS Comprehend** - NLP and sentiment analysis
 - **AWS Rekognition** - Image analysis and visual search
 - **AWS Forecast** - Demand forecasting
-- **AWS Lex** - Conversational AI
+- **AWS Lex** - Conversational AI (alternative to Bedrock chatbot)
 - **Amazon Textract** - Document processing
 - **SageMaker** - Custom ML models
 

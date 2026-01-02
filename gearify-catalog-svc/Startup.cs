@@ -143,6 +143,7 @@ public class Startup
 
         // Section Mappers (Strategy Pattern)
         services.AddScoped<ISectionMapper, BrandSectionMapper>();
+        services.AddScoped<ISectionMapper, PriceRangeSectionMapper>();
         services.AddScoped<ISectionMapperFactory, SectionMapperFactory>();
 
         // Media Service Client with HttpClient

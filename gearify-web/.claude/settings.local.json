@@ -38,7 +38,18 @@
       "Bash(docker inspect:*)",
       "Bash(AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws dynamodb scan:*)",
       "Bash(AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws dynamodb query:*)",
-      "Bash(AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws dynamodb get-item:*)"
+      "Bash(AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws dynamodb get-item:*)",
+      "Bash(npm run build:*)",
+      "Bash(dir \"C:\\\\Gearify\\\\gearify-umbrella\\\\localstack\" /B)",
+      "Bash(chmod:*)",
+      "Bash(bash update-catalog-brand-mapping.sh:*)",
+      "Bash(AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws dynamodb delete-table:*)",
+      "Bash(ls:*)",
+      "Bash(python3:*)",
+      "Bash(python load-catalog-data.py:*)",
+      "Bash(bash add-mapping-fields.sh:*)",
+      "Bash(bash:*)",
+      "Bash(find:*)"
     ]
   }
 }

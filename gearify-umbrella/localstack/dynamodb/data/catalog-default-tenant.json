@@ -95,6 +95,9 @@
     "ShowTitle": {
       "BOOL": true
     },
+    "Mapping": {
+      "S": "BRAND"
+    },
     "DisplayOrder": {
       "N": "1"
     },
@@ -136,8 +139,23 @@
     "Slug": {
       "S": "ss"
     },
+    "Description": {
+      "S": "SS cricket bats - Premium quality from India"
+    },
+    "ImageUrl": {
+      "S": ""
+    },
+    "BrandId": {
+      "S": "a1b2c3d4-e5f6-4a5b-8c9d-1e2f3a4b5c6d"
+    },
+    "FilterType": {
+      "S": "BRAND"
+    },
     "DisplayOrder": {
       "N": "1"
+    },
+    "ProductCount": {
+      "N": "0"
     },
     "IsActive": {
       "BOOL": true
@@ -177,8 +195,23 @@
     "Slug": {
       "S": "mrf"
     },
+    "Description": {
+      "S": "MRF cricket bats - Trusted by champions"
+    },
+    "ImageUrl": {
+      "S": ""
+    },
+    "BrandId": {
+      "S": "b2c3d4e5-f6a7-4b5c-9d0e-2f3a4b5c6d7e"
+    },
+    "FilterType": {
+      "S": "BRAND"
+    },
     "DisplayOrder": {
       "N": "2"
+    },
+    "ProductCount": {
+      "N": "0"
     },
     "IsActive": {
       "BOOL": true
@@ -218,8 +251,23 @@
     "Slug": {
       "S": "sg"
     },
+    "Description": {
+      "S": "SG cricket bats - Superior craftsmanship"
+    },
+    "ImageUrl": {
+      "S": ""
+    },
+    "BrandId": {
+      "S": "c3d4e5f6-a7b8-4c5d-0e1f-3a4b5c6d7e8f"
+    },
+    "FilterType": {
+      "S": "BRAND"
+    },
     "DisplayOrder": {
       "N": "3"
+    },
+    "ProductCount": {
+      "N": "0"
     },
     "IsActive": {
       "BOOL": true
@@ -259,8 +307,23 @@
     "Slug": {
       "S": "kookaburra"
     },
+    "Description": {
+      "S": "Kookaburra cricket bats - Australian excellence"
+    },
+    "ImageUrl": {
+      "S": ""
+    },
+    "BrandId": {
+      "S": "d4e5f6a7-b8c9-4d5e-1f2a-4b5c6d7e8f9a"
+    },
+    "FilterType": {
+      "S": "BRAND"
+    },
     "DisplayOrder": {
       "N": "4"
+    },
+    "ProductCount": {
+      "N": "0"
     },
     "IsActive": {
       "BOOL": true
@@ -300,8 +363,23 @@
     "Slug": {
       "S": "dsc"
     },
+    "Description": {
+      "S": "DSC cricket bats - Power and performance"
+    },
+    "ImageUrl": {
+      "S": ""
+    },
+    "BrandId": {
+      "S": "e5f6a7b8-c9d0-4e5f-2a3b-5c6d7e8f9a0b"
+    },
+    "FilterType": {
+      "S": "BRAND"
+    },
     "DisplayOrder": {
       "N": "5"
+    },
+    "ProductCount": {
+      "N": "0"
     },
     "IsActive": {
       "BOOL": true
@@ -340,6 +418,9 @@
     },
     "ShowTitle": {
       "BOOL": true
+    },
+    "Mapping": {
+      "S": "PRICE_RANGE"
     },
     "DisplayOrder": {
       "N": "2"
@@ -382,8 +463,23 @@
     "Slug": {
       "S": "under-5000"
     },
+    "Description": {
+      "S": "Cricket bats priced under ₹5000"
+    },
+    "ImageUrl": {
+      "S": ""
+    },
+    "PriceRangeId": {
+      "S": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+    },
+    "FilterType": {
+      "S": "PRICE_RANGE"
+    },
     "DisplayOrder": {
       "N": "1"
+    },
+    "ProductCount": {
+      "N": "0"
     },
     "IsActive": {
       "BOOL": true
@@ -423,8 +519,23 @@
     "Slug": {
       "S": "5000-10000"
     },
+    "Description": {
+      "S": "Cricket bats priced between ₹5000 and ₹10000"
+    },
+    "ImageUrl": {
+      "S": ""
+    },
+    "PriceRangeId": {
+      "S": "b2c3d4e5-f6a7-8901-bcde-f12345678901"
+    },
+    "FilterType": {
+      "S": "PRICE_RANGE"
+    },
     "DisplayOrder": {
       "N": "2"
+    },
+    "ProductCount": {
+      "N": "0"
     },
     "IsActive": {
       "BOOL": true
@@ -464,8 +575,23 @@
     "Slug": {
       "S": "above-10000"
     },
+    "Description": {
+      "S": "Premium cricket bats priced above ₹10000"
+    },
+    "ImageUrl": {
+      "S": ""
+    },
+    "PriceRangeId": {
+      "S": "e5f6a7b8-c9d0-1234-ef12-345678901234"
+    },
+    "FilterType": {
+      "S": "PRICE_RANGE"
+    },
     "DisplayOrder": {
       "N": "3"
+    },
+    "ProductCount": {
+      "N": "0"
     },
     "IsActive": {
       "BOOL": true
@@ -572,6 +698,9 @@
     },
     "ShowTitle": {
       "BOOL": true
+    },
+    "Mapping": {
+      "S": "BRAND"
     },
     "DisplayOrder": {
       "N": "1"
@@ -846,6 +975,9 @@
     "ShowTitle": {
       "BOOL": true
     },
+    "Mapping": {
+      "S": "BRAND"
+    },
     "DisplayOrder": {
       "N": "1"
     },
@@ -1077,6 +1209,9 @@
     },
     "ShowTitle": {
       "BOOL": true
+    },
+    "Mapping": {
+      "S": "BRAND"
     },
     "DisplayOrder": {
       "N": "1"
@@ -1310,6 +1445,9 @@
     "ShowTitle": {
       "BOOL": true
     },
+    "Mapping": {
+      "S": "BRAND"
+    },
     "DisplayOrder": {
       "N": "1"
     },
@@ -1542,6 +1680,9 @@
     "ShowTitle": {
       "BOOL": true
     },
+    "Mapping": {
+      "S": "BRAND"
+    },
     "DisplayOrder": {
       "N": "1"
     },
@@ -1773,6 +1914,9 @@
     },
     "ShowTitle": {
       "BOOL": true
+    },
+    "Mapping": {
+      "S": "BRAND"
     },
     "DisplayOrder": {
       "N": "1"

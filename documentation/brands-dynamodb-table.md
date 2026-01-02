@@ -208,6 +208,343 @@ Returns: All products from SS brand
 
 ---
 
+## Category Section Mapping - Brand Enrichment
+
+### Overview
+The mega menu system supports dynamic brand enrichment through the `Mapping` field in CategorySection entities. When a CategorySection has `Mapping: "BRAND"`, the `EnrichSubcategoriesAsync` method automatically enriches subcategories with brand data (logo, description, etc.) using the BrandMapper.
+
+**How It Works:**
+1. CategorySection is created with `Mapping: "BRAND"`
+2. Subcategories are created with `BrandId` references
+3. At runtime, `GetMegaMenuDataQueryHandler.EnrichSubcategoriesAsync()` detects the Mapping field
+4. BrandMapper fetches brand details from the brands table
+5. Subcategories are enriched with brand logo, name, description
+
+**Implementation Reference:**
+See `GetMegaMenuDataQueryHandler.cs` lines 143-163 for enrichment logic.
+
+---
+
+### Seed Data Example: "Bats → By Brand" Section
+
+This example shows how to create a category section that displays cricket bat brands in the mega menu.
+
+#### Step 1: Create the CategorySection with Mapping
+
+```json
+{
+  "PK": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bats",
+  "SK": "SECTION#sec_bats_brands",
+  "EntityType": "CATEGORY_SECTION",
+  "Id": "sec_bats_brands",
+  "CategoryId": "cat_bats",
+  "TenantId": "default",
+  "Title": "By Brand",
+  "Slug": "by-brand",
+  "ShowTitle": true,
+  "Mapping": "BRAND",
+  "DisplayOrder": 1,
+  "IsActive": true,
+  "CreatedAt": "2025-12-21T00:00:00.000Z",
+  "UpdatedAt": "2025-12-21T00:00:00.000Z"
+}
+```
+
+**Key Field:** `"Mapping": "BRAND"` - This triggers brand enrichment
+
+---
+
+#### Step 2: Create Subcategories with BrandId References
+
+**SS Brand Subcategory:**
+```json
+{
+  "PK": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bats",
+  "SK": "SECTION#sec_bats_brands#ITEM#sub_bats_ss",
+  "EntityType": "SUBCATEGORY",
+  "Id": "sub_bats_ss",
+  "CategoryId": "cat_bats",
+  "SectionId": "sec_bats_brands",
+  "TenantId": "default",
+  "Name": "SS",
+  "Slug": "ss",
+  "Description": "SS cricket bats - Premium quality from India",
+  "ImageUrl": null,
+  "BrandId": "a1b2c3d4-e5f6-4a5b-8c9d-1e2f3a4b5c6d",
+  "FilterType": "BRAND",
+  "DisplayOrder": 1,
+  "ProductCount": 0,
+  "IsActive": true,
+  "CreatedAt": "2025-12-21T00:00:00.000Z",
+  "UpdatedAt": "2025-12-21T00:00:00.000Z"
+}
+```
+
+**MRF Brand Subcategory:**
+```json
+{
+  "PK": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bats",
+  "SK": "SECTION#sec_bats_brands#ITEM#sub_bats_mrf",
+  "EntityType": "SUBCATEGORY",
+  "Id": "sub_bats_mrf",
+  "CategoryId": "cat_bats",
+  "SectionId": "sec_bats_brands",
+  "TenantId": "default",
+  "Name": "MRF",
+  "Slug": "mrf",
+  "Description": "MRF cricket bats - Trusted by champions",
+  "ImageUrl": null,
+  "BrandId": "b2c3d4e5-f6a7-5b6c-9d0e-2f3a4b5c6d7e",
+  "FilterType": "BRAND",
+  "DisplayOrder": 2,
+  "ProductCount": 0,
+  "IsActive": true,
+  "CreatedAt": "2025-12-21T00:00:00.000Z",
+  "UpdatedAt": "2025-12-21T00:00:00.000Z"
+}
+```
+
+**SG Brand Subcategory:**
+```json
+{
+  "PK": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bats",
+  "SK": "SECTION#sec_bats_brands#ITEM#sub_bats_sg",
+  "EntityType": "SUBCATEGORY",
+  "Id": "sub_bats_sg",
+  "CategoryId": "cat_bats",
+  "SectionId": "sec_bats_brands",
+  "TenantId": "default",
+  "Name": "SG",
+  "Slug": "sg",
+  "Description": "SG cricket bats - Superior craftsmanship",
+  "ImageUrl": null,
+  "BrandId": "c3d4e5f6-a7b8-6c7d-0e1f-3a4b5c6d7e8f",
+  "FilterType": "BRAND",
+  "DisplayOrder": 3,
+  "ProductCount": 0,
+  "IsActive": true,
+  "CreatedAt": "2025-12-21T00:00:00.000Z",
+  "UpdatedAt": "2025-12-21T00:00:00.000Z"
+}
+```
+
+**Kookaburra Brand Subcategory:**
+```json
+{
+  "PK": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bats",
+  "SK": "SECTION#sec_bats_brands#ITEM#sub_bats_kookaburra",
+  "EntityType": "SUBCATEGORY",
+  "Id": "sub_bats_kookaburra",
+  "CategoryId": "cat_bats",
+  "SectionId": "sec_bats_brands",
+  "TenantId": "default",
+  "Name": "Kookaburra",
+  "Slug": "kookaburra",
+  "Description": "Kookaburra cricket bats - Australian excellence",
+  "ImageUrl": null,
+  "BrandId": "d4e5f6a7-b8c9-7d8e-1f2a-4b5c6d7e8f9a",
+  "FilterType": "BRAND",
+  "DisplayOrder": 4,
+  "ProductCount": 0,
+  "IsActive": true,
+  "CreatedAt": "2025-12-21T00:00:00.000Z",
+  "UpdatedAt": "2025-12-21T00:00:00.000Z"
+}
+```
+
+**DSC Brand Subcategory:**
+```json
+{
+  "PK": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bats",
+  "SK": "SECTION#sec_bats_brands#ITEM#sub_bats_dsc",
+  "EntityType": "SUBCATEGORY",
+  "Id": "sub_bats_dsc",
+  "CategoryId": "cat_bats",
+  "SectionId": "sec_bats_brands",
+  "TenantId": "default",
+  "Name": "DSC",
+  "Slug": "dsc",
+  "Description": "DSC cricket bats - Power and performance",
+  "ImageUrl": null,
+  "BrandId": "e5f6a7b8-c9d0-8e9f-2a3b-5c6d7e8f9a0b",
+  "FilterType": "BRAND",
+  "DisplayOrder": 5,
+  "ProductCount": 0,
+  "IsActive": true,
+  "CreatedAt": "2025-12-21T00:00:00.000Z",
+  "UpdatedAt": "2025-12-21T00:00:00.000Z"
+}
+```
+
+---
+
+#### Step 3: Create Corresponding Brand Entities
+
+These brands should exist in the `gearify-brands` table:
+
+**SS Brand:**
+```json
+{
+  "PK": "TENANT#default#BRAND#a1b2c3d4-e5f6-4a5b-8c9d-1e2f3a4b5c6d",
+  "SK": "METADATA",
+  "EntityType": "BRAND",
+  "Id": "a1b2c3d4-e5f6-4a5b-8c9d-1e2f3a4b5c6d",
+  "TenantId": "default",
+  "Name": "SS",
+  "Slug": "ss",
+  "Description": "Premium cricket equipment manufacturer from India",
+  "Logo": "https://cdn.example.com/brands/ss-logo.png",
+  "Country": "India",
+  "Website": "https://www.ss.com",
+  "DisplayOrder": 1,
+  "IsActive": true,
+  "CreatedAt": "2025-12-21T00:00:00.000Z",
+  "UpdatedAt": "2025-12-21T00:00:00.000Z",
+  "CreatedBy": "system",
+  "UpdatedBy": "system",
+  "GSI1PK": "TENANT#default#BRANDS",
+  "GSI1SK": "BRAND#ss"
+}
+```
+
+**MRF Brand:**
+```json
+{
+  "PK": "TENANT#default#BRAND#b2c3d4e5-f6a7-5b6c-9d0e-2f3a4b5c6d7e",
+  "SK": "METADATA",
+  "EntityType": "BRAND",
+  "Id": "b2c3d4e5-f6a7-5b6c-9d0e-2f3a4b5c6d7e",
+  "TenantId": "default",
+  "Name": "MRF",
+  "Slug": "mrf",
+  "Description": "Trusted by champions worldwide",
+  "Logo": "https://cdn.example.com/brands/mrf-logo.png",
+  "Country": "India",
+  "Website": "https://www.mrf.com",
+  "DisplayOrder": 2,
+  "IsActive": true,
+  "CreatedAt": "2025-12-21T00:00:00.000Z",
+  "UpdatedAt": "2025-12-21T00:00:00.000Z",
+  "CreatedBy": "system",
+  "UpdatedBy": "system",
+  "GSI1PK": "TENANT#default#BRANDS",
+  "GSI1SK": "BRAND#mrf"
+}
+```
+
+**SG Brand:**
+```json
+{
+  "PK": "TENANT#default#BRAND#c3d4e5f6-a7b8-6c7d-0e1f-3a4b5c6d7e8f",
+  "SK": "METADATA",
+  "EntityType": "BRAND",
+  "Id": "c3d4e5f6-a7b8-6c7d-0e1f-3a4b5c6d7e8f",
+  "TenantId": "default",
+  "Name": "SG",
+  "Slug": "sg",
+  "Description": "Superior craftsmanship since 1931",
+  "Logo": "https://cdn.example.com/brands/sg-logo.png",
+  "Country": "India",
+  "Website": "https://www.sg.com",
+  "DisplayOrder": 3,
+  "IsActive": true,
+  "CreatedAt": "2025-12-21T00:00:00.000Z",
+  "UpdatedAt": "2025-12-21T00:00:00.000Z",
+  "CreatedBy": "system",
+  "UpdatedBy": "system",
+  "GSI1PK": "TENANT#default#BRANDS",
+  "GSI1SK": "BRAND#sg"
+}
+```
+
+**Kookaburra Brand:**
+```json
+{
+  "PK": "TENANT#default#BRAND#d4e5f6a7-b8c9-7d8e-1f2a-4b5c6d7e8f9a",
+  "SK": "METADATA",
+  "EntityType": "BRAND",
+  "Id": "d4e5f6a7-b8c9-7d8e-1f2a-4b5c6d7e8f9a",
+  "TenantId": "default",
+  "Name": "Kookaburra",
+  "Slug": "kookaburra",
+  "Description": "Australian excellence in cricket equipment",
+  "Logo": "https://cdn.example.com/brands/kookaburra-logo.png",
+  "Country": "Australia",
+  "Website": "https://www.kookaburra.com",
+  "DisplayOrder": 4,
+  "IsActive": true,
+  "CreatedAt": "2025-12-21T00:00:00.000Z",
+  "UpdatedAt": "2025-12-21T00:00:00.000Z",
+  "CreatedBy": "system",
+  "UpdatedBy": "system",
+  "GSI1PK": "TENANT#default#BRANDS",
+  "GSI1SK": "BRAND#kookaburra"
+}
+```
+
+**DSC Brand:**
+```json
+{
+  "PK": "TENANT#default#BRAND#e5f6a7b8-c9d0-8e9f-2a3b-5c6d7e8f9a0b",
+  "SK": "METADATA",
+  "EntityType": "BRAND",
+  "Id": "e5f6a7b8-c9d0-8e9f-2a3b-5c6d7e8f9a0b",
+  "TenantId": "default",
+  "Name": "DSC",
+  "Slug": "dsc",
+  "Description": "Power and performance combined",
+  "Logo": "https://cdn.example.com/brands/dsc-logo.png",
+  "Country": "India",
+  "Website": "https://www.dsc.com",
+  "DisplayOrder": 5,
+  "IsActive": true,
+  "CreatedAt": "2025-12-21T00:00:00.000Z",
+  "UpdatedAt": "2025-12-21T00:00:00.000Z",
+  "CreatedBy": "system",
+  "UpdatedBy": "system",
+  "GSI1PK": "TENANT#default#BRANDS",
+  "GSI1SK": "BRAND#dsc"
+}
+```
+
+---
+
+### How Runtime Enrichment Works
+
+**Before Enrichment (from DynamoDB):**
+```json
+{
+  "Id": "sub_bats_ss",
+  "Name": "SS",
+  "BrandId": "a1b2c3d4-e5f6-4a5b-8c9d-1e2f3a4b5c6d",
+  "ImageUrl": null
+}
+```
+
+**After Enrichment (by BrandMapper):**
+```json
+{
+  "Id": "sub_bats_ss",
+  "Name": "SS",
+  "BrandId": "a1b2c3d4-e5f6-4a5b-8c9d-1e2f3a4b5c6d",
+  "ImageUrl": "https://cdn.example.com/brands/ss-logo.png",
+  "BrandDetails": {
+    "Name": "SS",
+    "Logo": "https://cdn.example.com/brands/ss-logo.png",
+    "Description": "Premium cricket equipment manufacturer from India",
+    "Country": "India"
+  }
+}
+```
+
+**Benefits:**
+- Brand logos automatically populate in mega menu
+- Consistent brand information across the application
+- Single source of truth for brand data
+- Easy to update brand information (update once in brands table, reflects everywhere)
+
+---
+
 ## Multi-Tenancy Isolation
 
 All access patterns enforce tenant isolation:

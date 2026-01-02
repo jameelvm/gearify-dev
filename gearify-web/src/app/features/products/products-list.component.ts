@@ -1,6 +1,7 @@
 import { Component, signal, computed, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Product, ProductFilter } from '@core/models/product.model';
 import {
   ProductCardComponent,
@@ -45,6 +46,7 @@ interface PriceRange {
 })
 export class ProductsListComponent implements OnInit {
   private productService = inject(ProductService);
+  private route = inject(ActivatedRoute);
 
   // Loading and error states
   isLoading = signal<boolean>(true);
@@ -70,6 +72,11 @@ export class ProductsListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProducts();
+
+    // Listen to route parameter changes (when navigating between subcategories)
+    this.route.params.subscribe(() => {
+      this.loadProducts();
+    });
   }
 
   /**
@@ -79,7 +86,22 @@ export class ProductsListComponent implements OnInit {
     this.isLoading.set(true);
     this.error.set(null);
 
-    this.productService.getProductsBySlug({}).subscribe({
+    // Read route parameters
+    const departmentSlug = this.route.snapshot.paramMap.get('departmentSlug');
+    const categorySlug = this.route.snapshot.paramMap.get('categorySlug');
+    const subcategorySlug = this.route.snapshot.paramMap.get('subcategorySlug');
+
+    console.log('Loading products with filters:', {
+      departmentSlug,
+      categorySlug,
+      subcategorySlug
+    });
+
+    this.productService.getProductsBySlug({
+      departmentSlug,
+      categorySlug,
+      subcategorySlug
+    }).subscribe({
       next: (response) => {
         this.allProducts.set(response.products);
         this.isLoading.set(false);

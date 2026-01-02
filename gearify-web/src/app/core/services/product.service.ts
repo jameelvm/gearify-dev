@@ -9,6 +9,8 @@ export interface ProductFilters {
   departmentSlug?: string | null;
   categorySlug?: string | null;
   subcategorySlug?: string | null;
+  minPrice?: number | null;
+  maxPrice?: number | null;
 }
 
 export interface ProductListResponse {
@@ -36,6 +38,12 @@ export class ProductService {
     }
     if (filters.subcategorySlug) {
       params = params.set('subcategorySlug', filters.subcategorySlug);
+    }
+    if (filters.minPrice !== null && filters.minPrice !== undefined) {
+      params = params.set('minPrice', filters.minPrice.toString());
+    }
+    if (filters.maxPrice !== null && filters.maxPrice !== undefined) {
+      params = params.set('maxPrice', filters.maxPrice.toString());
     }
 
     return this.http.get<ProductListResponse>(API_CONFIG.ENDPOINTS.PRODUCTS, params);

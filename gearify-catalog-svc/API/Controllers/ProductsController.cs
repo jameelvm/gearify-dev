@@ -23,14 +23,16 @@ public class ProductsController : ControllerBase
         [FromQuery] string? departmentSlug,
         [FromQuery] string? categorySlug,
         [FromQuery] string? subcategorySlug,
-        [FromQuery] string? category)
+        [FromQuery] string? category,
+        [FromQuery] decimal? minPrice,
+        [FromQuery] decimal? maxPrice)
     {
         try
         {
             // If any slug parameters are provided, use slug-based query
-            if (!string.IsNullOrEmpty(departmentSlug) || !string.IsNullOrEmpty(categorySlug) || !string.IsNullOrEmpty(subcategorySlug))
+            if (!string.IsNullOrEmpty(departmentSlug) || !string.IsNullOrEmpty(categorySlug) || !string.IsNullOrEmpty(subcategorySlug) || minPrice.HasValue || maxPrice.HasValue)
             {
-                var result = await _mediator.Send(new GetProductsBySlugQuery(departmentSlug, categorySlug, subcategorySlug));
+                var result = await _mediator.Send(new GetProductsBySlugQuery(departmentSlug, categorySlug, subcategorySlug, minPrice, maxPrice));
                 return Ok(result);
             }
 

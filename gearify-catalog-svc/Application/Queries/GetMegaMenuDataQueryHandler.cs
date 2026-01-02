@@ -186,6 +186,11 @@ public class GetMegaMenuDataQueryHandler : IRequestHandler<GetMegaMenuDataQuery,
 
     private CategorySection MapToSection(Dictionary<string, Amazon.DynamoDBv2.Model.AttributeValue> item)
     {
+
+        if (item.TryGetValue("Mapping", out var mapping1))
+        {
+            var test = mapping1;
+        }
         return new CategorySection
         {
             Id = item["Id"].S,
@@ -215,6 +220,7 @@ public class GetMegaMenuDataQueryHandler : IRequestHandler<GetMegaMenuDataQuery,
             Description = item.TryGetValue("Description", out var desc) ? desc.S : string.Empty,
             ImageUrl = item.TryGetValue("ImageUrl", out var img) ? img.S : string.Empty,
             BrandId = item.TryGetValue("BrandId", out var brandId) ? brandId.S : null,
+            PriceRangeId = item.TryGetValue("PriceRangeId", out var priceRangeId) ? priceRangeId.S : null,
             FilterType = item.TryGetValue("FilterType", out var filterType) ? filterType.S : null,
             DisplayOrder = item.TryGetValue("DisplayOrder", out var order) ? int.Parse(order.N) : 0,
             ProductCount = item.TryGetValue("ProductCount", out var count) ? int.Parse(count.N) : 0,

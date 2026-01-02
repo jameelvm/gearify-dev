@@ -11,6 +11,9 @@ export interface SubcategoryDto {
   slug: string;
   description: string;
   imageUrl: string;
+  brandId?: string;
+  priceRangeId?: string;
+  filterType?: string;
   displayOrder: number;
   productCount: number;
   isActive: boolean;

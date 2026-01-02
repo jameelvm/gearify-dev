@@ -57,14 +57,26 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
 
         if (!string.IsNullOrEmpty(request.CategorySlug))
         {
-            filterExpressions.Add("contains(Category, :category)");
-            queryRequest.ExpressionAttributeValues.Add(":category", new AttributeValue { S = request.CategorySlug });
+            filterExpressions.Add("CategorySlug = :catSlug");
+            queryRequest.ExpressionAttributeValues.Add(":catSlug", new AttributeValue { S = request.CategorySlug });
         }
 
         if (!string.IsNullOrEmpty(request.SubcategorySlug))
         {
-            filterExpressions.Add("contains(Tags, :subcategory)");
-            queryRequest.ExpressionAttributeValues.Add(":subcategory", new AttributeValue { S = request.SubcategorySlug });
+            filterExpressions.Add("SubcategorySlug = :subcatSlug");
+            queryRequest.ExpressionAttributeValues.Add(":subcatSlug", new AttributeValue { S = request.SubcategorySlug });
+        }
+
+        if (request.MinPrice.HasValue)
+        {
+            filterExpressions.Add("Price >= :minPrice");
+            queryRequest.ExpressionAttributeValues.Add(":minPrice", new AttributeValue { N = request.MinPrice.Value.ToString() });
+        }
+
+        if (request.MaxPrice.HasValue)
+        {
+            filterExpressions.Add("Price <= :maxPrice");
+            queryRequest.ExpressionAttributeValues.Add(":maxPrice", new AttributeValue { N = request.MaxPrice.Value.ToString() });
         }
 
         if (filterExpressions.Any())

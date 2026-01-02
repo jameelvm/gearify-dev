@@ -14,7 +14,8 @@ public class Subcategory
     public string Description { get; set; } = string.Empty;
     public string ImageUrl { get; set; } = string.Empty;
     public string? BrandId { get; set; }  // Reference to Brand (if FilterType = BRAND)
-    public string? FilterType { get; set; }  // BRAND, PRICE, etc.
+    public string? PriceRangeId { get; set; }  // Reference to PriceRange (if FilterType = PRICE_RANGE)
+    public string? FilterType { get; set; }  // BRAND, PRICE_RANGE, etc.
     public int DisplayOrder { get; set; }
     public int ProductCount { get; set; }
     public bool IsActive { get; set; } = true;

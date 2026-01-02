@@ -8,7 +8,9 @@ public record GetProductByIdQuery(string ProductId) : IRequest<ProductDto?>;
 public record GetProductsBySlugQuery(
     string? DepartmentSlug,
     string? CategorySlug,
-    string? SubcategorySlug
+    string? SubcategorySlug,
+    decimal? MinPrice,
+    decimal? MaxPrice
 ) : IRequest<ProductListResponse>;
 
 public record ProductListResponse(List<ProductListDto> Products, int Total);
