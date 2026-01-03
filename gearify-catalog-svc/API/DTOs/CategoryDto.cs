@@ -75,7 +75,10 @@ public record SubcategoryDto(
     string Description,
     string ImageUrl,
     string? BrandId,
+    string? PriceRangeId,
     string? FilterType,
+    decimal? MinPrice,
+    decimal? MaxPrice,
     int DisplayOrder,
     int ProductCount,
     bool IsActive
@@ -95,7 +98,10 @@ public record SubcategoryDto(
             subcategory.Description,
             subcategory.ImageUrl,
             subcategory.BrandId,
+            subcategory.PriceRangeId,
             subcategory.FilterType,
+            subcategory.MinPrice,
+            subcategory.MaxPrice,
             subcategory.DisplayOrder,
             subcategory.ProductCount,
             subcategory.IsActive

@@ -16,6 +16,8 @@ public class Subcategory
     public string? BrandId { get; set; }  // Reference to Brand (if FilterType = BRAND)
     public string? PriceRangeId { get; set; }  // Reference to PriceRange (if FilterType = PRICE_RANGE)
     public string? FilterType { get; set; }  // BRAND, PRICE_RANGE, etc.
+    public decimal? MinPrice { get; set; }  // Populated by PriceRangeSectionMapper
+    public decimal? MaxPrice { get; set; }  // Populated by PriceRangeSectionMapper
     public int DisplayOrder { get; set; }
     public int ProductCount { get; set; }
     public bool IsActive { get; set; } = true;

@@ -53,6 +53,10 @@ public class PriceRangeSectionMapper : ISectionMapper
                 subcategory.Name = priceRange.Label;
                 subcategory.Description = $"Products priced {priceRange.Label}";
 
+                // Populate min/max price for frontend filtering
+                subcategory.MinPrice = priceRange.MinPrice;
+                subcategory.MaxPrice = priceRange.MaxPrice;
+
                 // Generate a slug from the label
                 subcategory.Slug = priceRange.Label.ToLowerInvariant()
                     .Replace("$", "")

@@ -67,6 +67,12 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
             queryRequest.ExpressionAttributeValues.Add(":subcatSlug", new AttributeValue { S = request.SubcategorySlug });
         }
 
+        if (!string.IsNullOrEmpty(request.BrandSlug))
+        {
+            filterExpressions.Add("BrandSlug = :brandSlug");
+            queryRequest.ExpressionAttributeValues.Add(":brandSlug", new AttributeValue { S = request.BrandSlug });
+        }
+
         if (request.MinPrice.HasValue)
         {
             filterExpressions.Add("Price >= :minPrice");

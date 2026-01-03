@@ -23,16 +23,31 @@ public class ProductsController : ControllerBase
         [FromQuery] string? departmentSlug,
         [FromQuery] string? categorySlug,
         [FromQuery] string? subcategorySlug,
+        [FromQuery] string? brandSlug,
         [FromQuery] string? category,
-        [FromQuery] decimal? minPrice,
-        [FromQuery] decimal? maxPrice)
+        [FromQuery] string? priceRange)
     {
         try
         {
-            // If any slug parameters are provided, use slug-based query
-            if (!string.IsNullOrEmpty(departmentSlug) || !string.IsNullOrEmpty(categorySlug) || !string.IsNullOrEmpty(subcategorySlug) || minPrice.HasValue || maxPrice.HasValue)
+            // Parse price range if provided (format: "min-max" e.g., "0-5000")
+            decimal? minPrice = null;
+            decimal? maxPrice = null;
+            if (!string.IsNullOrEmpty(priceRange))
             {
-                var result = await _mediator.Send(new GetProductsBySlugQuery(departmentSlug, categorySlug, subcategorySlug, minPrice, maxPrice));
+                var parts = priceRange.Split('-');
+                if (parts.Length == 2)
+                {
+                    if (decimal.TryParse(parts[0], out var min))
+                        minPrice = min;
+                    if (decimal.TryParse(parts[1], out var max))
+                        maxPrice = max;
+                }
+            }
+
+            // If any slug parameters are provided, use slug-based query
+            if (!string.IsNullOrEmpty(departmentSlug) || !string.IsNullOrEmpty(categorySlug) || !string.IsNullOrEmpty(subcategorySlug) || !string.IsNullOrEmpty(brandSlug) || minPrice.HasValue || maxPrice.HasValue)
+            {
+                var result = await _mediator.Send(new GetProductsBySlugQuery(departmentSlug, categorySlug, subcategorySlug, brandSlug, minPrice, maxPrice));
                 return Ok(result);
             }
 

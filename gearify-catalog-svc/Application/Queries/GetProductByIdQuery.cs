@@ -9,6 +9,7 @@ public record GetProductsBySlugQuery(
     string? DepartmentSlug,
     string? CategorySlug,
     string? SubcategorySlug,
+    string? BrandSlug,
     decimal? MinPrice,
     decimal? MaxPrice
 ) : IRequest<ProductListResponse>;
