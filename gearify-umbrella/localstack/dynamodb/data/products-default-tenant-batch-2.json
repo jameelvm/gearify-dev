@@ -55,13 +55,13 @@
             "S": "sg"
           },
           "Price": {
-            "N": "3500"
+            "N": "42.0"
           },
           "CompareAtPrice": {
-            "N": "4200"
+            "N": "50.4"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "17"
@@ -150,13 +150,13 @@
             "S": "kookaburra"
           },
           "Price": {
-            "N": "4200"
+            "N": "600.0"
           },
           "CompareAtPrice": {
-            "N": "5000"
+            "N": "720.0"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "16"
@@ -248,13 +248,13 @@
             "S": "ss"
           },
           "Price": {
-            "N": "2500"
+            "N": "30.0"
           },
           "CompareAtPrice": {
-            "N": "3000"
+            "N": "36.0"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "17"
@@ -342,13 +342,13 @@
             "S": "sg"
           },
           "Price": {
-            "N": "2200"
+            "N": "26.4"
           },
           "CompareAtPrice": {
-            "N": "2700"
+            "N": "32.4"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "19"
@@ -437,13 +437,13 @@
             "S": "sg"
           },
           "Price": {
-            "N": "3200"
+            "N": "38.4"
           },
           "CompareAtPrice": {
-            "N": "3800"
+            "N": "45.6"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "16"
@@ -532,13 +532,13 @@
             "S": "kookaburra"
           },
           "Price": {
-            "N": "4200"
+            "N": "540.0"
           },
           "CompareAtPrice": {
-            "N": "5000"
+            "N": "640.0"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "16"
@@ -630,13 +630,13 @@
             "S": "ss"
           },
           "Price": {
-            "N": "3500"
+            "N": "42.0"
           },
           "CompareAtPrice": {
-            "N": "4200"
+            "N": "50.4"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "17"
@@ -724,13 +724,13 @@
             "S": "sg"
           },
           "Price": {
-            "N": "1500"
+            "N": "18.0"
           },
           "CompareAtPrice": {
-            "N": "1800"
+            "N": "21.6"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "17"
@@ -819,13 +819,13 @@
             "S": "sg"
           },
           "Price": {
-            "N": "2200"
+            "N": "26.4"
           },
           "CompareAtPrice": {
-            "N": "2700"
+            "N": "32.4"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "19"
@@ -914,13 +914,13 @@
             "S": "kookaburra"
           },
           "Price": {
-            "N": "2800"
+            "N": "33.6"
           },
           "CompareAtPrice": {
-            "N": "3300"
+            "N": "39.6"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "15"
@@ -1012,13 +1012,13 @@
             "S": "ss"
           },
           "Price": {
-            "N": "1800"
+            "N": "21.6"
           },
           "CompareAtPrice": {
-            "N": "2200"
+            "N": "26.4"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "18"
@@ -1106,13 +1106,13 @@
             "S": "sg"
           },
           "Price": {
-            "N": "350"
+            "N": "4.2"
           },
           "CompareAtPrice": {
-            "N": "450"
+            "N": "5.4"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "22"
@@ -1200,13 +1200,13 @@
             "S": "ss"
           },
           "Price": {
-            "N": "420"
+            "N": "5.04"
           },
           "CompareAtPrice": {
-            "N": "550"
+            "N": "6.6"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "24"
@@ -1294,13 +1294,13 @@
             "S": "sg"
           },
           "Price": {
-            "N": "650"
+            "N": "7.8"
           },
           "CompareAtPrice": {
-            "N": "800"
+            "N": "9.6"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "19"
@@ -1389,13 +1389,13 @@
             "S": "kookaburra"
           },
           "Price": {
-            "N": "1200"
+            "N": "14.4"
           },
           "CompareAtPrice": {
-            "N": "1500"
+            "N": "18.0"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "20"
@@ -1484,13 +1484,13 @@
             "S": "generic"
           },
           "Price": {
-            "N": "180"
+            "N": "2.16"
           },
           "CompareAtPrice": {
-            "N": "250"
+            "N": "3.0"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "28"
@@ -1579,13 +1579,13 @@
             "S": "generic"
           },
           "Price": {
-            "N": "350"
+            "N": "4.2"
           },
           "CompareAtPrice": {
-            "N": "450"
+            "N": "5.4"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "22"
@@ -1674,13 +1674,13 @@
             "S": "generic"
           },
           "Price": {
-            "N": "850"
+            "N": "10.2"
           },
           "CompareAtPrice": {
-            "N": "1100"
+            "N": "13.2"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "23"
@@ -1768,13 +1768,13 @@
             "S": "generic"
           },
           "Price": {
-            "N": "1500"
+            "N": "18.0"
           },
           "CompareAtPrice": {
-            "N": "1900"
+            "N": "22.8"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "21"
@@ -1863,13 +1863,13 @@
             "S": "ss"
           },
           "Price": {
-            "N": "850"
+            "N": "10.2"
           },
           "CompareAtPrice": {
-            "N": "1100"
+            "N": "13.2"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "23"
@@ -1958,13 +1958,13 @@
             "S": "sg"
           },
           "Price": {
-            "N": "1200"
+            "N": "14.4"
           },
           "CompareAtPrice": {
-            "N": "1500"
+            "N": "18.0"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "20"
@@ -2053,13 +2053,13 @@
             "S": "ss"
           },
           "Price": {
-            "N": "2500"
+            "N": "30.0"
           },
           "CompareAtPrice": {
-            "N": "4500"
+            "N": "54.0"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "44"
@@ -2151,13 +2151,13 @@
             "S": "dsc"
           },
           "Price": {
-            "N": "1800"
+            "N": "21.6"
           },
           "CompareAtPrice": {
-            "N": "3200"
+            "N": "38.4"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "44"
@@ -2249,13 +2249,13 @@
             "S": "kookaburra"
           },
           "Price": {
-            "N": "1999"
+            "N": "23.99"
           },
           "CompareAtPrice": {
-            "N": "3200"
+            "N": "38.4"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "38"
@@ -2347,13 +2347,13 @@
             "S": "mrf"
           },
           "Price": {
-            "N": "3200"
+            "N": "38.4"
           },
           "CompareAtPrice": {
-            "N": "5000"
+            "N": "60.0"
           },
           "Currency": {
-            "S": "INR"
+            "S": "USD"
           },
           "DiscountPercentage": {
             "N": "36"
