@@ -44,9 +44,9 @@
           <ul class="section-items">
             <li *ngFor="let item of section.items">
               <a
-                [routerLink]="['/', getActiveCategory()?.departmentSlug, getActiveCategory()?.slug, item.slug]"
                 class="section-item-link"
-                (click)="onSubCategoryClick(getActiveCategory()!, item)">
+                (click)="onSubCategoryClick(getActiveCategory()!, item)"
+                style="cursor: pointer;">
                 {{ item.name }}
               </a>
             </li>

@@ -1,12 +1,17 @@
 import { Component, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CategoryService } from '@core/services/category.service';
 
 export interface SubCategory {
   name: string;
   slug: string;
+  brandId?: string;
+  priceRangeId?: string;
+  filterType?: string;
+  minPrice?: number;
+  maxPrice?: number;
 }
 
 export interface MegaMenuSection {
@@ -33,6 +38,7 @@ export interface Category {
 })
 export class CategoryNavComponent implements OnInit {
   private categoryService = inject(CategoryService);
+  private router = inject(Router);
 
   searchQuery = signal('');
   activeCategory = signal<string | null>(null);
@@ -41,6 +47,7 @@ export class CategoryNavComponent implements OnInit {
   error = signal<string | null>(null);
 
   categories: Category[] = [];
+  categoryDict: Record<string, Category> = {};
 
   ngOnInit(): void {
     // Only load categories if not on auth or tenant-not-found pages
@@ -71,13 +78,24 @@ export class CategoryNavComponent implements OnInit {
             megaMenu: item.sections.map(section => ({
               title: section.title,
               showTitle: section.showTitle,
-              items: section.items.map(subItem => ({
-                name: subItem.name,
-                slug: subItem.slug
+              items: section.items.map(subCategory => ({
+                name: subCategory.name,
+                slug: subCategory.slug,
+                minPrice: subCategory.minPrice,
+                maxPrice: subCategory.maxPrice,
+                brandId: subCategory.brandId,
+                priceRangeId: subCategory.priceRangeId,
+                filterType: subCategory.filterType
               }))
             }))
           }))
         );
+
+        this.categoryDict = this.categories.reduce((acc, category) => {
+          acc[category.id] = category;
+          return acc;
+        }, {} as Record<string, Category>);
+
         this.isLoading.set(false);
       },
       error: (err) => {
@@ -87,190 +105,6 @@ export class CategoryNavComponent implements OnInit {
         // Fallback to empty array or show error message
       }
     });
-  }
-
-  // Keep original hardcoded data as fallback (commented out)
-  private get fallbackCategories(): Category[] {
-    return [
-    {
-      id: '1',
-      name: 'Cricket Bats',
-      slug: 'cricket-bats',
-      departmentSlug: 'cricket',
-      megaMenu: [
-        {
-          title: 'Shop New Arrivals',
-          items: [
-            { name: 'English Willow Bats', slug: 'english-willow' },
-            { name: 'Kashmir Willow Bats', slug: 'kashmir-willow' },
-            { name: 'Tennis Bats', slug: 'tennis-bats' },
-            { name: 'Junior Bats', slug: 'junior-bats' }
-          ]
-        },
-        {
-          title: 'By Brand',
-          items: [
-            { name: 'SS', slug: 'ss' },
-            { name: 'Kookaburra', slug: 'kookaburra' },
-            { name: 'Gray-Nicolls', slug: 'gray-nicolls' },
-            { name: 'SG', slug: 'sg' },
-            { name: 'MRF', slug: 'mrf' }
-          ]
-        },
-        {
-          title: 'By Player Level',
-          items: [
-            { name: 'Professional', slug: 'professional' },
-            { name: 'Intermediate', slug: 'intermediate' },
-            { name: 'Beginner', slug: 'beginner' }
-          ]
-        }
-      ]
-    },
-    {
-      id: '2',
-      name: 'Cricket Balls',
-      slug: 'cricket-balls',
-      departmentSlug: 'cricket',
-      megaMenu: [
-        {
-          title: 'Shop New Arrivals',
-          items: [
-            { name: 'Leather Balls', slug: 'leather-balls' },
-            { name: 'Tennis Balls', slug: 'tennis-balls' },
-            { name: 'Practice Balls', slug: 'practice-balls' },
-            { name: 'Match Balls', slug: 'match-balls' }
-          ]
-        },
-        {
-          title: 'By Type',
-          items: [
-            { name: 'Test Cricket Balls', slug: 'test-balls' },
-            { name: 'ODI Cricket Balls', slug: 'odi-balls' },
-            { name: 'T20 Cricket Balls', slug: 't20-balls' },
-            { name: 'Indoor Cricket Balls', slug: 'indoor-balls' }
-          ]
-        }
-      ]
-    },
-    {
-      id: '3',
-      name: 'Protective Gear',
-      slug: 'protective-gear',
-      departmentSlug: 'cricket',
-      megaMenu: [
-        {
-          title: 'Shop New Arrivals',
-          items: [
-            { name: 'Batting Pads', slug: 'batting-pads' },
-            { name: 'Batting Gloves', slug: 'batting-gloves' },
-            { name: 'Helmets', slug: 'helmets' },
-            { name: 'Thigh Guards', slug: 'thigh-guards' },
-            { name: 'Chest Guards', slug: 'chest-guards' }
-          ]
-        },
-        {
-          title: 'Wicket Keeping',
-          items: [
-            { name: 'WK Gloves', slug: 'wk-gloves' },
-            { name: 'WK Pads', slug: 'wk-pads' },
-            { name: 'WK Inner Gloves', slug: 'wk-inner-gloves' }
-          ]
-        }
-      ]
-    },
-    {
-      id: '4',
-      name: 'Clothing',
-      slug: 'clothing',
-      departmentSlug: 'cricket',
-      megaMenu: [
-        {
-          title: 'Shop New Arrivals',
-          items: [
-            { name: 'Cricket Jerseys', slug: 'jerseys' },
-            { name: 'Cricket Pants', slug: 'pants' },
-            { name: 'Cricket Shirts', slug: 'shirts' },
-            { name: 'Sweaters', slug: 'sweaters' }
-          ]
-        },
-        {
-          title: 'Collections',
-          items: [
-            { name: 'Team India Collection', slug: 'team-india' },
-            { name: 'IPL Collection', slug: 'ipl' },
-            { name: 'Training Wear', slug: 'training-wear' }
-          ]
-        }
-      ]
-    },
-    {
-      id: '5',
-      name: 'Footwear',
-      slug: 'footwear',
-      departmentSlug: 'cricket',
-      megaMenu: [
-        {
-          title: 'Shop New Arrivals',
-          items: [
-            { name: 'Spikes', slug: 'spikes' },
-            { name: 'Rubber Sole Shoes', slug: 'rubber-sole' },
-            { name: 'Training Shoes', slug: 'training-shoes' }
-          ]
-        }
-      ]
-    },
-    {
-      id: '6',
-      name: 'Accessories',
-      slug: 'accessories',
-      departmentSlug: 'cricket',
-      megaMenu: [
-        {
-          title: 'Shop New Arrivals',
-          items: [
-            { name: 'Cricket Bags', slug: 'bags' },
-            { name: 'Grips', slug: 'grips' },
-            { name: 'Bat Care', slug: 'bat-care' },
-            { name: 'Stumps & Bails', slug: 'stumps-bails' }
-          ]
-        }
-      ]
-    },
-    {
-      id: '7',
-      name: 'Training Equipment',
-      slug: 'training-equipment',
-      departmentSlug: 'cricket',
-      megaMenu: [
-        {
-          title: 'Shop New Arrivals',
-          items: [
-            { name: 'Bowling Machines', slug: 'bowling-machines' },
-            { name: 'Cricket Nets', slug: 'nets' },
-            { name: 'Practice Pitches', slug: 'practice-pitches' },
-            { name: 'Cones & Markers', slug: 'cones-markers' }
-          ]
-        }
-      ]
-    },
-    {
-      id: '8',
-      name: 'Team Kits',
-      slug: 'team-kits',
-      departmentSlug: 'cricket',
-      megaMenu: [
-        {
-          title: 'Shop Team Kits',
-          items: [
-            { name: 'Complete Team Sets', slug: 'complete-sets' },
-            { name: 'Custom Team Jerseys', slug: 'custom-jerseys' },
-            { name: 'Team Accessories', slug: 'team-accessories' }
-          ]
-        }
-      ]
-    }
-    ];
   }
 
   onSearch(): void {
@@ -295,14 +129,36 @@ export class CategoryNavComponent implements OnInit {
   }
 
   onSubCategoryClick(category: Category, subCategory: SubCategory): void {
-    console.log('SubCategory clicked:', category.slug, subCategory.slug);
     this.hoveredCategory.set(null);
-    // TODO: Navigate to subcategory page
+
+    let routePath: string[];
+    const queryParams: any = {};
+
+    // Build route path based on FilterType
+    switch (subCategory.filterType) {
+      case 'BRAND':
+        // For brand filters, use clean URL with brand slug
+        routePath = ['/', category.departmentSlug, category.slug, 'brand', subCategory.slug];
+        break;
+
+      case 'PRICE_RANGE':
+        // For price range filters, use category route with price range in URL
+        const priceRange = `${subCategory.minPrice}-${subCategory.maxPrice}`;
+        routePath = ['/', category.departmentSlug, category.slug, 'price', priceRange];
+        break;
+
+      default:
+        // For regular subcategories, use full route path
+        routePath = ['/', category.departmentSlug, category.slug, subCategory.slug];
+    }
+
+    this.router.navigate(routePath, { queryParams });
   }
 
   getActiveCategory(): Category | undefined {
     const categoryId = this.hoveredCategory();
     if (!categoryId) return undefined;
-    return this.categories.find(cat => cat.id === categoryId);
+    var category = this.categoryDict[categoryId];
+    return category;
   }
 }

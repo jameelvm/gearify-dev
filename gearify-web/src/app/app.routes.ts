@@ -47,6 +47,16 @@ export const routes: Routes = [
   },
   // Catalog navigation routes (slug-based, clean URLs)
   {
+    path: ':departmentSlug/:categorySlug/price/:range',
+    canActivate: [tenantGuard],
+    loadComponent: () => import('./features/products/products-list.component').then(m => m.ProductsListComponent)
+  },
+  {
+    path: ':departmentSlug/:categorySlug/brand/:brandSlug',
+    canActivate: [tenantGuard],
+    loadComponent: () => import('./features/products/products-list.component').then(m => m.ProductsListComponent)
+  },
+  {
     path: ':departmentSlug/:categorySlug/:subcategorySlug',
     canActivate: [tenantGuard],
     loadComponent: () => import('./features/products/products-list.component').then(m => m.ProductsListComponent)

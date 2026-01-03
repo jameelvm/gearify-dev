@@ -99,6 +99,9 @@
           "Slug": {
             "S": "by-brand"
           },
+          "Mapping": {
+            "S": "BRAND"
+          },
           "ShowTitle": {
             "BOOL": true
           },
@@ -147,6 +150,12 @@
           "Slug": {
             "S": "ss"
           },
+          "BrandId": {
+            "S": "a1b2c3d4-e5f6-4a5b-8c9d-1e2f3a4b5c6d"
+          },
+          "FilterType": {
+            "S": "BRAND"
+          },
           "DisplayOrder": {
             "N": "1"
           },
@@ -191,6 +200,12 @@
           },
           "Slug": {
             "S": "mrf"
+          },
+          "BrandId": {
+            "S": "b2c3d4e5-f6a7-4b5c-9d0e-2f3a4b5c6d7e"
+          },
+          "FilterType": {
+            "S": "BRAND"
           },
           "DisplayOrder": {
             "N": "2"
@@ -237,6 +252,12 @@
           "Slug": {
             "S": "sg"
           },
+          "BrandId": {
+            "S": "c3d4e5f6-a7b8-4c5d-0e1f-3a4b5c6d7e8f"
+          },
+          "FilterType": {
+            "S": "BRAND"
+          },
           "DisplayOrder": {
             "N": "3"
           },
@@ -281,6 +302,12 @@
           },
           "Slug": {
             "S": "kookaburra"
+          },
+          "BrandId": {
+            "S": "d4e5f6a7-b8c9-4d5e-1f2a-4b5c6d7e8f9a"
+          },
+          "FilterType": {
+            "S": "BRAND"
           },
           "DisplayOrder": {
             "N": "4"
@@ -327,6 +354,12 @@
           "Slug": {
             "S": "dsc"
           },
+          "BrandId": {
+            "S": "e5f6a7b8-c9d0-4e5f-2a3b-5c6d7e8f9a0b"
+          },
+          "FilterType": {
+            "S": "BRAND"
+          },
           "DisplayOrder": {
             "N": "5"
           },
@@ -368,6 +401,9 @@
           },
           "Slug": {
             "S": "price-range"
+          },
+          "Mapping": {
+            "S": "PRICE_RANGE"
           },
           "ShowTitle": {
             "BOOL": true
@@ -412,10 +448,16 @@
             "S": "default"
           },
           "Name": {
-            "S": "Under \u20b95000"
+            "S": "Under $300"
           },
           "Slug": {
-            "S": "under-5000"
+            "S": "under-300"
+          },
+          "PriceRangeId": {
+            "S": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          },
+          "FilterType": {
+            "S": "PRICE_RANGE"
           },
           "DisplayOrder": {
             "N": "1"
@@ -457,10 +499,16 @@
             "S": "default"
           },
           "Name": {
-            "S": "\u20b95000 - \u20b910000"
+            "S": "$300-$500"
           },
           "Slug": {
-            "S": "5000-10000"
+            "S": "300-500"
+          },
+          "PriceRangeId": {
+            "S": "b2c3d4e5-f6a7-8901-bcde-f12345678901"
+          },
+          "FilterType": {
+            "S": "PRICE_RANGE"
           },
           "DisplayOrder": {
             "N": "2"
@@ -502,10 +550,16 @@
             "S": "default"
           },
           "Name": {
-            "S": "Above \u20b910000"
+            "S": "$500-$1000"
           },
           "Slug": {
-            "S": "above-10000"
+            "S": "500-1000"
+          },
+          "PriceRangeId": {
+            "S": "c3d4e5f6-a7b8-9012-cdef-123456789012"
+          },
+          "FilterType": {
+            "S": "PRICE_RANGE"
           },
           "DisplayOrder": {
             "N": "3"
@@ -621,6 +675,9 @@
           "Slug": {
             "S": "by-brand"
           },
+          "Mapping": {
+            "S": "BRAND"
+          },
           "ShowTitle": {
             "BOOL": true
           },
@@ -680,6 +737,12 @@
           },
           "UpdatedAt": {
             "S": "2025-12-21T00:00:00.000Z"
+          },
+          "BrandId": {
+            "S": "c3d4e5f6-a7b8-4c5d-0e1f-3a4b5c6d7e8f"
+          },
+          "FilterType": {
+            "S": "BRAND"
           }
         }
       }
@@ -725,6 +788,12 @@
           },
           "UpdatedAt": {
             "S": "2025-12-21T00:00:00.000Z"
+          },
+          "BrandId": {
+            "S": "d4e5f6a7-b8c9-4d5e-1f2a-4b5c6d7e8f9a"
+          },
+          "FilterType": {
+            "S": "BRAND"
           }
         }
       }
@@ -770,6 +839,12 @@
           },
           "UpdatedAt": {
             "S": "2025-12-21T00:00:00.000Z"
+          },
+          "BrandId": {
+            "S": "a1b2c3d4-e5f6-4a5b-8c9d-1e2f3a4b5c6d"
+          },
+          "FilterType": {
+            "S": "BRAND"
           }
         }
       }
@@ -815,6 +890,12 @@
           },
           "UpdatedAt": {
             "S": "2025-12-21T00:00:00.000Z"
+          },
+          "BrandId": {
+            "S": "e5f6a7b8-c9d0-4e5f-2a3b-5c6d7e8f9a0b"
+          },
+          "FilterType": {
+            "S": "BRAND"
           }
         }
       }
@@ -932,6 +1013,9 @@
           },
           "UpdatedAt": {
             "S": "2025-12-21T00:00:00.000Z"
+          },
+          "Mapping": {
+            "S": "BRAND"
           }
         }
       }
@@ -977,6 +1061,12 @@
           },
           "UpdatedAt": {
             "S": "2025-12-21T00:00:00.000Z"
+          },
+          "BrandId": {
+            "S": "c3d4e5f6-a7b8-4c5d-0e1f-3a4b5c6d7e8f"
+          },
+          "FilterType": {
+            "S": "BRAND"
           }
         }
       }
@@ -1022,6 +1112,12 @@
           },
           "UpdatedAt": {
             "S": "2025-12-21T00:00:00.000Z"
+          },
+          "BrandId": {
+            "S": "d4e5f6a7-b8c9-4d5e-1f2a-4b5c6d7e8f9a"
+          },
+          "FilterType": {
+            "S": "BRAND"
           }
         }
       }
@@ -1067,6 +1163,12 @@
           },
           "UpdatedAt": {
             "S": "2025-12-21T00:00:00.000Z"
+          },
+          "BrandId": {
+            "S": "a1b2c3d4-e5f6-4a5b-8c9d-1e2f3a4b5c6d"
+          },
+          "FilterType": {
+            "S": "BRAND"
           }
         }
       }
@@ -1184,6 +1286,9 @@
           },
           "UpdatedAt": {
             "S": "2025-12-21T00:00:00.000Z"
+          },
+          "Mapping": {
+            "S": "BRAND"
           }
         }
       }
@@ -1229,6 +1334,12 @@
           },
           "UpdatedAt": {
             "S": "2025-12-21T00:00:00.000Z"
+          },
+          "BrandId": {
+            "S": "c3d4e5f6-a7b8-4c5d-0e1f-3a4b5c6d7e8f"
+          },
+          "FilterType": {
+            "S": "BRAND"
           }
         }
       }

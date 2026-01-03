@@ -14,6 +14,8 @@ export interface SubcategoryDto {
   brandId?: string;
   priceRangeId?: string;
   filterType?: string;
+  minPrice?: number;
+  maxPrice?: number;
   displayOrder: number;
   productCount: number;
   isActive: boolean;

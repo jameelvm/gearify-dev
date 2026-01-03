@@ -49,7 +49,12 @@
       "Bash(python load-catalog-data.py:*)",
       "Bash(bash add-mapping-fields.sh:*)",
       "Bash(bash:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(python:*)",
+      "Bash(timeout /t 5)",
+      "Bash(AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws dynamodb:*)",
+      "Bash(docker restart:*)",
+      "Bash(del \"C:\\\\Gearify\\\\gearify-umbrella\\\\localstack\\\\update-catalog-seed.py\")"
     ]
   }
 }

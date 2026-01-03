@@ -90,17 +90,23 @@ export class ProductsListComponent implements OnInit {
     const departmentSlug = this.route.snapshot.paramMap.get('departmentSlug');
     const categorySlug = this.route.snapshot.paramMap.get('categorySlug');
     const subcategorySlug = this.route.snapshot.paramMap.get('subcategorySlug');
+    const brandSlug = this.route.snapshot.paramMap.get('brandSlug');
+    const range = this.route.snapshot.paramMap.get('range');
 
     console.log('Loading products with filters:', {
       departmentSlug,
       categorySlug,
-      subcategorySlug
+      subcategorySlug,
+      brandSlug,
+      priceRange: range
     });
 
     this.productService.getProductsBySlug({
       departmentSlug,
       categorySlug,
-      subcategorySlug
+      subcategorySlug,
+      brandSlug,
+      priceRange: range
     }).subscribe({
       next: (response) => {
         this.allProducts.set(response.products);
