@@ -67,10 +67,27 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
             queryRequest.ExpressionAttributeValues.Add(":subcatSlug", new AttributeValue { S = request.SubcategorySlug });
         }
 
-        if (!string.IsNullOrEmpty(request.BrandSlug))
+        // Handle multiple brands with IN operator
+        if (request.BrandSlugs != null && request.BrandSlugs.Length > 0)
         {
-            filterExpressions.Add("BrandSlug = :brandSlug");
-            queryRequest.ExpressionAttributeValues.Add(":brandSlug", new AttributeValue { S = request.BrandSlug });
+            if (request.BrandSlugs.Length == 1)
+            {
+                // Single brand - use equality for better performance
+                filterExpressions.Add("BrandSlug = :brand0");
+                queryRequest.ExpressionAttributeValues.Add(":brand0", new AttributeValue { S = request.BrandSlugs[0] });
+            }
+            else
+            {
+                // Multiple brands - use IN operator
+                var brandPlaceholders = new List<string>();
+                for (int i = 0; i < request.BrandSlugs.Length; i++)
+                {
+                    var placeholder = $":brand{i}";
+                    brandPlaceholders.Add(placeholder);
+                    queryRequest.ExpressionAttributeValues.Add(placeholder, new AttributeValue { S = request.BrandSlugs[i] });
+                }
+                filterExpressions.Add($"BrandSlug IN ({string.Join(", ", brandPlaceholders)})");
+            }
         }
 
         if (request.MinPrice.HasValue)
@@ -95,11 +112,27 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
             var response = await _dynamoDb.QueryAsync(queryRequest, cancellationToken);
 
             var products = response.Items.Select(MapToProduct).ToList();
+
+            // Apply sorting if specified
+            if (!string.IsNullOrEmpty(request.SortBy))
+            {
+                products = request.SortBy.ToLower() switch
+                {
+                    "price-asc" or "price: low to high" => products.OrderBy(p => p.Price).ToList(),
+                    "price-desc" or "price: high to low" => products.OrderByDescending(p => p.Price).ToList(),
+                    "rating" or "top rated" => products.OrderByDescending(p => p.RatingAverage ?? 0).ToList(),
+                    "newest" or "newest first" => products.OrderByDescending(p => p.CreatedAt).ToList(),
+                    "name" or "featured items" => products.OrderBy(p => p.Name).ToList(),
+                    _ => products // Default: no sorting
+                };
+            }
+
             var productDtos = products.Select(ProductListDto.FromProduct).ToList();
 
             _logger.LogInformation(
-                "Retrieved {Count} products for tenant {TenantId} with filters: Dept={Dept}, Cat={Cat}, Subcat={Subcat}",
-                products.Count, tenantId, request.DepartmentSlug, request.CategorySlug, request.SubcategorySlug);
+                "Retrieved {Count} products for tenant {TenantId} with filters: Dept={Dept}, Cat={Cat}, Subcat={Subcat}, Brands={Brands}, SortBy={SortBy}",
+                products.Count, tenantId, request.DepartmentSlug, request.CategorySlug, request.SubcategorySlug,
+                request.BrandSlugs != null ? string.Join(",", request.BrandSlugs) : "none", request.SortBy ?? "none");
 
             return new ProductListResponse(productDtos, productDtos.Count);
         }

@@ -1,6 +1,6 @@
 <div class="products-page">
   <!-- Filter Bar -->
-  <app-filter />
+  <app-filter (filtersChanged)="onFiltersChanged($event)" />
 
   <!-- Main Content -->
   <div class="products-container">

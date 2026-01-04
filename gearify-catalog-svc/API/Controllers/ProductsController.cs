@@ -23,31 +23,68 @@ public class ProductsController : ControllerBase
         [FromQuery] string? departmentSlug,
         [FromQuery] string? categorySlug,
         [FromQuery] string? subcategorySlug,
-        [FromQuery] string? brandSlug,
+        [FromQuery] string? brandSlug,          // Single brand from URL route
+        [FromQuery] string[]? brand,             // Multiple brands from dropdown filter
         [FromQuery] string? category,
-        [FromQuery] string? priceRange)
+        [FromQuery] string? priceRange,          // Price range from URL route (e.g., "0-300")
+        [FromQuery] decimal? minPrice,           // Min price from dropdown filter
+        [FromQuery] decimal? maxPrice,           // Max price from dropdown filter
+        [FromQuery] string? sortBy)              // Sort parameter
     {
         try
         {
-            // Parse price range if provided (format: "min-max" e.g., "0-5000")
-            decimal? minPrice = null;
-            decimal? maxPrice = null;
-            if (!string.IsNullOrEmpty(priceRange))
+            // Merge/combine brand slugs from both route and dropdown
+            var allBrandSlugs = new List<string>();
+
+            // Add brand from route (mega menu navigation)
+            if (!string.IsNullOrEmpty(brandSlug))
+                allBrandSlugs.Add(brandSlug);
+
+            // Add brands from dropdown filter
+            if (brand is { Length: > 0 })
+                allBrandSlugs.AddRange(brand);
+
+            // Deduplicate and convert to array (handles case where same brand in both route and dropdown)
+            string[]? brandSlugs = allBrandSlugs.Count > 0
+                ? allBrandSlugs.Distinct().ToArray()
+                : null;
+
+            // Determine price range: dropdown takes priority, otherwise use route
+            decimal? finalMinPrice = null;
+            decimal? finalMaxPrice = null;
+
+            if (minPrice.HasValue || maxPrice.HasValue)
             {
+                // Dropdown has price selections - use them
+                finalMinPrice = minPrice;
+                finalMaxPrice = maxPrice;
+            }
+            else if (!string.IsNullOrEmpty(priceRange))
+            {
+                // No dropdown price - parse route price range
                 var parts = priceRange.Split('-');
                 if (parts.Length == 2)
                 {
                     if (decimal.TryParse(parts[0], out var min))
-                        minPrice = min;
+                        finalMinPrice = min;
                     if (decimal.TryParse(parts[1], out var max))
-                        maxPrice = max;
+                        finalMaxPrice = max;
                 }
             }
 
             // If any slug parameters are provided, use slug-based query
-            if (!string.IsNullOrEmpty(departmentSlug) || !string.IsNullOrEmpty(categorySlug) || !string.IsNullOrEmpty(subcategorySlug) || !string.IsNullOrEmpty(brandSlug) || minPrice.HasValue || maxPrice.HasValue)
+            if (!string.IsNullOrEmpty(departmentSlug) || !string.IsNullOrEmpty(categorySlug) ||
+                !string.IsNullOrEmpty(subcategorySlug) || brandSlugs != null ||
+                finalMinPrice.HasValue || finalMaxPrice.HasValue)
             {
-                var result = await _mediator.Send(new GetProductsBySlugQuery(departmentSlug, categorySlug, subcategorySlug, brandSlug, minPrice, maxPrice));
+                var result = await _mediator.Send(new GetProductsBySlugQuery(
+                    departmentSlug,
+                    categorySlug,
+                    subcategorySlug,
+                    brandSlugs,
+                    finalMinPrice,
+                    finalMaxPrice,
+                    sortBy));
                 return Ok(result);
             }
 

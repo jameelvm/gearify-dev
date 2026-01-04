@@ -1,4 +1,4 @@
-import { Component, signal, computed, OnInit, inject } from '@angular/core';
+import { Component, signal, computed, OnInit, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -13,7 +13,7 @@ import {
 } from '@app/ui-kit/components';
 import { PageChangeEvent } from '@app/ui-kit/components/pagination/pagination.component';
 import { SelectOption } from '@app/ui-kit/components/select/select.component';
-import { FilterComponent } from '../product/filter/filter.component';
+import { FilterComponent, ProductFilters } from '../product/filter/filter.component';
 import { ProductService } from '@core/services/product.service';
 
 export type ViewMode = 'grid' | 'list';
@@ -48,6 +48,9 @@ export class ProductsListComponent implements OnInit {
   private productService = inject(ProductService);
   private route = inject(ActivatedRoute);
 
+  // Reference to filter component to clear selections on route change
+  @ViewChild(FilterComponent) filterComponent?: FilterComponent;
+
   // Loading and error states
   isLoading = signal<boolean>(true);
   error = signal<string | null>(null);
@@ -59,6 +62,9 @@ export class ProductsListComponent implements OnInit {
   selectedBrand = signal<string>('');
   priceRange = signal<PriceRange>({ min: 0, max: 10000 });
   sortField = signal<SortField>('newest');
+
+  // Dropdown filters from filter component
+  private dropdownFilters = signal<ProductFilters | null>(null);
 
   // Pagination state
   currentPage = signal<number>(1);
@@ -75,6 +81,16 @@ export class ProductsListComponent implements OnInit {
 
     // Listen to route parameter changes (when navigating between subcategories)
     this.route.params.subscribe(() => {
+      // Clear dropdown filters when route changes (mega menu navigation)
+      this.dropdownFilters.set(null);
+
+      // Sync filter component with route parameters (auto-select brand/price from URL)
+      if (this.filterComponent) {
+        const brandSlug = this.route.snapshot.paramMap.get('brandSlug');
+        const range = this.route.snapshot.paramMap.get('range');
+        this.filterComponent.initializeFromRoute(brandSlug, range);
+      }
+
       this.loadProducts();
     });
   }
@@ -93,21 +109,32 @@ export class ProductsListComponent implements OnInit {
     const brandSlug = this.route.snapshot.paramMap.get('brandSlug');
     const range = this.route.snapshot.paramMap.get('range');
 
-    console.log('Loading products with filters:', {
-      departmentSlug,
-      categorySlug,
-      subcategorySlug,
-      brandSlug,
-      priceRange: range
-    });
+    // Get dropdown filters
+    const dropdownFilters = this.dropdownFilters();
 
-    this.productService.getProductsBySlug({
+    // Send both route and dropdown filters - backend will merge/combine them
+    const requestFilters = {
       departmentSlug,
       categorySlug,
       subcategorySlug,
-      brandSlug,
-      priceRange: range
-    }).subscribe({
+      // Send route brandSlug (from mega menu navigation)
+      brandSlug: brandSlug,
+      // Send dropdown brand selections (backend will merge with brandSlug)
+      brandSlugs: dropdownFilters?.brands && dropdownFilters.brands.length > 0
+        ? dropdownFilters.brands
+        : undefined,
+      // Dropdown price takes priority, otherwise send route price range
+      minPrice: dropdownFilters?.minPrice,
+      maxPrice: dropdownFilters?.maxPrice,
+      priceRange: (dropdownFilters?.minPrice === undefined && dropdownFilters?.maxPrice === undefined)
+        ? range
+        : undefined,
+      sortBy: dropdownFilters?.sortBy
+    };
+
+    console.log('[ProductsListComponent] Loading products with filters:', requestFilters);
+
+    this.productService.getProductsBySlug(requestFilters).subscribe({
       next: (response) => {
         this.allProducts.set(response.products);
         this.isLoading.set(false);
@@ -307,6 +334,24 @@ export class ProductsListComponent implements OnInit {
     this.selectedBrand.set('');
     this.priceRange.set({ min: 0, max: 10000 });
     this.currentPage.set(1);
+    this.dropdownFilters.set(null);
+
+    // Clear filter component UI state (no route params)
+    if (this.filterComponent) {
+      this.filterComponent.initializeFromRoute(null, null);
+    }
+
+    this.loadProducts();
+  }
+
+  /**
+   * Handle filter changes from filter component dropdown
+   */
+  onFiltersChanged(filters: ProductFilters): void {
+    console.log('[ProductsListComponent] Filters changed:', filters);
+    this.dropdownFilters.set(filters);
+    this.currentPage.set(1); // Reset to first page when filters change
+    this.loadProducts();
   }
 
   /**

@@ -9,9 +9,10 @@ public record GetProductsBySlugQuery(
     string? DepartmentSlug,
     string? CategorySlug,
     string? SubcategorySlug,
-    string? BrandSlug,
+    string[]? BrandSlugs,  // Changed from single BrandSlug to array
     decimal? MinPrice,
-    decimal? MaxPrice
+    decimal? MaxPrice,
+    string? SortBy = null  // New parameter for sorting
 ) : IRequest<ProductListResponse>;
 
 public record ProductListResponse(List<ProductListDto> Products, int Total);

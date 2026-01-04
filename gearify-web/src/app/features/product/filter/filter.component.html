@@ -52,7 +52,11 @@
             <!-- Brands List -->
             <div class="checkbox-list" *ngIf="!brandsLoading() && !brandsError()">
               <label class="checkbox-item" *ngFor="let brand of filteredBrands">
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  [checked]="isBrandSelected(brand.slug)"
+                  (change)="toggleBrand(brand.slug)"
+                />
                 <span class="checkbox-label">{{ brand.name }}</span>
                 <span class="checkbox-count" *ngIf="brand.productCount">({{ brand.productCount }})</span>
               </label>
@@ -61,7 +65,7 @@
 
           <!-- Bottom Clear Button -->
           <div class="dropdown-actions">
-            <button class="action-btn action-clear-solo">Clear</button>
+            <button class="action-btn action-clear-solo" (click)="clearBrands()">Clear</button>
           </div>
         </div>
       </ng-container>
@@ -100,7 +104,12 @@
           <!-- Price Ranges -->
           <div class="checkbox-list" *ngIf="!priceRangesLoading() && !priceRangesError()">
             <label class="checkbox-item" *ngFor="let range of priceRanges()">
-              <input type="checkbox" />
+              <input
+                type="radio"
+                name="priceRange"
+                [checked]="selectedPriceRange()?.id === range.id"
+                (change)="selectPriceRange(range)"
+              />
               <span class="checkbox-label">{{ range.label }}</span>
               <span class="checkbox-count">({{ range.productCount }})</span>
             </label>
@@ -123,13 +132,13 @@
                 [(ngModel)]="customPriceMax"
                 class="range-input"
               />
-              <button class="range-go-btn">Go</button>
+              <button class="range-go-btn" (click)="applyCustomPrice()">Go</button>
             </div>
           </div>
 
           <!-- Bottom Clear Button -->
           <div class="dropdown-actions">
-            <button class="action-btn action-clear-solo">Clear</button>
+            <button class="action-btn action-clear-solo" (click)="clearPriceRange()">Clear</button>
           </div>
         </div>
       </ng-container>
@@ -175,7 +184,7 @@
     <!-- Sort Dropdown -->
     <div class="sort-dropdown">
       <label class="sort-label">Sort by</label>
-      <select class="sort-select" [(ngModel)]="selectedSort">
+      <select class="sort-select" [(ngModel)]="selectedSort" (change)="onSortChange(selectedSort)">
         <option *ngFor="let option of sortOptions" [value]="option">
           {{ option }}
         </option>
