@@ -1,6 +1,16 @@
 <div class="category-nav" (mouseleave)="onCategoryLeave()">
   <div class="category-nav-container">
     <div class="categories">
+      <!-- Loading Skeleton -->
+      <ng-container *ngIf="isLoading()">
+        <div class="category-wrapper" *ngFor="let item of [1,2,3,4,5]">
+          <div class="category-link skeleton-loader">
+            <div class="skeleton-text"></div>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Actual Categories -->
       <div
         *ngFor="let category of categories"
         class="category-wrapper"
