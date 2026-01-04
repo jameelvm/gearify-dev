@@ -1,3 +1,4 @@
+using Gearify.CatalogService.API.Builders;
 using Gearify.CatalogService.Application.Commands;
 using Gearify.CatalogService.Application.Queries;
 using MediatR;
@@ -33,58 +34,25 @@ public class ProductsController : ControllerBase
     {
         try
         {
-            // Merge/combine brand slugs from both route and dropdown
-            var allBrandSlugs = new List<string>();
+            // Use builder to construct query from route and dropdown parameters
+            var query = ProductFilterBuilder.Build(
+                departmentSlug,
+                categorySlug,
+                subcategorySlug,
+                brandSlug,
+                brand,
+                priceRange,
+                minPrice,
+                maxPrice,
+                sortBy
+            );
 
-            // Add brand from route (mega menu navigation)
-            if (!string.IsNullOrEmpty(brandSlug))
-                allBrandSlugs.Add(brandSlug);
-
-            // Add brands from dropdown filter
-            if (brand is { Length: > 0 })
-                allBrandSlugs.AddRange(brand);
-
-            // Deduplicate and convert to array (handles case where same brand in both route and dropdown)
-            string[]? brandSlugs = allBrandSlugs.Count > 0
-                ? allBrandSlugs.Distinct().ToArray()
-                : null;
-
-            // Determine price range: dropdown takes priority, otherwise use route
-            decimal? finalMinPrice = null;
-            decimal? finalMaxPrice = null;
-
-            if (minPrice.HasValue || maxPrice.HasValue)
-            {
-                // Dropdown has price selections - use them
-                finalMinPrice = minPrice;
-                finalMaxPrice = maxPrice;
-            }
-            else if (!string.IsNullOrEmpty(priceRange))
-            {
-                // No dropdown price - parse route price range
-                var parts = priceRange.Split('-');
-                if (parts.Length == 2)
-                {
-                    if (decimal.TryParse(parts[0], out var min))
-                        finalMinPrice = min;
-                    if (decimal.TryParse(parts[1], out var max))
-                        finalMaxPrice = max;
-                }
-            }
-
-            // If any slug parameters are provided, use slug-based query
+            // If any filter parameters are provided, use slug-based query
             if (!string.IsNullOrEmpty(departmentSlug) || !string.IsNullOrEmpty(categorySlug) ||
-                !string.IsNullOrEmpty(subcategorySlug) || brandSlugs != null ||
-                finalMinPrice.HasValue || finalMaxPrice.HasValue)
+                !string.IsNullOrEmpty(subcategorySlug) || query.BrandSlugs != null ||
+                query.MinPrice.HasValue || query.MaxPrice.HasValue)
             {
-                var result = await _mediator.Send(new GetProductsBySlugQuery(
-                    departmentSlug,
-                    categorySlug,
-                    subcategorySlug,
-                    brandSlugs,
-                    finalMinPrice,
-                    finalMaxPrice,
-                    sortBy));
+                var result = await _mediator.Send(query);
                 return Ok(result);
             }
 
