@@ -26,7 +26,6 @@ public class ProductsController : ControllerBase
         [FromQuery] string? subcategorySlug,
         [FromQuery] string? brandSlug,          // Single brand from URL route
         [FromQuery] string[]? brand,             // Multiple brands from dropdown filter
-        [FromQuery] string? category,
         [FromQuery] string? priceRange,          // Price range from URL route (e.g., "0-300")
         [FromQuery] decimal? minPrice,           // Min price from dropdown filter
         [FromQuery] decimal? maxPrice,           // Max price from dropdown filter
@@ -56,12 +55,9 @@ public class ProductsController : ControllerBase
                 return Ok(result);
             }
 
-            // Legacy query param support - wrap in ProductListResponse
-            var products = string.IsNullOrEmpty(category)
-                ? await _mediator.Send(new GetAllProductsQuery())
-                : await _mediator.Send(new GetProductsByCategoryQuery(category));
-
-            var response = new ProductListResponse(products, products.Count);
+            // No filters provided - return all products
+            var allProducts = await _mediator.Send(new GetAllProductsQuery());
+            var response = new ProductListResponse(allProducts, allProducts.Count);
             return Ok(response);
         }
         catch (Exception ex)
