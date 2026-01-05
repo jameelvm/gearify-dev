@@ -115,7 +115,8 @@ export class ProductsListComponent implements OnInit {
     // Send both route and dropdown filters - backend will merge/combine them
     const requestFilters = {
       departmentSlug,
-      categorySlug,
+      // Only pass categorySlug if it's not being used as collectionId
+      categorySlug: subcategorySlug || brandSlug || range ? categorySlug : undefined,
       subcategorySlug,
       // Send route brandSlug (from mega menu navigation)
       brandSlug: brandSlug,
@@ -129,7 +130,9 @@ export class ProductsListComponent implements OnInit {
       priceRange: (dropdownFilters?.minPrice === undefined && dropdownFilters?.maxPrice === undefined)
         ? range
         : undefined,
-      sortBy: dropdownFilters?.sortBy
+      sortBy: dropdownFilters?.sortBy,
+      // Pass categorySlug as collectionId - backend will check if it's a valid special collection
+      collectionId: categorySlug
     };
 
     console.log('[ProductsListComponent] Loading products with filters:', requestFilters);

@@ -242,6 +242,13 @@ awslocal dynamodb batch-write-item \
   --region us-east-1 \
   2>/dev/null || echo "    Failed to seed acme-corp products"
 
+# Seed special collections products for testing
+echo "  - Seeding special collections test products"
+awslocal dynamodb batch-write-item \
+  --request-items file://${CONFIG_DIR}/dynamodb/data/products-special-collections.json \
+  --region us-east-1 \
+  2>/dev/null || echo "    Failed to seed special collections products"
+
 # Seed tenants
 echo "  - Seeding tenants"
 awslocal dynamodb batch-write-item \
@@ -295,6 +302,13 @@ awslocal dynamodb batch-write-item \
   --request-items file://${CONFIG_DIR}/dynamodb/data/catalog-default-tenant-batch-3.json \
   --region us-east-1 \
   2>/dev/null || echo "    Failed to seed catalog batch 3"
+
+# Seed special collections for default tenant
+echo "  - Seeding special collections for default tenant"
+awslocal dynamodb batch-write-item \
+  --request-items file://${CONFIG_DIR}/dynamodb/data/special-collections-default-tenant.json \
+  --region us-east-1 \
+  2>/dev/null || echo "    Failed to seed special collections"
 
 echo "DynamoDB data seeded successfully!"
 

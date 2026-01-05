@@ -29,7 +29,8 @@ public class ProductsController : ControllerBase
         [FromQuery] string? priceRange,          // Price range from URL route (e.g., "0-300")
         [FromQuery] decimal? minPrice,           // Min price from dropdown filter
         [FromQuery] decimal? maxPrice,           // Max price from dropdown filter
-        [FromQuery] string? sortBy)              // Sort parameter
+        [FromQuery] string? sortBy,              // Sort parameter
+        [FromQuery] string? collectionId = null) // Special collection ID (deals, clearance, etc.)
     {
         try
         {
@@ -43,13 +44,14 @@ public class ProductsController : ControllerBase
                 priceRange,
                 minPrice,
                 maxPrice,
-                sortBy
+                sortBy,
+                collectionId
             );
 
             // If any filter parameters are provided, use slug-based query
             if (!string.IsNullOrEmpty(departmentSlug) || !string.IsNullOrEmpty(categorySlug) ||
                 !string.IsNullOrEmpty(subcategorySlug) || query.BrandSlugs != null ||
-                query.MinPrice.HasValue || query.MaxPrice.HasValue)
+                query.MinPrice.HasValue || query.MaxPrice.HasValue || !string.IsNullOrEmpty(query.CollectionId))
             {
                 var result = await _mediator.Send(query);
                 return Ok(result);

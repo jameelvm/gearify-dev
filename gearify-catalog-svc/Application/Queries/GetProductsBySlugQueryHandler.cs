@@ -102,6 +102,32 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
             queryRequest.ExpressionAttributeValues.Add(":maxPrice", new AttributeValue { N = request.MaxPrice.Value.ToString() });
         }
 
+        // Filter by special collection (deals, clearance, etc.)
+        if (!string.IsNullOrEmpty(request.CollectionId))
+        {
+            var collection = await GetCollectionConfig(request.CollectionId, cancellationToken);
+
+            if (collection != null)
+            {
+                if (collection.FilterType == "Common")
+                {
+                    // Filter on top-level boolean field (optimized for performance)
+                    filterExpressions.Add($"{collection.FilterAttribute} = :collectionValue");
+                }
+                else // Custom
+                {
+                    // Filter on CustomCollections map
+                    filterExpressions.Add($"CustomCollections.{collection.FilterAttribute} = :collectionValue");
+                }
+
+                queryRequest.ExpressionAttributeValues.Add(":collectionValue", new AttributeValue { BOOL = true });
+            }
+            else
+            {
+                _logger.LogWarning("Collection {CollectionId} not found for tenant {TenantId}", request.CollectionId, tenantId);
+            }
+        }
+
         if (filterExpressions.Any())
         {
             queryRequest.FilterExpression = string.Join(" AND ", filterExpressions);
@@ -170,11 +196,68 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
             ThumbnailUrl = item.TryGetValue("ThumbnailUrl", out var thumbnailUrl) ? thumbnailUrl.S : null,
             ImageUrls = item.TryGetValue("ImageUrls", out var images) ? images.SS : new List<string>(),
             Tags = item.TryGetValue("Tags", out var tags) ? tags.SS : new List<string>(),
+            // Product attributes
+            IsDeal = item.TryGetValue("IsDeal", out var isDeal) && isDeal.BOOL,
+            IsClearance = item.TryGetValue("IsClearance", out var isClearance) && isClearance.BOOL,
+            IsNewArrival = item.TryGetValue("IsNewArrival", out var isNewArrival) && isNewArrival.BOOL,
+            IsBestSeller = item.TryGetValue("IsBestSeller", out var isBestSeller) && isBestSeller.BOOL,
+            IsFeatured = item.TryGetValue("IsFeatured", out var isFeatured) && isFeatured.BOOL,
+            DealStartDate = item.TryGetValue("DealStartDate", out var dealStart) ? DateTime.Parse(dealStart.S) : null,
+            DealEndDate = item.TryGetValue("DealEndDate", out var dealEnd) ? DateTime.Parse(dealEnd.S) : null,
+            CustomCollections = item.TryGetValue("CustomCollections", out var customColl) && customColl.M != null
+                ? customColl.M.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.BOOL)
+                : new Dictionary<string, bool>(),
             IsActive = item.TryGetValue("IsActive", out var active) && active.BOOL,
             CreatedAt = item.TryGetValue("CreatedAt", out var created) ? DateTime.Parse(created.S) : DateTime.UtcNow,
             UpdatedAt = item.TryGetValue("UpdatedAt", out var updated) ? DateTime.Parse(updated.S) : DateTime.UtcNow,
             CreatedBy = item.TryGetValue("CreatedBy", out var createdBy) ? createdBy.S : string.Empty,
             UpdatedBy = item.TryGetValue("UpdatedBy", out var updatedBy) ? updatedBy.S : string.Empty
         };
+    }
+
+    private async Task<SpecialCollectionDto?> GetCollectionConfig(string collectionId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var getRequest = new GetItemRequest
+            {
+                TableName = _tableName,
+                Key = new Dictionary<string, AttributeValue>
+                {
+                    { "PK", new AttributeValue { S = $"TENANT#{_tenantContext.TenantId}" } },
+                    { "SK", new AttributeValue { S = "SPECIAL_COLLECTIONS" } }
+                }
+            };
+
+            var response = await _dynamoDb.GetItemAsync(getRequest, cancellationToken);
+
+            if (!response.IsItemSet || !response.Item.TryGetValue("Collections", out var collectionsAttr))
+            {
+                return null;
+            }
+
+            // Find the matching collection by ID
+            foreach (var collectionAttr in collectionsAttr.L)
+            {
+                if (collectionAttr.M == null) continue;
+
+                if (collectionAttr.M.TryGetValue("Id", out var id) && id.S == collectionId)
+                {
+                    return new SpecialCollectionDto
+                    {
+                        Id = id.S,
+                        FilterAttribute = collectionAttr.M.TryGetValue("FilterAttribute", out var filterAttr) ? filterAttr.S : string.Empty,
+                        FilterType = collectionAttr.M.TryGetValue("FilterType", out var filterType) ? filterType.S : "Common"
+                    };
+                }
+            }
+
+            return null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching collection config for {CollectionId}", collectionId);
+            return null;
+        }
     }
 }

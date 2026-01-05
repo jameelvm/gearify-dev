@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CategoryService } from '@core/services/category.service';
+import { SpecialCollectionsService, SpecialCollectionDto } from '@core/services/special-collections.service';
+import { forkJoin } from 'rxjs';
 
 export interface SubCategory {
   name: string;
@@ -38,6 +40,7 @@ export interface Category {
 })
 export class CategoryNavComponent implements OnInit {
   private categoryService = inject(CategoryService);
+  private specialCollectionsService = inject(SpecialCollectionsService);
   private router = inject(Router);
 
   searchQuery = signal('');
@@ -48,6 +51,7 @@ export class CategoryNavComponent implements OnInit {
 
   categories: Category[] = [];
   categoryDict: Record<string, Category> = {};
+  specialCollections = signal<SpecialCollectionDto[]>([]);
 
   ngOnInit(): void {
     // Only load categories if not on auth or tenant-not-found pages
@@ -63,19 +67,22 @@ export class CategoryNavComponent implements OnInit {
     this.isLoading.set(true);
     this.error.set(null);
 
-    this.categoryService.getMegaMenuData().subscribe({
-      next: (megaMenu) => {
+    // Fetch both mega menu data and special collections in parallel
+    forkJoin({
+      megaMenu: this.categoryService.getMegaMenuData(),
+      specialCollections: this.specialCollectionsService.getSpecialCollections()
+    }).subscribe({
+      next: ({ megaMenu, specialCollections }) => {
+        // Store special collections
+        this.specialCollections.set(specialCollections.collections);
+
         // Extract categories from departments and preserve department slug for routing
         // For single-department tenants, get categories from the first department
         // For multi-department, this would need UI to select department
-        this.categories = megaMenu.departments.flatMap(dept =>
-          dept.categories.map(item => ({
-            id: item.category.id,
-            name: item.category.name,
-            slug: item.category.slug,
-            icon: item.category.icon,
-            departmentSlug: dept.slug, // Preserve department slug for clean URL routing
-            megaMenu: item.sections.map(section => ({
+        const regularCategories = megaMenu.departments.flatMap(dept =>
+          dept.categories.map(item => {
+            // Build category sections from mega menu data
+            const sections = item.sections.map(section => ({
               title: section.title,
               showTitle: section.showTitle,
               items: section.items.map(subCategory => ({
@@ -87,9 +94,44 @@ export class CategoryNavComponent implements OnInit {
                 priceRangeId: subCategory.priceRangeId,
                 filterType: subCategory.filterType
               }))
-            }))
-          }))
+            }));
+
+            return {
+              id: item.category.id,
+              name: item.category.name,
+              slug: item.category.slug,
+              icon: item.category.icon,
+              departmentSlug: dept.slug,
+              megaMenu: sections
+            };
+          })
         );
+
+        // Create independent "Deals" menu item with special collections
+        const dealsCategory: Category[] = specialCollections.collections.length > 0 && megaMenu.departments.length > 0
+          ? [{
+              id: 'deals',
+              name: 'Deals',
+              slug: 'deals',
+              icon: '🔥',
+              departmentSlug: megaMenu.departments[0].slug,
+              megaMenu: [{
+                title: 'Special Collections',
+                showTitle: false,
+                items: specialCollections.collections.map(collection => ({
+                  name: `${collection.icon} ${collection.label}`,
+                  slug: collection.id,
+                  filterType: 'SPECIAL_COLLECTION',
+                  minPrice: undefined,
+                  maxPrice: undefined,
+                  brandId: undefined,
+                  priceRangeId: undefined
+                }))
+              }]
+            }]
+          : [];
+
+        this.categories = [...regularCategories, ...dealsCategory];
 
         this.categoryDict = this.categories.reduce((acc, category) => {
           acc[category.id] = category;
@@ -99,8 +141,8 @@ export class CategoryNavComponent implements OnInit {
         this.isLoading.set(false);
       },
       error: (err) => {
-        console.error('Failed to load categories:', err);
-        this.error.set('Failed to load categories');
+        console.error('Failed to load menu data:', err);
+        this.error.set('Failed to load menu');
         this.isLoading.set(false);
         // Fallback to empty array or show error message
       }
@@ -145,6 +187,11 @@ export class CategoryNavComponent implements OnInit {
         // For price range filters, use category route with price range in URL
         const priceRange = `${subCategory.minPrice}-${subCategory.maxPrice}`;
         routePath = ['/', category.departmentSlug, category.slug, 'price', priceRange];
+        break;
+
+      case 'SPECIAL_COLLECTION':
+        // For special collections, use department/collection route
+        routePath = ['/', category.departmentSlug, subCategory.slug];
         break;
 
       default:

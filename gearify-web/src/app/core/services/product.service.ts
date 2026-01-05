@@ -15,6 +15,7 @@ export interface ProductFilters {
   minPrice?: number;
   maxPrice?: number;
   sortBy?: string;
+  collectionId?: string | null;  // Special collection filter (deals, clearance, etc.)
 }
 
 export interface ProductListResponse {
@@ -68,6 +69,10 @@ export class ProductService {
 
     if (filters.sortBy) {
       params = params.set('sortBy', filters.sortBy);
+    }
+
+    if (filters.collectionId) {
+      params = params.set('collectionId', filters.collectionId);
     }
 
     return this.http.get<ProductListResponse>(API_CONFIG.ENDPOINTS.PRODUCTS, params);

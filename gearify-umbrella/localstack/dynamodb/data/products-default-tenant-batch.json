@@ -75,6 +75,27 @@
           "RatingCount": {
             "N": "28"
           },
+          "IsDeal": {
+            "BOOL": true
+          },
+          "DealStartDate": {
+            "S": "2026-01-01T00:00:00.000Z"
+          },
+          "DealEndDate": {
+            "S": "2026-01-15T00:00:00.000Z"
+          },
+          "IsClearance": {
+            "BOOL": false
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": false
+          },
+          "IsFeatured": {
+            "BOOL": false
+          },
           "IsActive": {
             "BOOL": true
           },
@@ -169,6 +190,21 @@
           },
           "RatingCount": {
             "N": "45"
+          },
+          "IsDeal": {
+            "BOOL": false
+          },
+          "IsClearance": {
+            "BOOL": false
+          },
+          "IsNewArrival": {
+            "BOOL": true
+          },
+          "IsBestSeller": {
+            "BOOL": false
+          },
+          "IsFeatured": {
+            "BOOL": false
           },
           "IsActive": {
             "BOOL": true
@@ -267,6 +303,21 @@
           },
           "RatingCount": {
             "N": "67"
+          },
+          "IsDeal": {
+            "BOOL": false
+          },
+          "IsClearance": {
+            "BOOL": false
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": true
+          },
+          "IsFeatured": {
+            "BOOL": true
           },
           "IsActive": {
             "BOOL": true
@@ -653,6 +704,21 @@
           "RatingCount": {
             "N": "41"
           },
+          "IsDeal": {
+            "BOOL": false
+          },
+          "IsClearance": {
+            "BOOL": false
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": true
+          },
+          "IsFeatured": {
+            "BOOL": true
+          },
           "IsActive": {
             "BOOL": true
           },
@@ -747,6 +813,21 @@
           },
           "RatingCount": {
             "N": "56"
+          },
+          "IsDeal": {
+            "BOOL": false
+          },
+          "IsClearance": {
+            "BOOL": true
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": false
+          },
+          "IsFeatured": {
+            "BOOL": false
           },
           "IsActive": {
             "BOOL": true
@@ -1227,6 +1308,21 @@
           },
           "RatingCount": {
             "N": "95"
+          },
+          "IsDeal": {
+            "BOOL": false
+          },
+          "IsClearance": {
+            "BOOL": false
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": true
+          },
+          "IsFeatured": {
+            "BOOL": true
           },
           "IsActive": {
             "BOOL": true
@@ -1804,6 +1900,21 @@
           "RatingCount": {
             "N": "58"
           },
+          "IsDeal": {
+            "BOOL": false
+          },
+          "IsClearance": {
+            "BOOL": false
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": false
+          },
+          "IsFeatured": {
+            "BOOL": true
+          },
           "IsActive": {
             "BOOL": true
           },
@@ -2188,6 +2299,21 @@
           "RatingCount": {
             "N": "52"
           },
+          "IsDeal": {
+            "BOOL": false
+          },
+          "IsClearance": {
+            "BOOL": false
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": false
+          },
+          "IsFeatured": {
+            "BOOL": true
+          },
           "IsActive": {
             "BOOL": true
           },
@@ -2377,6 +2503,21 @@
           },
           "RatingCount": {
             "N": "73"
+          },
+          "IsDeal": {
+            "BOOL": false
+          },
+          "IsClearance": {
+            "BOOL": true
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": false
+          },
+          "IsFeatured": {
+            "BOOL": false
           },
           "IsActive": {
             "BOOL": true

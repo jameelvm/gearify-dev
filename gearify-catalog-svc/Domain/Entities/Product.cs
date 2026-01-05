@@ -45,6 +45,20 @@ public class Product
     // Primary image URL for list views (thumbnail variant for performance)
     public string? ThumbnailUrl { get; set; }
 
+    // Common product classification attributes (optimized for frequent queries)
+    // Used by most tenants - indexed at top level for performance
+    public bool IsDeal { get; set; } = false;              // Product is on deal/promotion
+    public bool IsClearance { get; set; } = false;         // Product is on clearance
+    public bool IsNewArrival { get; set; } = false;        // Recently added product
+    public bool IsBestSeller { get; set; } = false;        // Popular/best-selling product
+    public bool IsFeatured { get; set; } = false;          // Featured/highlighted product
+    public DateTime? DealStartDate { get; set; }           // When deal starts (null = no deal)
+    public DateTime? DealEndDate { get; set; }             // When deal expires (null = indefinite)
+
+    // Tenant-specific custom collections (flexible for unique business needs)
+    // Examples: "organic", "vegan", "eco-friendly", "halal", "gift-set", "limited-edition"
+    public Dictionary<string, bool> CustomCollections { get; set; } = new();
+
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;

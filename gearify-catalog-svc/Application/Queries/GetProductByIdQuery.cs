@@ -12,7 +12,12 @@ public record GetProductsBySlugQuery(
     string[]? BrandSlugs,  // Changed from single BrandSlug to array
     decimal? MinPrice,
     decimal? MaxPrice,
-    string? SortBy = null  // New parameter for sorting
+    string? SortBy = null,  // Sorting parameter
+    string? CollectionId = null     // Special collection filter (deals, clearance, new-arrivals, etc.)
 ) : IRequest<ProductListResponse>;
 
 public record ProductListResponse(List<ProductListDto> Products, int Total);
+
+public record GetSpecialCollectionsQuery() : IRequest<SpecialCollectionsResponse>;
+
+public record SpecialCollectionsResponse(List<SpecialCollectionDto> Collections);

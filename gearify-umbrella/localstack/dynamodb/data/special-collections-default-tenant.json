@@ -1,0 +1,190 @@
+{
+  "gearify-catalog": [
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "SPECIAL_COLLECTIONS"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#CONFIG"
+          },
+          "GSI1SK": {
+            "S": "SPECIAL_COLLECTIONS"
+          },
+          "Collections": {
+            "L": [
+              {
+                "M": {
+                  "Id": {
+                    "S": "deals"
+                  },
+                  "Label": {
+                    "S": "Deals & Offers"
+                  },
+                  "Icon": {
+                    "S": "🔥"
+                  },
+                  "FilterAttribute": {
+                    "S": "IsDeal"
+                  },
+                  "FilterType": {
+                    "S": "Common"
+                  },
+                  "DisplayOrder": {
+                    "N": "1"
+                  },
+                  "IsActive": {
+                    "BOOL": true
+                  },
+                  "BadgeText": {
+                    "S": "Hot"
+                  },
+                  "BadgeColor": {
+                    "S": "red"
+                  },
+                  "Description": {
+                    "S": "Limited time deals and special offers"
+                  }
+                }
+              },
+              {
+                "M": {
+                  "Id": {
+                    "S": "clearance"
+                  },
+                  "Label": {
+                    "S": "Clearance Sale"
+                  },
+                  "Icon": {
+                    "S": "🏷️"
+                  },
+                  "FilterAttribute": {
+                    "S": "IsClearance"
+                  },
+                  "FilterType": {
+                    "S": "Common"
+                  },
+                  "DisplayOrder": {
+                    "N": "2"
+                  },
+                  "IsActive": {
+                    "BOOL": true
+                  },
+                  "BadgeText": {
+                    "S": "Save"
+                  },
+                  "BadgeColor": {
+                    "S": "orange"
+                  },
+                  "Description": {
+                    "S": "Clearance items at discounted prices"
+                  }
+                }
+              },
+              {
+                "M": {
+                  "Id": {
+                    "S": "new-arrivals"
+                  },
+                  "Label": {
+                    "S": "New Arrivals"
+                  },
+                  "Icon": {
+                    "S": "✨"
+                  },
+                  "FilterAttribute": {
+                    "S": "IsNewArrival"
+                  },
+                  "FilterType": {
+                    "S": "Common"
+                  },
+                  "DisplayOrder": {
+                    "N": "3"
+                  },
+                  "IsActive": {
+                    "BOOL": true
+                  },
+                  "BadgeText": {
+                    "S": "New"
+                  },
+                  "BadgeColor": {
+                    "S": "green"
+                  },
+                  "Description": {
+                    "S": "Recently added products"
+                  }
+                }
+              },
+              {
+                "M": {
+                  "Id": {
+                    "S": "best-sellers"
+                  },
+                  "Label": {
+                    "S": "Best Sellers"
+                  },
+                  "Icon": {
+                    "S": "⭐"
+                  },
+                  "FilterAttribute": {
+                    "S": "IsBestSeller"
+                  },
+                  "FilterType": {
+                    "S": "Common"
+                  },
+                  "DisplayOrder": {
+                    "N": "4"
+                  },
+                  "IsActive": {
+                    "BOOL": true
+                  },
+                  "Description": {
+                    "S": "Most popular products"
+                  }
+                }
+              },
+              {
+                "M": {
+                  "Id": {
+                    "S": "featured"
+                  },
+                  "Label": {
+                    "S": "Featured"
+                  },
+                  "Icon": {
+                    "S": "👑"
+                  },
+                  "FilterAttribute": {
+                    "S": "IsFeatured"
+                  },
+                  "FilterType": {
+                    "S": "Common"
+                  },
+                  "DisplayOrder": {
+                    "N": "5"
+                  },
+                  "IsActive": {
+                    "BOOL": true
+                  },
+                  "Description": {
+                    "S": "Curated featured products"
+                  }
+                }
+              }
+            ]
+          },
+          "CreatedAt": {
+            "S": "2026-01-03T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2026-01-03T00:00:00.000Z"
+          }
+        }
+      }
+    }
+  ]
+}
