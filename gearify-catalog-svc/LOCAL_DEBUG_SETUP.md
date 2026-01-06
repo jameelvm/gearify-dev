@@ -325,7 +325,7 @@ The API Gateway will automatically route back to the dockerized catalog-svc.
 Right-click breakpoint → Conditions
 ```csharp
 // Only break when specific category is requested
-categoryId == "cat_bats"
+categorySlug == "bats"  // Or use categoryId == "b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e" for GUID
 ```
 
 ### 2. Watch Key Variables

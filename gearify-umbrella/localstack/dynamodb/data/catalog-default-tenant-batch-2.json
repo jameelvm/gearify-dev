@@ -4,22 +4,22 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_helmets"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#e5f6a7b8-c9d0-4e5f-2a3b-4c5d6e7f8a9b"
           },
           "SK": {
-            "S": "SECTION#sec_helmets_1#ITEM#sub_helmets_2"
+            "S": "SECTION#d0e1f2a3-b4c5-4d5e-7f8a-9b0c1d2e3f4a#ITEM#e3f4a5b6-c7d8-4e5f-0a1b-2c3d4e5f6a7b"
           },
           "EntityType": {
             "S": "SUBCATEGORY"
           },
           "Id": {
-            "S": "sub_helmets_2"
+            "S": "f6a7b8c9-d0e1-4f5a-3b4c-5d6e7f8a9b0c"
           },
           "CategoryId": {
-            "S": "cat_helmets"
+            "S": "e5f6a7b8-c9d0-4e5f-2a3b-4c5d6e7f8a9b"
           },
           "SectionId": {
-            "S": "sec_helmets_1"
+            "S": "b4c5d6e7-f8a9-4b5c-1d2e-3f4a5b6c7d8e"
           },
           "TenantId": {
             "S": "default"
@@ -55,22 +55,22 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_helmets"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#e5f6a7b8-c9d0-4e5f-2a3b-4c5d6e7f8a9b"
           },
           "SK": {
-            "S": "SECTION#sec_helmets_1#ITEM#sub_helmets_3"
+            "S": "SECTION#d0e1f2a3-b4c5-4d5e-7f8a-9b0c1d2e3f4a#ITEM#b0c1d2e3-f4a5-4b5c-7d8e-9f0a1b2c3d4e"
           },
           "EntityType": {
             "S": "SUBCATEGORY"
           },
           "Id": {
-            "S": "sub_helmets_3"
+            "S": "a7b8c9d0-e1f2-4a5b-4c5d-6e7f8a9b0c1d"
           },
           "CategoryId": {
-            "S": "cat_helmets"
+            "S": "e5f6a7b8-c9d0-4e5f-2a3b-4c5d6e7f8a9b"
           },
           "SectionId": {
-            "S": "sec_helmets_1"
+            "S": "b4c5d6e7-f8a9-4b5c-1d2e-3f4a5b6c7d8e"
           },
           "TenantId": {
             "S": "default"
@@ -106,7 +106,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bags"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#f6a7b8c9-d0e1-4f5a-3b4c-5d6e7f8a9b0c"
           },
           "SK": {
             "S": "METADATA"
@@ -127,7 +127,7 @@
             "S": "ORDER#0005"
           },
           "Id": {
-            "S": "cat_bags"
+            "S": "f6a7b8c9-d0e1-4f5a-3b4c-5d6e7f8a9b0c"
           },
           "TenantId": {
             "S": "default"
@@ -166,7 +166,7 @@
             "S": "system"
           },
           "DepartmentId": {
-            "S": "dept_cricket"
+            "S": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d"
           },
           "DepartmentSlug": {
             "S": "cricket"
@@ -178,19 +178,19 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bags"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#f6a7b8c9-d0e1-4f5a-3b4c-5d6e7f8a9b0c"
           },
           "SK": {
-            "S": "SECTION#sec_bags_1"
+            "S": "SECTION#d0e1f2a3-b4c5-4d5e-7f8a-9b0c1d2e3f4a"
           },
           "EntityType": {
             "S": "CATEGORY_SECTION"
           },
           "Id": {
-            "S": "sec_bags_1"
+            "S": "c5d6e7f8-a9b0-4c5d-2e3f-4a5b6c7d8e9f"
           },
           "CategoryId": {
-            "S": "cat_bags"
+            "S": "f6a7b8c9-d0e1-4f5a-3b4c-5d6e7f8a9b0c"
           },
           "TenantId": {
             "S": "default"
@@ -226,22 +226,22 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bags"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#f6a7b8c9-d0e1-4f5a-3b4c-5d6e7f8a9b0c"
           },
           "SK": {
-            "S": "SECTION#sec_bags_1#ITEM#sub_bags_1"
+            "S": "SECTION#d0e1f2a3-b4c5-4d5e-7f8a-9b0c1d2e3f4a#ITEM#d2e3f4a5-b6c7-4d5e-9f0a-1b2c3d4e5f6a"
           },
           "EntityType": {
             "S": "SUBCATEGORY"
           },
           "Id": {
-            "S": "sub_bags_1"
+            "S": "b8c9d0e1-f2a3-4b5c-5d6e-7f8a9b0c1d2e"
           },
           "CategoryId": {
-            "S": "cat_bags"
+            "S": "f6a7b8c9-d0e1-4f5a-3b4c-5d6e7f8a9b0c"
           },
           "SectionId": {
-            "S": "sec_bags_1"
+            "S": "c5d6e7f8-a9b0-4c5d-2e3f-4a5b6c7d8e9f"
           },
           "TenantId": {
             "S": "default"
@@ -277,22 +277,22 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bags"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#f6a7b8c9-d0e1-4f5a-3b4c-5d6e7f8a9b0c"
           },
           "SK": {
-            "S": "SECTION#sec_bags_1#ITEM#sub_bags_2"
+            "S": "SECTION#d0e1f2a3-b4c5-4d5e-7f8a-9b0c1d2e3f4a#ITEM#e3f4a5b6-c7d8-4e5f-0a1b-2c3d4e5f6a7b"
           },
           "EntityType": {
             "S": "SUBCATEGORY"
           },
           "Id": {
-            "S": "sub_bags_2"
+            "S": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
           },
           "CategoryId": {
-            "S": "cat_bags"
+            "S": "f6a7b8c9-d0e1-4f5a-3b4c-5d6e7f8a9b0c"
           },
           "SectionId": {
-            "S": "sec_bags_1"
+            "S": "c5d6e7f8-a9b0-4c5d-2e3f-4a5b6c7d8e9f"
           },
           "TenantId": {
             "S": "default"
@@ -328,22 +328,22 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_bags"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#f6a7b8c9-d0e1-4f5a-3b4c-5d6e7f8a9b0c"
           },
           "SK": {
-            "S": "SECTION#sec_bags_1#ITEM#sub_bags_3"
+            "S": "SECTION#d0e1f2a3-b4c5-4d5e-7f8a-9b0c1d2e3f4a#ITEM#b0c1d2e3-f4a5-4b5c-7d8e-9f0a1b2c3d4e"
           },
           "EntityType": {
             "S": "SUBCATEGORY"
           },
           "Id": {
-            "S": "sub_bags_3"
+            "S": "d0e1f2a3-b4c5-4d5e-7f8a-9b0c1d2e3f4a"
           },
           "CategoryId": {
-            "S": "cat_bags"
+            "S": "f6a7b8c9-d0e1-4f5a-3b4c-5d6e7f8a9b0c"
           },
           "SectionId": {
-            "S": "sec_bags_1"
+            "S": "c5d6e7f8-a9b0-4c5d-2e3f-4a5b6c7d8e9f"
           },
           "TenantId": {
             "S": "default"
@@ -379,7 +379,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_pads"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#a7b8c9d0-e1f2-4a5b-4c5d-6e7f8a9b0c1d"
           },
           "SK": {
             "S": "METADATA"
@@ -400,7 +400,7 @@
             "S": "ORDER#0006"
           },
           "Id": {
-            "S": "cat_pads"
+            "S": "a7b8c9d0-e1f2-4a5b-4c5d-6e7f8a9b0c1d"
           },
           "TenantId": {
             "S": "default"
@@ -439,7 +439,7 @@
             "S": "system"
           },
           "DepartmentId": {
-            "S": "dept_cricket"
+            "S": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d"
           },
           "DepartmentSlug": {
             "S": "cricket"
@@ -451,19 +451,19 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_pads"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#a7b8c9d0-e1f2-4a5b-4c5d-6e7f8a9b0c1d"
           },
           "SK": {
-            "S": "SECTION#sec_pads_1"
+            "S": "SECTION#d0e1f2a3-b4c5-4d5e-7f8a-9b0c1d2e3f4a"
           },
           "EntityType": {
             "S": "CATEGORY_SECTION"
           },
           "Id": {
-            "S": "sec_pads_1"
+            "S": "d6e7f8a9-b0c1-4d5e-3f4a-5b6c7d8e9f0a"
           },
           "CategoryId": {
-            "S": "cat_pads"
+            "S": "a7b8c9d0-e1f2-4a5b-4c5d-6e7f8a9b0c1d"
           },
           "TenantId": {
             "S": "default"
@@ -499,22 +499,22 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_pads"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#a7b8c9d0-e1f2-4a5b-4c5d-6e7f8a9b0c1d"
           },
           "SK": {
-            "S": "SECTION#sec_pads_1#ITEM#sub_pads_1"
+            "S": "SECTION#d0e1f2a3-b4c5-4d5e-7f8a-9b0c1d2e3f4a#ITEM#d2e3f4a5-b6c7-4d5e-9f0a-1b2c3d4e5f6a"
           },
           "EntityType": {
             "S": "SUBCATEGORY"
           },
           "Id": {
-            "S": "sub_pads_1"
+            "S": "e1f2a3b4-c5d6-4e5f-8a9b-0c1d2e3f4a5b"
           },
           "CategoryId": {
-            "S": "cat_pads"
+            "S": "a7b8c9d0-e1f2-4a5b-4c5d-6e7f8a9b0c1d"
           },
           "SectionId": {
-            "S": "sec_pads_1"
+            "S": "d6e7f8a9-b0c1-4d5e-3f4a-5b6c7d8e9f0a"
           },
           "TenantId": {
             "S": "default"
@@ -550,22 +550,22 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_pads"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#a7b8c9d0-e1f2-4a5b-4c5d-6e7f8a9b0c1d"
           },
           "SK": {
-            "S": "SECTION#sec_pads_1#ITEM#sub_pads_2"
+            "S": "SECTION#d0e1f2a3-b4c5-4d5e-7f8a-9b0c1d2e3f4a#ITEM#e3f4a5b6-c7d8-4e5f-0a1b-2c3d4e5f6a7b"
           },
           "EntityType": {
             "S": "SUBCATEGORY"
           },
           "Id": {
-            "S": "sub_pads_2"
+            "S": "f2a3b4c5-d6e7-4f5a-9b0c-1d2e3f4a5b6c"
           },
           "CategoryId": {
-            "S": "cat_pads"
+            "S": "a7b8c9d0-e1f2-4a5b-4c5d-6e7f8a9b0c1d"
           },
           "SectionId": {
-            "S": "sec_pads_1"
+            "S": "d6e7f8a9-b0c1-4d5e-3f4a-5b6c7d8e9f0a"
           },
           "TenantId": {
             "S": "default"
@@ -601,22 +601,22 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_pads"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#a7b8c9d0-e1f2-4a5b-4c5d-6e7f8a9b0c1d"
           },
           "SK": {
-            "S": "SECTION#sec_pads_1#ITEM#sub_pads_3"
+            "S": "SECTION#d0e1f2a3-b4c5-4d5e-7f8a-9b0c1d2e3f4a#ITEM#b0c1d2e3-f4a5-4b5c-7d8e-9f0a1b2c3d4e"
           },
           "EntityType": {
             "S": "SUBCATEGORY"
           },
           "Id": {
-            "S": "sub_pads_3"
+            "S": "a3b4c5d6-e7f8-4a5b-0c1d-2e3f4a5b6c7d"
           },
           "CategoryId": {
-            "S": "cat_pads"
+            "S": "a7b8c9d0-e1f2-4a5b-4c5d-6e7f8a9b0c1d"
           },
           "SectionId": {
-            "S": "sec_pads_1"
+            "S": "d6e7f8a9-b0c1-4d5e-3f4a-5b6c7d8e9f0a"
           },
           "TenantId": {
             "S": "default"
@@ -652,7 +652,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_gloves"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#b8c9d0e1-f2a3-4b5c-5d6e-7f8a9b0c1d2e"
           },
           "SK": {
             "S": "METADATA"
@@ -673,7 +673,7 @@
             "S": "ORDER#0007"
           },
           "Id": {
-            "S": "cat_gloves"
+            "S": "b8c9d0e1-f2a3-4b5c-5d6e-7f8a9b0c1d2e"
           },
           "TenantId": {
             "S": "default"
@@ -712,7 +712,7 @@
             "S": "system"
           },
           "DepartmentId": {
-            "S": "dept_cricket"
+            "S": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d"
           },
           "DepartmentSlug": {
             "S": "cricket"
@@ -724,19 +724,19 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_gloves"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#b8c9d0e1-f2a3-4b5c-5d6e-7f8a9b0c1d2e"
           },
           "SK": {
-            "S": "SECTION#sec_gloves_1"
+            "S": "SECTION#d0e1f2a3-b4c5-4d5e-7f8a-9b0c1d2e3f4a"
           },
           "EntityType": {
             "S": "CATEGORY_SECTION"
           },
           "Id": {
-            "S": "sec_gloves_1"
+            "S": "e7f8a9b0-c1d2-4e5f-4a5b-6c7d8e9f0a1b"
           },
           "CategoryId": {
-            "S": "cat_gloves"
+            "S": "b8c9d0e1-f2a3-4b5c-5d6e-7f8a9b0c1d2e"
           },
           "TenantId": {
             "S": "default"
@@ -772,22 +772,22 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_gloves"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#b8c9d0e1-f2a3-4b5c-5d6e-7f8a9b0c1d2e"
           },
           "SK": {
-            "S": "SECTION#sec_gloves_1#ITEM#sub_gloves_1"
+            "S": "SECTION#d0e1f2a3-b4c5-4d5e-7f8a-9b0c1d2e3f4a#ITEM#d2e3f4a5-b6c7-4d5e-9f0a-1b2c3d4e5f6a"
           },
           "EntityType": {
             "S": "SUBCATEGORY"
           },
           "Id": {
-            "S": "sub_gloves_1"
+            "S": "b4c5d6e7-f8a9-4b5c-1d2e-3f4a5b6c7d8e"
           },
           "CategoryId": {
-            "S": "cat_gloves"
+            "S": "b8c9d0e1-f2a3-4b5c-5d6e-7f8a9b0c1d2e"
           },
           "SectionId": {
-            "S": "sec_gloves_1"
+            "S": "e7f8a9b0-c1d2-4e5f-4a5b-6c7d8e9f0a1b"
           },
           "TenantId": {
             "S": "default"
@@ -823,22 +823,22 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_gloves"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#b8c9d0e1-f2a3-4b5c-5d6e-7f8a9b0c1d2e"
           },
           "SK": {
-            "S": "SECTION#sec_gloves_1#ITEM#sub_gloves_2"
+            "S": "SECTION#d0e1f2a3-b4c5-4d5e-7f8a-9b0c1d2e3f4a#ITEM#e3f4a5b6-c7d8-4e5f-0a1b-2c3d4e5f6a7b"
           },
           "EntityType": {
             "S": "SUBCATEGORY"
           },
           "Id": {
-            "S": "sub_gloves_2"
+            "S": "c5d6e7f8-a9b0-4c5d-2e3f-4a5b6c7d8e9f"
           },
           "CategoryId": {
-            "S": "cat_gloves"
+            "S": "b8c9d0e1-f2a3-4b5c-5d6e-7f8a9b0c1d2e"
           },
           "SectionId": {
-            "S": "sec_gloves_1"
+            "S": "e7f8a9b0-c1d2-4e5f-4a5b-6c7d8e9f0a1b"
           },
           "TenantId": {
             "S": "default"
@@ -874,22 +874,22 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_gloves"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#b8c9d0e1-f2a3-4b5c-5d6e-7f8a9b0c1d2e"
           },
           "SK": {
-            "S": "SECTION#sec_gloves_1#ITEM#sub_gloves_3"
+            "S": "SECTION#d0e1f2a3-b4c5-4d5e-7f8a-9b0c1d2e3f4a#ITEM#b0c1d2e3-f4a5-4b5c-7d8e-9f0a1b2c3d4e"
           },
           "EntityType": {
             "S": "SUBCATEGORY"
           },
           "Id": {
-            "S": "sub_gloves_3"
+            "S": "d6e7f8a9-b0c1-4d5e-3f4a-5b6c7d8e9f0a"
           },
           "CategoryId": {
-            "S": "cat_gloves"
+            "S": "b8c9d0e1-f2a3-4b5c-5d6e-7f8a9b0c1d2e"
           },
           "SectionId": {
-            "S": "sec_gloves_1"
+            "S": "e7f8a9b0-c1d2-4e5f-4a5b-6c7d8e9f0a1b"
           },
           "TenantId": {
             "S": "default"
@@ -925,7 +925,7 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_accessories"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
           },
           "SK": {
             "S": "METADATA"
@@ -946,7 +946,7 @@
             "S": "ORDER#0008"
           },
           "Id": {
-            "S": "cat_accessories"
+            "S": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
           },
           "TenantId": {
             "S": "default"
@@ -985,7 +985,7 @@
             "S": "system"
           },
           "DepartmentId": {
-            "S": "dept_cricket"
+            "S": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d"
           },
           "DepartmentSlug": {
             "S": "cricket"
@@ -997,19 +997,19 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_accessories"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
           },
           "SK": {
-            "S": "SECTION#sec_acc_1"
+            "S": "SECTION#c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f-group-1"
           },
           "EntityType": {
             "S": "CATEGORY_SECTION"
           },
           "Id": {
-            "S": "sec_acc_1"
+            "S": "f8a9b0c1-d2e3-4f5a-5b6c-7d8e9f0a1b2c"
           },
           "CategoryId": {
-            "S": "cat_accessories"
+            "S": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
           },
           "TenantId": {
             "S": "default"
@@ -1042,22 +1042,22 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_accessories"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
           },
           "SK": {
-            "S": "SECTION#sec_acc_1#ITEM#sub_acc_1"
+            "S": "SECTION#c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f-group-1#ITEM#grips"
           },
           "EntityType": {
             "S": "SUBCATEGORY"
           },
           "Id": {
-            "S": "sub_acc_1"
+            "S": "e7f8a9b0-c1d2-4e5f-4a5b-6c7d8e9f0a1b"
           },
           "CategoryId": {
-            "S": "cat_accessories"
+            "S": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
           },
           "SectionId": {
-            "S": "sec_acc_1"
+            "S": "f8a9b0c1-d2e3-4f5a-5b6c-7d8e9f0a1b2c"
           },
           "TenantId": {
             "S": "default"
@@ -1087,22 +1087,22 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_accessories"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
           },
           "SK": {
-            "S": "SECTION#sec_acc_1#ITEM#sub_acc_2"
+            "S": "SECTION#c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f-group-1#ITEM#guards"
           },
           "EntityType": {
             "S": "SUBCATEGORY"
           },
           "Id": {
-            "S": "sub_acc_2"
+            "S": "f8a9b0c1-d2e3-4f5a-5b6c-7d8e9f0a1b2c"
           },
           "CategoryId": {
-            "S": "cat_accessories"
+            "S": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
           },
           "SectionId": {
-            "S": "sec_acc_1"
+            "S": "f8a9b0c1-d2e3-4f5a-5b6c-7d8e9f0a1b2c"
           },
           "TenantId": {
             "S": "default"
@@ -1132,22 +1132,22 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_accessories"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
           },
           "SK": {
-            "S": "SECTION#sec_acc_1#ITEM#sub_acc_3"
+            "S": "SECTION#c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f-group-1#ITEM#bat-care"
           },
           "EntityType": {
             "S": "SUBCATEGORY"
           },
           "Id": {
-            "S": "sub_acc_3"
+            "S": "a9b0c1d2-e3f4-4a5b-6c7d-8e9f0a1b2c3d"
           },
           "CategoryId": {
-            "S": "cat_accessories"
+            "S": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
           },
           "SectionId": {
-            "S": "sec_acc_1"
+            "S": "f8a9b0c1-d2e3-4f5a-5b6c-7d8e9f0a1b2c"
           },
           "TenantId": {
             "S": "default"
@@ -1177,19 +1177,19 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_accessories"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
           },
           "SK": {
-            "S": "SECTION#sec_acc_2"
+            "S": "SECTION#c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f-group-2"
           },
           "EntityType": {
             "S": "CATEGORY_SECTION"
           },
           "Id": {
-            "S": "sec_acc_2"
+            "S": "a9b0c1d2-e3f4-4a5b-6c7d-8e9f0a1b2c3d"
           },
           "CategoryId": {
-            "S": "cat_accessories"
+            "S": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
           },
           "TenantId": {
             "S": "default"
@@ -1222,22 +1222,22 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_accessories"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
           },
           "SK": {
-            "S": "SECTION#sec_acc_2#ITEM#sub_acc_4"
+            "S": "SECTION#c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f-group-2#ITEM#stumps"
           },
           "EntityType": {
             "S": "SUBCATEGORY"
           },
           "Id": {
-            "S": "sub_acc_4"
+            "S": "b0c1d2e3-f4a5-4b5c-7d8e-9f0a1b2c3d4e"
           },
           "CategoryId": {
-            "S": "cat_accessories"
+            "S": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
           },
           "SectionId": {
-            "S": "sec_acc_2"
+            "S": "a9b0c1d2-e3f4-4a5b-6c7d-8e9f0a1b2c3d"
           },
           "TenantId": {
             "S": "default"
@@ -1267,22 +1267,22 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#cricket#CATEGORY#cat_accessories"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d#CATEGORY#c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
           },
           "SK": {
-            "S": "SECTION#sec_acc_2#ITEM#sub_acc_5"
+            "S": "SECTION#c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f-group-2#ITEM#clothing"
           },
           "EntityType": {
             "S": "SUBCATEGORY"
           },
           "Id": {
-            "S": "sub_acc_5"
+            "S": "c1d2e3f4-a5b6-4c5d-8e9f-0a1b2c3d4e5f"
           },
           "CategoryId": {
-            "S": "cat_accessories"
+            "S": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
           },
           "SectionId": {
-            "S": "sec_acc_2"
+            "S": "a9b0c1d2-e3f4-4a5b-6c7d-8e9f0a1b2c3d"
           },
           "TenantId": {
             "S": "default"

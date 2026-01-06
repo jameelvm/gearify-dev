@@ -46,6 +46,52 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
             }
         };
 
+        var filterExpressions = await Build(request, cancellationToken, queryRequest, tenantId);
+
+        if (filterExpressions.Any())
+        {
+            queryRequest.FilterExpression = string.Join(" AND ", filterExpressions);
+        }
+
+        try
+        {
+            var response = await _dynamoDb.QueryAsync(queryRequest, cancellationToken);
+
+            var products = response.Items.Select(MapToProduct).ToList();
+
+            // Apply sorting if specified
+            if (!string.IsNullOrEmpty(request.SortBy))
+            {
+                products = request.SortBy.ToLower() switch
+                {
+                    "price-asc" or "price: low to high" => products.OrderBy(p => p.Price).ToList(),
+                    "price-desc" or "price: high to low" => products.OrderByDescending(p => p.Price).ToList(),
+                    "rating" or "top rated" => products.OrderByDescending(p => p.RatingAverage ?? 0).ToList(),
+                    "newest" or "newest first" => products.OrderByDescending(p => p.CreatedAt).ToList(),
+                    "name" or "featured items" => products.OrderBy(p => p.Name).ToList(),
+                    _ => products // Default: no sorting
+                };
+            }
+
+            var productDtos = products.Select(ProductListDto.FromProduct).ToList();
+
+            _logger.LogInformation(
+                "Retrieved {Count} products for tenant {TenantId} with filters: Dept={Dept}, Cat={Cat}, Subcat={Subcat}, Brands={Brands}, SortBy={SortBy}",
+                products.Count, tenantId, request.DepartmentSlug, request.CategorySlug, request.SubcategorySlug,
+                request.BrandSlugs != null ? string.Join(",", request.BrandSlugs) : "none", request.SortBy ?? "none");
+
+            return new ProductListResponse(productDtos, productDtos.Count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving products by slug for tenant {TenantId}", tenantId);
+            throw;
+        }
+    }
+
+    private async Task<List<string>> Build(GetProductsBySlugQuery request, CancellationToken cancellationToken, QueryRequest queryRequest,
+        string tenantId)
+    {
         // Build filter expression for slugs
         var filterExpressions = new List<string>();
 
@@ -68,7 +114,7 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
         }
 
         // Handle multiple brands with IN operator
-        if (request.BrandSlugs != null && request.BrandSlugs.Length > 0)
+        if (request.BrandSlugs is { Length: > 0 })
         {
             if (request.BrandSlugs.Length == 1)
             {
@@ -128,45 +174,7 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
             }
         }
 
-        if (filterExpressions.Any())
-        {
-            queryRequest.FilterExpression = string.Join(" AND ", filterExpressions);
-        }
-
-        try
-        {
-            var response = await _dynamoDb.QueryAsync(queryRequest, cancellationToken);
-
-            var products = response.Items.Select(MapToProduct).ToList();
-
-            // Apply sorting if specified
-            if (!string.IsNullOrEmpty(request.SortBy))
-            {
-                products = request.SortBy.ToLower() switch
-                {
-                    "price-asc" or "price: low to high" => products.OrderBy(p => p.Price).ToList(),
-                    "price-desc" or "price: high to low" => products.OrderByDescending(p => p.Price).ToList(),
-                    "rating" or "top rated" => products.OrderByDescending(p => p.RatingAverage ?? 0).ToList(),
-                    "newest" or "newest first" => products.OrderByDescending(p => p.CreatedAt).ToList(),
-                    "name" or "featured items" => products.OrderBy(p => p.Name).ToList(),
-                    _ => products // Default: no sorting
-                };
-            }
-
-            var productDtos = products.Select(ProductListDto.FromProduct).ToList();
-
-            _logger.LogInformation(
-                "Retrieved {Count} products for tenant {TenantId} with filters: Dept={Dept}, Cat={Cat}, Subcat={Subcat}, Brands={Brands}, SortBy={SortBy}",
-                products.Count, tenantId, request.DepartmentSlug, request.CategorySlug, request.SubcategorySlug,
-                request.BrandSlugs != null ? string.Join(",", request.BrandSlugs) : "none", request.SortBy ?? "none");
-
-            return new ProductListResponse(productDtos, productDtos.Count);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving products by slug for tenant {TenantId}", tenantId);
-            throw;
-        }
+        return filterExpressions;
     }
 
     private Product MapToProduct(Dictionary<string, AttributeValue> item)
@@ -241,11 +249,12 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
             {
                 if (collectionAttr.M == null) continue;
 
-                if (collectionAttr.M.TryGetValue("Id", out var id) && id.S == collectionId)
+                // Compare by Slug (not Id) since frontend passes slug as collectionId
+                if (collectionAttr.M.TryGetValue("Slug", out var slug) && slug.S == collectionId)
                 {
                     return new SpecialCollectionDto
                     {
-                        Id = id.S,
+                        Id = collectionAttr.M.TryGetValue("Id", out var id) ? id.S : string.Empty,
                         FilterAttribute = collectionAttr.M.TryGetValue("FilterAttribute", out var filterAttr) ? filterAttr.S : string.Empty,
                         FilterType = collectionAttr.M.TryGetValue("FilterType", out var filterType) ? filterType.S : "Common"
                     };

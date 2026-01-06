@@ -68,9 +68,10 @@ export class CategoryNavComponent implements OnInit {
     this.error.set(null);
 
     // Fetch both mega menu data and special collections in parallel
+    // TODO: For multi-department, get departmentSlug from selected department
     forkJoin({
       megaMenu: this.categoryService.getMegaMenuData(),
-      specialCollections: this.specialCollectionsService.getSpecialCollections()
+      specialCollections: this.specialCollectionsService.getSpecialCollections('cricket')
     }).subscribe({
       next: ({ megaMenu, specialCollections }) => {
         // Store special collections
@@ -120,7 +121,7 @@ export class CategoryNavComponent implements OnInit {
                 showTitle: false,
                 items: specialCollections.collections.map(collection => ({
                   name: `${collection.icon} ${collection.label}`,
-                  slug: collection.id,
+                  slug: collection.slug,
                   filterType: 'SPECIAL_COLLECTION',
                   minPrice: undefined,
                   maxPrice: undefined,

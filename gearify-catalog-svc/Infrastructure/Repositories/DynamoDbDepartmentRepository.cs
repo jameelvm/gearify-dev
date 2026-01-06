@@ -9,8 +9,10 @@ namespace Gearify.CatalogService.Infrastructure.Repositories;
 /// <summary>
 /// DynamoDB implementation for Department repository
 /// Table: gearify-catalog
-/// PK Pattern: TENANT#{tenantId}#DEPARTMENT#{departmentSlug}
+/// PK Pattern: TENANT#{tenantId}#DEPARTMENT#{departmentId} (GUID-based)
 /// SK Pattern: METADATA
+/// GSI1: For slug-based lookups (GSI1PK: TENANT#{tenantId}#SLUG, GSI1SK: DEPARTMENT#{slug})
+/// GSI2: For listing all departments (GSI2PK: TENANT#{tenantId}#DEPARTMENTS)
 /// </summary>
 public class DynamoDbDepartmentRepository(
     IAmazonDynamoDB dynamoDb,
@@ -62,15 +64,16 @@ public class DynamoDbDepartmentRepository(
 
     public async Task<Department?> GetBySlugAsync(string slug, string tenantId)
     {
-        // Direct query using PK
+        // Query using GSI1 (slug-based lookup)
         var request = new QueryRequest
         {
             TableName = _tableName,
-            KeyConditionExpression = "PK = :pk AND SK = :sk",
+            IndexName = "GSI1",
+            KeyConditionExpression = "GSI1PK = :gsi1pk AND GSI1SK = :gsi1sk",
             ExpressionAttributeValues = new Dictionary<string, AttributeValue>
             {
-                { ":pk", new AttributeValue { S = $"TENANT#{tenantId}#DEPARTMENT#{slug}" } },
-                { ":sk", new AttributeValue { S = "METADATA" } }
+                { ":gsi1pk", new AttributeValue { S = $"TENANT#{tenantId}#SLUG" } },
+                { ":gsi1sk", new AttributeValue { S = $"DEPARTMENT#{slug}" } }
             }
         };
 

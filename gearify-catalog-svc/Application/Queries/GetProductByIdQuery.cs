@@ -18,6 +18,6 @@ public record GetProductsBySlugQuery(
 
 public record ProductListResponse(List<ProductListDto> Products, int Total);
 
-public record GetSpecialCollectionsQuery() : IRequest<SpecialCollectionsResponse>;
+public record GetSpecialCollectionsQuery(string? DepartmentSlug = null) : IRequest<SpecialCollectionsResponse>;
 
 public record SpecialCollectionsResponse(List<SpecialCollectionDto> Collections);

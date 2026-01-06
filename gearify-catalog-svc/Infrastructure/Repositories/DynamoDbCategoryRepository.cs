@@ -55,7 +55,7 @@ public class DynamoDbCategoryRepository(
     private async Task<(Category category, List<CategorySection> sections, List<Subcategory> subcategories)>
         GetCategoryWithDetailsAsync(string categoryId, string tenantId)
     {
-        // First, find the category to get its department slug
+        // First, find the category by GUID Id to get its metadata
         var categoryRequest = new ScanRequest
         {
             TableName = _tableName,
@@ -75,19 +75,19 @@ public class DynamoDbCategoryRepository(
 
         var categoryItem = categoryResponse.Items.First();
         var category = MapToCategory(categoryItem);
-        var departmentSlug = categoryItem.TryGetValue("DepartmentSlug", out var deptSlug) ? deptSlug.S : string.Empty;
+        var departmentId = categoryItem.TryGetValue("DepartmentId", out var deptId) ? deptId.S : string.Empty;
 
-        if (string.IsNullOrEmpty(departmentSlug))
+        if (string.IsNullOrEmpty(departmentId) || string.IsNullOrEmpty(categoryId))
             return (category, new List<CategorySection>(), new List<Subcategory>());
 
-        // Now query for sections and subcategories using the new PK pattern
+        // Now query for sections and subcategories using GUID-based PK pattern
         var detailsRequest = new QueryRequest
         {
             TableName = _tableName,
             KeyConditionExpression = "PK = :pk",
             ExpressionAttributeValues = new Dictionary<string, AttributeValue>
             {
-                { ":pk", new AttributeValue { S = $"TENANT#{tenantId}#DEPARTMENT#{departmentSlug}#CATEGORY#{categoryId}" } }
+                { ":pk", new AttributeValue { S = $"TENANT#{tenantId}#DEPARTMENT#{departmentId}#CATEGORY#{categoryId}" } }
             }
         };
 

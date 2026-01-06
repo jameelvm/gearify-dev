@@ -4,22 +4,34 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default"
+            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d"
           },
           "SK": {
             "S": "SPECIAL_COLLECTIONS"
           },
           "GSI1PK": {
-            "S": "TENANT#default#CONFIG"
+            "S": "TENANT#default#SPECIAL_COLLECTIONS"
           },
           "GSI1SK": {
+            "S": "DEPARTMENT#cricket"
+          },
+          "EntityType": {
             "S": "SPECIAL_COLLECTIONS"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "DepartmentId": {
+            "S": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d"
           },
           "Collections": {
             "L": [
               {
                 "M": {
                   "Id": {
+                    "S": "550e8400-e29b-41d4-a716-446655440001"
+                  },
+                  "Slug": {
                     "S": "deals"
                   },
                   "Label": {
@@ -54,6 +66,9 @@
               {
                 "M": {
                   "Id": {
+                    "S": "550e8400-e29b-41d4-a716-446655440002"
+                  },
+                  "Slug": {
                     "S": "clearance"
                   },
                   "Label": {
@@ -88,6 +103,9 @@
               {
                 "M": {
                   "Id": {
+                    "S": "550e8400-e29b-41d4-a716-446655440003"
+                  },
+                  "Slug": {
                     "S": "new-arrivals"
                   },
                   "Label": {
@@ -122,6 +140,9 @@
               {
                 "M": {
                   "Id": {
+                    "S": "550e8400-e29b-41d4-a716-446655440004"
+                  },
+                  "Slug": {
                     "S": "best-sellers"
                   },
                   "Label": {
@@ -150,6 +171,9 @@
               {
                 "M": {
                   "Id": {
+                    "S": "550e8400-e29b-41d4-a716-446655440005"
+                  },
+                  "Slug": {
                     "S": "featured"
                   },
                   "Label": {

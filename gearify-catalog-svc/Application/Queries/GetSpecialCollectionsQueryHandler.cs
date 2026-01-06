@@ -26,7 +26,7 @@ public class GetSpecialCollectionsQueryHandler : IRequestHandler<GetSpecialColle
         ILogger<GetSpecialCollectionsQueryHandler> logger)
     {
         _dynamoDb = dynamoDb;
-        _tableName = catalogDataSettings.Value.ProductsTableName;
+        _tableName = catalogDataSettings.Value.CatalogTableName;
         _tenantContext = tenantContext;
         _logger = logger;
     }
@@ -37,12 +37,45 @@ public class GetSpecialCollectionsQueryHandler : IRequestHandler<GetSpecialColle
 
         try
         {
+            // Build PK with department GUID if provided
+            string pk;
+            if (string.IsNullOrEmpty(request.DepartmentSlug))
+            {
+                pk = $"TENANT#{tenantId}";
+            }
+            else
+            {
+                // First, lookup department GUID by slug using GSI1
+                var departmentQuery = new QueryRequest
+                {
+                    TableName = _tableName,
+                    IndexName = "GSI1",
+                    KeyConditionExpression = "GSI1PK = :gsi1pk AND GSI1SK = :gsi1sk",
+                    ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+                    {
+                        { ":gsi1pk", new AttributeValue { S = $"TENANT#{tenantId}#SLUG" } },
+                        { ":gsi1sk", new AttributeValue { S = $"DEPARTMENT#{request.DepartmentSlug}" } }
+                    },
+                    Limit = 1
+                };
+
+                var departmentResponse = await _dynamoDb.QueryAsync(departmentQuery, cancellationToken);
+                if (!departmentResponse.Items.Any())
+                {
+                    _logger.LogWarning("Department not found for slug {DepartmentSlug}", request.DepartmentSlug);
+                    return new SpecialCollectionsResponse(new List<SpecialCollectionDto>());
+                }
+
+                var departmentId = departmentResponse.Items.First()["Id"].S;
+                pk = $"TENANT#{tenantId}#DEPARTMENT#{departmentId}";
+            }
+
             var getRequest = new GetItemRequest
             {
                 TableName = _tableName,
                 Key = new Dictionary<string, AttributeValue>
                 {
-                    { "PK", new AttributeValue { S = $"TENANT#{tenantId}" } },
+                    { "PK", new AttributeValue { S = pk } },
                     { "SK", new AttributeValue { S = "SPECIAL_COLLECTIONS" } }
                 }
             };
@@ -51,7 +84,8 @@ public class GetSpecialCollectionsQueryHandler : IRequestHandler<GetSpecialColle
 
             if (!response.IsItemSet)
             {
-                _logger.LogWarning("Special collections not found for tenant {TenantId}", tenantId);
+                _logger.LogWarning("Special collections not found for tenant {TenantId}, department {DepartmentSlug}",
+                    tenantId, request.DepartmentSlug ?? "none");
                 return new SpecialCollectionsResponse(new List<SpecialCollectionDto>());
             }
 
@@ -91,6 +125,7 @@ public class GetSpecialCollectionsQueryHandler : IRequestHandler<GetSpecialColle
             var collection = new SpecialCollectionDto
             {
                 Id = collectionAttr.M.TryGetValue("Id", out var id) ? id.S : string.Empty,
+                Slug = collectionAttr.M.TryGetValue("Slug", out var slug) ? slug.S : string.Empty,
                 Label = collectionAttr.M.TryGetValue("Label", out var label) ? label.S : string.Empty,
                 Icon = collectionAttr.M.TryGetValue("Icon", out var icon) ? icon.S : string.Empty,
                 FilterAttribute = collectionAttr.M.TryGetValue("FilterAttribute", out var filterAttr) ? filterAttr.S : string.Empty,

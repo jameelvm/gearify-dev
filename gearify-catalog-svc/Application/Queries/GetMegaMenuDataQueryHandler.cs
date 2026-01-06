@@ -64,7 +64,7 @@ public class GetMegaMenuDataQueryHandler : IRequestHandler<GetMegaMenuDataQuery,
             {
                 var (_, sections, subcategories) = await GetCategoryWithDetailsAsync(
                     category.Id,
-                    category.DepartmentSlug,
+                    category.DepartmentId,
                     tenantId
                 );
 
@@ -97,7 +97,7 @@ public class GetMegaMenuDataQueryHandler : IRequestHandler<GetMegaMenuDataQuery,
     /// Get category with sections and subcategories using the department-aware PK pattern
     /// </summary>
     private async Task<(Category category, List<CategorySection> sections, List<Subcategory> subcategories)>
-        GetCategoryWithDetailsAsync(string categoryId, string departmentSlug, string tenantId)
+        GetCategoryWithDetailsAsync(string categoryId, string departmentId, string tenantId)
     {
         var request = new Amazon.DynamoDBv2.Model.QueryRequest
         {
@@ -105,7 +105,7 @@ public class GetMegaMenuDataQueryHandler : IRequestHandler<GetMegaMenuDataQuery,
             KeyConditionExpression = "PK = :pk",
             ExpressionAttributeValues = new Dictionary<string, Amazon.DynamoDBv2.Model.AttributeValue>
             {
-                { ":pk", new Amazon.DynamoDBv2.Model.AttributeValue { S = $"TENANT#{tenantId}#DEPARTMENT#{departmentSlug}#CATEGORY#{categoryId}" } }
+                { ":pk", new Amazon.DynamoDBv2.Model.AttributeValue { S = $"TENANT#{tenantId}#DEPARTMENT#{departmentId}#CATEGORY#{categoryId}" } }
             }
         };
 

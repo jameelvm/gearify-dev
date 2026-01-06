@@ -6,7 +6,8 @@ namespace Gearify.CatalogService.Application.DTOs;
 /// </summary>
 public class SpecialCollectionDto
 {
-    public string Id { get; set; } = string.Empty;
+    public string Id { get; set; } = string.Empty; // GUID for tracking
+    public string Slug { get; set; } = string.Empty; // URL-friendly identifier (e.g., "deals", "clearance")
     public string Label { get; set; } = string.Empty;
     public string Icon { get; set; } = string.Empty;
     public string FilterAttribute { get; set; } = string.Empty;

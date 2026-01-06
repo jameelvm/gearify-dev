@@ -4,7 +4,8 @@ import { HttpService } from './http.service';
 import { API_CONFIG } from '@shared/constants/api.constants';
 
 export interface SpecialCollectionDto {
-  id: string;
+  id: string;       // GUID for tracking
+  slug: string;     // URL-friendly identifier
   label: string;
   icon: string;
   filterAttribute: string;
@@ -30,7 +31,8 @@ export class SpecialCollectionsService {
    * Get special product collections for the tenant
    * Used to render special collection links in mega menu
    */
-  getSpecialCollections(): Observable<SpecialCollectionsResponse> {
-    return this.http.get<SpecialCollectionsResponse>(`${API_CONFIG.ENDPOINTS.CATALOG}/special-collections`);
+  getSpecialCollections(departmentSlug?: string): Observable<SpecialCollectionsResponse> {
+    const params = departmentSlug ? `?departmentSlug=${departmentSlug}` : '';
+    return this.http.get<SpecialCollectionsResponse>(`${API_CONFIG.ENDPOINTS.CATALOG}/special-collections${params}`);
   }
 }
