@@ -7,16 +7,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-bat-ss-001"
+            "S": "PRODUCT#022f46ce-1882-4966-b1fa-7636c6c62351"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-bat-ss-001"
+            "S": "PRODUCT#022f46ce-1882-4966-b1fa-7636c6c62351"
           },
           "Id": {
-            "S": "prod-bat-ss-001"
+            "S": "022f46ce-1882-4966-b1fa-7636c6c62351"
           },
           "TenantId": {
             "S": "default"
@@ -126,16 +126,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-bat-ss-002"
+            "S": "PRODUCT#c1fb96da-2df2-44df-8df6-37966e71d3ea"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-bat-ss-002"
+            "S": "PRODUCT#c1fb96da-2df2-44df-8df6-37966e71d3ea"
           },
           "Id": {
-            "S": "prod-bat-ss-002"
+            "S": "c1fb96da-2df2-44df-8df6-37966e71d3ea"
           },
           "TenantId": {
             "S": "default"
@@ -236,16 +236,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-bat-mrf-001"
+            "S": "PRODUCT#1a53a237-e4f4-4ce8-bcd2-140e15d243c0"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-bat-mrf-001"
+            "S": "PRODUCT#1a53a237-e4f4-4ce8-bcd2-140e15d243c0"
           },
           "Id": {
-            "S": "prod-bat-mrf-001"
+            "S": "1a53a237-e4f4-4ce8-bcd2-140e15d243c0"
           },
           "TenantId": {
             "S": "default"
@@ -350,16 +350,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-bat-mrf-002"
+            "S": "PRODUCT#6c46fdea-91b2-430a-a5af-fe7077449643"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-bat-mrf-002"
+            "S": "PRODUCT#6c46fdea-91b2-430a-a5af-fe7077449643"
           },
           "Id": {
-            "S": "prod-bat-mrf-002"
+            "S": "6c46fdea-91b2-430a-a5af-fe7077449643"
           },
           "TenantId": {
             "S": "default"
@@ -445,16 +445,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-bat-sg-001"
+            "S": "PRODUCT#ab99e592-ae00-4b73-a2ce-2071d2c6182a"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-bat-sg-001"
+            "S": "PRODUCT#ab99e592-ae00-4b73-a2ce-2071d2c6182a"
           },
           "Id": {
-            "S": "prod-bat-sg-001"
+            "S": "ab99e592-ae00-4b73-a2ce-2071d2c6182a"
           },
           "TenantId": {
             "S": "default"
@@ -540,16 +540,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-bat-sg-002"
+            "S": "PRODUCT#d5d45a36-98d9-4e4e-b632-2a6425de7605"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-bat-sg-002"
+            "S": "PRODUCT#d5d45a36-98d9-4e4e-b632-2a6425de7605"
           },
           "Id": {
-            "S": "prod-bat-sg-002"
+            "S": "d5d45a36-98d9-4e4e-b632-2a6425de7605"
           },
           "TenantId": {
             "S": "default"
@@ -636,16 +636,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-bat-kook-001"
+            "S": "PRODUCT#fb7a7159-acdb-4868-a35f-834548a91c38"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-bat-kook-001"
+            "S": "PRODUCT#fb7a7159-acdb-4868-a35f-834548a91c38"
           },
           "Id": {
-            "S": "prod-bat-kook-001"
+            "S": "fb7a7159-acdb-4868-a35f-834548a91c38"
           },
           "TenantId": {
             "S": "default"
@@ -749,16 +749,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-bat-kook-002"
+            "S": "PRODUCT#7c38eac2-15ef-4738-941b-f8db16bc1b5d"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-bat-kook-002"
+            "S": "PRODUCT#7c38eac2-15ef-4738-941b-f8db16bc1b5d"
           },
           "Id": {
-            "S": "prod-bat-kook-002"
+            "S": "7c38eac2-15ef-4738-941b-f8db16bc1b5d"
           },
           "TenantId": {
             "S": "default"
@@ -859,16 +859,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-bat-dsc-001"
+            "S": "PRODUCT#4278f80e-a480-4440-a465-0b835c4b5f1a"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-bat-dsc-001"
+            "S": "PRODUCT#4278f80e-a480-4440-a465-0b835c4b5f1a"
           },
           "Id": {
-            "S": "prod-bat-dsc-001"
+            "S": "4278f80e-a480-4440-a465-0b835c4b5f1a"
           },
           "TenantId": {
             "S": "default"
@@ -954,16 +954,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-bat-dsc-002"
+            "S": "PRODUCT#116c11d6-7b43-4300-b877-a26bb67ea06f"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-bat-dsc-002"
+            "S": "PRODUCT#116c11d6-7b43-4300-b877-a26bb67ea06f"
           },
           "Id": {
-            "S": "prod-bat-dsc-002"
+            "S": "116c11d6-7b43-4300-b877-a26bb67ea06f"
           },
           "TenantId": {
             "S": "default"
@@ -1049,16 +1049,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-ball-sg-001"
+            "S": "PRODUCT#f7a1db8f-b6f7-49f3-9b76-bf672f926454"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-ball-sg-001"
+            "S": "PRODUCT#f7a1db8f-b6f7-49f3-9b76-bf672f926454"
           },
           "Id": {
-            "S": "prod-ball-sg-001"
+            "S": "f7a1db8f-b6f7-49f3-9b76-bf672f926454"
           },
           "TenantId": {
             "S": "default"
@@ -1145,16 +1145,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-ball-sg-002"
+            "S": "PRODUCT#eb7a8769-04e5-45dc-97e4-51e0143511c6"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-ball-sg-002"
+            "S": "PRODUCT#eb7a8769-04e5-45dc-97e4-51e0143511c6"
           },
           "Id": {
-            "S": "prod-ball-sg-002"
+            "S": "eb7a8769-04e5-45dc-97e4-51e0143511c6"
           },
           "TenantId": {
             "S": "default"
@@ -1241,16 +1241,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-ball-kook-001"
+            "S": "PRODUCT#77f93ec6-4e79-4d90-a39e-0b785f122e2a"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-ball-kook-001"
+            "S": "PRODUCT#77f93ec6-4e79-4d90-a39e-0b785f122e2a"
           },
           "Id": {
-            "S": "prod-ball-kook-001"
+            "S": "77f93ec6-4e79-4d90-a39e-0b785f122e2a"
           },
           "TenantId": {
             "S": "default"
@@ -1356,16 +1356,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-ball-kook-002"
+            "S": "PRODUCT#12713f8e-bce8-474a-bc74-2a55b5bde035"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-ball-kook-002"
+            "S": "PRODUCT#12713f8e-bce8-474a-bc74-2a55b5bde035"
           },
           "Id": {
-            "S": "prod-ball-kook-002"
+            "S": "12713f8e-bce8-474a-bc74-2a55b5bde035"
           },
           "TenantId": {
             "S": "default"
@@ -1452,16 +1452,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-ball-ss-001"
+            "S": "PRODUCT#bd8fbb6f-afb3-43af-8968-c75be2123986"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-ball-ss-001"
+            "S": "PRODUCT#bd8fbb6f-afb3-43af-8968-c75be2123986"
           },
           "Id": {
-            "S": "prod-ball-ss-001"
+            "S": "bd8fbb6f-afb3-43af-8968-c75be2123986"
           },
           "TenantId": {
             "S": "default"
@@ -1547,16 +1547,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-ball-dsc-001"
+            "S": "PRODUCT#c16b3397-d8c6-4ecb-acb7-c1ae03728861"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-ball-dsc-001"
+            "S": "PRODUCT#c16b3397-d8c6-4ecb-acb7-c1ae03728861"
           },
           "Id": {
-            "S": "prod-ball-dsc-001"
+            "S": "c16b3397-d8c6-4ecb-acb7-c1ae03728861"
           },
           "TenantId": {
             "S": "default"
@@ -1642,16 +1642,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-shoes-sg-001"
+            "S": "PRODUCT#469fabdb-4ab4-4a8f-879b-ddeeb005db6c"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-shoes-sg-001"
+            "S": "PRODUCT#469fabdb-4ab4-4a8f-879b-ddeeb005db6c"
           },
           "Id": {
-            "S": "prod-shoes-sg-001"
+            "S": "469fabdb-4ab4-4a8f-879b-ddeeb005db6c"
           },
           "TenantId": {
             "S": "default"
@@ -1737,16 +1737,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-shoes-sg-002"
+            "S": "PRODUCT#d8832388-2384-492b-80ef-d96a1cf3bd35"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-shoes-sg-002"
+            "S": "PRODUCT#d8832388-2384-492b-80ef-d96a1cf3bd35"
           },
           "Id": {
-            "S": "prod-shoes-sg-002"
+            "S": "d8832388-2384-492b-80ef-d96a1cf3bd35"
           },
           "TenantId": {
             "S": "default"
@@ -1832,16 +1832,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-shoes-kook-001"
+            "S": "PRODUCT#a25ce22b-8f3d-4544-8a38-ac9c24e7103e"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-shoes-kook-001"
+            "S": "PRODUCT#a25ce22b-8f3d-4544-8a38-ac9c24e7103e"
           },
           "Id": {
-            "S": "prod-shoes-kook-001"
+            "S": "a25ce22b-8f3d-4544-8a38-ac9c24e7103e"
           },
           "TenantId": {
             "S": "default"
@@ -1945,16 +1945,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-shoes-ss-001"
+            "S": "PRODUCT#1e0c2dca-727b-4571-a59e-46540a733071"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-shoes-ss-001"
+            "S": "PRODUCT#1e0c2dca-727b-4571-a59e-46540a733071"
           },
           "Id": {
-            "S": "prod-shoes-ss-001"
+            "S": "1e0c2dca-727b-4571-a59e-46540a733071"
           },
           "TenantId": {
             "S": "default"
@@ -2040,16 +2040,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-helmet-sg-001"
+            "S": "PRODUCT#862cef10-117b-4b8d-bfe9-1eb4cdbc0709"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-helmet-sg-001"
+            "S": "PRODUCT#862cef10-117b-4b8d-bfe9-1eb4cdbc0709"
           },
           "Id": {
-            "S": "prod-helmet-sg-001"
+            "S": "862cef10-117b-4b8d-bfe9-1eb4cdbc0709"
           },
           "TenantId": {
             "S": "default"
@@ -2135,16 +2135,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-helmet-sg-002"
+            "S": "PRODUCT#f5d9af35-db0d-4208-9ace-d2f8aff65bf5"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-helmet-sg-002"
+            "S": "PRODUCT#f5d9af35-db0d-4208-9ace-d2f8aff65bf5"
           },
           "Id": {
-            "S": "prod-helmet-sg-002"
+            "S": "f5d9af35-db0d-4208-9ace-d2f8aff65bf5"
           },
           "TenantId": {
             "S": "default"
@@ -2231,16 +2231,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-helmet-kook-001"
+            "S": "PRODUCT#18e29e9f-f3bb-4fba-b9d4-4a00eedd35a6"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-helmet-kook-001"
+            "S": "PRODUCT#18e29e9f-f3bb-4fba-b9d4-4a00eedd35a6"
           },
           "Id": {
-            "S": "prod-helmet-kook-001"
+            "S": "18e29e9f-f3bb-4fba-b9d4-4a00eedd35a6"
           },
           "TenantId": {
             "S": "default"
@@ -2344,16 +2344,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-helmet-ss-001"
+            "S": "PRODUCT#13601e8c-43e5-4bca-8dd9-3c3b328dbf75"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-helmet-ss-001"
+            "S": "PRODUCT#13601e8c-43e5-4bca-8dd9-3c3b328dbf75"
           },
           "Id": {
-            "S": "prod-helmet-ss-001"
+            "S": "13601e8c-43e5-4bca-8dd9-3c3b328dbf75"
           },
           "TenantId": {
             "S": "default"
@@ -2439,16 +2439,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-bag-sg-001"
+            "S": "PRODUCT#0853b39a-ab73-40de-a456-13ad24cad034"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-bag-sg-001"
+            "S": "PRODUCT#0853b39a-ab73-40de-a456-13ad24cad034"
           },
           "Id": {
-            "S": "prod-bag-sg-001"
+            "S": "0853b39a-ab73-40de-a456-13ad24cad034"
           },
           "TenantId": {
             "S": "default"

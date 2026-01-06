@@ -3,326 +3,882 @@
     {
       "PutRequest": {
         "Item": {
-          "PK": { "S": "TENANT#default#PRODUCT#prod_deal_001" },
-          "SK": { "S": "METADATA" },
-          "GSI1PK": { "S": "TENANT#default#PRODUCTS" },
-          "GSI1SK": { "S": "PRODUCT#prod_deal_001" },
-          "Id": { "S": "prod_deal_001" },
-          "TenantId": { "S": "default" },
-          "Name": { "S": "Deal: SS Premium Cricket Bat" },
-          "Slug": { "S": "deal-cricket-bat" },
-          "Description": { "S": "Premium cricket bat at special deal price" },
-          "ShortDescription": { "S": "Special deal on SS Premium Bat" },
-          "DepartmentId": { "S": "dept_cricket" },
-          "DepartmentSlug": { "S": "cricket" },
-          "CategoryId": { "S": "cat_bats" },
-          "CategorySlug": { "S": "bats" },
-          "SubcategoryId": { "S": "sub_bats_1" },
-          "SubcategorySlug": { "S": "cricket-bats" },
-          "BrandId": { "S": "brand_ss" },
-          "BrandSlug": { "S": "ss" },
-          "SKU": { "S": "DEAL-SS-BAT-001" },
-          "BasePrice": { "N": "150" },
-          "SalePrice": { "N": "99" },
-          "CostPrice": { "N": "70" },
-          "Currency": { "S": "USD" },
-          "StockQuantity": { "N": "50" },
-          "LowStockThreshold": { "N": "10" },
-          "IsDeal": { "BOOL": true },
-          "DealStartDate": { "S": "2026-01-01T00:00:00.000Z" },
-          "DealEndDate": { "S": "2026-12-31T23:59:59.000Z" },
-          "IsClearance": { "BOOL": false },
-          "IsNewArrival": { "BOOL": false },
-          "IsBestSeller": { "BOOL": false },
-          "IsFeatured": { "BOOL": false },
-          "IsActive": { "BOOL": true },
-          "IsPublished": { "BOOL": true },
-          "CreatedAt": { "S": "2026-01-03T00:00:00.000Z" },
-          "UpdatedAt": { "S": "2026-01-03T00:00:00.000Z" }
+          "PK": {
+            "S": "TENANT#default#PRODUCT#prod_deal_001"
+          },
+          "SK": {
+            "S": "PRODUCT#69b803a9-925b-432f-a3ab-a16c06bc48d6"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#69b803a9-925b-432f-a3ab-a16c06bc48d6"
+          },
+          "Id": {
+            "S": "69b803a9-925b-432f-a3ab-a16c06bc48d6"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "Deal: SS Premium Cricket Bat"
+          },
+          "Slug": {
+            "S": "deal-cricket-bat"
+          },
+          "Description": {
+            "S": "Premium cricket bat at special deal price"
+          },
+          "ShortDescription": {
+            "S": "Special deal on SS Premium Bat"
+          },
+          "DepartmentId": {
+            "S": "dept_cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "CategoryId": {
+            "S": "cat_bats"
+          },
+          "CategorySlug": {
+            "S": "bats"
+          },
+          "SubcategoryId": {
+            "S": "sub_bats_1"
+          },
+          "SubcategorySlug": {
+            "S": "cricket-bats"
+          },
+          "BrandId": {
+            "S": "brand_ss"
+          },
+          "BrandSlug": {
+            "S": "ss"
+          },
+          "SKU": {
+            "S": "DEAL-SS-BAT-001"
+          },
+          "BasePrice": {
+            "N": "150"
+          },
+          "SalePrice": {
+            "N": "99"
+          },
+          "CostPrice": {
+            "N": "70"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "StockQuantity": {
+            "N": "50"
+          },
+          "LowStockThreshold": {
+            "N": "10"
+          },
+          "IsDeal": {
+            "BOOL": true
+          },
+          "DealStartDate": {
+            "S": "2026-01-01T00:00:00.000Z"
+          },
+          "DealEndDate": {
+            "S": "2026-12-31T23:59:59.000Z"
+          },
+          "IsClearance": {
+            "BOOL": false
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": false
+          },
+          "IsFeatured": {
+            "BOOL": false
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "IsPublished": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2026-01-03T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2026-01-03T00:00:00.000Z"
+          }
         }
       }
     },
     {
       "PutRequest": {
         "Item": {
-          "PK": { "S": "TENANT#default#PRODUCT#prod_deal_002" },
-          "SK": { "S": "METADATA" },
-          "GSI1PK": { "S": "TENANT#default#PRODUCTS" },
-          "GSI1SK": { "S": "PRODUCT#prod_deal_002" },
-          "Id": { "S": "prod_deal_002" },
-          "TenantId": { "S": "default" },
-          "Name": { "S": "Deal: Kookaburra Ghost Pro Bat" },
-          "Slug": { "S": "deal-kookaburra-bat" },
-          "Description": { "S": "Kookaburra Ghost Pro at amazing deal price" },
-          "ShortDescription": { "S": "Hot deal on Kookaburra Ghost" },
-          "DepartmentId": { "S": "dept_cricket" },
-          "DepartmentSlug": { "S": "cricket" },
-          "CategoryId": { "S": "cat_bats" },
-          "CategorySlug": { "S": "bats" },
-          "SubcategoryId": { "S": "sub_bats_1" },
-          "SubcategorySlug": { "S": "cricket-bats" },
-          "BrandId": { "S": "brand_kookaburra" },
-          "BrandSlug": { "S": "kookaburra" },
-          "SKU": { "S": "DEAL-KB-GHOST-001" },
-          "BasePrice": { "N": "200" },
-          "SalePrice": { "N": "149" },
-          "CostPrice": { "N": "100" },
-          "Currency": { "S": "USD" },
-          "StockQuantity": { "N": "30" },
-          "LowStockThreshold": { "N": "5" },
-          "IsDeal": { "BOOL": true },
-          "DealStartDate": { "S": "2026-01-01T00:00:00.000Z" },
-          "DealEndDate": { "S": "2026-12-31T23:59:59.000Z" },
-          "IsClearance": { "BOOL": false },
-          "IsNewArrival": { "BOOL": false },
-          "IsBestSeller": { "BOOL": false },
-          "IsFeatured": { "BOOL": false },
-          "IsActive": { "BOOL": true },
-          "IsPublished": { "BOOL": true },
-          "CreatedAt": { "S": "2026-01-03T00:00:00.000Z" },
-          "UpdatedAt": { "S": "2026-01-03T00:00:00.000Z" }
+          "PK": {
+            "S": "TENANT#default#PRODUCT#prod_deal_002"
+          },
+          "SK": {
+            "S": "PRODUCT#2a953d5a-37ea-414b-9a79-e270320c575d"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#2a953d5a-37ea-414b-9a79-e270320c575d"
+          },
+          "Id": {
+            "S": "2a953d5a-37ea-414b-9a79-e270320c575d"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "Deal: Kookaburra Ghost Pro Bat"
+          },
+          "Slug": {
+            "S": "deal-kookaburra-bat"
+          },
+          "Description": {
+            "S": "Kookaburra Ghost Pro at amazing deal price"
+          },
+          "ShortDescription": {
+            "S": "Hot deal on Kookaburra Ghost"
+          },
+          "DepartmentId": {
+            "S": "dept_cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "CategoryId": {
+            "S": "cat_bats"
+          },
+          "CategorySlug": {
+            "S": "bats"
+          },
+          "SubcategoryId": {
+            "S": "sub_bats_1"
+          },
+          "SubcategorySlug": {
+            "S": "cricket-bats"
+          },
+          "BrandId": {
+            "S": "brand_kookaburra"
+          },
+          "BrandSlug": {
+            "S": "kookaburra"
+          },
+          "SKU": {
+            "S": "DEAL-KB-GHOST-001"
+          },
+          "BasePrice": {
+            "N": "200"
+          },
+          "SalePrice": {
+            "N": "149"
+          },
+          "CostPrice": {
+            "N": "100"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "StockQuantity": {
+            "N": "30"
+          },
+          "LowStockThreshold": {
+            "N": "5"
+          },
+          "IsDeal": {
+            "BOOL": true
+          },
+          "DealStartDate": {
+            "S": "2026-01-01T00:00:00.000Z"
+          },
+          "DealEndDate": {
+            "S": "2026-12-31T23:59:59.000Z"
+          },
+          "IsClearance": {
+            "BOOL": false
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": false
+          },
+          "IsFeatured": {
+            "BOOL": false
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "IsPublished": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2026-01-03T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2026-01-03T00:00:00.000Z"
+          }
         }
       }
     },
     {
       "PutRequest": {
         "Item": {
-          "PK": { "S": "TENANT#default#PRODUCT#prod_clearance_001" },
-          "SK": { "S": "METADATA" },
-          "GSI1PK": { "S": "TENANT#default#PRODUCTS" },
-          "GSI1SK": { "S": "PRODUCT#prod_clearance_001" },
-          "Id": { "S": "prod_clearance_001" },
-          "TenantId": { "S": "default" },
-          "Name": { "S": "Clearance: MRF Cricket Gloves" },
-          "Slug": { "S": "clearance-cricket-gloves" },
-          "Description": { "S": "Last season MRF gloves at clearance price" },
-          "ShortDescription": { "S": "Clearance sale on MRF Gloves" },
-          "DepartmentId": { "S": "dept_cricket" },
-          "DepartmentSlug": { "S": "cricket" },
-          "CategoryId": { "S": "cat_accessories" },
-          "CategorySlug": { "S": "accessories" },
-          "SubcategoryId": { "S": "sub_acc_1" },
-          "SubcategorySlug": { "S": "gloves" },
-          "BrandId": { "S": "brand_mrf" },
-          "BrandSlug": { "S": "mrf" },
-          "SKU": { "S": "CLR-MRF-GLV-001" },
-          "BasePrice": { "N": "80" },
-          "SalePrice": { "N": "35" },
-          "CostPrice": { "N": "25" },
-          "Currency": { "S": "USD" },
-          "StockQuantity": { "N": "15" },
-          "LowStockThreshold": { "N": "5" },
-          "IsDeal": { "BOOL": false },
-          "IsClearance": { "BOOL": true },
-          "IsNewArrival": { "BOOL": false },
-          "IsBestSeller": { "BOOL": false },
-          "IsFeatured": { "BOOL": false },
-          "IsActive": { "BOOL": true },
-          "IsPublished": { "BOOL": true },
-          "CreatedAt": { "S": "2026-01-03T00:00:00.000Z" },
-          "UpdatedAt": { "S": "2026-01-03T00:00:00.000Z" }
+          "PK": {
+            "S": "TENANT#default#PRODUCT#prod_clearance_001"
+          },
+          "SK": {
+            "S": "PRODUCT#281dd116-d1a7-4da6-b641-8a9b8c28c9f9"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#281dd116-d1a7-4da6-b641-8a9b8c28c9f9"
+          },
+          "Id": {
+            "S": "281dd116-d1a7-4da6-b641-8a9b8c28c9f9"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "Clearance: MRF Cricket Gloves"
+          },
+          "Slug": {
+            "S": "clearance-cricket-gloves"
+          },
+          "Description": {
+            "S": "Last season MRF gloves at clearance price"
+          },
+          "ShortDescription": {
+            "S": "Clearance sale on MRF Gloves"
+          },
+          "DepartmentId": {
+            "S": "dept_cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "CategoryId": {
+            "S": "cat_accessories"
+          },
+          "CategorySlug": {
+            "S": "accessories"
+          },
+          "SubcategoryId": {
+            "S": "sub_acc_1"
+          },
+          "SubcategorySlug": {
+            "S": "gloves"
+          },
+          "BrandId": {
+            "S": "brand_mrf"
+          },
+          "BrandSlug": {
+            "S": "mrf"
+          },
+          "SKU": {
+            "S": "CLR-MRF-GLV-001"
+          },
+          "BasePrice": {
+            "N": "80"
+          },
+          "SalePrice": {
+            "N": "35"
+          },
+          "CostPrice": {
+            "N": "25"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "StockQuantity": {
+            "N": "15"
+          },
+          "LowStockThreshold": {
+            "N": "5"
+          },
+          "IsDeal": {
+            "BOOL": false
+          },
+          "IsClearance": {
+            "BOOL": true
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": false
+          },
+          "IsFeatured": {
+            "BOOL": false
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "IsPublished": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2026-01-03T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2026-01-03T00:00:00.000Z"
+          }
         }
       }
     },
     {
       "PutRequest": {
         "Item": {
-          "PK": { "S": "TENANT#default#PRODUCT#prod_clearance_002" },
-          "SK": { "S": "METADATA" },
-          "GSI1PK": { "S": "TENANT#default#PRODUCTS" },
-          "GSI1SK": { "S": "PRODUCT#prod_clearance_002" },
-          "Id": { "S": "prod_clearance_002" },
-          "TenantId": { "S": "default" },
-          "Name": { "S": "Clearance: SS Batting Pads" },
-          "Slug": { "S": "clearance-cricket-pads" },
-          "Description": { "S": "SS batting pads clearance - limited stock" },
-          "ShortDescription": { "S": "Clearance on SS Pads" },
-          "DepartmentId": { "S": "dept_cricket" },
-          "DepartmentSlug": { "S": "cricket" },
-          "CategoryId": { "S": "cat_accessories" },
-          "CategorySlug": { "S": "accessories" },
-          "SubcategoryId": { "S": "sub_acc_2" },
-          "SubcategorySlug": { "S": "pads" },
-          "BrandId": { "S": "brand_ss" },
-          "BrandSlug": { "S": "ss" },
-          "SKU": { "S": "CLR-SS-PADS-001" },
-          "BasePrice": { "N": "100" },
-          "SalePrice": { "N": "45" },
-          "CostPrice": { "N": "30" },
-          "Currency": { "S": "USD" },
-          "StockQuantity": { "N": "8" },
-          "LowStockThreshold": { "N": "3" },
-          "IsDeal": { "BOOL": false },
-          "IsClearance": { "BOOL": true },
-          "IsNewArrival": { "BOOL": false },
-          "IsBestSeller": { "BOOL": false },
-          "IsFeatured": { "BOOL": false },
-          "IsActive": { "BOOL": true },
-          "IsPublished": { "BOOL": true },
-          "CreatedAt": { "S": "2026-01-03T00:00:00.000Z" },
-          "UpdatedAt": { "S": "2026-01-03T00:00:00.000Z" }
+          "PK": {
+            "S": "TENANT#default#PRODUCT#prod_clearance_002"
+          },
+          "SK": {
+            "S": "PRODUCT#825247f8-8c96-4a60-be23-3ff896ee5025"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#825247f8-8c96-4a60-be23-3ff896ee5025"
+          },
+          "Id": {
+            "S": "825247f8-8c96-4a60-be23-3ff896ee5025"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "Clearance: SS Batting Pads"
+          },
+          "Slug": {
+            "S": "clearance-cricket-pads"
+          },
+          "Description": {
+            "S": "SS batting pads clearance - limited stock"
+          },
+          "ShortDescription": {
+            "S": "Clearance on SS Pads"
+          },
+          "DepartmentId": {
+            "S": "dept_cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "CategoryId": {
+            "S": "cat_accessories"
+          },
+          "CategorySlug": {
+            "S": "accessories"
+          },
+          "SubcategoryId": {
+            "S": "sub_acc_2"
+          },
+          "SubcategorySlug": {
+            "S": "pads"
+          },
+          "BrandId": {
+            "S": "brand_ss"
+          },
+          "BrandSlug": {
+            "S": "ss"
+          },
+          "SKU": {
+            "S": "CLR-SS-PADS-001"
+          },
+          "BasePrice": {
+            "N": "100"
+          },
+          "SalePrice": {
+            "N": "45"
+          },
+          "CostPrice": {
+            "N": "30"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "StockQuantity": {
+            "N": "8"
+          },
+          "LowStockThreshold": {
+            "N": "3"
+          },
+          "IsDeal": {
+            "BOOL": false
+          },
+          "IsClearance": {
+            "BOOL": true
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": false
+          },
+          "IsFeatured": {
+            "BOOL": false
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "IsPublished": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2026-01-03T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2026-01-03T00:00:00.000Z"
+          }
         }
       }
     },
     {
       "PutRequest": {
         "Item": {
-          "PK": { "S": "TENANT#default#PRODUCT#prod_new_001" },
-          "SK": { "S": "METADATA" },
-          "GSI1PK": { "S": "TENANT#default#PRODUCTS" },
-          "GSI1SK": { "S": "PRODUCT#prod_new_001" },
-          "Id": { "S": "prod_new_001" },
-          "TenantId": { "S": "default" },
-          "Name": { "S": "New: Adidas XT Pro Bat 2026" },
-          "Slug": { "S": "new-adidas-bat-2026" },
-          "Description": { "S": "Brand new 2026 Adidas XT Pro cricket bat" },
-          "ShortDescription": { "S": "Just arrived - Adidas XT Pro" },
-          "DepartmentId": { "S": "dept_cricket" },
-          "DepartmentSlug": { "S": "cricket" },
-          "CategoryId": { "S": "cat_bats" },
-          "CategorySlug": { "S": "bats" },
-          "SubcategoryId": { "S": "sub_bats_1" },
-          "SubcategorySlug": { "S": "cricket-bats" },
-          "BrandId": { "S": "brand_adidas" },
-          "BrandSlug": { "S": "adidas" },
-          "SKU": { "S": "NEW-ADIDAS-XT-2026" },
-          "BasePrice": { "N": "180" },
-          "SalePrice": { "N": "180" },
-          "CostPrice": { "N": "120" },
-          "Currency": { "S": "USD" },
-          "StockQuantity": { "N": "25" },
-          "LowStockThreshold": { "N": "10" },
-          "IsDeal": { "BOOL": false },
-          "IsClearance": { "BOOL": false },
-          "IsNewArrival": { "BOOL": true },
-          "IsBestSeller": { "BOOL": false },
-          "IsFeatured": { "BOOL": false },
-          "IsActive": { "BOOL": true },
-          "IsPublished": { "BOOL": true },
-          "CreatedAt": { "S": "2026-01-03T00:00:00.000Z" },
-          "UpdatedAt": { "S": "2026-01-03T00:00:00.000Z" }
+          "PK": {
+            "S": "TENANT#default#PRODUCT#prod_new_001"
+          },
+          "SK": {
+            "S": "PRODUCT#13e2073b-1848-4942-9f08-430a7d91cfbf"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#13e2073b-1848-4942-9f08-430a7d91cfbf"
+          },
+          "Id": {
+            "S": "13e2073b-1848-4942-9f08-430a7d91cfbf"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "New: Adidas XT Pro Bat 2026"
+          },
+          "Slug": {
+            "S": "new-adidas-bat-2026"
+          },
+          "Description": {
+            "S": "Brand new 2026 Adidas XT Pro cricket bat"
+          },
+          "ShortDescription": {
+            "S": "Just arrived - Adidas XT Pro"
+          },
+          "DepartmentId": {
+            "S": "dept_cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "CategoryId": {
+            "S": "cat_bats"
+          },
+          "CategorySlug": {
+            "S": "bats"
+          },
+          "SubcategoryId": {
+            "S": "sub_bats_1"
+          },
+          "SubcategorySlug": {
+            "S": "cricket-bats"
+          },
+          "BrandId": {
+            "S": "brand_adidas"
+          },
+          "BrandSlug": {
+            "S": "adidas"
+          },
+          "SKU": {
+            "S": "NEW-ADIDAS-XT-2026"
+          },
+          "BasePrice": {
+            "N": "180"
+          },
+          "SalePrice": {
+            "N": "180"
+          },
+          "CostPrice": {
+            "N": "120"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "StockQuantity": {
+            "N": "25"
+          },
+          "LowStockThreshold": {
+            "N": "10"
+          },
+          "IsDeal": {
+            "BOOL": false
+          },
+          "IsClearance": {
+            "BOOL": false
+          },
+          "IsNewArrival": {
+            "BOOL": true
+          },
+          "IsBestSeller": {
+            "BOOL": false
+          },
+          "IsFeatured": {
+            "BOOL": false
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "IsPublished": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2026-01-03T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2026-01-03T00:00:00.000Z"
+          }
         }
       }
     },
     {
       "PutRequest": {
         "Item": {
-          "PK": { "S": "TENANT#default#PRODUCT#prod_bestseller_001" },
-          "SK": { "S": "METADATA" },
-          "GSI1PK": { "S": "TENANT#default#PRODUCTS" },
-          "GSI1SK": { "S": "PRODUCT#prod_bestseller_001" },
-          "Id": { "S": "prod_bestseller_001" },
-          "TenantId": { "S": "default" },
-          "Name": { "S": "SG Savage Edition Cricket Bat" },
-          "Slug": { "S": "bestseller-sg-bat" },
-          "Description": { "S": "Our #1 selling cricket bat - SG Savage Edition" },
-          "ShortDescription": { "S": "Best seller - SG Savage" },
-          "DepartmentId": { "S": "dept_cricket" },
-          "DepartmentSlug": { "S": "cricket" },
-          "CategoryId": { "S": "cat_bats" },
-          "CategorySlug": { "S": "bats" },
-          "SubcategoryId": { "S": "sub_bats_1" },
-          "SubcategorySlug": { "S": "cricket-bats" },
-          "BrandId": { "S": "brand_sg" },
-          "BrandSlug": { "S": "sg" },
-          "SKU": { "S": "BS-SG-SAVAGE-001" },
-          "BasePrice": { "N": "165" },
-          "SalePrice": { "N": "165" },
-          "CostPrice": { "N": "110" },
-          "Currency": { "S": "USD" },
-          "StockQuantity": { "N": "100" },
-          "LowStockThreshold": { "N": "20" },
-          "IsDeal": { "BOOL": false },
-          "IsClearance": { "BOOL": false },
-          "IsNewArrival": { "BOOL": false },
-          "IsBestSeller": { "BOOL": true },
-          "IsFeatured": { "BOOL": false },
-          "IsActive": { "BOOL": true },
-          "IsPublished": { "BOOL": true },
-          "CreatedAt": { "S": "2026-01-03T00:00:00.000Z" },
-          "UpdatedAt": { "S": "2026-01-03T00:00:00.000Z" }
+          "PK": {
+            "S": "TENANT#default#PRODUCT#prod_bestseller_001"
+          },
+          "SK": {
+            "S": "PRODUCT#ce4fb62a-e020-4c51-b4d3-9005a436629a"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#ce4fb62a-e020-4c51-b4d3-9005a436629a"
+          },
+          "Id": {
+            "S": "ce4fb62a-e020-4c51-b4d3-9005a436629a"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "SG Savage Edition Cricket Bat"
+          },
+          "Slug": {
+            "S": "bestseller-sg-bat"
+          },
+          "Description": {
+            "S": "Our #1 selling cricket bat - SG Savage Edition"
+          },
+          "ShortDescription": {
+            "S": "Best seller - SG Savage"
+          },
+          "DepartmentId": {
+            "S": "dept_cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "CategoryId": {
+            "S": "cat_bats"
+          },
+          "CategorySlug": {
+            "S": "bats"
+          },
+          "SubcategoryId": {
+            "S": "sub_bats_1"
+          },
+          "SubcategorySlug": {
+            "S": "cricket-bats"
+          },
+          "BrandId": {
+            "S": "brand_sg"
+          },
+          "BrandSlug": {
+            "S": "sg"
+          },
+          "SKU": {
+            "S": "BS-SG-SAVAGE-001"
+          },
+          "BasePrice": {
+            "N": "165"
+          },
+          "SalePrice": {
+            "N": "165"
+          },
+          "CostPrice": {
+            "N": "110"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "StockQuantity": {
+            "N": "100"
+          },
+          "LowStockThreshold": {
+            "N": "20"
+          },
+          "IsDeal": {
+            "BOOL": false
+          },
+          "IsClearance": {
+            "BOOL": false
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": true
+          },
+          "IsFeatured": {
+            "BOOL": false
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "IsPublished": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2026-01-03T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2026-01-03T00:00:00.000Z"
+          }
         }
       }
     },
     {
       "PutRequest": {
         "Item": {
-          "PK": { "S": "TENANT#default#PRODUCT#prod_featured_001" },
-          "SK": { "S": "METADATA" },
-          "GSI1PK": { "S": "TENANT#default#PRODUCTS" },
-          "GSI1SK": { "S": "PRODUCT#prod_featured_001" },
-          "Id": { "S": "prod_featured_001" },
-          "TenantId": { "S": "default" },
-          "Name": { "S": "Gray-Nicolls Powerbow Premium" },
-          "Slug": { "S": "featured-gray-nicolls-bat" },
-          "Description": { "S": "Featured product - Gray-Nicolls Powerbow Premium edition" },
-          "ShortDescription": { "S": "Featured - Gray-Nicolls Powerbow" },
-          "DepartmentId": { "S": "dept_cricket" },
-          "DepartmentSlug": { "S": "cricket" },
-          "CategoryId": { "S": "cat_bats" },
-          "CategorySlug": { "S": "bats" },
-          "SubcategoryId": { "S": "sub_bats_1" },
-          "SubcategorySlug": { "S": "cricket-bats" },
-          "BrandId": { "S": "brand_gray_nicolls" },
-          "BrandSlug": { "S": "gray-nicolls" },
-          "SKU": { "S": "FTR-GN-POWERBOW-001" },
-          "BasePrice": { "N": "220" },
-          "SalePrice": { "N": "220" },
-          "CostPrice": { "N": "150" },
-          "Currency": { "S": "USD" },
-          "StockQuantity": { "N": "40" },
-          "LowStockThreshold": { "N": "10" },
-          "IsDeal": { "BOOL": false },
-          "IsClearance": { "BOOL": false },
-          "IsNewArrival": { "BOOL": false },
-          "IsBestSeller": { "BOOL": false },
-          "IsFeatured": { "BOOL": true },
-          "IsActive": { "BOOL": true },
-          "IsPublished": { "BOOL": true },
-          "CreatedAt": { "S": "2026-01-03T00:00:00.000Z" },
-          "UpdatedAt": { "S": "2026-01-03T00:00:00.000Z" }
+          "PK": {
+            "S": "TENANT#default#PRODUCT#prod_featured_001"
+          },
+          "SK": {
+            "S": "PRODUCT#55b03cc0-8fad-4c46-bea4-23f18da3cf0a"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#55b03cc0-8fad-4c46-bea4-23f18da3cf0a"
+          },
+          "Id": {
+            "S": "55b03cc0-8fad-4c46-bea4-23f18da3cf0a"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "Gray-Nicolls Powerbow Premium"
+          },
+          "Slug": {
+            "S": "featured-gray-nicolls-bat"
+          },
+          "Description": {
+            "S": "Featured product - Gray-Nicolls Powerbow Premium edition"
+          },
+          "ShortDescription": {
+            "S": "Featured - Gray-Nicolls Powerbow"
+          },
+          "DepartmentId": {
+            "S": "dept_cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "CategoryId": {
+            "S": "cat_bats"
+          },
+          "CategorySlug": {
+            "S": "bats"
+          },
+          "SubcategoryId": {
+            "S": "sub_bats_1"
+          },
+          "SubcategorySlug": {
+            "S": "cricket-bats"
+          },
+          "BrandId": {
+            "S": "brand_gray_nicolls"
+          },
+          "BrandSlug": {
+            "S": "gray-nicolls"
+          },
+          "SKU": {
+            "S": "FTR-GN-POWERBOW-001"
+          },
+          "BasePrice": {
+            "N": "220"
+          },
+          "SalePrice": {
+            "N": "220"
+          },
+          "CostPrice": {
+            "N": "150"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "StockQuantity": {
+            "N": "40"
+          },
+          "LowStockThreshold": {
+            "N": "10"
+          },
+          "IsDeal": {
+            "BOOL": false
+          },
+          "IsClearance": {
+            "BOOL": false
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": false
+          },
+          "IsFeatured": {
+            "BOOL": true
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "IsPublished": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2026-01-03T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2026-01-03T00:00:00.000Z"
+          }
         }
       }
     },
     {
       "PutRequest": {
         "Item": {
-          "PK": { "S": "TENANT#default#PRODUCT#prod_combo_001" },
-          "SK": { "S": "METADATA" },
-          "GSI1PK": { "S": "TENANT#default#PRODUCTS" },
-          "GSI1SK": { "S": "PRODUCT#prod_combo_001" },
-          "Id": { "S": "prod_combo_001" },
-          "TenantId": { "S": "default" },
-          "Name": { "S": "Kookaburra Kahuna Pro - Deal + Featured" },
-          "Slug": { "S": "combo-kookaburra-bat" },
-          "Description": { "S": "Special deal on our featured Kookaburra Kahuna Pro bat" },
-          "ShortDescription": { "S": "Deal + Featured combo" },
-          "DepartmentId": { "S": "dept_cricket" },
-          "DepartmentSlug": { "S": "cricket" },
-          "CategoryId": { "S": "cat_bats" },
-          "CategorySlug": { "S": "bats" },
-          "SubcategoryId": { "S": "sub_bats_1" },
-          "SubcategorySlug": { "S": "cricket-bats" },
-          "BrandId": { "S": "brand_kookaburra" },
-          "BrandSlug": { "S": "kookaburra" },
-          "SKU": { "S": "COMBO-KB-KAHUNA-001" },
-          "BasePrice": { "N": "250" },
-          "SalePrice": { "N": "199" },
-          "CostPrice": { "N": "140" },
-          "Currency": { "S": "USD" },
-          "StockQuantity": { "N": "20" },
-          "LowStockThreshold": { "N": "5" },
-          "IsDeal": { "BOOL": true },
-          "DealStartDate": { "S": "2026-01-01T00:00:00.000Z" },
-          "DealEndDate": { "S": "2026-12-31T23:59:59.000Z" },
-          "IsClearance": { "BOOL": false },
-          "IsNewArrival": { "BOOL": false },
-          "IsBestSeller": { "BOOL": true },
-          "IsFeatured": { "BOOL": true },
-          "IsActive": { "BOOL": true },
-          "IsPublished": { "BOOL": true },
-          "CreatedAt": { "S": "2026-01-03T00:00:00.000Z" },
-          "UpdatedAt": { "S": "2026-01-03T00:00:00.000Z" }
+          "PK": {
+            "S": "TENANT#default#PRODUCT#prod_combo_001"
+          },
+          "SK": {
+            "S": "PRODUCT#3ea3c341-b604-46f2-a1d9-d94eb2a11f17"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#3ea3c341-b604-46f2-a1d9-d94eb2a11f17"
+          },
+          "Id": {
+            "S": "3ea3c341-b604-46f2-a1d9-d94eb2a11f17"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Name": {
+            "S": "Kookaburra Kahuna Pro - Deal + Featured"
+          },
+          "Slug": {
+            "S": "combo-kookaburra-bat"
+          },
+          "Description": {
+            "S": "Special deal on our featured Kookaburra Kahuna Pro bat"
+          },
+          "ShortDescription": {
+            "S": "Deal + Featured combo"
+          },
+          "DepartmentId": {
+            "S": "dept_cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "CategoryId": {
+            "S": "cat_bats"
+          },
+          "CategorySlug": {
+            "S": "bats"
+          },
+          "SubcategoryId": {
+            "S": "sub_bats_1"
+          },
+          "SubcategorySlug": {
+            "S": "cricket-bats"
+          },
+          "BrandId": {
+            "S": "brand_kookaburra"
+          },
+          "BrandSlug": {
+            "S": "kookaburra"
+          },
+          "SKU": {
+            "S": "COMBO-KB-KAHUNA-001"
+          },
+          "BasePrice": {
+            "N": "250"
+          },
+          "SalePrice": {
+            "N": "199"
+          },
+          "CostPrice": {
+            "N": "140"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "StockQuantity": {
+            "N": "20"
+          },
+          "LowStockThreshold": {
+            "N": "5"
+          },
+          "IsDeal": {
+            "BOOL": true
+          },
+          "DealStartDate": {
+            "S": "2026-01-01T00:00:00.000Z"
+          },
+          "DealEndDate": {
+            "S": "2026-12-31T23:59:59.000Z"
+          },
+          "IsClearance": {
+            "BOOL": false
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": true
+          },
+          "IsFeatured": {
+            "BOOL": true
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "IsPublished": {
+            "BOOL": true
+          },
+          "CreatedAt": {
+            "S": "2026-01-03T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2026-01-03T00:00:00.000Z"
+          }
         }
       }
     }

@@ -69,7 +69,9 @@
       "Bash(for product_id in 0c6b7d5e-8f9a-7b0c-1d2e-3f4a5b6c7d8e 1d7c8e6f-9a0b-8c1d-2e3f-4a5b6c7d8e9f 2e8d9f7a-0b1c-9d2e-3f4a-5b6c7d8e9f0a 3f9e0a8b-1c2d-0e3f-4a5b-6c7d8e9f0a1b 4a0f1b9c-2d3e-1f4a-5b6c-7d8e9f0a1b2c 7f3e4a2b-5c6d-4e7f-8a9b-0c1d2e3f4a5b 8a4f5b3c-6d7e-5f8a-9ba0-1d2e3f4a5b6c 9b5a6c4d-7e8f-6a9b-0c1d-2e3f4a5b6c7d prod-001 prod-002 prod-003 prod-004 prod-005 prod-006 prod-007 prod-008)",
       "Bash(awslocal dynamodb:*)",
       "Bash(for table in gearify-products gearify-brands)",
-      "Bash(do echo \"=== $table ===\" AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws dynamodb describe-table  --table-name $table  --endpoint-url http://localhost:4566  --region us-east-1  --query 'Table.{KeySchema:KeySchema,GSIs:GlobalSecondaryIndexes[*].{Name:IndexName,KeySchema:KeySchema}}'  --output json)"
+      "Bash(do echo \"=== $table ===\" AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws dynamodb describe-table  --table-name $table  --endpoint-url http://localhost:4566  --region us-east-1  --query 'Table.{KeySchema:KeySchema,GSIs:GlobalSecondaryIndexes[*].{Name:IndexName,KeySchema:KeySchema}}'  --output json)",
+      "Bash(AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY_test aws dynamodb scan --table-name gearify-products --endpoint-url http://localhost:4566 --region us-east-1 --filter-expression \"TenantId = :tenant\" --expression-attribute-values '{\"\":tenant\"\":{\"\"S\"\":\"\"default\"\"}}' --select COUNT --output json)",
+      "Bash(docker volume:*)"
     ]
   }
 }

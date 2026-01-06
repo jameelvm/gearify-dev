@@ -7,16 +7,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-bag-sg-002"
+            "S": "PRODUCT#e29ee9c2-275b-49a0-8893-ae8c442e058a"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-bag-sg-002"
+            "S": "PRODUCT#e29ee9c2-275b-49a0-8893-ae8c442e058a"
           },
           "Id": {
-            "S": "prod-bag-sg-002"
+            "S": "e29ee9c2-275b-49a0-8893-ae8c442e058a"
           },
           "TenantId": {
             "S": "default"
@@ -102,16 +102,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-bag-kook-001"
+            "S": "PRODUCT#9c15938d-9f05-4374-9044-f9a84bf2a096"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-bag-kook-001"
+            "S": "PRODUCT#9c15938d-9f05-4374-9044-f9a84bf2a096"
           },
           "Id": {
-            "S": "prod-bag-kook-001"
+            "S": "9c15938d-9f05-4374-9044-f9a84bf2a096"
           },
           "TenantId": {
             "S": "default"
@@ -200,16 +200,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-bag-ss-001"
+            "S": "PRODUCT#6a0d5877-3a3c-49f8-b4db-29be3dedd683"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-bag-ss-001"
+            "S": "PRODUCT#6a0d5877-3a3c-49f8-b4db-29be3dedd683"
           },
           "Id": {
-            "S": "prod-bag-ss-001"
+            "S": "6a0d5877-3a3c-49f8-b4db-29be3dedd683"
           },
           "TenantId": {
             "S": "default"
@@ -294,16 +294,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-pads-sg-001"
+            "S": "PRODUCT#6b83bbe4-3c0e-4b7d-ad1f-f9613fde119c"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-pads-sg-001"
+            "S": "PRODUCT#6b83bbe4-3c0e-4b7d-ad1f-f9613fde119c"
           },
           "Id": {
-            "S": "prod-pads-sg-001"
+            "S": "6b83bbe4-3c0e-4b7d-ad1f-f9613fde119c"
           },
           "TenantId": {
             "S": "default"
@@ -389,16 +389,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-pads-sg-002"
+            "S": "PRODUCT#0a18b01e-6896-4c19-aa04-c8a3cbeb9685"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-pads-sg-002"
+            "S": "PRODUCT#0a18b01e-6896-4c19-aa04-c8a3cbeb9685"
           },
           "Id": {
-            "S": "prod-pads-sg-002"
+            "S": "0a18b01e-6896-4c19-aa04-c8a3cbeb9685"
           },
           "TenantId": {
             "S": "default"
@@ -484,16 +484,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-pads-kook-001"
+            "S": "PRODUCT#b25b0b53-c7a9-483f-81f7-7d08bd4c4ebd"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-pads-kook-001"
+            "S": "PRODUCT#b25b0b53-c7a9-483f-81f7-7d08bd4c4ebd"
           },
           "Id": {
-            "S": "prod-pads-kook-001"
+            "S": "b25b0b53-c7a9-483f-81f7-7d08bd4c4ebd"
           },
           "TenantId": {
             "S": "default"
@@ -582,16 +582,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-pads-ss-001"
+            "S": "PRODUCT#b03c898d-471a-415e-af9b-46ada2a7b093"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-pads-ss-001"
+            "S": "PRODUCT#b03c898d-471a-415e-af9b-46ada2a7b093"
           },
           "Id": {
-            "S": "prod-pads-ss-001"
+            "S": "b03c898d-471a-415e-af9b-46ada2a7b093"
           },
           "TenantId": {
             "S": "default"
@@ -676,16 +676,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-gloves-sg-001"
+            "S": "PRODUCT#c27c1f4c-08a3-4721-b9c2-51ecd390623c"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-gloves-sg-001"
+            "S": "PRODUCT#c27c1f4c-08a3-4721-b9c2-51ecd390623c"
           },
           "Id": {
-            "S": "prod-gloves-sg-001"
+            "S": "c27c1f4c-08a3-4721-b9c2-51ecd390623c"
           },
           "TenantId": {
             "S": "default"
@@ -771,16 +771,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-gloves-sg-002"
+            "S": "PRODUCT#18e5c43e-831a-4b9b-bb4b-bca3f1b19758"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-gloves-sg-002"
+            "S": "PRODUCT#18e5c43e-831a-4b9b-bb4b-bca3f1b19758"
           },
           "Id": {
-            "S": "prod-gloves-sg-002"
+            "S": "18e5c43e-831a-4b9b-bb4b-bca3f1b19758"
           },
           "TenantId": {
             "S": "default"
@@ -866,16 +866,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-gloves-kook-001"
+            "S": "PRODUCT#1a7d2605-e514-4cbf-80f9-8c44445ff172"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-gloves-kook-001"
+            "S": "PRODUCT#1a7d2605-e514-4cbf-80f9-8c44445ff172"
           },
           "Id": {
-            "S": "prod-gloves-kook-001"
+            "S": "1a7d2605-e514-4cbf-80f9-8c44445ff172"
           },
           "TenantId": {
             "S": "default"
@@ -964,16 +964,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-gloves-ss-001"
+            "S": "PRODUCT#e6625d34-96c5-4856-a3a9-0aa6563e4f41"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-gloves-ss-001"
+            "S": "PRODUCT#e6625d34-96c5-4856-a3a9-0aa6563e4f41"
           },
           "Id": {
-            "S": "prod-gloves-ss-001"
+            "S": "e6625d34-96c5-4856-a3a9-0aa6563e4f41"
           },
           "TenantId": {
             "S": "default"
@@ -1058,16 +1058,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-acc-grips-001"
+            "S": "PRODUCT#e48cef85-faaa-4487-8d13-f6aac49ce7ce"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-acc-grips-001"
+            "S": "PRODUCT#e48cef85-faaa-4487-8d13-f6aac49ce7ce"
           },
           "Id": {
-            "S": "prod-acc-grips-001"
+            "S": "e48cef85-faaa-4487-8d13-f6aac49ce7ce"
           },
           "TenantId": {
             "S": "default"
@@ -1152,16 +1152,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-acc-grips-002"
+            "S": "PRODUCT#fce2bb97-5f2b-4d8f-9dfb-95491442e91c"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-acc-grips-002"
+            "S": "PRODUCT#fce2bb97-5f2b-4d8f-9dfb-95491442e91c"
           },
           "Id": {
-            "S": "prod-acc-grips-002"
+            "S": "fce2bb97-5f2b-4d8f-9dfb-95491442e91c"
           },
           "TenantId": {
             "S": "default"
@@ -1246,16 +1246,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-acc-guards-001"
+            "S": "PRODUCT#1fc69297-d74c-4a75-a387-f83dae4ef75d"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-acc-guards-001"
+            "S": "PRODUCT#1fc69297-d74c-4a75-a387-f83dae4ef75d"
           },
           "Id": {
-            "S": "prod-acc-guards-001"
+            "S": "1fc69297-d74c-4a75-a387-f83dae4ef75d"
           },
           "TenantId": {
             "S": "default"
@@ -1341,16 +1341,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-acc-guards-002"
+            "S": "PRODUCT#9fa86e00-8c7e-422f-ba16-c7a1d5ed1a89"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-acc-guards-002"
+            "S": "PRODUCT#9fa86e00-8c7e-422f-ba16-c7a1d5ed1a89"
           },
           "Id": {
-            "S": "prod-acc-guards-002"
+            "S": "9fa86e00-8c7e-422f-ba16-c7a1d5ed1a89"
           },
           "TenantId": {
             "S": "default"
@@ -1436,16 +1436,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-acc-batcare-001"
+            "S": "PRODUCT#ff312369-0ca6-4e31-b646-3cdf6b760056"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-acc-batcare-001"
+            "S": "PRODUCT#ff312369-0ca6-4e31-b646-3cdf6b760056"
           },
           "Id": {
-            "S": "prod-acc-batcare-001"
+            "S": "ff312369-0ca6-4e31-b646-3cdf6b760056"
           },
           "TenantId": {
             "S": "default"
@@ -1531,16 +1531,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-acc-batcare-002"
+            "S": "PRODUCT#dcb11a13-7ae6-4d8a-8d37-83915466e7c3"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-acc-batcare-002"
+            "S": "PRODUCT#dcb11a13-7ae6-4d8a-8d37-83915466e7c3"
           },
           "Id": {
-            "S": "prod-acc-batcare-002"
+            "S": "dcb11a13-7ae6-4d8a-8d37-83915466e7c3"
           },
           "TenantId": {
             "S": "default"
@@ -1626,16 +1626,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-acc-stumps-001"
+            "S": "PRODUCT#b2c8f067-d3b6-46c3-9fef-26225789055d"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-acc-stumps-001"
+            "S": "PRODUCT#b2c8f067-d3b6-46c3-9fef-26225789055d"
           },
           "Id": {
-            "S": "prod-acc-stumps-001"
+            "S": "b2c8f067-d3b6-46c3-9fef-26225789055d"
           },
           "TenantId": {
             "S": "default"
@@ -1720,16 +1720,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-acc-stumps-002"
+            "S": "PRODUCT#fd26db42-e382-41cc-bd7d-a0c65472ee4d"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-acc-stumps-002"
+            "S": "PRODUCT#fd26db42-e382-41cc-bd7d-a0c65472ee4d"
           },
           "Id": {
-            "S": "prod-acc-stumps-002"
+            "S": "fd26db42-e382-41cc-bd7d-a0c65472ee4d"
           },
           "TenantId": {
             "S": "default"
@@ -1815,16 +1815,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-acc-clothing-001"
+            "S": "PRODUCT#b8578749-3285-4770-8faa-b9c05fb5edfe"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-acc-clothing-001"
+            "S": "PRODUCT#b8578749-3285-4770-8faa-b9c05fb5edfe"
           },
           "Id": {
-            "S": "prod-acc-clothing-001"
+            "S": "b8578749-3285-4770-8faa-b9c05fb5edfe"
           },
           "TenantId": {
             "S": "default"
@@ -1910,16 +1910,16 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#prod-acc-clothing-002"
+            "S": "PRODUCT#098947fa-0b8c-4d2f-bb5c-99a127cfdeb0"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#prod-acc-clothing-002"
+            "S": "PRODUCT#098947fa-0b8c-4d2f-bb5c-99a127cfdeb0"
           },
           "Id": {
-            "S": "prod-acc-clothing-002"
+            "S": "098947fa-0b8c-4d2f-bb5c-99a127cfdeb0"
           },
           "TenantId": {
             "S": "default"
@@ -1984,398 +1984,6 @@
               "accessories",
               "clothing",
               "trousers"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#prod-deals-clearance-001"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#prod-deals-clearance-001"
-          },
-          "Id": {
-            "S": "prod-deals-clearance-001"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "DEAL-BAT-CLEAR-001"
-          },
-          "Name": {
-            "S": "SS Gutsy Kashmir Willow Bat - Clearance"
-          },
-          "Description": {
-            "S": "Previous season model - excellent value Kashmir willow bat"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Deals"
-          },
-          "CategorySlug": {
-            "S": "deals"
-          },
-          "Subcategory": {
-            "S": "Clearance"
-          },
-          "SubcategorySlug": {
-            "S": "clearance"
-          },
-          "Brand": {
-            "S": "SS"
-          },
-          "BrandSlug": {
-            "S": "ss"
-          },
-          "Price": {
-            "N": "30.0"
-          },
-          "CompareAtPrice": {
-            "N": "54.0"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "44"
-          },
-          "OfferBadge": {
-            "S": "Mega Deal"
-          },
-          "RatingAverage": {
-            "N": "4.0"
-          },
-          "RatingCount": {
-            "N": "143"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "bat",
-              "deals",
-              "clearance"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#prod-deals-clearance-002"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#prod-deals-clearance-002"
-          },
-          "Id": {
-            "S": "prod-deals-clearance-002"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "DEAL-PADS-CLEAR-002"
-          },
-          "Name": {
-            "S": "DSC Intense Lite Batting Pads - Clearance"
-          },
-          "Description": {
-            "S": "Last season stock - quality pads at unbeatable price"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Deals"
-          },
-          "CategorySlug": {
-            "S": "deals"
-          },
-          "Subcategory": {
-            "S": "Clearance"
-          },
-          "SubcategorySlug": {
-            "S": "clearance"
-          },
-          "Brand": {
-            "S": "DSC"
-          },
-          "BrandSlug": {
-            "S": "dsc"
-          },
-          "Price": {
-            "N": "21.6"
-          },
-          "CompareAtPrice": {
-            "N": "38.4"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "44"
-          },
-          "OfferBadge": {
-            "S": "Hot Deal"
-          },
-          "RatingAverage": {
-            "N": "4.1"
-          },
-          "RatingCount": {
-            "N": "96"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "pads",
-              "deals",
-              "clearance"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#prod-deals-season-001"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#prod-deals-season-001"
-          },
-          "Id": {
-            "S": "prod-deals-season-001"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "DEAL-GLOVES-SEASON-001"
-          },
-          "Name": {
-            "S": "Kookaburra Pro Batting Gloves - Season Sale"
-          },
-          "Description": {
-            "S": "Premium gloves at special discounted price - limited time offer"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Deals"
-          },
-          "CategorySlug": {
-            "S": "deals"
-          },
-          "Subcategory": {
-            "S": "Season Sale"
-          },
-          "SubcategorySlug": {
-            "S": "season-sale"
-          },
-          "Brand": {
-            "S": "Kookaburra"
-          },
-          "BrandSlug": {
-            "S": "kookaburra"
-          },
-          "Price": {
-            "N": "23.99"
-          },
-          "CompareAtPrice": {
-            "N": "38.4"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "38"
-          },
-          "OfferBadge": {
-            "S": "Season Special"
-          },
-          "RatingAverage": {
-            "N": "4.7"
-          },
-          "RatingCount": {
-            "N": "128"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "gloves",
-              "deals",
-              "season-sale"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#prod-deals-season-002"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#prod-deals-season-002"
-          },
-          "Id": {
-            "S": "prod-deals-season-002"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "DEAL-BAG-SEASON-002"
-          },
-          "Name": {
-            "S": "MRF Grand Edition Kit Bag - Season Sale"
-          },
-          "Description": {
-            "S": "Spacious team bag with wheels - special pricing for limited period"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Deals"
-          },
-          "CategorySlug": {
-            "S": "deals"
-          },
-          "Subcategory": {
-            "S": "Season Sale"
-          },
-          "SubcategorySlug": {
-            "S": "season-sale"
-          },
-          "Brand": {
-            "S": "MRF"
-          },
-          "BrandSlug": {
-            "S": "mrf"
-          },
-          "Price": {
-            "N": "38.4"
-          },
-          "CompareAtPrice": {
-            "N": "60.0"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "36"
-          },
-          "OfferBadge": {
-            "S": "Limited Offer"
-          },
-          "RatingAverage": {
-            "N": "4.5"
-          },
-          "RatingCount": {
-            "N": "73"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "bag",
-              "deals",
-              "season-sale"
             ]
           },
           "CreatedAt": {
