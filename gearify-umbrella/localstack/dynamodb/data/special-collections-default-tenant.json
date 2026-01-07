@@ -4,25 +4,16 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "TENANT#default#DEPARTMENT#a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d"
+            "S": "TENANT#default"
           },
           "SK": {
             "S": "SPECIAL_COLLECTIONS"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#SPECIAL_COLLECTIONS"
-          },
-          "GSI1SK": {
-            "S": "DEPARTMENT#cricket"
           },
           "EntityType": {
             "S": "SPECIAL_COLLECTIONS"
           },
           "TenantId": {
             "S": "default"
-          },
-          "DepartmentId": {
-            "S": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d"
           },
           "Collections": {
             "L": [

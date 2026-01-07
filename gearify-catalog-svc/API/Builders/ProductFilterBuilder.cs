@@ -21,6 +21,8 @@ public static class ProductFilterBuilder
     /// <param name="maxPrice">Max price from dropdown filter</param>
     /// <param name="sortBy">Sort parameter</param>
     /// <param name="collectionId">Special collection ID (deals, clearance, new-arrivals, etc.)</param>
+    /// <param name="pageSize">Items per page</param>
+    /// <param name="cursor">Pagination cursor</param>
     /// <returns>GetProductsBySlugQuery with merged filter parameters</returns>
     public static GetProductsBySlugQuery Build(
         string? departmentSlug,
@@ -32,7 +34,9 @@ public static class ProductFilterBuilder
         decimal? minPrice,
         decimal? maxPrice,
         string? sortBy,
-        string? collectionId = null)
+        string? collectionId = null,
+        int pageSize = 12,
+        string? cursor = null)
     {
         // Merge/combine brand slugs from both route and dropdown
         var brandSlugs = MergeBrandSlugs(brandSlug, brand);
@@ -48,7 +52,9 @@ public static class ProductFilterBuilder
             finalMinPrice,
             finalMaxPrice,
             sortBy,
-            collectionId
+            collectionId,
+            pageSize,
+            cursor
         );
     }
 

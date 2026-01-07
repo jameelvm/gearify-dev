@@ -7,9 +7,22 @@
     <!-- Products Grid/List -->
     <main class="products-main">
       <!-- Loading State -->
-      <div class="loading-state" *ngIf="isLoading()">
-        <div class="spinner"></div>
-        <p>Loading products...</p>
+      <div
+        class="skeleton-grid"
+        [class.grid-view]="viewMode() === 'grid'"
+        [class.list-view]="viewMode() === 'list'"
+        *ngIf="isLoading()"
+      >
+        <div class="skeleton-card" *ngFor="let item of [1,2,3,4,5,6,7,8,9,10,11,12]">
+          <div class="skeleton-image"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-text skeleton-brand"></div>
+            <div class="skeleton-text skeleton-title"></div>
+            <div class="skeleton-text skeleton-title-second"></div>
+            <div class="skeleton-text skeleton-price"></div>
+            <div class="skeleton-text skeleton-rating"></div>
+          </div>
+        </div>
       </div>
 
       <!-- Error State -->
@@ -27,7 +40,7 @@
       </div>
 
       <!-- Empty State -->
-      <div class="empty-state" *ngIf="paginatedProducts().length === 0 && !isLoading() && !error()">
+      <div class="empty-state" *ngIf="displayedProducts().length === 0 && !isLoading() && !error()">
         <svg class="empty-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="11" cy="11" r="8"></circle>
           <path d="m21 21-4.35-4.35"></path>
@@ -48,10 +61,10 @@
         class="products-grid"
         [class.grid-view]="viewMode() === 'grid'"
         [class.list-view]="viewMode() === 'list'"
-        *ngIf="paginatedProducts().length > 0 && !isLoading() && !error()"
+        *ngIf="displayedProducts().length > 0 && !isLoading() && !error()"
       >
         <app-product-card
-          *ngFor="let product of paginatedProducts()"
+          *ngFor="let product of displayedProducts()"
           [product]="product"
           [compact]="viewMode() === 'list'"
           (productClicked)="onProductClick($event)"
@@ -60,20 +73,32 @@
         />
       </div>
 
-      <!-- Pagination -->
-      <div class="pagination-container" *ngIf="paginatedProducts().length > 0 && !isLoading() && !error()">
-        <app-pagination
-          [currentPage]="currentPage()"
-          [totalPages]="totalPages()"
-          [totalItems]="totalItems()"
-          [itemsPerPage]="itemsPerPage()"
-          [itemsPerPageOptions]="[12, 24, 48]"
-          [showJumpToPage]="false"
-          [showItemsPerPageSelector]="true"
-          [showTotalItems]="true"
-          (pageChanged)="onPageChange($event)"
-        />
+      <!-- Loading More Skeleton (when scrolling) -->
+      <div
+        class="skeleton-grid loading-more-skeleton"
+        [class.grid-view]="viewMode() === 'grid'"
+        [class.list-view]="viewMode() === 'list'"
+        *ngIf="isLoadingMore() && !error()"
+      >
+        <div class="skeleton-card" *ngFor="let item of [1,2,3,4,5,6]">
+          <div class="skeleton-image"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-text skeleton-brand"></div>
+            <div class="skeleton-text skeleton-title"></div>
+            <div class="skeleton-text skeleton-title-second"></div>
+            <div class="skeleton-text skeleton-price"></div>
+            <div class="skeleton-text skeleton-rating"></div>
+          </div>
+        </div>
       </div>
+
+      <!-- End of Results Indicator -->
+      <div class="end-of-results" *ngIf="displayedProducts().length > 0 && !hasMore() && !isLoading() && !error()">
+        <p class="end-of-results-text">You've reached the end of the list</p>
+      </div>
+
+      <!-- Scroll Sentinel (invisible element to trigger infinite scroll) -->
+      <div #scrollSentinel class="scroll-sentinel" *ngIf="displayedProducts().length > 0 && hasMore() && !isLoading() && !error()"></div>
     </main>
   </div>
 </div>

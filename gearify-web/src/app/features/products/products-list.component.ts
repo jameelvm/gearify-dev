@@ -1,20 +1,19 @@
-import { Component, signal, computed, OnInit, inject, ViewChild } from '@angular/core';
+import { Component, signal, computed, OnInit, OnDestroy, inject, ViewChild, ElementRef, AfterViewInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Product, ProductFilter } from '@core/models/product.model';
 import {
   ProductCardComponent,
-  PaginationComponent,
   InputComponent,
   SelectComponent,
   ButtonComponent,
   CheckboxComponent
 } from '@app/ui-kit/components';
-import { PageChangeEvent } from '@app/ui-kit/components/pagination/pagination.component';
 import { SelectOption } from '@app/ui-kit/components/select/select.component';
 import { FilterComponent, ProductFilters } from '../product/filter/filter.component';
 import { ProductService } from '@core/services/product.service';
+import { SpecialCollectionsService } from '@core/services/special-collections.service';
 
 export type ViewMode = 'grid' | 'list';
 export type SortField = 'price' | 'rating' | 'newest' | 'name';
@@ -34,7 +33,6 @@ interface PriceRange {
     CommonModule,
     FormsModule,
     ProductCardComponent,
-    PaginationComponent,
     InputComponent,
     SelectComponent,
     ButtonComponent,
@@ -44,15 +42,23 @@ interface PriceRange {
   templateUrl: './products-list.component.html',
   styleUrl: './products-list.component.scss'
 })
-export class ProductsListComponent implements OnInit {
+export class ProductsListComponent implements OnInit, AfterViewInit, OnDestroy {
   private productService = inject(ProductService);
+  private specialCollectionsService = inject(SpecialCollectionsService);
   private route = inject(ActivatedRoute);
 
   // Reference to filter component to clear selections on route change
   @ViewChild(FilterComponent) filterComponent?: FilterComponent;
 
+  // Reference to scroll sentinel for infinite scroll
+  @ViewChild('scrollSentinel', { read: ElementRef }) scrollSentinel?: ElementRef;
+
+  // Intersection Observer for infinite scroll
+  private observer?: IntersectionObserver;
+
   // Loading and error states
   isLoading = signal<boolean>(true);
+  isLoadingMore = signal<boolean>(false);
   error = signal<string | null>(null);
 
   // View state
@@ -66,17 +72,38 @@ export class ProductsListComponent implements OnInit {
   // Dropdown filters from filter component
   private dropdownFilters = signal<ProductFilters | null>(null);
 
-  // Pagination state
-  currentPage = signal<number>(1);
-  itemsPerPage = signal<number>(12);
+  // Infinite scroll state
+  private nextCursor = signal<string | null>(null);
+  hasMore = signal<boolean>(true);  // Public for template access
+  private readonly pageSize = 12;
 
   // Filter visibility (for mobile)
   showFilters = signal<boolean>(true);
 
-  // Products data
-  private allProducts = signal<Product[]>([]);
+  // Products data - accumulated for infinite scroll
+  displayedProducts = signal<Product[]>([]);
+
+  // Special collection slugs loaded from DB (Set for O(1) lookup)
+  private specialCollectionSlugs = new Set<string>();
+
+  constructor() {
+    // Effect to observe sentinel after products load (handles *ngIf timing issue)
+    effect(() => {
+      const products = this.displayedProducts();
+      const hasMore = this.hasMore();
+
+      // Only try to observe if we have products AND there are more to load
+      if (products.length > 0 && hasMore && this.observer) {
+        // Use setTimeout to ensure DOM has updated after *ngIf renders the sentinel
+        setTimeout(() => this.tryObserveSentinel(), 0);
+      }
+    });
+  }
 
   ngOnInit(): void {
+    // Load special collections from DB for lookup
+    this.loadSpecialCollections();
+
     this.loadProducts();
 
     // Listen to route parameter changes (when navigating between subcategories)
@@ -96,10 +123,87 @@ export class ProductsListComponent implements OnInit {
   }
 
   /**
-   * Load products from API
+   * Load special collections from database to populate lookup Set
    */
-  loadProducts(): void {
-    this.isLoading.set(true);
+  private loadSpecialCollections(): void {
+    // TODO: Get departmentSlug from route or tenant config
+    const departmentSlug = this.route.snapshot.paramMap.get('departmentSlug') || 'cricket';
+
+    this.specialCollectionsService.getSpecialCollections(departmentSlug).subscribe({
+      next: (response) => {
+        // Populate Set with slugs for O(1) lookup
+        this.specialCollectionSlugs = new Set(response.collections.map(c => c.slug));
+        console.log('[ProductsListComponent] Loaded special collections:', Array.from(this.specialCollectionSlugs));
+      },
+      error: (err) => {
+        console.error('[ProductsListComponent] Failed to load special collections:', err);
+        // Continue with empty Set - will treat all categorySlug values as regular categories
+      }
+    });
+  }
+
+  ngAfterViewInit(): void {
+    // Set up Intersection Observer for infinite scroll
+    this.setupIntersectionObserver();
+  }
+
+  ngOnDestroy(): void {
+    // Clean up Intersection Observer
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+  }
+
+  /**
+   * Set up Intersection Observer for infinite scroll
+   */
+  private setupIntersectionObserver(): void {
+    const options = {
+      root: null,
+      rootMargin: '200px', // Load more when 200px before reaching the sentinel
+      threshold: 0.1
+    };
+
+    this.observer = new IntersectionObserver((entries) => {
+      console.log('[IntersectionObserver] Entries:', entries);
+      entries.forEach(entry => {
+        console.log('[IntersectionObserver] Entry isIntersecting:', entry.isIntersecting, 'hasMore:', this.hasMore(), 'isLoadingMore:', this.isLoadingMore(), 'isLoading:', this.isLoading());
+        if (entry.isIntersecting && this.hasMore() && !this.isLoadingMore() && !this.isLoading()) {
+          console.log('[IntersectionObserver] Triggering loadMoreProducts');
+          this.loadMoreProducts();
+        }
+      });
+    }, options);
+
+    // Try to observe immediately, but also set up a retry mechanism
+    this.tryObserveSentinel();
+  }
+
+  /**
+   * Try to observe the sentinel element (with retry for dynamic content)
+   */
+  private tryObserveSentinel(): void {
+    if (this.scrollSentinel && this.scrollSentinel.nativeElement) {
+      console.log('[IntersectionObserver] Observing sentinel element');
+      this.observer?.observe(this.scrollSentinel.nativeElement);
+    } else {
+      console.log('[IntersectionObserver] Sentinel not found, will retry after products load');
+      // Will be called again after products load via effect
+    }
+  }
+
+  /**
+   * Load products from API (first page or reset)
+   */
+  loadProducts(reset: boolean = true): void {
+    if (reset) {
+      this.nextCursor.set(null);
+      this.displayedProducts.set([]);
+      this.hasMore.set(false);  // Reset to false, will be updated by API response
+      this.isLoading.set(true);
+    } else {
+      this.isLoadingMore.set(true);
+    }
     this.error.set(null);
 
     // Read route parameters
@@ -112,11 +216,16 @@ export class ProductsListComponent implements OnInit {
     // Get dropdown filters
     const dropdownFilters = this.dropdownFilters();
 
+    // Check if categorySlug is a special collection (not a real category) - O(1) lookup
+    const isSpecialCollection = categorySlug && this.specialCollectionSlugs.has(categorySlug);
+
     // Send both route and dropdown filters - backend will merge/combine them
     const requestFilters = {
       departmentSlug,
-      // Only pass categorySlug if it's not being used as collectionId
-      categorySlug: subcategorySlug || brandSlug || range ? categorySlug : undefined,
+      // Only pass categorySlug as filter if:
+      // 1. We're drilling down (has subcategory/brand/range), OR
+      // 2. It's NOT a special collection (it's a real category)
+      categorySlug: (subcategorySlug || brandSlug || range || !isSpecialCollection) ? categorySlug : undefined,
       subcategorySlug,
       // Send route brandSlug (from mega menu navigation)
       brandSlug: brandSlug,
@@ -132,34 +241,56 @@ export class ProductsListComponent implements OnInit {
         : undefined,
       sortBy: dropdownFilters?.sortBy,
       // Pass categorySlug as collectionId - backend will check if it's a valid special collection
-      collectionId: categorySlug
+      collectionId: categorySlug,
+      // Pagination parameters
+      pageSize: this.pageSize,
+      cursor: reset ? null : this.nextCursor()
     };
 
     console.log('[ProductsListComponent] Loading products with filters:', requestFilters);
 
     this.productService.getProductsBySlug(requestFilters).subscribe({
       next: (response) => {
-        this.allProducts.set(response.products);
+        console.log('[ProductsListComponent] Received response:', response);
+
+        // Update displayed products
+        if (reset) {
+          this.displayedProducts.set(response.products);
+        } else {
+          this.displayedProducts.update(products => [...products, ...response.products]);
+        }
+
+        // Smart hasMore logic: if we received fewer products than requested, there can't be more
+        const receivedLessThanPageSize = response.products.length < this.pageSize;
+        const actuallyHasMore = response.hasMore && !receivedLessThanPageSize;
+
+        this.nextCursor.set(response.nextCursor);
+        this.hasMore.set(actuallyHasMore);
         this.isLoading.set(false);
+        this.isLoadingMore.set(false);
+
+        console.log('[ProductsListComponent] hasMore set to:', actuallyHasMore, 'received:', response.products.length, 'pageSize:', this.pageSize);
       },
       error: (err) => {
         console.error('Error loading products:', err);
         this.error.set('Failed to load products. Please try again later.');
         this.isLoading.set(false);
+        this.isLoadingMore.set(false);
       }
     });
   }
 
-  // Available filter options
-  categories = computed(() => {
-    const cats = new Set(this.allProducts().map(p => p.category));
-    return Array.from(cats).sort();
-  });
+  /**
+   * Load more products (next page)
+   */
+  private loadMoreProducts(): void {
+    console.log('[ProductsListComponent] loadMoreProducts called, hasMore:', this.hasMore(), 'isLoadingMore:', this.isLoadingMore());
+    if (!this.hasMore() || this.isLoadingMore() || this.isLoading()) {
+      return;
+    }
 
-  brands = computed(() => {
-    const brds = new Set(this.allProducts().map(p => p.brand));
-    return Array.from(brds).sort();
-  });
+    this.loadProducts(false);
+  }
 
   // Sort options
   sortOptions: SelectOption[] = [
@@ -169,76 +300,6 @@ export class ProductsListComponent implements OnInit {
     { value: 'rating', label: 'Highest Rated' },
     { value: 'name', label: 'Name A-Z' }
   ];
-
-  // Filtered and sorted products
-  filteredProducts = computed(() => {
-    let products = this.allProducts();
-
-    // Apply search filter
-    const search = this.searchQuery().toLowerCase();
-    if (search) {
-      products = products.filter(p =>
-        p.name.toLowerCase().includes(search) ||
-        p.description.toLowerCase().includes(search) ||
-        p.brand.toLowerCase().includes(search) ||
-        p.category.toLowerCase().includes(search) ||
-        p.tags.some(tag => tag.toLowerCase().includes(search))
-      );
-    }
-
-    // Apply category filter
-    const category = this.selectedCategory();
-    if (category) {
-      products = products.filter(p => p.category === category);
-    }
-
-    // Apply brand filter
-    const brand = this.selectedBrand();
-    if (brand) {
-      products = products.filter(p => p.brand === brand);
-    }
-
-    // Apply price range filter
-    const range = this.priceRange();
-    products = products.filter(p => p.price >= range.min && p.price <= range.max);
-
-    // Apply sorting
-    const sort = this.sortField();
-    products = [...products].sort((a, b) => {
-      switch (sort) {
-        case 'price':
-          return a.price - b.price;
-        case 'rating':
-          return (b.rating?.average || 0) - (a.rating?.average || 0);
-        case 'newest':
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        case 'name':
-          return a.name.localeCompare(b.name);
-        default:
-          return 0;
-      }
-    });
-
-    return products;
-  });
-
-  // Paginated products
-  paginatedProducts = computed(() => {
-    const products = this.filteredProducts();
-    const page = this.currentPage();
-    const perPage = this.itemsPerPage();
-    const start = (page - 1) * perPage;
-    const end = start + perPage;
-    return products.slice(start, end);
-  });
-
-  // Total pages
-  totalPages = computed(() => {
-    return Math.ceil(this.filteredProducts().length / this.itemsPerPage());
-  });
-
-  // Total items
-  totalItems = computed(() => this.filteredProducts().length);
 
   /**
    * Toggle view mode between grid and list
@@ -259,7 +320,7 @@ export class ProductsListComponent implements OnInit {
    */
   onSearch(query: string): void {
     this.searchQuery.set(query);
-    this.currentPage.set(1); // Reset to first page on search
+    this.loadProducts(); // Reset and reload
   }
 
   /**
@@ -267,7 +328,7 @@ export class ProductsListComponent implements OnInit {
    */
   onCategoryChange(category: string): void {
     this.selectedCategory.set(category);
-    this.currentPage.set(1);
+    this.loadProducts(); // Reset and reload
   }
 
   /**
@@ -275,7 +336,7 @@ export class ProductsListComponent implements OnInit {
    */
   onBrandChange(brand: string): void {
     this.selectedBrand.set(brand);
-    this.currentPage.set(1);
+    this.loadProducts(); // Reset and reload
   }
 
   /**
@@ -283,7 +344,7 @@ export class ProductsListComponent implements OnInit {
    */
   onPriceRangeChange(min: number, max: number): void {
     this.priceRange.set({ min, max });
-    this.currentPage.set(1);
+    this.loadProducts(); // Reset and reload
   }
 
   /**
@@ -291,16 +352,6 @@ export class ProductsListComponent implements OnInit {
    */
   onSortChange(value: string): void {
     this.sortField.set(value as SortField);
-  }
-
-  /**
-   * Handle page change
-   */
-  onPageChange(event: PageChangeEvent): void {
-    this.currentPage.set(event.page);
-    this.itemsPerPage.set(event.itemsPerPage);
-    // Scroll to top on page change
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   /**
@@ -336,7 +387,6 @@ export class ProductsListComponent implements OnInit {
     this.selectedCategory.set('');
     this.selectedBrand.set('');
     this.priceRange.set({ min: 0, max: 10000 });
-    this.currentPage.set(1);
     this.dropdownFilters.set(null);
 
     // Clear filter component UI state (no route params)
@@ -344,7 +394,7 @@ export class ProductsListComponent implements OnInit {
       this.filterComponent.initializeFromRoute(null, null);
     }
 
-    this.loadProducts();
+    this.loadProducts(); // Reset and reload
   }
 
   /**
@@ -353,8 +403,7 @@ export class ProductsListComponent implements OnInit {
   onFiltersChanged(filters: ProductFilters): void {
     console.log('[ProductsListComponent] Filters changed:', filters);
     this.dropdownFilters.set(filters);
-    this.currentPage.set(1); // Reset to first page when filters change
-    this.loadProducts();
+    this.loadProducts(); // Reset and reload
   }
 
   /**

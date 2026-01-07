@@ -30,7 +30,9 @@ public class ProductsController : ControllerBase
         [FromQuery] decimal? minPrice,           // Min price from dropdown filter
         [FromQuery] decimal? maxPrice,           // Max price from dropdown filter
         [FromQuery] string? sortBy,              // Sort parameter
-        [FromQuery] string? collectionId = null) // Special collection ID (deals, clearance, etc.)
+        [FromQuery] string? collectionId = null, // Special collection ID (deals, clearance, etc.)
+        [FromQuery] int pageSize = 12,           // Items per page
+        [FromQuery] string? cursor = null)       // Pagination cursor
     {
         try
         {
@@ -45,22 +47,14 @@ public class ProductsController : ControllerBase
                 minPrice,
                 maxPrice,
                 sortBy,
-                collectionId
+                collectionId,
+                pageSize,
+                cursor
             );
 
-            // If any filter parameters are provided, use slug-based query
-            if (!string.IsNullOrEmpty(departmentSlug) || !string.IsNullOrEmpty(categorySlug) ||
-                !string.IsNullOrEmpty(subcategorySlug) || query.BrandSlugs != null ||
-                query.MinPrice.HasValue || query.MaxPrice.HasValue || !string.IsNullOrEmpty(query.CollectionId))
-            {
-                var result = await _mediator.Send(query);
-                return Ok(result);
-            }
-
-            // No filters provided - return all products
-            var allProducts = await _mediator.Send(new GetAllProductsQuery());
-            var response = new ProductListResponse(allProducts, allProducts.Count);
-            return Ok(response);
+            // Execute query (handles both filtered and unfiltered cases)
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
         catch (Exception ex)
         {

@@ -37,45 +37,13 @@ public class GetSpecialCollectionsQueryHandler : IRequestHandler<GetSpecialColle
 
         try
         {
-            // Build PK with department GUID if provided
-            string pk;
-            if (string.IsNullOrEmpty(request.DepartmentSlug))
-            {
-                pk = $"TENANT#{tenantId}";
-            }
-            else
-            {
-                // First, lookup department GUID by slug using GSI1
-                var departmentQuery = new QueryRequest
-                {
-                    TableName = _tableName,
-                    IndexName = "GSI1",
-                    KeyConditionExpression = "GSI1PK = :gsi1pk AND GSI1SK = :gsi1sk",
-                    ExpressionAttributeValues = new Dictionary<string, AttributeValue>
-                    {
-                        { ":gsi1pk", new AttributeValue { S = $"TENANT#{tenantId}#SLUG" } },
-                        { ":gsi1sk", new AttributeValue { S = $"DEPARTMENT#{request.DepartmentSlug}" } }
-                    },
-                    Limit = 1
-                };
-
-                var departmentResponse = await _dynamoDb.QueryAsync(departmentQuery, cancellationToken);
-                if (!departmentResponse.Items.Any())
-                {
-                    _logger.LogWarning("Department not found for slug {DepartmentSlug}", request.DepartmentSlug);
-                    return new SpecialCollectionsResponse(new List<SpecialCollectionDto>());
-                }
-
-                var departmentId = departmentResponse.Items.First()["Id"].S;
-                pk = $"TENANT#{tenantId}#DEPARTMENT#{departmentId}";
-            }
-
+            // Special collections are stored at tenant level (not department-specific)
             var getRequest = new GetItemRequest
             {
                 TableName = _tableName,
                 Key = new Dictionary<string, AttributeValue>
                 {
-                    { "PK", new AttributeValue { S = pk } },
+                    { "PK", new AttributeValue { S = $"TENANT#{tenantId}" } },
                     { "SK", new AttributeValue { S = "SPECIAL_COLLECTIONS" } }
                 }
             };
@@ -84,8 +52,7 @@ public class GetSpecialCollectionsQueryHandler : IRequestHandler<GetSpecialColle
 
             if (!response.IsItemSet)
             {
-                _logger.LogWarning("Special collections not found for tenant {TenantId}, department {DepartmentSlug}",
-                    tenantId, request.DepartmentSlug ?? "none");
+                _logger.LogWarning("Special collections not found for tenant {TenantId}", tenantId);
                 return new SpecialCollectionsResponse(new List<SpecialCollectionDto>());
             }
 

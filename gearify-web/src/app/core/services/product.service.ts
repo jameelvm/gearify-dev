@@ -16,11 +16,15 @@ export interface ProductFilters {
   maxPrice?: number;
   sortBy?: string;
   collectionId?: string | null;  // Special collection filter (deals, clearance, etc.)
+  pageSize?: number;    // Items per page
+  cursor?: string | null;       // Pagination cursor
 }
 
 export interface ProductListResponse {
   products: Product[];
   total: number;
+  hasMore: boolean;
+  nextCursor: string | null;
 }
 
 @Injectable({
@@ -73,6 +77,14 @@ export class ProductService {
 
     if (filters.collectionId) {
       params = params.set('collectionId', filters.collectionId);
+    }
+
+    // Pagination parameters
+    if (filters.pageSize !== undefined) {
+      params = params.set('pageSize', filters.pageSize.toString());
+    }
+    if (filters.cursor) {
+      params = params.set('cursor', filters.cursor);
     }
 
     return this.http.get<ProductListResponse>(API_CONFIG.ENDPOINTS.PRODUCTS, params);

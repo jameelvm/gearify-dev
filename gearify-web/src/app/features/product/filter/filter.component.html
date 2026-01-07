@@ -40,8 +40,12 @@
             <div class="section-title">All Brands</div>
 
             <!-- Loading State -->
-            <div class="checkbox-list" *ngIf="brandsLoading()">
-              <div class="loading-message">Loading brands...</div>
+            <div class="checkbox-list skeleton-list" *ngIf="brandsLoading()">
+              <div class="skeleton-checkbox-item" *ngFor="let item of [1,2,3,4,5,6,7,8]">
+                <div class="skeleton-checkbox"></div>
+                <div class="skeleton-label"></div>
+                <div class="skeleton-count"></div>
+              </div>
             </div>
 
             <!-- Error State -->
@@ -92,8 +96,12 @@
         <div class="dropdown-overlay" (click)="closeAllDropdowns()"></div>
         <div class="dropdown-menu">
           <!-- Loading State -->
-          <div class="checkbox-list" *ngIf="priceRangesLoading()">
-            <div class="loading-message">Loading price ranges...</div>
+          <div class="checkbox-list skeleton-list" *ngIf="priceRangesLoading()">
+            <div class="skeleton-checkbox-item" *ngFor="let item of [1,2,3,4,5]">
+              <div class="skeleton-radio"></div>
+              <div class="skeleton-label"></div>
+              <div class="skeleton-count"></div>
+            </div>
           </div>
 
           <!-- Error State -->

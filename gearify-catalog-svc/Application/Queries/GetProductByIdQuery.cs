@@ -13,10 +13,16 @@ public record GetProductsBySlugQuery(
     decimal? MinPrice,
     decimal? MaxPrice,
     string? SortBy = null,  // Sorting parameter
-    string? CollectionId = null     // Special collection filter (deals, clearance, new-arrivals, etc.)
+    string? CollectionId = null,     // Special collection filter (deals, clearance, new-arrivals, etc.)
+    int PageSize = 12,               // Items per page
+    string? Cursor = null            // Pagination cursor (base64 encoded LastEvaluatedKey)
 ) : IRequest<ProductListResponse>;
 
-public record ProductListResponse(List<ProductListDto> Products, int Total);
+public record ProductListResponse(
+    List<ProductListDto> Products,
+    int Total,
+    bool HasMore,
+    string? NextCursor);
 
 public record GetSpecialCollectionsQuery(string? DepartmentSlug = null) : IRequest<SpecialCollectionsResponse>;
 

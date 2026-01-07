@@ -6,6 +6,8 @@ using Gearify.CatalogService.Infrastructure.Configuration;
 using Gearify.SharedKernel.Multitenancy;
 using MediatR;
 using Microsoft.Extensions.Options;
+using System.Text;
+using System.Text.Json;
 
 namespace Gearify.CatalogService.Application.Queries;
 
@@ -16,6 +18,7 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
 {
     private readonly IAmazonDynamoDB _dynamoDb;
     private readonly string _tableName;
+    private readonly string _catalogTableName;
     private readonly ITenantContext _tenantContext;
     private readonly ILogger<GetProductsBySlugQueryHandler> _logger;
 
@@ -27,6 +30,7 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
     {
         _dynamoDb = dynamoDb;
         _tableName = catalogDataSettings.Value.ProductsTableName;
+        _catalogTableName = catalogDataSettings.Value.CatalogTableName;
         _tenantContext = tenantContext;
         _logger = logger;
     }
@@ -34,6 +38,10 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
     public async Task<ProductListResponse> Handle(GetProductsBySlugQuery request, CancellationToken cancellationToken)
     {
         var tenantId = _tenantContext.TenantId;
+
+        // For sorting, we need to fetch more items than requested, sort them, then paginate
+        // Fetch 5x page size to have enough items for sorting while still using pagination
+        var fetchLimit = string.IsNullOrEmpty(request.SortBy) ? request.PageSize : request.PageSize * 5;
 
         var queryRequest = new QueryRequest
         {
@@ -43,8 +51,23 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
             ExpressionAttributeValues = new Dictionary<string, AttributeValue>
             {
                 { ":gsi1pk", new AttributeValue { S = $"TENANT#{tenantId}#PRODUCTS" } }
-            }
+            },
+            Limit = fetchLimit
         };
+
+        // Decode cursor if provided
+        if (!string.IsNullOrEmpty(request.Cursor))
+        {
+            try
+            {
+                var lastEvaluatedKey = DecodeCursor(request.Cursor);
+                queryRequest.ExclusiveStartKey = lastEvaluatedKey;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Invalid cursor provided, ignoring it");
+            }
+        }
 
         var filterExpressions = await Build(request, cancellationToken, queryRequest, tenantId);
 
@@ -55,38 +78,82 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
 
         try
         {
-            var response = await _dynamoDb.QueryAsync(queryRequest, cancellationToken);
+            var allProducts = new List<Product>();
 
-            var products = response.Items.Select(MapToProduct).ToList();
+            // Query DynamoDB
+            var response = await _dynamoDb.QueryAsync(queryRequest, cancellationToken);
+            allProducts.AddRange(response.Items.Select(MapToProduct));
+            Dictionary<string, AttributeValue> lastEvaluatedKey = response.LastEvaluatedKey;
 
             // Apply sorting if specified
             if (!string.IsNullOrEmpty(request.SortBy))
             {
-                products = request.SortBy.ToLower() switch
+                allProducts = request.SortBy.ToLower() switch
                 {
-                    "price-asc" or "price: low to high" => products.OrderBy(p => p.Price).ToList(),
-                    "price-desc" or "price: high to low" => products.OrderByDescending(p => p.Price).ToList(),
-                    "rating" or "top rated" => products.OrderByDescending(p => p.RatingAverage ?? 0).ToList(),
-                    "newest" or "newest first" => products.OrderByDescending(p => p.CreatedAt).ToList(),
-                    "name" or "featured items" => products.OrderBy(p => p.Name).ToList(),
-                    _ => products // Default: no sorting
+                    "price-asc" or "price: low to high" => allProducts.OrderBy(p => p.Price).ToList(),
+                    "price-desc" or "price: high to low" => allProducts.OrderByDescending(p => p.Price).ToList(),
+                    "rating" or "top rated" => allProducts.OrderByDescending(p => p.RatingAverage ?? 0).ToList(),
+                    "newest" or "newest first" => allProducts.OrderByDescending(p => p.CreatedAt).ToList(),
+                    "name" or "featured items" => allProducts.OrderBy(p => p.Name).ToList(),
+                    _ => allProducts
                 };
             }
 
-            var productDtos = products.Select(ProductListDto.FromProduct).ToList();
+            // Take only the requested page size
+            var paginatedProducts = allProducts.Take(request.PageSize).ToList();
+
+            // Check if there are more items
+            var hasMore = lastEvaluatedKey is { Count: > 0 };
+
+            // Encode next cursor
+            string? nextCursor = null;
+            if (hasMore && lastEvaluatedKey != null)
+            {
+                nextCursor = EncodeCursor(lastEvaluatedKey);
+            }
+
+            var productDtos = paginatedProducts.Select(ProductListDto.FromProduct).ToList();
 
             _logger.LogInformation(
-                "Retrieved {Count} products for tenant {TenantId} with filters: Dept={Dept}, Cat={Cat}, Subcat={Subcat}, Brands={Brands}, SortBy={SortBy}",
-                products.Count, tenantId, request.DepartmentSlug, request.CategorySlug, request.SubcategorySlug,
+                "Retrieved {Count} products (size {PageSize}, hasMore={HasMore}) for tenant {TenantId} with filters: Dept={Dept}, Cat={Cat}, Subcat={Subcat}, Brands={Brands}, SortBy={SortBy}",
+                productDtos.Count, request.PageSize, hasMore, tenantId, request.DepartmentSlug, request.CategorySlug, request.SubcategorySlug,
                 request.BrandSlugs != null ? string.Join(",", request.BrandSlugs) : "none", request.SortBy ?? "none");
 
-            return new ProductListResponse(productDtos, productDtos.Count);
+            return new ProductListResponse(productDtos, allProducts.Count, hasMore, nextCursor);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving products by slug for tenant {TenantId}", tenantId);
             throw;
         }
+    }
+
+    private static string EncodeCursor(Dictionary<string, AttributeValue> lastEvaluatedKey)
+    {
+        var json = JsonSerializer.Serialize(lastEvaluatedKey.ToDictionary(
+            kvp => kvp.Key,
+            kvp => new { S = kvp.Value.S, N = kvp.Value.N }
+        ));
+        return Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
+    }
+
+    private static Dictionary<string, AttributeValue> DecodeCursor(string cursor)
+    {
+        var json = Encoding.UTF8.GetString(Convert.FromBase64String(cursor));
+        var decoded = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json);
+
+        return decoded!.ToDictionary(
+            kvp => kvp.Key,
+            kvp =>
+            {
+                var attr = new AttributeValue();
+                if (kvp.Value.TryGetProperty("S", out var s) && s.ValueKind == JsonValueKind.String)
+                    attr.S = s.GetString();
+                if (kvp.Value.TryGetProperty("N", out var n) && n.ValueKind == JsonValueKind.String)
+                    attr.N = n.GetString();
+                return attr;
+            }
+        );
     }
 
     private async Task<List<string>> Build(GetProductsBySlugQuery request, CancellationToken cancellationToken, QueryRequest queryRequest,
@@ -229,7 +296,7 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
         {
             var getRequest = new GetItemRequest
             {
-                TableName = _tableName,
+                TableName = _catalogTableName,  // Use catalog table, not products table
                 Key = new Dictionary<string, AttributeValue>
                 {
                     { "PK", new AttributeValue { S = $"TENANT#{_tenantContext.TenantId}" } },
