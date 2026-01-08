@@ -1,8 +1,471 @@
 {
   "gearify-products": [
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#acme"}, "SK": {"S": "PRODUCT#prod-201"}, "GSI1PK": {"S": "TENANT#acme#PRODUCTS"}, "GSI1SK": {"S": "PRODUCT#prod-201"}, "Id": {"S": "prod-201"}, "TenantId": {"S": "acme"}, "Sku": {"S": "AC-PROJ-201"}, "Name": {"S": "4K Business Projector"}, "Description": {"S": "High-brightness 4K projector for conference rooms"}, "Department": {"S": "Business"}, "DepartmentSlug": {"S": "business"}, "Category": {"S": "Presentation"}, "CategorySlug": {"S": "presentation"}, "Subcategory": {"S": "Projectors"}, "SubcategorySlug": {"S": "projectors"}, "Brand": {"S": "ProPresent"}, "BrandSlug": {"S": "propresent"}, "Price": {"N": "1299.99"}, "CompareAtPrice": {"N": "1599.99"}, "DiscountPercentage": {"N": "19"}, "OfferBadge": {"S": "19% OFF"}, "Currency": {"S": "USD"}, "RatingAverage": {"N": "4.7"}, "RatingCount": {"N": "123"}, "IsActive": {"BOOL": true}, "Tags": {"SS": ["featured", "projectors"]}, "CreatedAt": {"S": "2025-01-17T10:00:00.000Z"}, "UpdatedAt": {"S": "2025-01-17T10:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#acme"}, "SK": {"S": "PRODUCT#prod-202"}, "GSI1PK": {"S": "TENANT#acme#PRODUCTS"}, "GSI1SK": {"S": "PRODUCT#prod-202"}, "Id": {"S": "prod-202"}, "TenantId": {"S": "acme"}, "Sku": {"S": "AC-CONF-202"}, "Name": {"S": "Conference Phone System"}, "Description": {"S": "360-degree audio conference phone with noise cancellation"}, "Department": {"S": "Business"}, "DepartmentSlug": {"S": "business"}, "Category": {"S": "Communication"}, "CategorySlug": {"S": "communication"}, "Subcategory": {"S": "Conference Systems"}, "SubcategorySlug": {"S": "conference-systems"}, "Brand": {"S": "ClearCall"}, "BrandSlug": {"S": "clearcall"}, "Price": {"N": "449.99"}, "CompareAtPrice": {"N": "599.99"}, "DiscountPercentage": {"N": "25"}, "OfferBadge": {"S": "25% OFF"}, "Currency": {"S": "USD"}, "RatingAverage": {"N": "4.5"}, "RatingCount": {"N": "98"}, "IsActive": {"BOOL": true}, "Tags": {"SS": ["featured", "conference-systems"]}, "CreatedAt": {"S": "2025-01-17T10:00:00.000Z"}, "UpdatedAt": {"S": "2025-01-17T10:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#acme"}, "SK": {"S": "PRODUCT#prod-203"}, "GSI1PK": {"S": "TENANT#acme#PRODUCTS"}, "GSI1SK": {"S": "PRODUCT#prod-203"}, "Id": {"S": "prod-203"}, "TenantId": {"S": "acme"}, "Sku": {"S": "AC-BOARD-203"}, "Name": {"S": "Digital Whiteboard 65-inch"}, "Description": {"S": "Interactive touchscreen whiteboard for collaboration"}, "Department": {"S": "Business"}, "DepartmentSlug": {"S": "business"}, "Category": {"S": "Collaboration"}, "CategorySlug": {"S": "collaboration"}, "Subcategory": {"S": "Whiteboards"}, "SubcategorySlug": {"S": "whiteboards"}, "Brand": {"S": "SmartBoard"}, "BrandSlug": {"S": "smartboard"}, "Price": {"N": "2499.99"}, "CompareAtPrice": {"N": "2999.99"}, "DiscountPercentage": {"N": "17"}, "OfferBadge": {"S": "17% OFF"}, "Currency": {"S": "USD"}, "RatingAverage": {"N": "4.8"}, "RatingCount": {"N": "156"}, "IsActive": {"BOOL": true}, "Tags": {"SS": ["featured", "whiteboards"]}, "CreatedAt": {"S": "2025-01-17T10:00:00.000Z"}, "UpdatedAt": {"S": "2025-01-17T10:00:00.000Z"}}}},
-    {"PutRequest": {"Item": {"PK": {"S": "TENANT#acme"}, "SK": {"S": "PRODUCT#prod-204"}, "GSI1PK": {"S": "TENANT#acme#PRODUCTS"}, "GSI1SK": {"S": "PRODUCT#prod-204"}, "Id": {"S": "prod-204"}, "TenantId": {"S": "acme"}, "Sku": {"S": "AC-SCAN-204"}, "Name": {"S": "Document Scanner Pro"}, "Description": {"S": "High-speed duplex document scanner with OCR"}, "Department": {"S": "Business"}, "DepartmentSlug": {"S": "business"}, "Category": {"S": "Office Equipment"}, "CategorySlug": {"S": "office-equipment"}, "Subcategory": {"S": "Scanners"}, "SubcategorySlug": {"S": "scanners"}, "Brand": {"S": "ScanTech"}, "BrandSlug": {"S": "scantech"}, "Price": {"N": "699.99"}, "CompareAtPrice": {"N": "899.99"}, "DiscountPercentage": {"N": "22"}, "OfferBadge": {"S": "22% OFF"}, "Currency": {"S": "USD"}, "RatingAverage": {"N": "4.6"}, "RatingCount": {"N": "112"}, "IsActive": {"BOOL": true}, "Tags": {"SS": ["scanners"]}, "CreatedAt": {"S": "2025-01-17T10:00:00.000Z"}, "UpdatedAt": {"S": "2025-01-17T10:00:00.000Z"}}}}
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#acme"
+          },
+          "SK": {
+            "S": "PRODUCT#prod-201"
+          },
+          "GSI1PK": {
+            "S": "TENANT#acme#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#prod-201"
+          },
+          "Id": {
+            "S": "prod-201"
+          },
+          "TenantId": {
+            "S": "acme"
+          },
+          "Sku": {
+            "S": "AC-PROJ-201"
+          },
+          "Name": {
+            "S": "4K Business Projector"
+          },
+          "Description": {
+            "S": "High-brightness 4K projector for conference rooms"
+          },
+          "Department": {
+            "S": "Business"
+          },
+          "DepartmentSlug": {
+            "S": "business"
+          },
+          "Category": {
+            "S": "Presentation"
+          },
+          "CategorySlug": {
+            "S": "presentation"
+          },
+          "Subcategory": {
+            "S": "Projectors"
+          },
+          "SubcategorySlug": {
+            "S": "projectors"
+          },
+          "Brand": {
+            "S": "ProPresent"
+          },
+          "BrandSlug": {
+            "S": "propresent"
+          },
+          "Price": {
+            "N": "1299.99"
+          },
+          "CompareAtPrice": {
+            "N": "1599.99"
+          },
+          "DiscountPercentage": {
+            "N": "19"
+          },
+          "OfferBadge": {
+            "S": "19% OFF"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "RatingAverage": {
+            "N": "4.7"
+          },
+          "RatingCount": {
+            "N": "123"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "featured",
+              "projectors"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-01-17T10:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-01-17T10:00:00.000Z"
+          },
+          "GSI2PK": {
+            "S": "TENANT#acme"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000129999#PRODUCT#prod-201"
+          },
+          "GSI3PK": {
+            "S": "TENANT#acme"
+          },
+          "GSI3SK": {
+            "S": "RATING#00470#PRODUCT#prod-201"
+          },
+          "GSI4PK": {
+            "S": "TENANT#acme"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-01-17T10:00:00.000Z#PRODUCT#prod-201"
+          },
+          "GSI5PK": {
+            "S": "TENANT#acme"
+          },
+          "GSI5SK": {
+            "S": "NAME#4k business projector#PRODUCT#prod-201"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#acme"
+          },
+          "SK": {
+            "S": "PRODUCT#prod-202"
+          },
+          "GSI1PK": {
+            "S": "TENANT#acme#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#prod-202"
+          },
+          "Id": {
+            "S": "prod-202"
+          },
+          "TenantId": {
+            "S": "acme"
+          },
+          "Sku": {
+            "S": "AC-CONF-202"
+          },
+          "Name": {
+            "S": "Conference Phone System"
+          },
+          "Description": {
+            "S": "360-degree audio conference phone with noise cancellation"
+          },
+          "Department": {
+            "S": "Business"
+          },
+          "DepartmentSlug": {
+            "S": "business"
+          },
+          "Category": {
+            "S": "Communication"
+          },
+          "CategorySlug": {
+            "S": "communication"
+          },
+          "Subcategory": {
+            "S": "Conference Systems"
+          },
+          "SubcategorySlug": {
+            "S": "conference-systems"
+          },
+          "Brand": {
+            "S": "ClearCall"
+          },
+          "BrandSlug": {
+            "S": "clearcall"
+          },
+          "Price": {
+            "N": "449.99"
+          },
+          "CompareAtPrice": {
+            "N": "599.99"
+          },
+          "DiscountPercentage": {
+            "N": "25"
+          },
+          "OfferBadge": {
+            "S": "25% OFF"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "RatingAverage": {
+            "N": "4.5"
+          },
+          "RatingCount": {
+            "N": "98"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "featured",
+              "conference-systems"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-01-17T10:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-01-17T10:00:00.000Z"
+          },
+          "GSI2PK": {
+            "S": "TENANT#acme"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000044999#PRODUCT#prod-202"
+          },
+          "GSI3PK": {
+            "S": "TENANT#acme"
+          },
+          "GSI3SK": {
+            "S": "RATING#00450#PRODUCT#prod-202"
+          },
+          "GSI4PK": {
+            "S": "TENANT#acme"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-01-17T10:00:00.000Z#PRODUCT#prod-202"
+          },
+          "GSI5PK": {
+            "S": "TENANT#acme"
+          },
+          "GSI5SK": {
+            "S": "NAME#conference phone system#PRODUCT#prod-202"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#acme"
+          },
+          "SK": {
+            "S": "PRODUCT#prod-203"
+          },
+          "GSI1PK": {
+            "S": "TENANT#acme#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#prod-203"
+          },
+          "Id": {
+            "S": "prod-203"
+          },
+          "TenantId": {
+            "S": "acme"
+          },
+          "Sku": {
+            "S": "AC-BOARD-203"
+          },
+          "Name": {
+            "S": "Digital Whiteboard 65-inch"
+          },
+          "Description": {
+            "S": "Interactive touchscreen whiteboard for collaboration"
+          },
+          "Department": {
+            "S": "Business"
+          },
+          "DepartmentSlug": {
+            "S": "business"
+          },
+          "Category": {
+            "S": "Collaboration"
+          },
+          "CategorySlug": {
+            "S": "collaboration"
+          },
+          "Subcategory": {
+            "S": "Whiteboards"
+          },
+          "SubcategorySlug": {
+            "S": "whiteboards"
+          },
+          "Brand": {
+            "S": "SmartBoard"
+          },
+          "BrandSlug": {
+            "S": "smartboard"
+          },
+          "Price": {
+            "N": "2499.99"
+          },
+          "CompareAtPrice": {
+            "N": "2999.99"
+          },
+          "DiscountPercentage": {
+            "N": "17"
+          },
+          "OfferBadge": {
+            "S": "17% OFF"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "RatingAverage": {
+            "N": "4.8"
+          },
+          "RatingCount": {
+            "N": "156"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "featured",
+              "whiteboards"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-01-17T10:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-01-17T10:00:00.000Z"
+          },
+          "GSI2PK": {
+            "S": "TENANT#acme"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000249998#PRODUCT#prod-203"
+          },
+          "GSI3PK": {
+            "S": "TENANT#acme"
+          },
+          "GSI3SK": {
+            "S": "RATING#00480#PRODUCT#prod-203"
+          },
+          "GSI4PK": {
+            "S": "TENANT#acme"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-01-17T10:00:00.000Z#PRODUCT#prod-203"
+          },
+          "GSI5PK": {
+            "S": "TENANT#acme"
+          },
+          "GSI5SK": {
+            "S": "NAME#digital whiteboard 65-inch#PRODUCT#prod-203"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#acme"
+          },
+          "SK": {
+            "S": "PRODUCT#prod-204"
+          },
+          "GSI1PK": {
+            "S": "TENANT#acme#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#prod-204"
+          },
+          "Id": {
+            "S": "prod-204"
+          },
+          "TenantId": {
+            "S": "acme"
+          },
+          "Sku": {
+            "S": "AC-SCAN-204"
+          },
+          "Name": {
+            "S": "Document Scanner Pro"
+          },
+          "Description": {
+            "S": "High-speed duplex document scanner with OCR"
+          },
+          "Department": {
+            "S": "Business"
+          },
+          "DepartmentSlug": {
+            "S": "business"
+          },
+          "Category": {
+            "S": "Office Equipment"
+          },
+          "CategorySlug": {
+            "S": "office-equipment"
+          },
+          "Subcategory": {
+            "S": "Scanners"
+          },
+          "SubcategorySlug": {
+            "S": "scanners"
+          },
+          "Brand": {
+            "S": "ScanTech"
+          },
+          "BrandSlug": {
+            "S": "scantech"
+          },
+          "Price": {
+            "N": "699.99"
+          },
+          "CompareAtPrice": {
+            "N": "899.99"
+          },
+          "DiscountPercentage": {
+            "N": "22"
+          },
+          "OfferBadge": {
+            "S": "22% OFF"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "RatingAverage": {
+            "N": "4.6"
+          },
+          "RatingCount": {
+            "N": "112"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "scanners"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-01-17T10:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-01-17T10:00:00.000Z"
+          },
+          "GSI2PK": {
+            "S": "TENANT#acme"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000069999#PRODUCT#prod-204"
+          },
+          "GSI3PK": {
+            "S": "TENANT#acme"
+          },
+          "GSI3SK": {
+            "S": "RATING#00459#PRODUCT#prod-204"
+          },
+          "GSI4PK": {
+            "S": "TENANT#acme"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-01-17T10:00:00.000Z#PRODUCT#prod-204"
+          },
+          "GSI5PK": {
+            "S": "TENANT#acme"
+          },
+          "GSI5SK": {
+            "S": "NAME#document scanner pro#PRODUCT#prod-204"
+          }
+        }
+      }
+    }
   ]
 }

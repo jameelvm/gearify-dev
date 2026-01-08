@@ -115,6 +115,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000031000#PRODUCT#022f46ce-1882-4966-b1fa-7636c6c62351"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00450#PRODUCT#022f46ce-1882-4966-b1fa-7636c6c62351"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#022f46ce-1882-4966-b1fa-7636c6c62351"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#ss ton reserve edition english willow cricket bat#PRODUCT#022f46ce-1882-4966-b1fa-7636c6c62351"
           }
         }
       }
@@ -225,6 +249,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000005400#PRODUCT#c1fb96da-2df2-44df-8df6-37966e71d3ea"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00420#PRODUCT#c1fb96da-2df2-44df-8df6-37966e71d3ea"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#c1fb96da-2df2-44df-8df6-37966e71d3ea"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#ss master 1000 kashmir willow bat#PRODUCT#c1fb96da-2df2-44df-8df6-37966e71d3ea"
           }
         }
       }
@@ -339,6 +387,36 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000038000#PRODUCT#1a53a237-e4f4-4ce8-bcd2-140e15d243c0"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00480#PRODUCT#1a53a237-e4f4-4ce8-bcd2-140e15d243c0"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#1a53a237-e4f4-4ce8-bcd2-140e15d243c0"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#mrf legend vk18 english willow bat#PRODUCT#1a53a237-e4f4-4ce8-bcd2-140e15d243c0"
+          },
+          "GSI6PK": {
+            "S": "TENANT#default#FEATURED"
+          },
+          "GSI6SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#1a53a237-e4f4-4ce8-bcd2-140e15d243c0"
           }
         }
       }
@@ -434,6 +512,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000034000#PRODUCT#6c46fdea-91b2-430a-a5af-fe7077449643"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00459#PRODUCT#6c46fdea-91b2-430a-a5af-fe7077449643"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#6c46fdea-91b2-430a-a5af-fe7077449643"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#mrf genius grand edition bat#PRODUCT#6c46fdea-91b2-430a-a5af-fe7077449643"
           }
         }
       }
@@ -529,6 +631,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000055000#PRODUCT#ab99e592-ae00-4b73-a2ce-2071d2c6182a"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00440#PRODUCT#ab99e592-ae00-4b73-a2ce-2071d2c6182a"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#ab99e592-ae00-4b73-a2ce-2071d2c6182a"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg king cobra english willow bat#PRODUCT#ab99e592-ae00-4b73-a2ce-2071d2c6182a"
           }
         }
       }
@@ -625,6 +751,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000004200#PRODUCT#d5d45a36-98d9-4e4e-b632-2a6425de7605"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00400#PRODUCT#d5d45a36-98d9-4e4e-b632-2a6425de7605"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#d5d45a36-98d9-4e4e-b632-2a6425de7605"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg superpro kashmir willow bat#PRODUCT#d5d45a36-98d9-4e4e-b632-2a6425de7605"
           }
         }
       }
@@ -738,6 +888,36 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000120000#PRODUCT#fb7a7159-acdb-4868-a35f-834548a91c38"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00470#PRODUCT#fb7a7159-acdb-4868-a35f-834548a91c38"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#fb7a7159-acdb-4868-a35f-834548a91c38"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#kookaburra kahuna pro english willow bat#PRODUCT#fb7a7159-acdb-4868-a35f-834548a91c38"
+          },
+          "GSI6PK": {
+            "S": "TENANT#default#FEATURED"
+          },
+          "GSI6SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#fb7a7159-acdb-4868-a35f-834548a91c38"
           }
         }
       }
@@ -848,6 +1028,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000110000#PRODUCT#7c38eac2-15ef-4738-941b-f8db16bc1b5d"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00430#PRODUCT#7c38eac2-15ef-4738-941b-f8db16bc1b5d"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#7c38eac2-15ef-4738-941b-f8db16bc1b5d"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#kookaburra bubble kashmir willow bat#PRODUCT#7c38eac2-15ef-4738-941b-f8db16bc1b5d"
           }
         }
       }
@@ -943,6 +1147,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000032000#PRODUCT#4278f80e-a480-4440-a465-0b835c4b5f1a"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00450#PRODUCT#4278f80e-a480-4440-a465-0b835c4b5f1a"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#4278f80e-a480-4440-a465-0b835c4b5f1a"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#dsc condor flite english willow bat#PRODUCT#4278f80e-a480-4440-a465-0b835c4b5f1a"
           }
         }
       }
@@ -1038,6 +1266,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000005040#PRODUCT#116c11d6-7b43-4300-b877-a26bb67ea06f"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00409#PRODUCT#116c11d6-7b43-4300-b877-a26bb67ea06f"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#116c11d6-7b43-4300-b877-a26bb67ea06f"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#dsc pearla stroke kashmir willow bat#PRODUCT#116c11d6-7b43-4300-b877-a26bb67ea06f"
           }
         }
       }
@@ -1134,6 +1386,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000001019#PRODUCT#f7a1db8f-b6f7-49f3-9b76-bf672f926454"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00450#PRODUCT#f7a1db8f-b6f7-49f3-9b76-bf672f926454"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#f7a1db8f-b6f7-49f3-9b76-bf672f926454"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg club leather cricket ball - red#PRODUCT#f7a1db8f-b6f7-49f3-9b76-bf672f926454"
           }
         }
       }
@@ -1230,6 +1506,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000001140#PRODUCT#eb7a8769-04e5-45dc-97e4-51e0143511c6"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00459#PRODUCT#eb7a8769-04e5-45dc-97e4-51e0143511c6"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#eb7a8769-04e5-45dc-97e4-51e0143511c6"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg test leather ball - white#PRODUCT#eb7a8769-04e5-45dc-97e4-51e0143511c6"
           }
         }
       }
@@ -1345,6 +1645,36 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000001440#PRODUCT#77f93ec6-4e79-4d90-a39e-0b785f122e2a"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00480#PRODUCT#77f93ec6-4e79-4d90-a39e-0b785f122e2a"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#77f93ec6-4e79-4d90-a39e-0b785f122e2a"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#kookaburra regulation cricket ball - red#PRODUCT#77f93ec6-4e79-4d90-a39e-0b785f122e2a"
+          },
+          "GSI6PK": {
+            "S": "TENANT#default#FEATURED"
+          },
+          "GSI6SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#77f93ec6-4e79-4d90-a39e-0b785f122e2a"
           }
         }
       }
@@ -1441,6 +1771,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000001560#PRODUCT#12713f8e-bce8-474a-bc74-2a55b5bde035"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00470#PRODUCT#12713f8e-bce8-474a-bc74-2a55b5bde035"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#12713f8e-bce8-474a-bc74-2a55b5bde035"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#kookaburra turf ball - white#PRODUCT#12713f8e-bce8-474a-bc74-2a55b5bde035"
           }
         }
       }
@@ -1536,6 +1890,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000001080#PRODUCT#bd8fbb6f-afb3-43af-8968-c75be2123986"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00440#PRODUCT#bd8fbb6f-afb3-43af-8968-c75be2123986"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#bd8fbb6f-afb3-43af-8968-c75be2123986"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#ss ton elite leather cricket ball#PRODUCT#bd8fbb6f-afb3-43af-8968-c75be2123986"
           }
         }
       }
@@ -1631,6 +2009,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000001056#PRODUCT#c16b3397-d8c6-4ecb-acb7-c1ae03728861"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00430#PRODUCT#c16b3397-d8c6-4ecb-acb7-c1ae03728861"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#c16b3397-d8c6-4ecb-acb7-c1ae03728861"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#dsc pearla match cricket ball#PRODUCT#c16b3397-d8c6-4ecb-acb7-c1ae03728861"
           }
         }
       }
@@ -1726,6 +2128,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000004200#PRODUCT#469fabdb-4ab4-4a8f-879b-ddeeb005db6c"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00440#PRODUCT#469fabdb-4ab4-4a8f-879b-ddeeb005db6c"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#469fabdb-4ab4-4a8f-879b-ddeeb005db6c"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg velocity spike cricket shoes#PRODUCT#469fabdb-4ab4-4a8f-879b-ddeeb005db6c"
           }
         }
       }
@@ -1821,6 +2247,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000003000#PRODUCT#d8832388-2384-492b-80ef-d96a1cf3bd35"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00420#PRODUCT#d8832388-2384-492b-80ef-d96a1cf3bd35"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#d8832388-2384-492b-80ef-d96a1cf3bd35"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg strike rubber cricket shoes#PRODUCT#d8832388-2384-492b-80ef-d96a1cf3bd35"
           }
         }
       }
@@ -1934,6 +2384,36 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000052000#PRODUCT#a25ce22b-8f3d-4544-8a38-ac9c24e7103e"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00459#PRODUCT#a25ce22b-8f3d-4544-8a38-ac9c24e7103e"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#a25ce22b-8f3d-4544-8a38-ac9c24e7103e"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#kookaburra pro player spike shoes#PRODUCT#a25ce22b-8f3d-4544-8a38-ac9c24e7103e"
+          },
+          "GSI6PK": {
+            "S": "TENANT#default#FEATURED"
+          },
+          "GSI6SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#a25ce22b-8f3d-4544-8a38-ac9c24e7103e"
           }
         }
       }
@@ -2029,6 +2509,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000003840#PRODUCT#1e0c2dca-727b-4571-a59e-46540a733071"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00430#PRODUCT#1e0c2dca-727b-4571-a59e-46540a733071"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#1e0c2dca-727b-4571-a59e-46540a733071"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#ss ranger cricket shoes with spikes#PRODUCT#1e0c2dca-727b-4571-a59e-46540a733071"
           }
         }
       }
@@ -2124,6 +2628,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000003360#PRODUCT#862cef10-117b-4b8d-bfe9-1eb4cdbc0709"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00450#PRODUCT#862cef10-117b-4b8d-bfe9-1eb4cdbc0709"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#862cef10-117b-4b8d-bfe9-1eb4cdbc0709"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg aerogym cricket helmet with titanium grill#PRODUCT#862cef10-117b-4b8d-bfe9-1eb4cdbc0709"
           }
         }
       }
@@ -2220,6 +2748,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000004200#PRODUCT#f5d9af35-db0d-4208-9ace-d2f8aff65bf5"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00459#PRODUCT#f5d9af35-db0d-4208-9ace-d2f8aff65bf5"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#f5d9af35-db0d-4208-9ace-d2f8aff65bf5"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg pro guard cricket helmet#PRODUCT#f5d9af35-db0d-4208-9ace-d2f8aff65bf5"
           }
         }
       }
@@ -2333,6 +2885,36 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000058000#PRODUCT#18e29e9f-f3bb-4fba-b9d4-4a00eedd35a6"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00480#PRODUCT#18e29e9f-f3bb-4fba-b9d4-4a00eedd35a6"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#18e29e9f-f3bb-4fba-b9d4-4a00eedd35a6"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#kookaburra kahuna cricket helmet#PRODUCT#18e29e9f-f3bb-4fba-b9d4-4a00eedd35a6"
+          },
+          "GSI6PK": {
+            "S": "TENANT#default#FEATURED"
+          },
+          "GSI6SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#18e29e9f-f3bb-4fba-b9d4-4a00eedd35a6"
           }
         }
       }
@@ -2428,6 +3010,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000003000#PRODUCT#13601e8c-43e5-4bca-8dd9-3c3b328dbf75"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00430#PRODUCT#13601e8c-43e5-4bca-8dd9-3c3b328dbf75"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#13601e8c-43e5-4bca-8dd9-3c3b328dbf75"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#ss master cricket helmet#PRODUCT#13601e8c-43e5-4bca-8dd9-3c3b328dbf75"
           }
         }
       }
@@ -2538,6 +3144,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000003360#PRODUCT#0853b39a-ab73-40de-a456-13ad24cad034"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00440#PRODUCT#0853b39a-ab73-40de-a456-13ad24cad034"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#0853b39a-ab73-40de-a456-13ad24cad034"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg ecopak cricket kit bag#PRODUCT#0853b39a-ab73-40de-a456-13ad24cad034"
           }
         }
       }

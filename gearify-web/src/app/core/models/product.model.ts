@@ -35,7 +35,14 @@ export interface Product {
   attributes: Record<string, string>;
   isActive: boolean;
   stockQuantity?: number;
+
+  // Rating fields (matches API response)
+  ratingAverage?: number;               // Average rating (e.g., 4.5)
+  ratingCount?: number;                 // Number of reviews (e.g., 127)
+
+  // Deprecated: kept for backward compatibility
   rating?: ProductRating;
+
   createdAt: Date;
   updatedAt: Date;
 }

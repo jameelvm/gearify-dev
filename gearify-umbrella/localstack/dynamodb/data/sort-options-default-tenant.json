@@ -1,0 +1,203 @@
+{
+  "gearify-catalog": [
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "SORT_OPTIONS"
+          },
+          "EntityType": {
+            "S": "SORT_OPTIONS"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "SortOptions": {
+            "L": [
+              {
+                "M": {
+                  "Id": {
+                    "S": "660e8400-e29b-41d4-a716-446655440001"
+                  },
+                  "Label": {
+                    "S": "Featured Items"
+                  },
+                  "Value": {
+                    "S": "featured"
+                  },
+                  "SortType": {
+                    "S": "Filter"
+                  },
+                  "FilterField": {
+                    "S": "IsFeatured"
+                  },
+                  "SortField": {
+                    "S": "CreatedAt"
+                  },
+                  "SortDirection": {
+                    "S": "DESC"
+                  },
+                  "DisplayOrder": {
+                    "N": "1"
+                  },
+                  "IsActive": {
+                    "BOOL": true
+                  }
+                }
+              },
+              {
+                "M": {
+                  "Id": {
+                    "S": "660e8400-e29b-41d4-a716-446655440002"
+                  },
+                  "Label": {
+                    "S": "Price: Low to High"
+                  },
+                  "Value": {
+                    "S": "price-asc"
+                  },
+                  "SortType": {
+                    "S": "Simple"
+                  },
+                  "SortField": {
+                    "S": "Price"
+                  },
+                  "SortDirection": {
+                    "S": "ASC"
+                  },
+                  "DisplayOrder": {
+                    "N": "2"
+                  },
+                  "IsActive": {
+                    "BOOL": true
+                  }
+                }
+              },
+              {
+                "M": {
+                  "Id": {
+                    "S": "660e8400-e29b-41d4-a716-446655440003"
+                  },
+                  "Label": {
+                    "S": "Price: High to Low"
+                  },
+                  "Value": {
+                    "S": "price-desc"
+                  },
+                  "SortType": {
+                    "S": "Simple"
+                  },
+                  "SortField": {
+                    "S": "Price"
+                  },
+                  "SortDirection": {
+                    "S": "DESC"
+                  },
+                  "DisplayOrder": {
+                    "N": "3"
+                  },
+                  "IsActive": {
+                    "BOOL": true
+                  }
+                }
+              },
+              {
+                "M": {
+                  "Id": {
+                    "S": "660e8400-e29b-41d4-a716-446655440004"
+                  },
+                  "Label": {
+                    "S": "Newest First"
+                  },
+                  "Value": {
+                    "S": "newest"
+                  },
+                  "SortType": {
+                    "S": "Simple"
+                  },
+                  "SortField": {
+                    "S": "CreatedAt"
+                  },
+                  "SortDirection": {
+                    "S": "DESC"
+                  },
+                  "DisplayOrder": {
+                    "N": "4"
+                  },
+                  "IsActive": {
+                    "BOOL": true
+                  }
+                }
+              },
+              {
+                "M": {
+                  "Id": {
+                    "S": "660e8400-e29b-41d4-a716-446655440005"
+                  },
+                  "Label": {
+                    "S": "Top Rated"
+                  },
+                  "Value": {
+                    "S": "rating"
+                  },
+                  "SortType": {
+                    "S": "Simple"
+                  },
+                  "SortField": {
+                    "S": "RatingAverage"
+                  },
+                  "SortDirection": {
+                    "S": "DESC"
+                  },
+                  "DisplayOrder": {
+                    "N": "5"
+                  },
+                  "IsActive": {
+                    "BOOL": true
+                  }
+                }
+              },
+              {
+                "M": {
+                  "Id": {
+                    "S": "660e8400-e29b-41d4-a716-446655440006"
+                  },
+                  "Label": {
+                    "S": "Name: A-Z"
+                  },
+                  "Value": {
+                    "S": "name"
+                  },
+                  "SortType": {
+                    "S": "Simple"
+                  },
+                  "SortField": {
+                    "S": "Name"
+                  },
+                  "SortDirection": {
+                    "S": "ASC"
+                  },
+                  "DisplayOrder": {
+                    "N": "6"
+                  },
+                  "IsActive": {
+                    "BOOL": true
+                  }
+                }
+              }
+            ]
+          },
+          "CreatedAt": {
+            "S": "2026-01-06T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2026-01-06T00:00:00.000Z"
+          }
+        }
+      }
+    }
+  ]
+}

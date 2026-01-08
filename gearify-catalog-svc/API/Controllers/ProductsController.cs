@@ -165,4 +165,23 @@ public class ProductsController : ControllerBase
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
+
+    /// <summary>
+    /// Get sort options for the tenant
+    /// </summary>
+    [HttpGet("sort-options")]
+    [ProducesResponseType(200)]
+    public async Task<IActionResult> GetSortOptions()
+    {
+        try
+        {
+            var result = await _mediator.Send(new GetSortOptionsQuery());
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving sort options");
+            return StatusCode(500, new { error = "Internal server error" });
+        }
+    }
 }

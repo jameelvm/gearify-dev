@@ -46,10 +46,10 @@
     </div>
 
     <!-- Rating -->
-    <div class="product-card__rating" *ngIf="product.rating">
+    <div class="product-card__rating" *ngIf="product.ratingAverage">
       <app-rating
-        [rating]="product.rating.average"
-        [count]="product.rating.count">
+        [rating]="product.ratingAverage"
+        [count]="product.ratingCount">
       </app-rating>
     </div>
   </div>

@@ -193,8 +193,8 @@
     <div class="sort-dropdown">
       <label class="sort-label">Sort by</label>
       <select class="sort-select" [(ngModel)]="selectedSort" (change)="onSortChange(selectedSort)">
-        <option *ngFor="let option of sortOptions" [value]="option">
-          {{ option }}
+        <option *ngFor="let option of sortOptions()" [value]="option.value">
+          {{ option.label }}
         </option>
       </select>
       <svg class="sort-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

@@ -3,6 +3,7 @@ using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
 using Gearify.CatalogService.Domain.Entities;
 using Gearify.CatalogService.Infrastructure.Configuration;
+using Gearify.CatalogService.Infrastructure.Helpers;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 
@@ -109,12 +110,52 @@ public class DynamoDbProductRepository(
 
     public async Task CreateAsync(Product product)
     {
+        // =============================================================================
+        // IMPORTANT: GSI Keys are computed automatically by GsiKeyHelper
+        // You don't need to manually set these - just pass a Product with normal fields
+        // =============================================================================
+
+        // Compute GSI6 keys for featured products (sparse index - only if IsFeatured=true)
+        var (gsi6PK, gsi6SK) = GsiKeyHelper.ComputeFeaturedSortKeys(product);
+
         var item = new Dictionary<string, AttributeValue>
         {
+            // ===== Main Table Keys =====
             { "PK", new AttributeValue { S = $"TENANT#{product.TenantId}" } },
             { "SK", new AttributeValue { S = $"PRODUCT#{product.Id}" } },
-            { "GSI1PK", new AttributeValue { S = $"TENANT#{product.TenantId}#CATEGORY#{product.Category}" } },
+
+            // ===== GSI1: All Products (Default Listing) =====
+            // Used when: No sort specified or sortBy=default
+            { "GSI1PK", new AttributeValue { S = $"TENANT#{product.TenantId}#PRODUCTS" } },
             { "GSI1SK", new AttributeValue { S = $"PRODUCT#{product.Id}" } },
+
+            // ===== GSI2: Price Sorting =====
+            // Used when: sortBy=price-asc or sortBy=price-desc
+            // SK Format: PRICE#0000129999#PRODUCT#{id} (price in cents, zero-padded)
+            { "GSI2PK", new AttributeValue { S = $"TENANT#{product.TenantId}" } },
+            { "GSI2SK", new AttributeValue { S = GsiKeyHelper.ComputePriceSortKey(product) } },
+
+            // ===== GSI3: Rating Sorting =====
+            // Used when: sortBy=rating (highest rated first)
+            // SK Format: RATING#00450#PRODUCT#{id} (rating * 100, zero-padded)
+            { "GSI3PK", new AttributeValue { S = $"TENANT#{product.TenantId}" } },
+            { "GSI3SK", new AttributeValue { S = GsiKeyHelper.ComputeRatingSortKey(product) } },
+
+            // ===== GSI4: CreatedAt Sorting =====
+            // Used when: sortBy=newest (newest products first)
+            // SK Format: CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#{id}
+            { "GSI4PK", new AttributeValue { S = $"TENANT#{product.TenantId}" } },
+            { "GSI4SK", new AttributeValue { S = GsiKeyHelper.ComputeCreatedAtSortKey(product) } },
+
+            // ===== GSI5: Name Sorting =====
+            // Used when: sortBy=name (alphabetical A-Z)
+            // SK Format: NAME#kookaburra bat#PRODUCT#{id} (lowercase for case-insensitive sort)
+            { "GSI5PK", new AttributeValue { S = $"TENANT#{product.TenantId}" } },
+            { "GSI5SK", new AttributeValue { S = GsiKeyHelper.ComputeNameSortKey(product) } },
+
+            // Note: GSI6 (Featured Products) is added below only if IsFeatured=true
+
+            // ===== Product Data Fields =====
             { "Id", new AttributeValue { S = product.Id } },
             { "TenantId", new AttributeValue { S = product.TenantId } },
             { "Sku", new AttributeValue { S = product.Sku } },
@@ -132,10 +173,25 @@ public class DynamoDbProductRepository(
             { "CompareAtPrice", new AttributeValue { N = product.CompareAtPrice.ToString() } },
             { "Currency", new AttributeValue { S = product.Currency } },
             { "IsActive", new AttributeValue { BOOL = product.IsActive } },
+            { "IsDeal", new AttributeValue { BOOL = product.IsDeal } },
+            { "IsClearance", new AttributeValue { BOOL = product.IsClearance } },
+            { "IsNewArrival", new AttributeValue { BOOL = product.IsNewArrival } },
+            { "IsBestSeller", new AttributeValue { BOOL = product.IsBestSeller } },
+            { "IsFeatured", new AttributeValue { BOOL = product.IsFeatured } },
             { "CreatedAt", new AttributeValue { S = product.CreatedAt.ToString("O") } },
             { "UpdatedAt", new AttributeValue { S = product.UpdatedAt.ToString("O") } }
         };
 
+
+        // ===== GSI6: Featured Products (Sparse Index) =====
+        // Only add GSI6 keys if the product is featured
+        if (gsi6PK != null && gsi6SK != null)
+        {
+            item["GSI6PK"] = new AttributeValue { S = gsi6PK };
+            item["GSI6SK"] = new AttributeValue { S = gsi6SK };
+        }
+
+        // ===== Optional Fields =====
         if (product.Tags.Any())
         {
             item["Tags"] = new AttributeValue { SS = product.Tags };
@@ -175,6 +231,27 @@ public class DynamoDbProductRepository(
         if (product.RatingCount.HasValue)
         {
             item["RatingCount"] = new AttributeValue { N = product.RatingCount.Value.ToString() };
+        }
+
+        if (product.DealStartDate.HasValue)
+        {
+            item["DealStartDate"] = new AttributeValue { S = product.DealStartDate.Value.ToString("O") };
+        }
+
+        if (product.DealEndDate.HasValue)
+        {
+            item["DealEndDate"] = new AttributeValue { S = product.DealEndDate.Value.ToString("O") };
+        }
+
+        // Custom collections (tenant-specific flags)
+        if (product.CustomCollections.Any())
+        {
+            var customCollectionsMap = new Dictionary<string, AttributeValue>();
+            foreach (var kvp in product.CustomCollections)
+            {
+                customCollectionsMap[kvp.Key] = new AttributeValue { BOOL = kvp.Value };
+            }
+            item["CustomCollections"] = new AttributeValue { M = customCollectionsMap };
         }
 
         await _dynamoDb.PutItemAsync(new PutItemRequest
@@ -228,6 +305,13 @@ public class DynamoDbProductRepository(
             OfferBadge = item.TryGetValue("OfferBadge", out var offerBadge) ? offerBadge.S : null,
             RatingAverage = item.TryGetValue("RatingAverage", out var ratingAvg) ? decimal.Parse(ratingAvg.N) : null,
             RatingCount = item.TryGetValue("RatingCount", out var ratingCnt) ? int.Parse(ratingCnt.N) : null,
+            IsDeal = item.TryGetValue("IsDeal", out var isDeal) && isDeal.BOOL,
+            IsClearance = item.TryGetValue("IsClearance", out var isClearance) && isClearance.BOOL,
+            IsNewArrival = item.TryGetValue("IsNewArrival", out var isNewArrival) && isNewArrival.BOOL,
+            IsBestSeller = item.TryGetValue("IsBestSeller", out var isBestSeller) && isBestSeller.BOOL,
+            IsFeatured = item.TryGetValue("IsFeatured", out var isFeatured) && isFeatured.BOOL,
+            DealStartDate = item.TryGetValue("DealStartDate", out var dealStart) ? DateTime.Parse(dealStart.S) : null,
+            DealEndDate = item.TryGetValue("DealEndDate", out var dealEnd) ? DateTime.Parse(dealEnd.S) : null,
             IsActive = item.TryGetValue("IsActive", out var isActive) && isActive.BOOL,
             CreatedAt = DateTime.Parse(item["CreatedAt"].S),
             UpdatedAt = DateTime.Parse(item["UpdatedAt"].S)
@@ -246,6 +330,12 @@ public class DynamoDbProductRepository(
         if (item.TryGetValue("Attributes", out var attributes) && !string.IsNullOrEmpty(attributes.S))
         {
             product.Attributes = JsonSerializer.Deserialize<Dictionary<string, string>>(attributes.S) ?? new();
+        }
+
+
+        if (item.TryGetValue("CustomCollections", out var customColl) && customColl.M != null)
+        {
+            product.CustomCollections = customColl.M.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.BOOL);
         }
 
         return product;

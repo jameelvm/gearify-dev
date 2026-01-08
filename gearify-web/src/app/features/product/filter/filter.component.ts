@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BrandService, Brand } from '@core/services/brand.service';
 import { PriceRangeService, PriceRange } from '@core/services/price-range.service';
+import { SortOptionsService, SortOption } from '@core/services/sort-options.service';
 
 interface BrandWithCount extends Brand {
   productCount: number;
@@ -25,6 +26,7 @@ export interface ProductFilters {
 export class FilterComponent implements OnInit {
   private brandService = inject(BrandService);
   private priceRangeService = inject(PriceRangeService);
+  private sortOptionsService = inject(SortOptionsService);
 
   // Output event to notify parent component about filter changes
   filtersChanged = output<ProductFilters>();
@@ -49,14 +51,10 @@ export class FilterComponent implements OnInit {
   customPriceMax = '';
 
   // Sort options
-  sortOptions = [
-    'Featured Items',
-    'Price: Low to High',
-    'Price: High to Low',
-    'Newest First',
-    'Top Rated'
-  ];
-  selectedSort = 'Featured Items';
+  sortOptions = signal<SortOption[]>([]);
+  sortOptionsLoading = signal(false);
+  sortOptionsError = signal<string | null>(null);
+  selectedSort = 'featured'; // Default to featured (will be set from DB)
 
   // View mode
   viewMode: 'small' | 'medium' = 'medium';
@@ -65,9 +63,10 @@ export class FilterComponent implements OnInit {
   private pendingRouteSync: { brandSlug?: string | null; priceRange?: string | null } | null = null;
 
   ngOnInit() {
-    console.log('[FilterComponent] ngOnInit - Loading brands and price ranges...');
+    console.log('[FilterComponent] ngOnInit - Loading brands, price ranges, and sort options...');
     this.loadBrands();
     this.loadPriceRanges();
+    this.loadSortOptions();
   }
 
   loadBrands() {
@@ -159,6 +158,35 @@ export class FilterComponent implements OnInit {
         this.priceRangesLoading.set(false);
         // Fallback to empty array
         this.priceRanges.set([]);
+      }
+    });
+  }
+
+  loadSortOptions() {
+    console.log('[FilterComponent] loadSortOptions - Starting to load sort options');
+    this.sortOptionsLoading.set(true);
+    this.sortOptionsError.set(null);
+
+    console.log('[FilterComponent] Making API call to getSortOptions()');
+    this.sortOptionsService.getSortOptions().subscribe({
+      next: (response) => {
+        console.log('[FilterComponent] Sort options loaded successfully:', response);
+        this.sortOptions.set(response.sortOptions);
+        this.sortOptionsLoading.set(false);
+        console.log('[FilterComponent] Sort options state updated:', this.sortOptions());
+      },
+      error: (error) => {
+        console.error('[FilterComponent] Error loading sort options:', error);
+        console.error('[FilterComponent] Error details:', {
+          message: error.message,
+          status: error.status,
+          statusText: error.statusText,
+          url: error.url
+        });
+        this.sortOptionsError.set('Failed to load sort options');
+        this.sortOptionsLoading.set(false);
+        // Fallback to empty array
+        this.sortOptions.set([]);
       }
     });
   }

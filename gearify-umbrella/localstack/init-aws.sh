@@ -24,7 +24,7 @@ echo "LocalStack is ready!"
 echo ""
 echo "Creating DynamoDB tables..."
 
-# Products table
+# Products table with GSI2-GSI6 for sorting
 echo "  - Creating table: gearify-products"
 awslocal dynamodb create-table \
   --table-name gearify-products \
@@ -33,11 +33,21 @@ awslocal dynamodb create-table \
     AttributeName=SK,AttributeType=S \
     AttributeName=GSI1PK,AttributeType=S \
     AttributeName=GSI1SK,AttributeType=S \
+    AttributeName=GSI2PK,AttributeType=S \
+    AttributeName=GSI2SK,AttributeType=S \
+    AttributeName=GSI3PK,AttributeType=S \
+    AttributeName=GSI3SK,AttributeType=S \
+    AttributeName=GSI4PK,AttributeType=S \
+    AttributeName=GSI4SK,AttributeType=S \
+    AttributeName=GSI5PK,AttributeType=S \
+    AttributeName=GSI5SK,AttributeType=S \
+    AttributeName=GSI6PK,AttributeType=S \
+    AttributeName=GSI6SK,AttributeType=S \
   --key-schema \
     AttributeName=PK,KeyType=HASH \
     AttributeName=SK,KeyType=RANGE \
   --global-secondary-indexes \
-    "[{\"IndexName\":\"GSI1\",\"KeySchema\":[{\"AttributeName\":\"GSI1PK\",\"KeyType\":\"HASH\"},{\"AttributeName\":\"GSI1SK\",\"KeyType\":\"RANGE\"}],\"Projection\":{\"ProjectionType\":\"ALL\"}}]" \
+    "[{\"IndexName\":\"GSI1\",\"KeySchema\":[{\"AttributeName\":\"GSI1PK\",\"KeyType\":\"HASH\"},{\"AttributeName\":\"GSI1SK\",\"KeyType\":\"RANGE\"}],\"Projection\":{\"ProjectionType\":\"ALL\"}},{\"IndexName\":\"GSI2\",\"KeySchema\":[{\"AttributeName\":\"GSI2PK\",\"KeyType\":\"HASH\"},{\"AttributeName\":\"GSI2SK\",\"KeyType\":\"RANGE\"}],\"Projection\":{\"ProjectionType\":\"ALL\"}},{\"IndexName\":\"GSI3\",\"KeySchema\":[{\"AttributeName\":\"GSI3PK\",\"KeyType\":\"HASH\"},{\"AttributeName\":\"GSI3SK\",\"KeyType\":\"RANGE\"}],\"Projection\":{\"ProjectionType\":\"ALL\"}},{\"IndexName\":\"GSI4\",\"KeySchema\":[{\"AttributeName\":\"GSI4PK\",\"KeyType\":\"HASH\"},{\"AttributeName\":\"GSI4SK\",\"KeyType\":\"RANGE\"}],\"Projection\":{\"ProjectionType\":\"ALL\"}},{\"IndexName\":\"GSI5\",\"KeySchema\":[{\"AttributeName\":\"GSI5PK\",\"KeyType\":\"HASH\"},{\"AttributeName\":\"GSI5SK\",\"KeyType\":\"RANGE\"}],\"Projection\":{\"ProjectionType\":\"ALL\"}},{\"IndexName\":\"GSI6\",\"KeySchema\":[{\"AttributeName\":\"GSI6PK\",\"KeyType\":\"HASH\"},{\"AttributeName\":\"GSI6SK\",\"KeyType\":\"RANGE\"}],\"Projection\":{\"ProjectionType\":\"ALL\"}}]" \
   --billing-mode PAY_PER_REQUEST \
   --region us-east-1 \
   2>/dev/null || echo "    Table gearify-products already exists, skipping..."
@@ -497,3 +507,10 @@ echo "  - SSM Parameters: 3"
 echo ""
 echo "Ready for development!"
 echo "=========================================="
+
+# Seed sort options for default tenant
+echo "  - Seeding sort options for default tenant"
+awslocal dynamodb batch-write-item \
+  --request-items file://${CONFIG_DIR}/dynamodb/data/sort-options-default-tenant.json \
+  --region us-east-1 \
+  2>/dev/null || echo "    Failed to seed sort options"

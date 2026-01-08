@@ -39,21 +39,49 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
     {
         var tenantId = _tenantContext.TenantId;
 
-        // For sorting, we need to fetch more items than requested, sort them, then paginate
-        // Fetch 5x page size to have enough items for sorting while still using pagination
-        var fetchLimit = string.IsNullOrEmpty(request.SortBy) ? request.PageSize : request.PageSize * 5;
+        // Determine which GSI to use and sort direction based on sortBy parameter
+        var (indexName, sortAscending) = GetIndexAndSortDirection(request.SortBy);
 
         var queryRequest = new QueryRequest
         {
             TableName = _tableName,
-            IndexName = "GSI1",
-            KeyConditionExpression = "GSI1PK = :gsi1pk",
-            ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+            Limit = request.PageSize
+        };
+
+        // Set index and key condition based on sort type
+        if (indexName == "GSI1")
+        {
+            // Default: GSI1 (all products)
+            queryRequest.IndexName = "GSI1";
+            queryRequest.KeyConditionExpression = "GSI1PK = :gsi1pk";
+            queryRequest.ExpressionAttributeValues = new Dictionary<string, AttributeValue>
             {
                 { ":gsi1pk", new AttributeValue { S = $"TENANT#{tenantId}#PRODUCTS" } }
-            },
-            Limit = fetchLimit
-        };
+            };
+        }
+        else if (indexName == "GSI6")
+        {
+            // Featured products (sparse index)
+            queryRequest.IndexName = "GSI6";
+            queryRequest.KeyConditionExpression = "GSI6PK = :gsi6pk";
+            queryRequest.ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+            {
+                { ":gsi6pk", new AttributeValue { S = $"TENANT#{tenantId}#FEATURED" } }
+            };
+        }
+        else
+        {
+            // GSI2-GSI5: Price, Rating, CreatedAt, Name sorting
+            queryRequest.IndexName = indexName;
+            queryRequest.KeyConditionExpression = $"{indexName}PK = :{indexName.ToLower()}pk";
+            queryRequest.ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+            {
+                { $":{indexName.ToLower()}pk", new AttributeValue { S = $"TENANT#{tenantId}" } }
+            };
+        }
+
+        // Set scan direction
+        queryRequest.ScanIndexForward = sortAscending;
 
         // Decode cursor if provided
         if (!string.IsNullOrEmpty(request.Cursor))
@@ -69,7 +97,8 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
             }
         }
 
-        var filterExpressions = await Build(request, cancellationToken, queryRequest, tenantId);
+        // Build filter expressions for slugs, brands, price range, collections
+        var filterExpressions = await BuildFilterExpressions(request, cancellationToken, queryRequest, tenantId);
 
         if (filterExpressions.Any())
         {
@@ -78,29 +107,10 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
 
         try
         {
-            var allProducts = new List<Product>();
-
-            // Query DynamoDB
+            // Query DynamoDB with sorting at database level
             var response = await _dynamoDb.QueryAsync(queryRequest, cancellationToken);
-            allProducts.AddRange(response.Items.Select(MapToProduct));
-            Dictionary<string, AttributeValue> lastEvaluatedKey = response.LastEvaluatedKey;
-
-            // Apply sorting if specified
-            if (!string.IsNullOrEmpty(request.SortBy))
-            {
-                allProducts = request.SortBy.ToLower() switch
-                {
-                    "price-asc" or "price: low to high" => allProducts.OrderBy(p => p.Price).ToList(),
-                    "price-desc" or "price: high to low" => allProducts.OrderByDescending(p => p.Price).ToList(),
-                    "rating" or "top rated" => allProducts.OrderByDescending(p => p.RatingAverage ?? 0).ToList(),
-                    "newest" or "newest first" => allProducts.OrderByDescending(p => p.CreatedAt).ToList(),
-                    "name" or "featured items" => allProducts.OrderBy(p => p.Name).ToList(),
-                    _ => allProducts
-                };
-            }
-
-            // Take only the requested page size
-            var paginatedProducts = allProducts.Take(request.PageSize).ToList();
+            var products = response.Items.Select(MapToProduct).ToList();
+            var lastEvaluatedKey = response.LastEvaluatedKey;
 
             // Check if there are more items
             var hasMore = lastEvaluatedKey is { Count: > 0 };
@@ -112,20 +122,44 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
                 nextCursor = EncodeCursor(lastEvaluatedKey);
             }
 
-            var productDtos = paginatedProducts.Select(ProductListDto.FromProduct).ToList();
+            var productDtos = products.Select(ProductListDto.FromProduct).ToList();
 
             _logger.LogInformation(
-                "Retrieved {Count} products (size {PageSize}, hasMore={HasMore}) for tenant {TenantId} with filters: Dept={Dept}, Cat={Cat}, Subcat={Subcat}, Brands={Brands}, SortBy={SortBy}",
+                "Retrieved {Count} products (size {PageSize}, hasMore={HasMore}) for tenant {TenantId} with filters: Dept={Dept}, Cat={Cat}, Subcat={Subcat}, Brands={Brands}, SortBy={SortBy}, Index={Index}",
                 productDtos.Count, request.PageSize, hasMore, tenantId, request.DepartmentSlug, request.CategorySlug, request.SubcategorySlug,
-                request.BrandSlugs != null ? string.Join(",", request.BrandSlugs) : "none", request.SortBy ?? "none");
+                request.BrandSlugs != null ? string.Join(",", request.BrandSlugs) : "none", request.SortBy ?? "default", indexName);
 
-            return new ProductListResponse(productDtos, allProducts.Count, hasMore, nextCursor);
+            return new ProductListResponse(productDtos, products.Count, hasMore, nextCursor);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving products by slug for tenant {TenantId}", tenantId);
             throw;
         }
+    }
+
+    /// <summary>
+    /// Determine which GSI to use and sort direction based on sortBy parameter
+    /// Maps sort option values from frontend to DynamoDB GSI indexes
+    /// </summary>
+    private (string IndexName, bool SortAscending) GetIndexAndSortDirection(string? sortBy)
+    {
+        if (string.IsNullOrEmpty(sortBy))
+        {
+            // Default: GSI1 with no specific sort
+            return ("GSI1", true);
+        }
+
+        return sortBy.ToLower() switch
+        {
+            "featured" => ("GSI6", false),           // GSI6: Featured products, newest first
+            "price-asc" => ("GSI2", true),           // GSI2: Price low to high
+            "price-desc" => ("GSI2", false),         // GSI2: Price high to low
+            "rating" => ("GSI3", false),             // GSI3: Top rated first (descending)
+            "newest" => ("GSI4", false),             // GSI4: Newest first (descending)
+            "name" => ("GSI5", true),                // GSI5: Name A-Z (ascending)
+            _ => ("GSI1", true)                      // Default: GSI1 unsorted
+        };
     }
 
     private static string EncodeCursor(Dictionary<string, AttributeValue> lastEvaluatedKey)
@@ -156,7 +190,7 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
         );
     }
 
-    private async Task<List<string>> Build(GetProductsBySlugQuery request, CancellationToken cancellationToken, QueryRequest queryRequest,
+    private async Task<List<string>> BuildFilterExpressions(GetProductsBySlugQuery request, CancellationToken cancellationToken, QueryRequest queryRequest,
         string tenantId)
     {
         // Build filter expression for slugs

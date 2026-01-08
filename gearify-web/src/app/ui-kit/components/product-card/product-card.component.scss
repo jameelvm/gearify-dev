@@ -129,7 +129,8 @@
 }
 
 .product-card__rating {
-  margin-top: 8px;
+  margin-top: auto; // Push rating to bottom of card
+  padding-top: 8px; // Add spacing from price
 }
 
 // Responsive adjustments

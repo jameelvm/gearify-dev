@@ -91,6 +91,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000004200#PRODUCT#e29ee9c2-275b-49a0-8893-ae8c442e058a"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00459#PRODUCT#e29ee9c2-275b-49a0-8893-ae8c442e058a"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#e29ee9c2-275b-49a0-8893-ae8c442e058a"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg teampro cricket wheelie bag#PRODUCT#e29ee9c2-275b-49a0-8893-ae8c442e058a"
           }
         }
       }
@@ -189,6 +213,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000060000#PRODUCT#9c15938d-9f05-4374-9044-f9a84bf2a096"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00470#PRODUCT#9c15938d-9f05-4374-9044-f9a84bf2a096"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#9c15938d-9f05-4374-9044-f9a84bf2a096"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#kookaburra pro players cricket bag#PRODUCT#9c15938d-9f05-4374-9044-f9a84bf2a096"
           }
         }
       }
@@ -283,6 +331,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000003000#PRODUCT#6a0d5877-3a3c-49f8-b4db-29be3dedd683"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00430#PRODUCT#6a0d5877-3a3c-49f8-b4db-29be3dedd683"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#6a0d5877-3a3c-49f8-b4db-29be3dedd683"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#ss club cricket kit bag#PRODUCT#6a0d5877-3a3c-49f8-b4db-29be3dedd683"
           }
         }
       }
@@ -378,6 +450,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000002640#PRODUCT#6b83bbe4-3c0e-4b7d-ad1f-f9613fde119c"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00440#PRODUCT#6b83bbe4-3c0e-4b7d-ad1f-f9613fde119c"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#6b83bbe4-3c0e-4b7d-ad1f-f9613fde119c"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg club batting pads#PRODUCT#6b83bbe4-3c0e-4b7d-ad1f-f9613fde119c"
           }
         }
       }
@@ -473,6 +569,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000003840#PRODUCT#0a18b01e-6896-4c19-aa04-c8a3cbeb9685"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00459#PRODUCT#0a18b01e-6896-4c19-aa04-c8a3cbeb9685"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#0a18b01e-6896-4c19-aa04-c8a3cbeb9685"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg test batting pads#PRODUCT#0a18b01e-6896-4c19-aa04-c8a3cbeb9685"
           }
         }
       }
@@ -571,6 +691,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000054000#PRODUCT#b25b0b53-c7a9-483f-81f7-7d08bd4c4ebd"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00470#PRODUCT#b25b0b53-c7a9-483f-81f7-7d08bd4c4ebd"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#b25b0b53-c7a9-483f-81f7-7d08bd4c4ebd"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#kookaburra kahuna pro batting pads#PRODUCT#b25b0b53-c7a9-483f-81f7-7d08bd4c4ebd"
           }
         }
       }
@@ -665,6 +809,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000004200#PRODUCT#b03c898d-471a-415e-af9b-46ada2a7b093"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00450#PRODUCT#b03c898d-471a-415e-af9b-46ada2a7b093"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#b03c898d-471a-415e-af9b-46ada2a7b093"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#ss ton reserve batting pads#PRODUCT#b03c898d-471a-415e-af9b-46ada2a7b093"
           }
         }
       }
@@ -760,6 +928,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000001800#PRODUCT#c27c1f4c-08a3-4721-b9c2-51ecd390623c"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00440#PRODUCT#c27c1f4c-08a3-4721-b9c2-51ecd390623c"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#c27c1f4c-08a3-4721-b9c2-51ecd390623c"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg club batting gloves#PRODUCT#c27c1f4c-08a3-4721-b9c2-51ecd390623c"
           }
         }
       }
@@ -855,6 +1047,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000002640#PRODUCT#18e5c43e-831a-4b9b-bb4b-bca3f1b19758"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00459#PRODUCT#18e5c43e-831a-4b9b-bb4b-bca3f1b19758"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#18e5c43e-831a-4b9b-bb4b-bca3f1b19758"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg test batting gloves#PRODUCT#18e5c43e-831a-4b9b-bb4b-bca3f1b19758"
           }
         }
       }
@@ -953,6 +1169,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000003360#PRODUCT#1a7d2605-e514-4cbf-80f9-8c44445ff172"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00470#PRODUCT#1a7d2605-e514-4cbf-80f9-8c44445ff172"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#1a7d2605-e514-4cbf-80f9-8c44445ff172"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#kookaburra kahuna batting gloves#PRODUCT#1a7d2605-e514-4cbf-80f9-8c44445ff172"
           }
         }
       }
@@ -1047,6 +1287,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000002160#PRODUCT#e6625d34-96c5-4856-a3a9-0aa6563e4f41"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00450#PRODUCT#e6625d34-96c5-4856-a3a9-0aa6563e4f41"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#e6625d34-96c5-4856-a3a9-0aa6563e4f41"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#ss ton reserve batting gloves#PRODUCT#e6625d34-96c5-4856-a3a9-0aa6563e4f41"
           }
         }
       }
@@ -1141,6 +1405,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000000420#PRODUCT#e48cef85-faaa-4487-8d13-f6aac49ce7ce"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00430#PRODUCT#e48cef85-faaa-4487-8d13-f6aac49ce7ce"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#e48cef85-faaa-4487-8d13-f6aac49ce7ce"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg premium bat grip - pack of 3#PRODUCT#e48cef85-faaa-4487-8d13-f6aac49ce7ce"
           }
         }
       }
@@ -1235,6 +1523,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000000504#PRODUCT#fce2bb97-5f2b-4d8f-9dfb-95491442e91c"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00440#PRODUCT#fce2bb97-5f2b-4d8f-9dfb-95491442e91c"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#fce2bb97-5f2b-4d8f-9dfb-95491442e91c"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#ss super soft bat grip - multicolor#PRODUCT#fce2bb97-5f2b-4d8f-9dfb-95491442e91c"
           }
         }
       }
@@ -1330,6 +1642,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000000780#PRODUCT#1fc69297-d74c-4a75-a387-f83dae4ef75d"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00450#PRODUCT#1fc69297-d74c-4a75-a387-f83dae4ef75d"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#1fc69297-d74c-4a75-a387-f83dae4ef75d"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg abdominal guard - men#PRODUCT#1fc69297-d74c-4a75-a387-f83dae4ef75d"
           }
         }
       }
@@ -1425,6 +1761,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000001440#PRODUCT#9fa86e00-8c7e-422f-ba16-c7a1d5ed1a89"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00459#PRODUCT#9fa86e00-8c7e-422f-ba16-c7a1d5ed1a89"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#9fa86e00-8c7e-422f-ba16-c7a1d5ed1a89"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#kookaburra thigh guard - pair#PRODUCT#9fa86e00-8c7e-422f-ba16-c7a1d5ed1a89"
           }
         }
       }
@@ -1520,6 +1880,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000000216#PRODUCT#ff312369-0ca6-4e31-b646-3cdf6b760056"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00420#PRODUCT#ff312369-0ca6-4e31-b646-3cdf6b760056"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#ff312369-0ca6-4e31-b646-3cdf6b760056"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#cricket bat linseed oil - 100ml#PRODUCT#ff312369-0ca6-4e31-b646-3cdf6b760056"
           }
         }
       }
@@ -1615,6 +1999,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000000420#PRODUCT#dcb11a13-7ae6-4d8a-8d37-83915466e7c3"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00430#PRODUCT#dcb11a13-7ae6-4d8a-8d37-83915466e7c3"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#dcb11a13-7ae6-4d8a-8d37-83915466e7c3"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#cricket bat knocking mallet#PRODUCT#dcb11a13-7ae6-4d8a-8d37-83915466e7c3"
           }
         }
       }
@@ -1709,6 +2117,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000001019#PRODUCT#b2c8f067-d3b6-46c3-9fef-26225789055d"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00409#PRODUCT#b2c8f067-d3b6-46c3-9fef-26225789055d"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#b2c8f067-d3b6-46c3-9fef-26225789055d"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#wooden cricket stumps set with bails#PRODUCT#b2c8f067-d3b6-46c3-9fef-26225789055d"
           }
         }
       }
@@ -1804,6 +2236,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000001800#PRODUCT#fd26db42-e382-41cc-bd7d-a0c65472ee4d"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00440#PRODUCT#fd26db42-e382-41cc-bd7d-a0c65472ee4d"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#fd26db42-e382-41cc-bd7d-a0c65472ee4d"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#spring return cricket stumps set#PRODUCT#fd26db42-e382-41cc-bd7d-a0c65472ee4d"
           }
         }
       }
@@ -1899,6 +2355,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000001019#PRODUCT#b8578749-3285-4770-8faa-b9c05fb5edfe"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00430#PRODUCT#b8578749-3285-4770-8faa-b9c05fb5edfe"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#b8578749-3285-4770-8faa-b9c05fb5edfe"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#ss cricket t-shirt - polyester dri-fit#PRODUCT#b8578749-3285-4770-8faa-b9c05fb5edfe"
           }
         }
       }
@@ -1994,6 +2474,30 @@
           },
           "ThumbnailUrl": {
             "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000001440#PRODUCT#098947fa-0b8c-4d2f-bb5c-99a127cfdeb0"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00440#PRODUCT#098947fa-0b8c-4d2f-bb5c-99a127cfdeb0"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#098947fa-0b8c-4d2f-bb5c-99a127cfdeb0"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg cricket trousers - white#PRODUCT#098947fa-0b8c-4d2f-bb5c-99a127cfdeb0"
           }
         }
       }

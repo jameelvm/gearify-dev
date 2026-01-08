@@ -71,7 +71,24 @@
       "Bash(for table in gearify-products gearify-brands)",
       "Bash(do echo \"=== $table ===\" AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws dynamodb describe-table  --table-name $table  --endpoint-url http://localhost:4566  --region us-east-1  --query 'Table.{KeySchema:KeySchema,GSIs:GlobalSecondaryIndexes[*].{Name:IndexName,KeySchema:KeySchema}}'  --output json)",
       "Bash(AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY_test aws dynamodb scan --table-name gearify-products --endpoint-url http://localhost:4566 --region us-east-1 --filter-expression \"TenantId = :tenant\" --expression-attribute-values '{\"\":tenant\"\":{\"\"S\"\":\"\"default\"\"}}' --select COUNT --output json)",
-      "Bash(docker volume:*)"
+      "Bash(docker volume:*)",
+      "Bash(dir \"C:\\\\Gearify\\\\gearify-umbrella\\\\localstack\\\\dynamodb\\\\tables\" /B)",
+      "Bash(certutil -hashfile \"C:\\\\Gearify\\\\gearify-catalog-svc\\\\Infrastructure\\\\Repositories\\\\DynamoDbProductRepository.cs\" MD5)",
+      "Bash(AttributeName=GSI2PK,AttributeType=S )",
+      "Bash(AttributeName=GSI2SK,AttributeType=S )",
+      "Bash(AttributeName=GSI3PK,AttributeType=S )",
+      "Bash(AttributeName=GSI3SK,AttributeType=S )",
+      "Bash(AttributeName=GSI4PK,AttributeType=S )",
+      "Bash(AttributeName=GSI4SK,AttributeType=S )",
+      "Bash(AttributeName=GSI5PK,AttributeType=S )",
+      "Bash(AttributeName=GSI5SK,AttributeType=S )",
+      "Bash(AttributeName=GSI6PK,AttributeType=S )",
+      "Bash(AttributeName=GSI6SK,AttributeType=S )",
+      "Bash(\"[{\"\"IndexName\"\":\"\"GSI1\"\",\"\"KeySchema\"\":[{\"\"AttributeName\"\":\"\"GSI1PK\"\",\"\"KeyType\"\":\"\"HASH\"\"},{\"\"AttributeName\"\":\"\"GSI1SK\"\",\"\"KeyType\"\":\"\"RANGE\"\"}],\"\"Projection\"\":{\"\"ProjectionType\"\":\"\"ALL\"\"}},{\"\"IndexName\"\":\"\"GSI2\"\",\"\"KeySchema\"\":[{\"\"AttributeName\"\":\"\"GSI2PK\"\",\"\"KeyType\"\":\"\"HASH\"\"},{\"\"AttributeName\"\":\"\"GSI2SK\"\",\"\"KeyType\"\":\"\"RANGE\"\"}],\"\"Projection\"\":{\"\"ProjectionType\"\":\"\"ALL\"\"}},{\"\"IndexName\"\":\"\"GSI3\"\",\"\"KeySchema\"\":[{\"\"AttributeName\"\":\"\"GSI3PK\"\",\"\"KeyType\"\":\"\"HASH\"\"},{\"\"AttributeName\"\":\"\"GSI3SK\"\",\"\"KeyType\"\":\"\"RANGE\"\"}],\"\"Projection\"\":{\"\"ProjectionType\"\":\"\"ALL\"\"}},{\"\"IndexName\"\":\"\"GSI4\"\",\"\"KeySchema\"\":[{\"\"AttributeName\"\":\"\"GSI4PK\"\",\"\"KeyType\"\":\"\"HASH\"\"},{\"\"AttributeName\"\":\"\"GSI4SK\"\",\"\"KeyType\"\":\"\"RANGE\"\"}],\"\"Projection\"\":{\"\"ProjectionType\"\":\"\"ALL\"\"}},{\"\"IndexName\"\":\"\"GSI5\"\",\"\"KeySchema\"\":[{\"\"AttributeName\"\":\"\"GSI5PK\"\",\"\"KeyType\"\":\"\"HASH\"\"},{\"\"AttributeName\"\":\"\"GSI5SK\"\",\"\"KeyType\"\":\"\"RANGE\"\"}],\"\"Projection\"\":{\"\"ProjectionType\"\":\"\"ALL\"\"}},{\"\"IndexName\"\":\"\"GSI6\"\",\"\"KeySchema\"\":[{\"\"AttributeName\"\":\"\"GSI6PK\"\",\"\"KeyType\"\":\"\"HASH\"\"},{\"\"AttributeName\"\":\"\"GSI6SK\"\",\"\"KeyType\"\":\"\"RANGE\"\"}],\"\"Projection\"\":{\"\"ProjectionType\"\":\"\"ALL\"\"}}]\" )",
+      "Bash(__NEW_LINE__ AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws dynamodb batch-write-item --request-items file://C:/Gearify/gearify-umbrella/localstack/dynamodb/data/products-test-tenant-batch.json --endpoint-url http://localhost:4566 --region us-east-)",
+      "Bash(__NEW_LINE__ AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws dynamodb batch-write-item --request-items file://C:/Gearify/gearify-umbrella/localstack/dynamodb/data/products-acme-corp-batch.json --endpoint-url http://localhost:4566 --region us-east-)",
+      "Bash(__NEW_LINE__ AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws dynamodb batch-write-item --request-items file://C:/Gearify/gearify-umbrella/localstack/dynamodb/data/products-additional-batch.json --endpoint-url http://localhost:4566 --region us-east-)",
+      "Bash(tee:*)"
     ]
   }
 }
