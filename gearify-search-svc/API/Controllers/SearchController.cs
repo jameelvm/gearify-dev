@@ -43,7 +43,7 @@ public class SearchController : ControllerBase
         [FromQuery] bool? newArrivalsOnly,
         [FromQuery] bool? bestSellersOnly,
         [FromQuery] string? sortBy = "relevance",
-        [FromQuery] string? sortDirection = "desc",
+        [FromQuery] string? sortOrder = "desc",
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20,
         CancellationToken cancellationToken = default)
@@ -69,7 +69,7 @@ public class SearchController : ControllerBase
             NewArrivalsOnly = newArrivalsOnly,
             BestSellersOnly = bestSellersOnly,
             SortBy = sortBy,
-            SortDirection = sortDirection,
+            SortDirection = sortOrder,
             Page = page,
             PageSize = Math.Min(pageSize, 100) // Cap at 100
         };

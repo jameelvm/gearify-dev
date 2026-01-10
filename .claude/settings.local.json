@@ -113,7 +113,8 @@
       "Bash(dotnet restore:*)",
       "Bash(AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws:*)",
       "Bash(dotnet new:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(awslocal dynamodb scan:*)"
     ],
     "deny": [],
     "ask": []

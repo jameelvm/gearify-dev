@@ -165,11 +165,24 @@ public class SearchProductsQueryHandler : IRequestHandler<SearchProductsQuery, S
 
         return sortBy?.ToLowerInvariant() switch
         {
-            "price" => sort.Field(f => f.Price, order),
-            "name" => sort.Field("name.keyword", order),
-            "rating" => sort.Field(f => f.RatingAverage, SortOrder.Descending),
-            "newest" => sort.Field(f => f.CreatedAt, SortOrder.Descending),
-            "popularity" => sort.Field(f => f.RatingCount, SortOrder.Descending),
+            "price" => sort.Field(f => f
+                .Field(p => p.Price)
+                .Order(order)
+                .Missing(order == SortOrder.Ascending ? "_last" : "_first")),
+            "name" => sort.Field(f => f
+                .Field("name.keyword")
+                .Order(order)),
+            "rating" => sort.Field(f => f
+                .Field(p => p.RatingAverage)
+                .Order(order)
+                .Missing("_last")),
+            "newest" => sort.Field(f => f
+                .Field(p => p.CreatedAt)
+                .Order(order)),
+            "popularity" => sort.Field(f => f
+                .Field(p => p.RatingCount)
+                .Order(order)
+                .Missing("_last")),
             _ => sort.Field("_score", SortOrder.Descending) // relevance (default)
         };
     }

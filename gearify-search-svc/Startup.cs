@@ -2,6 +2,7 @@ using Amazon.Runtime;
 using Amazon.SQS;
 using Gearify.SearchService.Application.Events;
 using Gearify.SearchService.Application.Services;
+using Gearify.SearchService.Infrastructure.Clients;
 using Gearify.SearchService.Infrastructure.Configuration;
 using Gearify.SearchService.Infrastructure.Messaging;
 using Gearify.SearchService.Infrastructure.OpenSearch;
@@ -130,6 +131,19 @@ public class Startup
         services.AddHostedService<CatalogEventConsumer>();
 
         Console.WriteLine("Messaging services registered successfully");
+
+        // Catalog Service Client for bulk sync
+        var catalogServiceUrl = Environment.GetEnvironmentVariable("CATALOG_SERVICE_URL")
+            ?? Configuration["CatalogService:BaseUrl"]
+            ?? "http://localhost:5001";
+
+        services.AddHttpClient<ICatalogServiceClient, CatalogServiceClient>(client =>
+        {
+            client.BaseAddress = new Uri(catalogServiceUrl);
+            client.Timeout = TimeSpan.FromMinutes(5); // Allow time for large fetches
+        });
+
+        Console.WriteLine($"Catalog Service Client configured: {catalogServiceUrl}");
 
         // TODO: Module 4.3 - Add Redis cache configuration
     }
