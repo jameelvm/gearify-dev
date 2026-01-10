@@ -1,3 +1,7 @@
+using Gearify.SearchService.Application.DTOs;
+using Gearify.SearchService.Application.Queries;
+using Gearify.SharedKernel.Multitenancy;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -7,10 +11,17 @@ namespace Gearify.SearchService.API.Controllers;
 [Route("api/search")]
 public class SearchController : ControllerBase
 {
+    private readonly IMediator _mediator;
+    private readonly ITenantContext _tenantContext;
     private readonly ILogger<SearchController> _logger;
 
-    public SearchController(ILogger<SearchController> logger)
+    public SearchController(
+        IMediator mediator,
+        ITenantContext tenantContext,
+        ILogger<SearchController> logger)
     {
+        _mediator = mediator;
+        _tenantContext = tenantContext;
         _logger = logger;
     }
 
@@ -18,29 +29,54 @@ public class SearchController : ControllerBase
     /// Search products with full-text search, filters, and facets
     /// </summary>
     [HttpGet("products")]
-    public ActionResult SearchProducts(
+    public async Task<ActionResult<SearchProductsResponse>> SearchProducts(
         [FromQuery] string? q,
         [FromQuery] string? category,
         [FromQuery] string? brand,
+        [FromQuery] string? department,
         [FromQuery] decimal? minPrice,
         [FromQuery] decimal? maxPrice,
         [FromQuery] decimal? minRating,
+        [FromQuery] string? tags,
+        [FromQuery] bool? dealsOnly,
+        [FromQuery] bool? clearanceOnly,
+        [FromQuery] bool? newArrivalsOnly,
+        [FromQuery] bool? bestSellersOnly,
         [FromQuery] string? sortBy = "relevance",
+        [FromQuery] string? sortDirection = "desc",
         [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 20)
+        [FromQuery] int pageSize = 20,
+        CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Search request: q={Query}", q);
-        
-        // TODO: Implement search functionality (Module 2.2)
-        return Ok(new
+        var tenantId = _tenantContext.TenantId ?? "default-tenant";
+
+        _logger.LogInformation("Search request from tenant {TenantId}: q={Query}, category={Category}, brand={Brand}",
+            tenantId, q, category, brand);
+
+        var query = new SearchProductsQuery
         {
-            results = Array.Empty<object>(),
-            facets = new { brands = Array.Empty<object>(), categories = Array.Empty<object>() },
-            total = 0,
-            page,
-            pageSize,
-            totalPages = 0
-        });
+            TenantId = tenantId,
+            SearchTerm = q,
+            Category = category,
+            Brand = brand,
+            Department = department,
+            MinPrice = minPrice,
+            MaxPrice = maxPrice,
+            MinRating = minRating,
+            Tags = tags?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList(),
+            DealsOnly = dealsOnly,
+            ClearanceOnly = clearanceOnly,
+            NewArrivalsOnly = newArrivalsOnly,
+            BestSellersOnly = bestSellersOnly,
+            SortBy = sortBy,
+            SortDirection = sortDirection,
+            Page = page,
+            PageSize = Math.Min(pageSize, 100) // Cap at 100
+        };
+
+        var result = await _mediator.Send(query, cancellationToken);
+
+        return Ok(result);
     }
 
     /// <summary>
@@ -52,7 +88,7 @@ public class SearchController : ControllerBase
         [FromQuery] int limit = 10)
     {
         _logger.LogInformation("Autocomplete request: q={Query}", q);
-        
+
         // TODO: Implement autocomplete (Module 4.1)
         return Ok(new { suggestions = Array.Empty<string>() });
     }

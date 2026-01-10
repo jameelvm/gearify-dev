@@ -120,6 +120,29 @@ public class ProductsController : ControllerBase
         }
     }
 
+    [HttpDelete("products/{id}")]
+    public async Task<IActionResult> DeleteProduct(string id)
+    {
+        try
+        {
+            var result = await _mediator.Send(new DeleteProductCommand(id));
+
+            if (!result.Success)
+            {
+                return result.ErrorMessage == "Product not found"
+                    ? NotFound(new { error = result.ErrorMessage })
+                    : BadRequest(new { error = result.ErrorMessage });
+            }
+
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting product {ProductId}", id);
+            return StatusCode(500, new { error = "Internal server error" });
+        }
+    }
+
     /// <summary>
     /// Upload images for a product
     /// </summary>

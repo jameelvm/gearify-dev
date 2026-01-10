@@ -1,9 +1,11 @@
 using Amazon.DynamoDBv2;
 using Amazon.Runtime;
 using Amazon.S3;
+using Amazon.SimpleNotificationService;
 using Amazon.SQS;
 using FluentValidation;
 using Gearify.CatalogService.Application.Commands;
+using Gearify.CatalogService.Application.Events;
 using Gearify.CatalogService.Application.Mappers;
 using Gearify.CatalogService.Application.Validators;
 using Gearify.CatalogService.Infrastructure.BackgroundJobs;
@@ -73,6 +75,7 @@ public class Startup
         services.Configure<Infrastructure.Configuration.ProductImageUploadSettings>(Configuration.GetSection("ProductImageUpload"));
         services.Configure<Infrastructure.Configuration.MessagingSettings>(Configuration.GetSection("Messaging"));
         services.Configure<Infrastructure.Configuration.CatalogDataSettings>(Configuration.GetSection("CatalogData"));
+        services.Configure<Infrastructure.Configuration.EventPublisherSettings>(Configuration.GetSection("EventPublisher"));
 
         // CORS
         services.AddCors(options =>
@@ -125,6 +128,20 @@ public class Startup
                 return new Amazon.SQS.AmazonSQSClient(credentials, config);
             });
 
+            // Add SNS for publishing catalog events (to Search Service)
+            services.AddSingleton<IAmazonSimpleNotificationService>(sp =>
+            {
+                var endpoint = Environment.GetEnvironmentVariable("SNS_ENDPOINT") ?? Configuration["AWS:SNS:ServiceUrl"] ?? "http://localhost:4566";
+                var config = new AmazonSimpleNotificationServiceConfig
+                {
+                    ServiceURL = endpoint
+                };
+                var accessKey = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID") ?? "test";
+                var secretKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY") ?? "test";
+                var credentials = new BasicAWSCredentials(accessKey, secretKey);
+                return new AmazonSimpleNotificationServiceClient(credentials, config);
+            });
+
             Console.WriteLine("AWS services registered successfully");
         }
         catch (Exception ex)
@@ -140,6 +157,9 @@ public class Startup
         services.AddScoped<IBrandRepository, DynamoDbBrandRepository>();
         services.AddScoped<IPriceRangeRepository, DynamoDbPriceRangeRepository>();
         services.AddScoped<IDepartmentRepository, DynamoDbDepartmentRepository>();
+
+        // Event Publishing (for Search Service sync)
+        services.AddScoped<IEventPublisher, SnsEventPublisher>();
 
         // Section Mappers (Strategy Pattern)
         services.AddScoped<ISectionMapper, BrandSectionMapper>();

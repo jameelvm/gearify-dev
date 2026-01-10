@@ -364,6 +364,18 @@ awslocal sqs create-queue --queue-name gearify-inventory-updated --region us-eas
 awslocal sqs create-queue --queue-name gearify-notification-requested --region us-east-1 2>/dev/null || echo "  - Queue gearify-notification-requested already exists"
 awslocal sqs create-queue --queue-name gearify-shipping-requested --region us-east-1 2>/dev/null || echo "  - Queue gearify-shipping-requested already exists"
 
+# Search Service queue for catalog events
+echo "  - Creating queue: search-catalog-events-queue"
+awslocal sqs create-queue \
+  --queue-name search-catalog-events-queue \
+  --attributes '{
+    "VisibilityTimeout":"300",
+    "MessageRetentionPeriod":"1209600",
+    "ReceiveMessageWaitTimeSeconds":"20"
+  }' \
+  --region us-east-1 \
+  2>/dev/null || echo "    Queue search-catalog-events-queue already exists"
+
 # Image processing queue with attributes
 echo "  - Creating queue: gearify-image-processing-queue"
 awslocal sqs create-queue \
@@ -401,12 +413,14 @@ PAYMENT_TOPIC_ARN=$(awslocal sns create-topic --name gearify-payment-events --re
 INVENTORY_TOPIC_ARN=$(awslocal sns create-topic --name gearify-inventory-events --region us-east-1 --output text 2>/dev/null || echo "")
 MEDIA_TOPIC_ARN=$(awslocal sns create-topic --name gearify-media-upload-events --region us-east-1 --output text 2>/dev/null || echo "")
 IMAGE_PROCESSING_COMPLETED_TOPIC_ARN=$(awslocal sns create-topic --name gearify-image-processing-completed --region us-east-1 --output text 2>/dev/null || echo "")
+CATALOG_EVENTS_TOPIC_ARN=$(awslocal sns create-topic --name catalog-events-topic --region us-east-1 --output text 2>/dev/null || echo "")
 
 echo "  - Created topic: gearify-order-events"
 echo "  - Created topic: gearify-payment-events"
 echo "  - Created topic: gearify-inventory-events"
 echo "  - Created topic: gearify-media-upload-events"
 echo "  - Created topic: gearify-image-processing-completed"
+echo "  - Created topic: catalog-events-topic"
 
 # Subscribe SQS queue to SNS topic for media processing
 if [ ! -z "$MEDIA_TOPIC_ARN" ]; then
@@ -423,6 +437,15 @@ if [ ! -z "$IMAGE_PROCESSING_COMPLETED_TOPIC_ARN" ]; then
   if [ ! -z "$PRODUCT_THUMBNAIL_QUEUE_ARN" ]; then
     awslocal sns subscribe --topic-arn $IMAGE_PROCESSING_COMPLETED_TOPIC_ARN --protocol sqs --notification-endpoint $PRODUCT_THUMBNAIL_QUEUE_ARN --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
     echo "  - Subscribed gearify-product-thumbnail-update-queue to gearify-image-processing-completed"
+  fi
+fi
+
+# Subscribe Search Service SQS queue to Catalog Events SNS topic
+if [ ! -z "$CATALOG_EVENTS_TOPIC_ARN" ]; then
+  SEARCH_CATALOG_QUEUE_ARN=$(awslocal sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/search-catalog-events-queue --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn' 2>/dev/null || echo "")
+  if [ ! -z "$SEARCH_CATALOG_QUEUE_ARN" ]; then
+    awslocal sns subscribe --topic-arn $CATALOG_EVENTS_TOPIC_ARN --protocol sqs --notification-endpoint $SEARCH_CATALOG_QUEUE_ARN --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
+    echo "  - Subscribed search-catalog-events-queue to catalog-events-topic"
   fi
 fi
 
@@ -488,6 +511,22 @@ awslocal ssm put-parameter \
   2>/dev/null || echo "  - Parameter /gearify/config/cache-settings already exists"
 
 echo "SSM parameters created successfully!"
+
+# ==========================================
+# OpenSearch Domain
+# ==========================================
+echo ""
+echo "Creating OpenSearch domain..."
+
+awslocal opensearch create-domain \
+  --domain-name gearify-search \
+  --engine-version OpenSearch_2.5 \
+  --cluster-config InstanceType=t3.small.search,InstanceCount=1 \
+  --ebs-options EBSEnabled=true,VolumeType=gp2,VolumeSize=10 \
+  --region us-east-1 \
+  2>/dev/null || echo "  - OpenSearch domain gearify-search already exists"
+
+echo "OpenSearch domain created successfully!"
 
 # ==========================================
 # Summary

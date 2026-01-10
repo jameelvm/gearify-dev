@@ -1,3 +1,4 @@
+using Gearify.CatalogService.Application.Events;
 using Gearify.CatalogService.Domain.Entities;
 using Gearify.CatalogService.Infrastructure.Repositories;
 using Gearify.SharedKernel.Multitenancy;
@@ -9,15 +10,18 @@ namespace Gearify.CatalogService.Application.Commands;
 public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, CreateProductResult>
 {
     private readonly IProductRepository _repository;
+    private readonly IEventPublisher _eventPublisher;
     private readonly ITenantContext _tenantContext;
     private readonly ILogger<CreateProductCommandHandler> _logger;
 
     public CreateProductCommandHandler(
         IProductRepository repository,
+        IEventPublisher eventPublisher,
         ITenantContext tenantContext,
         ILogger<CreateProductCommandHandler> logger)
     {
         _repository = repository;
+        _eventPublisher = eventPublisher;
         _tenantContext = tenantContext;
         _logger = logger;
     }
@@ -48,6 +52,9 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
             await _repository.CreateAsync(product);
 
             _logger.LogInformation("Product created: {ProductId} for tenant {TenantId}", product.Id, product.TenantId);
+
+            // Publish event for Search Service to index the product
+            await _eventPublisher.PublishProductCreatedAsync(product, cancellationToken);
 
             return new CreateProductResult(product.Id, true);
         }
