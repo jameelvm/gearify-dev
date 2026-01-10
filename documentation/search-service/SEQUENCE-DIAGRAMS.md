@@ -243,7 +243,7 @@ sequenceDiagram
 
 ## 5. Autocomplete Flow
 
-This diagram shows the autocomplete suggestion flow (planned for Module 4.1).
+This diagram shows the autocomplete suggestion flow with brands, categories, and products.
 
 ```mermaid
 sequenceDiagram
@@ -251,26 +251,72 @@ sequenceDiagram
     participant Client as Client
     participant SC as SearchController
     participant TC as TenantContext
-    participant OCF as OpenSearchClientFactory
+    participant M as MediatR
+    participant AQH as AutocompleteQueryHandler
+    participant IM as IndexManager
     participant OS as OpenSearch
 
-    Client->>SC: GET /api/search/autocomplete<br/>?query=cyc
+    Client->>SC: GET /api/search/autocomplete<br/>?prefix=sg&limit=10
 
     SC->>TC: Get TenantId
-    TC-->>SC: "default-tenant"
+    TC-->>SC: "default"
 
-    SC->>OCF: GetClient()
-    OCF-->>SC: IElasticClient
+    SC->>SC: Build AutocompleteQuery
 
-    SC->>OS: SearchAsync<br/>- Index: {tenantId}-products<br/>- Query: match on name.autocomplete<br/>- Size: 10<br/>- Source: [name, brand, category]
+    alt Prefix < 2 characters
+        SC-->>Client: 200 OK<br/>{"suggestions": []}
+    end
 
-    OS-->>SC: SearchResponse<br/>(matching products)
+    SC->>M: Send(AutocompleteQuery)
+    M->>AQH: Handle(query)
 
-    SC->>SC: Extract unique suggestions<br/>from product names
+    AQH->>IM: GetIndexName(tenantId)
+    IM-->>AQH: "default-products"
 
-    SC-->>Client: 200 OK<br/>{"suggestions": ["Cycling Helmet", "Cycling Gloves", ...]}
+    Note over AQH,OS: Step 1: Get Brand Suggestions
 
-    Note over Client,OS: Note: In Production,<br/>uses autocomplete_analyzer<br/>with edge n-grams
+    AQH->>OS: SearchAsync<br/>- Size: 0<br/>- Match: brand.autocomplete<br/>- Aggs: brands (terms)
+    OS-->>AQH: Brand aggregation buckets
+
+    AQH->>AQH: Filter brands starting with prefix<br/>Add to suggestions (type: "brand")
+
+    Note over AQH,OS: Step 2: Get Category Suggestions
+
+    AQH->>OS: SearchAsync<br/>- Size: 0<br/>- Aggs: categories (terms)
+    OS-->>AQH: Category aggregation buckets
+
+    AQH->>AQH: Filter categories containing prefix<br/>Add to suggestions (type: "category")
+
+    Note over AQH,OS: Step 3: Get Product Suggestions
+
+    AQH->>OS: SearchAsync<br/>- Size: 10<br/>- MultiMatch: name.autocomplete, brand.autocomplete<br/>- Type: bool_prefix
+    OS-->>AQH: Product hits
+
+    AQH->>AQH: Map to suggestions (type: "product")
+
+    Note over AQH: Step 4: Combine & Deduplicate
+
+    AQH->>AQH: DistinctBy(text, type)<br/>Take(limit)
+
+    AQH-->>M: AutocompleteResponse
+    M-->>SC: AutocompleteResponse
+
+    SC-->>Client: 200 OK<br/>{"suggestions": [<br/>  {"text": "SG", "type": "brand"},<br/>  {"text": "Shoes", "type": "category"},<br/>  {"text": "SG Test Batting Gloves", "type": "product"}<br/>]}
+```
+
+### Autocomplete Priority Order
+
+| Priority | Type | Max Results | Match Strategy |
+|----------|------|-------------|----------------|
+| 1 | Brand | 3 | Prefix match (StartsWith) |
+| 2 | Category | 3 | Contains match |
+| 3 | Product | 10 | Edge n-gram on name & brand |
+
+### Edge N-Gram Tokenization Example
+
+```
+Indexed: "Kookaburra" → ["k", "ko", "koo", "kook", "kooka", ...]
+Query:   "kook"       → matches token "kook" ✓
 ```
 
 ---
@@ -371,6 +417,7 @@ sequenceDiagram
 
 ## Related Documentation
 
+- [Autocomplete](./AUTOCOMPLETE.md) - Detailed autocomplete feature documentation
 - [Class Responsibilities](./CLASS-RESPONSIBILITIES.md) - Detailed class documentation
 - [Architecture](./ARCHITECTURE.md) - System architecture overview
 - [Implementation Plan](./IMPLEMENTATION-PLAN.md) - Development guide

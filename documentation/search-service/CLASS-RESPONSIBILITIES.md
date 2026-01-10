@@ -53,9 +53,9 @@ The Search Service follows **Clean Architecture** with four distinct layers:
 | Method | Route | Description |
 |--------|-------|-------------|
 | GET | `/products` | Full-text search with filters and facets |
-| GET | `/autocomplete` | Autocomplete suggestions (TODO) |
+| GET | `/autocomplete` | Autocomplete suggestions (brands, categories, products) |
 
-**Search Parameters**:
+**Search Parameters (`/products`)**:
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
@@ -72,9 +72,28 @@ The Search Service follows **Clean Architecture** with four distinct layers:
 | `newArrivalsOnly` | bool | Only show new arrivals |
 | `bestSellersOnly` | bool | Only show best sellers |
 | `sortBy` | string | Sort field (relevance/price/name/rating/newest/popularity) |
-| `sortDirection` | string | asc/desc |
+| `sortOrder` | string | asc/desc |
 | `page` | int | Page number (default: 1) |
 | `pageSize` | int | Items per page (max: 100) |
+
+**Autocomplete Parameters (`/autocomplete`)**:
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `prefix` | string | Search prefix (minimum 2 characters) |
+| `limit` | int | Max suggestions to return (default: 10, max: 20) |
+
+**Autocomplete Response**:
+
+```json
+{
+  "suggestions": [
+    {"text": "SG", "type": "brand", "id": null, "slug": "sg"},
+    {"text": "Gloves", "type": "category", "id": null, "slug": "gloves"},
+    {"text": "SG Batting Gloves", "type": "product", "id": "abc-123", "slug": null}
+  ]
+}
+```
 
 ---
 
@@ -169,6 +188,65 @@ The Search Service follows **Clean Architecture** with four distinct layers:
 - **Multi-Match Fields**: Name (boost 3), name.autocomplete (boost 2), Description, Brand (boost 2), Category, Tags
 - **Fuzziness**: Auto
 - **Aggregations**: brands (50), categories (50), departments (20), price_ranges, ratings
+
+---
+
+#### AutocompleteQuery
+
+**File**: `Application/Queries/AutocompleteQuery.cs`
+
+**Responsibility**: MediatR request object for autocomplete suggestions.
+
+**Type**: `class` implementing `IRequest<AutocompleteResponse>`
+
+**Properties**:
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `TenantId` | string? | Tenant identifier |
+| `Prefix` | string | Search prefix (min 2 chars) |
+| `Limit` | int | Max suggestions (default: 10, max: 20) |
+
+---
+
+#### AutocompleteQueryHandler
+
+**File**: `Application/Queries/AutocompleteQueryHandler.cs`
+
+**Responsibility**: Executes autocomplete queries returning brands, categories, and products.
+
+**Type**: `class` implementing `IRequestHandler<AutocompleteQuery, AutocompleteResponse>`
+
+**Dependencies**:
+
+| Dependency | Purpose |
+|------------|---------|
+| `IOpenSearchClientFactory` | Get OpenSearch client |
+| `IIndexManager` | Get index name |
+| `ILogger<AutocompleteQueryHandler>` | Logging |
+
+**Key Methods**:
+
+| Method | Description |
+|--------|-------------|
+| `Handle()` | Main handler - orchestrates suggestion fetching |
+| `GetBrandSuggestionsAsync()` | Fetches matching brands via aggregations |
+| `GetCategorySuggestionsAsync()` | Fetches matching categories via aggregations |
+| `GetProductSuggestionsAsync()` | Fetches matching products via multi-match |
+
+**Suggestion Priority**:
+
+| Priority | Type | Max | Match Strategy |
+|----------|------|-----|----------------|
+| 1 | Brand | 3 | StartsWith (prefix match) |
+| 2 | Category | 3 | Contains (partial match) |
+| 3 | Product | 10 | Edge n-gram on name.autocomplete |
+
+**Query Details**:
+
+- **Brand Query**: Uses aggregation on `brand.keyword`, filters StartsWith in memory
+- **Category Query**: Uses aggregation on `category.keyword`, filters Contains in memory
+- **Product Query**: MultiMatch on `name.autocomplete` (boost 3) and `brand.autocomplete` (boost 2) with `bool_prefix` type
 
 ---
 
@@ -292,6 +370,39 @@ SearchFacets
 FacetItem
 ├── Key: string
 └── Count: long
+```
+
+---
+
+#### AutocompleteResponse
+
+**File**: `Application/DTOs/AutocompleteResponse.cs`
+
+**Responsibility**: Response object for autocomplete suggestions.
+
+**Structure**:
+
+```
+AutocompleteResponse
+└── Suggestions: List<AutocompleteSuggestion>
+
+AutocompleteSuggestion
+├── Text: string      // Display text (e.g., "SG", "Gloves", "SG Batting Gloves")
+├── Type: string      // "brand", "category", or "product"
+├── Id: string?       // Product ID (only for type="product")
+└── Slug: string?     // URL slug (only for type="brand" or "category")
+```
+
+**Example Response**:
+
+```json
+{
+  "suggestions": [
+    {"text": "SG", "type": "brand", "id": null, "slug": "sg"},
+    {"text": "Gloves", "type": "category", "id": null, "slug": "gloves"},
+    {"text": "SG Batting Gloves", "type": "product", "id": "18e5c43e-...", "slug": null}
+  ]
+}
 ```
 
 ---

@@ -196,11 +196,11 @@ public class SearchProductsQueryHandler : IRequestHandler<SearchProductsQuery, S
                 .Size(50)
             )
             .Terms("categories", t => t
-                .Field("category.keyword")
+                .Field(f => f.Category)
                 .Size(50)
             )
             .Terms("departments", t => t
-                .Field("department.keyword")
+                .Field(f => f.Department)
                 .Size(20)
             )
             .Range("price_ranges", r => r

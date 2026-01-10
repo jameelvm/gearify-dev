@@ -87,6 +87,24 @@ This directory contains comprehensive documentation for the Gearify Search Servi
 
 ---
 
+### 5. [AUTOCOMPLETE.md](./AUTOCOMPLETE.md)
+**Purpose**: Comprehensive documentation for the autocomplete feature
+
+**Contents**:
+- API endpoint documentation with examples
+- How autocomplete works (step-by-step flow)
+- Edge n-gram analyzer explanation
+- Index mapping configuration
+- Query examples for brands, categories, products
+- Frontend integration guide (React example)
+- Autocomplete vs Full Search comparison
+- Performance considerations (debouncing, limits)
+- Troubleshooting guide
+
+**Target Audience**: Frontend developers, backend developers
+
+---
+
 ## Quick Links
 
 ### Architecture Decisions
@@ -223,4 +241,4 @@ For questions about the Search Service architecture or implementation:
 
 **Last Updated**: 2026-01-09
 **Status**: Implementation Complete
-**Documentation**: Sequence diagrams and class responsibilities added
+**Documentation**: Sequence diagrams, class responsibilities, and autocomplete guide added

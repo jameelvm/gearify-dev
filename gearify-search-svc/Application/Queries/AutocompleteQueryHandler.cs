@@ -38,17 +38,21 @@ public class AutocompleteQueryHandler : IRequestHandler<AutocompleteQuery, Autoc
 
         var suggestions = new List<AutocompleteSuggestion>();
 
+        // Search for brand matches first (higher priority)
+        var brandSuggestions = await GetBrandSuggestionsAsync(indexName, request.Prefix, 3, cancellationToken);
+        suggestions.AddRange(brandSuggestions);
+
+        // Search for category matches
+        var categorySuggestions = await GetCategorySuggestionsAsync(indexName, request.Prefix, 3, cancellationToken);
+        suggestions.AddRange(categorySuggestions);
+
         // Search for product name matches
         var productSuggestions = await GetProductSuggestionsAsync(indexName, request.Prefix, request.Limit, cancellationToken);
         suggestions.AddRange(productSuggestions);
 
-        // Search for brand matches
-        var brandSuggestions = await GetBrandSuggestionsAsync(indexName, request.Prefix, 5, cancellationToken);
-        suggestions.AddRange(brandSuggestions);
-
-        // Deduplicate and limit results
+        // Deduplicate and limit results (brands/categories first, then products)
         var result = suggestions
-            .DistinctBy(s => s.Text.ToLowerInvariant())
+            .DistinctBy(s => (s.Text.ToLowerInvariant(), s.Type))
             .Take(request.Limit)
             .ToList();
 
@@ -155,6 +159,51 @@ public class AutocompleteQueryHandler : IRequestHandler<AutocompleteQuery, Autoc
             {
                 Text = b.Key,
                 Type = "brand",
+                Slug = b.Key.ToLowerInvariant().Replace(" ", "-")
+            })
+            .ToList();
+    }
+
+    private async Task<List<AutocompleteSuggestion>> GetCategorySuggestionsAsync(
+        string indexName, string prefix, int limit, CancellationToken cancellationToken)
+    {
+        var searchResponse = await _client.SearchAsync<ProductSearchDocument>(s => s
+            .Index(indexName)
+            .Size(0)
+            .Query(q => q
+                .Bool(b => b
+                    .Must(m => m.Term(t => t.Field(f => f.IsActive).Value(true)))
+                )
+            )
+            .Aggregations(a => a
+                .Terms("categories", t => t
+                    .Field(f => f.Category)
+                    .Size(50)
+                )
+            ),
+            cancellationToken
+        );
+
+        if (!searchResponse.IsValid)
+        {
+            _logger.LogWarning("Category autocomplete search failed: {Error}", searchResponse.DebugInformation);
+            return new List<AutocompleteSuggestion>();
+        }
+
+        var categoriesBucket = searchResponse.Aggregations.Terms("categories");
+        if (categoriesBucket == null)
+        {
+            return new List<AutocompleteSuggestion>();
+        }
+
+        return categoriesBucket.Buckets
+            .Where(b => !string.IsNullOrWhiteSpace(b.Key) &&
+                        b.Key.Contains(prefix, StringComparison.OrdinalIgnoreCase))
+            .Take(limit)
+            .Select(b => new AutocompleteSuggestion
+            {
+                Text = b.Key,
+                Type = "category",
                 Slug = b.Key.ToLowerInvariant().Replace(" ", "-")
             })
             .ToList();
