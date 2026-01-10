@@ -78,6 +78,7 @@ public class IndexManager : IIndexManager
             .Settings(s => s
                 .NumberOfShards(1)
                 .NumberOfReplicas(0)
+                .Analysis(ConfigureAnalysis)
             )
             .Map<ProductSearchDocument>(m => m.Properties(ConfigureProductProperties)),
             cancellationToken
@@ -102,34 +103,34 @@ public class IndexManager : IIndexManager
             .Settings(s => s
                 .NumberOfShards(2)
                 .NumberOfReplicas(1)
-                .Analysis(a => a
-                    .Analyzers(an => an
-                        .Custom("product_name_analyzer", ca => ca
-                            .Tokenizer("standard")
-                            .Filters("lowercase", "asciifolding", "edge_ngram_filter")
-                        )
-                        .Custom("autocomplete_analyzer", ca => ca
-                            .Tokenizer("standard")
-                            .Filters("lowercase", "asciifolding", "autocomplete_filter")
-                        )
-                    )
-                    .TokenFilters(tf => tf
-                        .EdgeNGram("edge_ngram_filter", e => e
-                            .MinGram(2)
-                            .MaxGram(20)
-                        )
-                        .EdgeNGram("autocomplete_filter", e => e
-                            .MinGram(2)
-                            .MaxGram(10)
-                        )
-                    )
-                )
+                .Analysis(ConfigureAnalysis)
             )
             .Map<ProductSearchDocument>(m => m.Properties(ConfigureProductProperties)),
             cancellationToken
         );
 
         return HandleIndexCreationResponse(createIndexResponse, indexName);
+    }
+
+    private static IAnalysis ConfigureAnalysis(AnalysisDescriptor a)
+    {
+        return a
+            .Analyzers(an => an
+                .Custom("autocomplete_index", ca => ca
+                    .Tokenizer("standard")
+                    .Filters("lowercase", "asciifolding", "autocomplete_filter")
+                )
+                .Custom("autocomplete_search", ca => ca
+                    .Tokenizer("standard")
+                    .Filters("lowercase", "asciifolding")
+                )
+            )
+            .TokenFilters(tf => tf
+                .EdgeNGram("autocomplete_filter", e => e
+                    .MinGram(1)
+                    .MaxGram(20)
+                )
+            );
     }
 
     private static IPromise<IProperties> ConfigureProductProperties(PropertiesDescriptor<ProductSearchDocument> p)
@@ -142,6 +143,11 @@ public class IndexManager : IIndexManager
                 .Name(n => n.Name)
                 .Fields(f => f
                     .Keyword(k => k.Name("keyword"))
+                    .Text(t => t
+                        .Name("autocomplete")
+                        .Analyzer("autocomplete_index")
+                        .SearchAnalyzer("autocomplete_search")
+                    )
                 )
             )
             .Text(t => t
@@ -152,6 +158,11 @@ public class IndexManager : IIndexManager
                 .Name(n => n.Brand)
                 .Fields(f => f
                     .Keyword(k => k.Name("keyword"))
+                    .Text(t => t
+                        .Name("autocomplete")
+                        .Analyzer("autocomplete_index")
+                        .SearchAnalyzer("autocomplete_search")
+                    )
                 )
             )
             .Keyword(k => k.Name(n => n.BrandSlug))

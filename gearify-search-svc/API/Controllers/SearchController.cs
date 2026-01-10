@@ -83,13 +83,24 @@ public class SearchController : ControllerBase
     /// Autocomplete suggestions as user types
     /// </summary>
     [HttpGet("autocomplete")]
-    public ActionResult Autocomplete(
-        [FromQuery] string? q,
-        [FromQuery] int limit = 10)
+    public async Task<ActionResult<AutocompleteResponse>> Autocomplete(
+        [FromQuery] string? prefix,
+        [FromQuery] int limit = 10,
+        CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Autocomplete request: q={Query}", q);
+        var tenantId = _tenantContext.TenantId ?? "default-tenant";
 
-        // TODO: Implement autocomplete (Module 4.1)
-        return Ok(new { suggestions = Array.Empty<string>() });
+        _logger.LogInformation("Autocomplete request from tenant {TenantId}: prefix={Prefix}", tenantId, prefix);
+
+        var query = new AutocompleteQuery
+        {
+            TenantId = tenantId,
+            Prefix = prefix ?? string.Empty,
+            Limit = Math.Min(limit, 20) // Cap at 20
+        };
+
+        var result = await _mediator.Send(query, cancellationToken);
+
+        return Ok(result);
     }
 }
