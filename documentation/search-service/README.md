@@ -26,7 +26,38 @@ This directory contains comprehensive documentation for the Gearify Search Servi
 
 ---
 
-### 2. [IMPLEMENTATION-PLAN.md](./IMPLEMENTATION-PLAN.md)
+### 2. [SEQUENCE-DIAGRAMS.md](./SEQUENCE-DIAGRAMS.md)
+**Purpose**: Visual flow diagrams for key operations
+
+**Contents**:
+- Event-driven synchronization flow (Catalog → Search)
+- Product search query flow
+- Index creation flow
+- Product indexing flow
+- Bulk indexing flow
+- Autocomplete flow
+- Delete product flow
+
+**Target Audience**: Developers, architects
+
+---
+
+### 3. [CLASS-RESPONSIBILITIES.md](./CLASS-RESPONSIBILITIES.md)
+**Purpose**: Detailed class documentation by architectural layer
+
+**Contents**:
+- API Layer classes (Controllers)
+- Application Layer classes (Handlers, Events, Mappers, DTOs)
+- Domain Layer classes (Entities, Events)
+- Infrastructure Layer classes (OpenSearch, Messaging, Configuration)
+- Dependency graph
+- Interface summary
+
+**Target Audience**: Developers implementing or maintaining the service
+
+---
+
+### 4. [IMPLEMENTATION-PLAN.md](./IMPLEMENTATION-PLAN.md)
 **Purpose**: Step-by-step implementation guide with module-wise breakdown
 
 **Contents**:
@@ -190,6 +221,6 @@ For questions about the Search Service architecture or implementation:
 
 ---
 
-**Last Updated**: 2026-01-07
-**Status**: Design Complete - Ready for Implementation
-**Estimated Timeline**: 6 weeks (1 developer)
+**Last Updated**: 2026-01-09
+**Status**: Implementation Complete
+**Documentation**: Sequence diagrams and class responsibilities added
