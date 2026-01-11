@@ -1,31 +1,6 @@
 <div class="category-nav" (mouseleave)="onCategoryLeave()">
-  <div class="category-nav-container">
-    <div class="categories">
-      <!-- Loading Skeleton -->
-      <ng-container *ngIf="isLoading()">
-        <div class="category-wrapper" *ngFor="let item of [1,2,3,4,5]">
-          <div class="category-link skeleton-loader">
-            <div class="skeleton-text"></div>
-          </div>
-        </div>
-      </ng-container>
-
-      <!-- Actual Categories -->
-      <div
-        *ngFor="let category of categories"
-        class="category-wrapper"
-        (mouseenter)="onCategoryHover(category.id)">
-        <a
-          [routerLink]="['/', category.departmentSlug, category.slug]"
-          class="category-link"
-          [class.active]="hoveredCategory() === category.id"
-          (click)="onCategoryClick(category)">
-          {{ category.name }}
-        </a>
-      </div>
-    </div>
-
-    <!-- Search with Autocomplete -->
+  <!-- Search Row -->
+  <div class="search-row">
     <div class="search-container" [class.has-suggestions]="showAutocomplete()">
       <input
         type="text"
@@ -94,6 +69,34 @@
         <div *ngIf="autocompleteSuggestions().length === 0 && !isSearching()" class="autocomplete-empty">
           No suggestions found
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Categories Row -->
+  <div class="category-nav-container">
+    <div class="categories">
+      <!-- Loading Skeleton -->
+      <ng-container *ngIf="isLoading()">
+        <div class="category-wrapper" *ngFor="let item of [1,2,3,4,5]">
+          <div class="category-link skeleton-loader">
+            <div class="skeleton-text"></div>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Actual Categories -->
+      <div
+        *ngFor="let category of categories"
+        class="category-wrapper"
+        (mouseenter)="onCategoryHover(category.id)">
+        <a
+          [routerLink]="['/', category.departmentSlug, category.slug]"
+          class="category-link"
+          [class.active]="hoveredCategory() === category.id"
+          (click)="onCategoryClick(category)">
+          {{ category.name }}
+        </a>
       </div>
     </div>
   </div>

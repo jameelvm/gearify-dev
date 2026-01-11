@@ -8,13 +8,21 @@
   z-index: 200;
 }
 
+// Search Row - Full width search bar
+.search-row {
+  @include container;
+  padding-top: 0.625rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
 .category-nav-container {
   @include container;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 2rem;
-  min-height: 3.5rem;
+  min-height: 3rem;
 }
 
 .categories {
@@ -184,18 +192,18 @@
   display: flex;
   align-items: center;
   background-color: #f3f4f6;
-  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
   padding: 0.5rem 1rem;
   gap: 0.5rem;
-  min-width: 250px;
-  max-width: 350px;
-  transition: background-color 0.2s ease;
+  width: 100%;
+  transition: all 0.2s ease;
   position: relative;
 
   &:focus-within {
-    background-color: #e5e7eb;
-    outline: 2px solid #2563eb;
-    outline-offset: 2px;
+    background-color: #fff;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
   }
 
   &.has-suggestions {
@@ -209,8 +217,9 @@
   background: transparent;
   border: none;
   outline: none;
-  font-size: 0.9rem;
+  font-size: 0.9375rem;
   color: #1f2937;
+  min-width: 0;
 
   &::placeholder {
     color: #9ca3af;
@@ -340,16 +349,8 @@
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-  .category-nav-container {
-    gap: 1rem;
-  }
-
   .categories {
     gap: 1.5rem;
-  }
-
-  .search-container {
-    min-width: 200px;
   }
 
   .mega-menu-content {
@@ -370,28 +371,32 @@
 }
 
 @media (max-width: 768px) {
+  .search-row {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .search-container {
+    padding: 0.5rem 0.875rem;
+  }
+
+  .search-input {
+    font-size: 0.875rem;
+  }
+
   .category-nav-container {
-    flex-direction: column;
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-    gap: 0.75rem;
+    min-height: 2.75rem;
   }
 
   .categories {
     width: 100%;
     justify-content: flex-start;
     gap: 1rem;
-    padding-bottom: 0.5rem;
   }
 
   .category-link {
     padding: 0.5rem 0.25rem;
     font-size: 0.875rem;
-  }
-
-  .search-container {
-    width: 100%;
-    max-width: 100%;
   }
 
   .mega-menu {
