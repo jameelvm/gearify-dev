@@ -45,6 +45,7 @@ export const API_CONFIG = {
     // Search
     SEARCH_PRODUCTS: '/api/search/products',
     SEARCH_AUTOCOMPLETE: '/api/search/autocomplete',
+    SEARCH_SIMILAR: (productId: string) => `/api/search/similar/${productId}`,
   },
   TIMEOUT: 30000,
 };

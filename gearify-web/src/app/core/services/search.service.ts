@@ -203,4 +203,26 @@ export class SearchService {
   quickSearch(query: string, pageSize: number = 20): Observable<SearchProductsResponse> {
     return this.searchProducts({ query, pageSize });
   }
+
+  /**
+   * Get similar/recommended products for a given product.
+   * Uses brand, category, price range, and tags for matching.
+   */
+  getSimilarProducts(productId: string, limit: number = 4): Observable<SimilarProductsResponse> {
+    const endpoint = `${API_CONFIG.ENDPOINTS.SEARCH_SIMILAR(productId)}?limit=${limit}`;
+
+    return this.http.get<SimilarProductsResponse>(endpoint).pipe(
+      catchError(() => of({
+        items: [],
+        productId,
+        matchStrategy: 'error'
+      }))
+    );
+  }
+}
+
+export interface SimilarProductsResponse {
+  items: ProductSearchItem[];
+  productId: string;
+  matchStrategy?: string;
 }

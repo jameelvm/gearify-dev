@@ -1,16 +1,71 @@
 <div class="product-detail-page">
-  <!-- Breadcrumb -->
-  <div class="breadcrumb-container">
-    <nav class="breadcrumb">
-      <a href="/" class="breadcrumb-link">Home</a>
-      <span class="breadcrumb-separator">/</span>
-      <a href="/products" class="breadcrumb-link">Products</a>
-      <span class="breadcrumb-separator">/</span>
-      <a [href]="'/products?category=' + product().category" class="breadcrumb-link">{{ product().category }}</a>
-      <span class="breadcrumb-separator">/</span>
-      <span class="breadcrumb-current">{{ product().name }}</span>
-    </nav>
+  <!-- Loading Skeleton State -->
+  <div class="skeleton-container" *ngIf="isLoading()">
+    <!-- Skeleton Breadcrumb -->
+    <div class="skeleton-breadcrumb">
+      <div class="skeleton-line skeleton-breadcrumb-item"></div>
+    </div>
+
+    <!-- Skeleton Product Main -->
+    <div class="skeleton-product-main">
+      <!-- Skeleton Image Gallery (Left) -->
+      <div class="skeleton-gallery">
+        <div class="skeleton-main-image"></div>
+        <div class="skeleton-thumbnails">
+          <div class="skeleton-thumb"></div>
+          <div class="skeleton-thumb"></div>
+          <div class="skeleton-thumb"></div>
+          <div class="skeleton-thumb"></div>
+        </div>
+      </div>
+
+      <!-- Skeleton Product Info (Right) -->
+      <div class="skeleton-info">
+        <div class="skeleton-line skeleton-brand"></div>
+        <div class="skeleton-line skeleton-name"></div>
+        <div class="skeleton-line skeleton-name-2"></div>
+        <div class="skeleton-line skeleton-sku"></div>
+        <div class="skeleton-line skeleton-rating"></div>
+        <div class="skeleton-line skeleton-price"></div>
+        <div class="skeleton-line skeleton-stock"></div>
+        <div class="skeleton-line skeleton-description"></div>
+        <div class="skeleton-line skeleton-description-2"></div>
+        <div class="skeleton-features">
+          <div class="skeleton-line skeleton-feature"></div>
+          <div class="skeleton-line skeleton-feature"></div>
+          <div class="skeleton-line skeleton-feature"></div>
+        </div>
+        <div class="skeleton-actions">
+          <div class="skeleton-line skeleton-qty"></div>
+          <div class="skeleton-buttons">
+            <div class="skeleton-btn"></div>
+            <div class="skeleton-btn"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="error() && !isLoading()">
+    <p class="error-message">{{ error() }}</p>
+    <button class="retry-btn" (click)="loadProduct(product()?.id || '')">Try Again</button>
+  </div>
+
+  <!-- Product Content -->
+  <ng-container *ngIf="product() && !isLoading() && !error()">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-container">
+      <nav class="breadcrumb">
+        <a routerLink="/" class="breadcrumb-link">Home</a>
+        <span class="breadcrumb-separator">/</span>
+        <a routerLink="/products" class="breadcrumb-link">Products</a>
+        <span class="breadcrumb-separator">/</span>
+        <a [routerLink]="['/products']" [queryParams]="{category: product()!.categorySlug || product()!.category}" class="breadcrumb-link">{{ product()!.category }}</a>
+        <span class="breadcrumb-separator">/</span>
+        <span class="breadcrumb-current">{{ product()!.name }}</span>
+      </nav>
+    </div>
 
   <!-- Product Main Section -->
   <div class="product-main">
@@ -23,7 +78,7 @@
         <app-badge *ngIf="hasDiscount()" variant="primary">
           {{ discountPercent() }}% OFF
         </app-badge>
-        <app-badge *ngIf="product().tags.includes('new')" variant="success">
+        <app-badge *ngIf="product()!.tags?.includes('new')" variant="success">
           NEW
         </app-badge>
         <app-badge *ngIf="isOutOfStock()" variant="danger">
@@ -38,54 +93,51 @@
     <!-- Product Info (Right) -->
     <div class="info-section">
       <!-- Brand -->
-      <div class="product-brand">{{ product().brand }}</div>
+      <div class="product-brand">{{ product()!.brand }}</div>
 
       <!-- Product Name -->
-      <h1 class="product-name">{{ product().name }}</h1>
+      <h1 class="product-name">{{ product()!.name }}</h1>
 
       <!-- SKU -->
-      <div class="product-sku">SKU: {{ product().sku }}</div>
+      <div class="product-sku">SKU: {{ product()!.sku }}</div>
 
       <!-- Rating -->
-      <div class="product-rating">
+      <div class="product-rating" *ngIf="ratingCount() > 0">
         <app-rating
-          [rating]="product().rating?.average || 0"
-          [count]="product().rating?.count"
+          [rating]="averageRating()"
+          [count]="ratingCount()"
         />
-        <a href="#reviews" class="reviews-link">
-          ({{ product().rating?.count || 0 }} reviews)
-        </a>
       </div>
 
       <!-- Price -->
       <div class="product-price">
         <app-price-tag
-          [price]="product().price"
-          [compareAtPrice]="hasDiscount() ? product().compareAtPrice : undefined"
-          [currency]="product().currency"
+          [price]="product()!.price"
+          [compareAtPrice]="hasDiscount() ? product()!.compareAtPrice : undefined"
+          [currency]="product()!.currency"
           size="large"
         />
       </div>
 
       <!-- Stock Status -->
-      <div class="stock-status" *ngIf="product().stockQuantity !== undefined">
+      <div class="stock-status" *ngIf="product()!.stockQuantity !== undefined">
         <span class="stock-label">Availability:</span>
         <span class="stock-value" [class.in-stock]="!isOutOfStock()" [class.out-of-stock]="isOutOfStock()">
-          <span *ngIf="!isOutOfStock()">In Stock ({{ product().stockQuantity }} available)</span>
+          <span *ngIf="!isOutOfStock()">In Stock ({{ product()!.stockQuantity }} available)</span>
           <span *ngIf="isOutOfStock()">Out of Stock</span>
         </span>
       </div>
 
       <!-- Short Description -->
-      <p class="product-summary">
-        {{ product().description.split('\n\n')[0] }}
+      <p class="product-summary" *ngIf="product()!.description">
+        {{ product()!.description.split('\n\n')[0] }}
       </p>
 
       <!-- Key Features (First 4) -->
-      <div class="key-features" *ngIf="product().attributes">
+      <div class="key-features" *ngIf="product()!.attributes">
         <h3 class="features-title">Key Features:</h3>
         <ul class="features-list">
-          <li *ngFor="let attr of (product().attributes | keyvalue).slice(0, 4)">
+          <li *ngFor="let attr of (product()!.attributes | keyvalue).slice(0, 4)">
             <strong>{{ attr.key }}:</strong> {{ attr.value }}
           </li>
         </ul>
@@ -112,13 +164,13 @@
               class="quantity-input"
               [value]="quantity()"
               min="1"
-              [max]="product().stockQuantity"
+              [max]="product()!.stockQuantity"
               readonly
             />
             <button
               class="quantity-btn"
               (click)="increaseQuantity()"
-              [disabled]="quantity() >= (product().stockQuantity || 0)"
+              [disabled]="quantity() >= (product()!.stockQuantity || 0)"
               aria-label="Increase quantity"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -133,45 +185,27 @@
         <div class="action-buttons">
           <app-button
             variant="primary"
-            size="large"
-            [fullWidth]="true"
+            size="medium"
             [disabled]="isOutOfStock()"
             (clicked)="onAddToCart()"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="9" cy="21" r="1"></circle>
-              <circle cx="20" cy="21" r="1"></circle>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-            </svg>
             Add to Cart
           </app-button>
 
           <app-button
             variant="secondary"
-            size="large"
-            [fullWidth]="true"
+            size="medium"
             [disabled]="isOutOfStock()"
             (clicked)="onBuyNow()"
           >
             Buy Now
           </app-button>
-
-          <button
-            class="wishlist-btn"
-            [class.active]="isWishlisted()"
-            (click)="toggleWishlist()"
-            aria-label="Add to wishlist"
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" [attr.fill]="isWishlisted() ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-            </svg>
-          </button>
         </div>
       </div>
 
       <!-- Product Tags -->
-      <div class="product-tags" *ngIf="product().tags.length > 0">
-        <span class="tag" *ngFor="let tag of product().tags">
+      <div class="product-tags" *ngIf="product()!.tags?.length">
+        <span class="tag" *ngFor="let tag of product()!.tags">
           {{ tag }}
         </span>
       </div>
@@ -180,8 +214,8 @@
       <div class="product-meta">
         <div class="meta-item">
           <span class="meta-label">Category:</span>
-          <a [href]="'/products?category=' + product().category" class="meta-link">
-            {{ product().category }}
+          <a [routerLink]="['/products']" [queryParams]="{category: product()!.categorySlug || product()!.category}" class="meta-link">
+            {{ product()!.category }}
           </a>
         </div>
         <div class="meta-item">
@@ -206,6 +240,19 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- You May Also Like Section -->
+  <div class="similar-products-section" *ngIf="relatedProducts().length > 0">
+    <h2 class="section-title">You may also like</h2>
+    <div class="similar-products-grid">
+      <app-product-card
+        *ngFor="let relatedProduct of relatedProducts()"
+        [product]="relatedProduct"
+        (productClicked)="onRelatedProductClick($event)"
+        (addToCart)="onRelatedProductAddToCart($event)"
+      />
     </div>
   </div>
 
@@ -239,14 +286,14 @@
       <!-- Description Tab -->
       <div class="tab-panel" *ngIf="activeTab() === 'description'">
         <div class="description-content">
-          <p *ngFor="let paragraph of product().description.split('\n\n')" [innerHTML]="paragraph"></p>
+          <p *ngFor="let paragraph of (product()!.description || '').split('\n\n')" [innerHTML]="paragraph"></p>
         </div>
       </div>
 
       <!-- Specifications Tab -->
       <div class="tab-panel" *ngIf="activeTab() === 'specifications'">
         <div class="specifications-table">
-          <div class="spec-row" *ngFor="let attr of (product().attributes | keyvalue)">
+          <div class="spec-row" *ngFor="let attr of (product()!.attributes | keyvalue)">
             <div class="spec-label">{{ attr.key }}</div>
             <div class="spec-value">{{ attr.value }}</div>
           </div>
@@ -323,17 +370,5 @@
       </div>
     </div>
   </div>
-
-  <!-- Related Products -->
-  <div class="related-products-section">
-    <h2 class="section-title">Related Products</h2>
-    <div class="related-products-grid">
-      <app-product-card
-        *ngFor="let relatedProduct of relatedProducts()"
-        [product]="relatedProduct"
-        (productClicked)="onRelatedProductClick($event)"
-        (addToCart)="onRelatedProductAddToCart($event)"
-      />
-    </div>
-  </div>
+  </ng-container>
 </div>

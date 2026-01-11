@@ -1,4 +1,4 @@
-import { Component, input, output, signal, effect, HostListener } from '@angular/core';
+import { Component, input, output, signal, computed, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export interface GalleryImage {
@@ -24,21 +24,19 @@ export class ImageGalleryComponent {
   touchStartX = signal(0);
   touchEndX = signal(0);
 
-  currentImage = signal<GalleryImage | null>(null);
-
-  constructor() {
-    effect(() => {
-      const imgs = this.images();
-      if (imgs && imgs.length > 0) {
-        this.currentImage.set(imgs[this.currentIndex()]);
-      }
-    });
-  }
+  // Use computed instead of effect + signal for reactive current image
+  currentImage = computed<GalleryImage | null>(() => {
+    const imgs = this.images();
+    const index = this.currentIndex();
+    if (imgs && imgs.length > 0 && index >= 0 && index < imgs.length) {
+      return imgs[index];
+    }
+    return null;
+  });
 
   selectImage(index: number): void {
     if (index >= 0 && index < this.images().length) {
       this.currentIndex.set(index);
-      this.currentImage.set(this.images()[index]);
     }
   }
 

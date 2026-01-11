@@ -1,7 +1,7 @@
 import { Component, signal, computed, OnInit, OnDestroy, inject, ViewChild, ElementRef, AfterViewInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Product, ProductFilter } from '@core/models/product.model';
 import {
   ProductCardComponent,
@@ -50,6 +50,7 @@ export class ProductsListComponent implements OnInit, AfterViewInit, OnDestroy {
   private specialCollectionsService = inject(SpecialCollectionsService);
   private searchService = inject(SearchService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   // Reference to filter component to clear selections on route change
   @ViewChild(FilterComponent) filterComponent?: FilterComponent;
@@ -626,9 +627,7 @@ export class ProductsListComponent implements OnInit, AfterViewInit, OnDestroy {
    * Handle product card click
    */
   onProductClick(product: Product): void {
-    console.log('Product clicked:', product);
-    // Navigate to product detail page
-    // this.router.navigate(['/products', product.id]);
+    this.router.navigate(['/products', product.id]);
   }
 
   /**

@@ -29,6 +29,7 @@ export interface Product {
 
   // Image fields
   thumbnailUrl?: string;            // Primary thumbnail URL for list views (updated by Media Service)
+  images?: ProductImage[];          // Enriched images from Media Service with size variants
   imageUrls: string[];              // Legacy field for backward compatibility
 
   tags: string[];
@@ -50,6 +51,16 @@ export interface Product {
 export interface ProductRating {
   average: number;
   count: number;
+}
+
+export interface ProductImage {
+  mediaId: string;
+  originalUrl: string;
+  thumbnailUrl: string;
+  mediumUrl: string;
+  largeUrl: string;
+  altText?: string;
+  displayOrder: number;
 }
 
 export interface ProductVariant {

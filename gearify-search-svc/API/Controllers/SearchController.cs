@@ -103,4 +103,32 @@ public class SearchController : ControllerBase
 
         return Ok(result);
     }
+
+    /// <summary>
+    /// Get similar/recommended products for a given product
+    /// Uses brand, category, price range, and tags for matching
+    /// Future: Will support AI-based recommendations
+    /// </summary>
+    [HttpGet("similar/{productId}")]
+    public async Task<ActionResult<SimilarProductsResponse>> GetSimilarProducts(
+        [FromRoute] string productId,
+        [FromQuery] int limit = 4,
+        CancellationToken cancellationToken = default)
+    {
+        var tenantId = _tenantContext.TenantId ?? "default-tenant";
+
+        _logger.LogInformation("Similar products request from tenant {TenantId} for product {ProductId}",
+            tenantId, productId);
+
+        var query = new SimilarProductsQuery
+        {
+            TenantId = tenantId,
+            ProductId = productId,
+            Limit = Math.Min(limit, 10) // Cap at 10
+        };
+
+        var result = await _mediator.Send(query, cancellationToken);
+
+        return Ok(result);
+    }
 }
