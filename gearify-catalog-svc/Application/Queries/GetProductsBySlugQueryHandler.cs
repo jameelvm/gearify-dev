@@ -157,7 +157,8 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
             "price-desc" => ("GSI2", false),         // GSI2: Price high to low
             "rating" => ("GSI3", false),             // GSI3: Top rated first (descending)
             "newest" => ("GSI4", false),             // GSI4: Newest first (descending)
-            "name" => ("GSI5", true),                // GSI5: Name A-Z (ascending)
+            "name" or "name-asc" => ("GSI5", true),  // GSI5: Name A-Z (ascending)
+            "name-desc" => ("GSI5", false),          // GSI5: Name Z-A (descending)
             _ => ("GSI1", true)                      // Default: GSI1 unsorted
         };
     }

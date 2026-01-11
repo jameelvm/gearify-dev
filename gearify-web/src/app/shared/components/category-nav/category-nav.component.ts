@@ -1,9 +1,11 @@
-import { Component, signal, OnInit, inject } from '@angular/core';
+import { Component, signal, OnInit, OnDestroy, inject, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
 import { CategoryService } from '@core/services/category.service';
 import { SpecialCollectionsService, SpecialCollectionDto } from '@core/services/special-collections.service';
+import { SearchService, AutocompleteSuggestion } from '@core/services/search.service';
 import { forkJoin } from 'rxjs';
 
 export interface SubCategory {
@@ -27,7 +29,7 @@ export interface Category {
   name: string;
   slug: string;
   icon?: string;
-  departmentSlug: string; // Added to track department for URL construction
+  departmentSlug: string;
   megaMenu?: MegaMenuSection[];
 }
 
@@ -38,16 +40,28 @@ export interface Category {
   templateUrl: './category-nav.component.html',
   styleUrls: ['./category-nav.component.scss']
 })
-export class CategoryNavComponent implements OnInit {
+export class CategoryNavComponent implements OnInit, OnDestroy {
   private categoryService = inject(CategoryService);
   private specialCollectionsService = inject(SpecialCollectionsService);
+  private searchService = inject(SearchService);
   private router = inject(Router);
+  private elementRef = inject(ElementRef);
 
+  // Cleanup subject for subscriptions
+  private destroy$ = new Subject<void>();
+
+  // Category navigation state
   searchQuery = signal('');
   activeCategory = signal<string | null>(null);
   hoveredCategory = signal<string | null>(null);
   isLoading = signal(false);
   error = signal<string | null>(null);
+
+  // Autocomplete state
+  autocompleteSuggestions = signal<AutocompleteSuggestion[]>([]);
+  showAutocomplete = signal(false);
+  isSearching = signal(false);
+  selectedSuggestionIndex = signal(-1);
 
   categories: Category[] = [];
   categoryDict: Record<string, Category> = {};
@@ -61,28 +75,48 @@ export class CategoryNavComponent implements OnInit {
         this.loadCategories();
       }
     }
+
+    // Subscribe to autocomplete stream
+    this.searchService.getAutocompleteStream()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(suggestions => {
+        this.autocompleteSuggestions.set(suggestions);
+        this.showAutocomplete.set(suggestions.length > 0);
+        this.isSearching.set(false);
+        this.selectedSuggestionIndex.set(-1);
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  /**
+   * Handles click outside to close autocomplete dropdown
+   */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const searchContainer = this.elementRef.nativeElement.querySelector('.search-container');
+    if (searchContainer && !searchContainer.contains(target)) {
+      this.closeAutocomplete();
+    }
   }
 
   private loadCategories(): void {
     this.isLoading.set(true);
     this.error.set(null);
 
-    // Fetch both mega menu data and special collections in parallel
-    // TODO: For multi-department, get departmentSlug from selected department
     forkJoin({
       megaMenu: this.categoryService.getMegaMenuData(),
       specialCollections: this.specialCollectionsService.getSpecialCollections('cricket')
     }).subscribe({
       next: ({ megaMenu, specialCollections }) => {
-        // Store special collections
         this.specialCollections.set(specialCollections.collections);
 
-        // Extract categories from departments and preserve department slug for routing
-        // For single-department tenants, get categories from the first department
-        // For multi-department, this would need UI to select department
         const regularCategories = megaMenu.departments.flatMap(dept =>
           dept.categories.map(item => {
-            // Build category sections from mega menu data
             const sections = item.sections.map(section => ({
               title: section.title,
               showTitle: section.showTitle,
@@ -108,13 +142,12 @@ export class CategoryNavComponent implements OnInit {
           })
         );
 
-        // Create independent "Deals" menu item with special collections
         const dealsCategory: Category[] = specialCollections.collections.length > 0 && megaMenu.departments.length > 0
           ? [{
               id: 'deals',
               name: 'Deals',
               slug: 'deals',
-              icon: '🔥',
+              icon: '',
               departmentSlug: megaMenu.departments[0].slug,
               megaMenu: [{
                 title: 'Special Collections',
@@ -145,18 +178,148 @@ export class CategoryNavComponent implements OnInit {
         console.error('Failed to load menu data:', err);
         this.error.set('Failed to load menu');
         this.isLoading.set(false);
-        // Fallback to empty array or show error message
       }
     });
   }
 
-  onSearch(): void {
-    const query = this.searchQuery();
-    if (query.trim()) {
-      console.log('Searching for:', query);
-      // TODO: Navigate to search results or filter products
+  // ============================================================================
+  // Search & Autocomplete Methods
+  // ============================================================================
+
+  /**
+   * Handles search input changes - triggers autocomplete
+   */
+  onSearchInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.value;
+    this.searchQuery.set(value);
+
+    if (value.length >= 2) {
+      this.isSearching.set(true);
+      this.searchService.updateAutocompleteInput(value);
+    } else {
+      this.closeAutocomplete();
     }
   }
+
+  /**
+   * Handles keyboard navigation in autocomplete dropdown
+   */
+  onSearchKeydown(event: KeyboardEvent): void {
+    const suggestions = this.autocompleteSuggestions();
+    const currentIndex = this.selectedSuggestionIndex();
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        if (currentIndex < suggestions.length - 1) {
+          this.selectedSuggestionIndex.set(currentIndex + 1);
+        }
+        break;
+
+      case 'ArrowUp':
+        event.preventDefault();
+        if (currentIndex > 0) {
+          this.selectedSuggestionIndex.set(currentIndex - 1);
+        }
+        break;
+
+      case 'Enter':
+        event.preventDefault();
+        if (currentIndex >= 0 && currentIndex < suggestions.length) {
+          this.selectSuggestion(suggestions[currentIndex]);
+        } else {
+          this.onSearch();
+        }
+        break;
+
+      case 'Escape':
+        this.closeAutocomplete();
+        break;
+    }
+  }
+
+  /**
+   * Handles focusing on the search input
+   */
+  onSearchFocus(): void {
+    const query = this.searchQuery();
+    if (query.length >= 2 && this.autocompleteSuggestions().length > 0) {
+      this.showAutocomplete.set(true);
+    }
+  }
+
+  /**
+   * Executes full product search and navigates to results
+   */
+  onSearch(): void {
+    const query = this.searchQuery();
+    this.closeAutocomplete();
+
+    if (query.trim()) {
+      this.router.navigate(['/search'], { queryParams: { q: query } });
+    }
+  }
+
+  /**
+   * Handles selection of an autocomplete suggestion
+   */
+  selectSuggestion(suggestion: AutocompleteSuggestion): void {
+    this.closeAutocomplete();
+
+    switch (suggestion.type) {
+      case 'brand':
+        // Navigate to search with brand filter
+        this.router.navigate(['/search'], {
+          queryParams: { brand: suggestion.slug || suggestion.text.toLowerCase().replace(/\s+/g, '-') }
+        });
+        break;
+
+      case 'category':
+        // Navigate to search with category filter
+        this.router.navigate(['/search'], {
+          queryParams: { category: suggestion.slug || suggestion.text.toLowerCase().replace(/\s+/g, '-') }
+        });
+        break;
+
+      case 'product':
+        // Search by product name to show it in results with similar items
+        this.searchQuery.set(suggestion.text);
+        this.router.navigate(['/search'], { queryParams: { q: suggestion.text } });
+        break;
+
+      default:
+        this.searchQuery.set(suggestion.text);
+        this.onSearch();
+    }
+  }
+
+  /**
+   * Closes autocomplete dropdown and clears state
+   */
+  closeAutocomplete(): void {
+    this.showAutocomplete.set(false);
+    this.autocompleteSuggestions.set([]);
+    this.selectedSuggestionIndex.set(-1);
+    this.isSearching.set(false);
+    this.searchService.clearAutocomplete();
+  }
+
+  /**
+   * Gets the icon for suggestion type
+   */
+  getSuggestionIcon(type: string): string {
+    switch (type) {
+      case 'brand': return 'tag';
+      case 'category': return 'folder';
+      case 'product': return 'box';
+      default: return 'search';
+    }
+  }
+
+  // ============================================================================
+  // Category Navigation Methods
+  // ============================================================================
 
   onCategoryHover(categoryId: string): void {
     this.hoveredCategory.set(categoryId);
@@ -168,7 +331,6 @@ export class CategoryNavComponent implements OnInit {
 
   onCategoryClick(category: Category): void {
     console.log('Category clicked:', category);
-    // TODO: Navigate to category page or filter products
   }
 
   onSubCategoryClick(category: Category, subCategory: SubCategory): void {
@@ -177,26 +339,21 @@ export class CategoryNavComponent implements OnInit {
     let routePath: string[];
     const queryParams: any = {};
 
-    // Build route path based on FilterType
     switch (subCategory.filterType) {
       case 'BRAND':
-        // For brand filters, use clean URL with brand slug
         routePath = ['/', category.departmentSlug, category.slug, 'brand', subCategory.slug];
         break;
 
       case 'PRICE_RANGE':
-        // For price range filters, use category route with price range in URL
         const priceRange = `${subCategory.minPrice}-${subCategory.maxPrice}`;
         routePath = ['/', category.departmentSlug, category.slug, 'price', priceRange];
         break;
 
       case 'SPECIAL_COLLECTION':
-        // For special collections, use department/collection route
         routePath = ['/', category.departmentSlug, subCategory.slug];
         break;
 
       default:
-        // For regular subcategories, use full route path
         routePath = ['/', category.departmentSlug, category.slug, subCategory.slug];
     }
 
@@ -206,7 +363,6 @@ export class CategoryNavComponent implements OnInit {
   getActiveCategory(): Category | undefined {
     const categoryId = this.hoveredCategory();
     if (!categoryId) return undefined;
-    var category = this.categoryDict[categoryId];
-    return category;
+    return this.categoryDict[categoryId];
   }
 }

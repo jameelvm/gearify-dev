@@ -3,7 +3,19 @@
   <app-filter (filtersChanged)="onFiltersChanged($event)" />
 
   <!-- Main Content -->
-  <div class="products-container">
+  <div class="products-container" [class.with-facets]="isSearchMode() && searchFacets()">
+    <!-- Facet Sidebar (Search Mode Only) -->
+    <aside class="facet-sidebar-container" *ngIf="isSearchMode() && searchFacets()">
+      <app-facet
+        [facets]="searchFacets()"
+        [selectedBrands]="selectedFacetBrands()"
+        [selectedCategories]="selectedFacetCategories()"
+        [selectedPriceRange]="selectedFacetPriceRange()"
+        [selectedRating]="selectedFacetRating()"
+        (filterChange)="onFacetFilterChange($event)"
+      />
+    </aside>
+
     <!-- Products Grid/List -->
     <main class="products-main">
       <!-- Loading State -->

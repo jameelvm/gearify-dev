@@ -190,11 +190,17 @@
   min-width: 250px;
   max-width: 350px;
   transition: background-color 0.2s ease;
+  position: relative;
 
   &:focus-within {
     background-color: #e5e7eb;
     outline: 2px solid #2563eb;
     outline-offset: 2px;
+  }
+
+  &.has-suggestions {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
   }
 }
 
@@ -229,6 +235,107 @@
   &:focus {
     outline: none;
   }
+
+  &.loading {
+    pointer-events: none;
+  }
+}
+
+// Search Spinner
+.search-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #e5e7eb;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Autocomplete Dropdown
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-top: none;
+  border-radius: 0 0 0.5rem 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-height: 320px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.autocomplete-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover,
+  &.selected {
+    background-color: #f3f4f6;
+  }
+
+  &:last-child {
+    border-radius: 0 0 0.5rem 0.5rem;
+  }
+}
+
+.suggestion-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background-color: #f3f4f6;
+  border-radius: 0.375rem;
+  color: #6b7280;
+  flex-shrink: 0;
+
+  .autocomplete-item:hover &,
+  .autocomplete-item.selected & {
+    background-color: #e5e7eb;
+    color: #2563eb;
+  }
+}
+
+.suggestion-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.suggestion-text {
+  font-size: 0.9rem;
+  color: #1f2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.suggestion-type {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  text-transform: capitalize;
+}
+
+.autocomplete-empty {
+  padding: 1rem;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.875rem;
 }
 
 /* Responsive Design */

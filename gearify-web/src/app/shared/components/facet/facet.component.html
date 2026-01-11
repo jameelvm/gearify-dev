@@ -1,0 +1,83 @@
+<aside class="facet-sidebar" *ngIf="facets()">
+  <!-- Brands Section -->
+  <div class="facet-section" *ngIf="facets()?.brands?.length">
+    <div class="facet-header" (click)="toggleSection('brands')">
+      <h3>Brand</h3>
+      <span class="toggle-icon" [class.collapsed]="isCollapsed('brands')"></span>
+    </div>
+    <ul class="facet-list" *ngIf="!isCollapsed('brands')">
+      @for (brand of facets()?.brands; track brand.key) {
+        <li class="facet-item"
+            [class.selected]="isBrandSelected(brand)"
+            (click)="onBrandClick(brand)">
+          <span class="checkbox" [class.checked]="isBrandSelected(brand)"></span>
+          <span class="facet-label">{{ brand.key }}</span>
+          <span class="facet-count">({{ brand.count }})</span>
+        </li>
+      }
+    </ul>
+  </div>
+
+  <!-- Categories Section -->
+  <div class="facet-section" *ngIf="facets()?.categories?.length">
+    <div class="facet-header" (click)="toggleSection('categories')">
+      <h3>Category</h3>
+      <span class="toggle-icon" [class.collapsed]="isCollapsed('categories')"></span>
+    </div>
+    <ul class="facet-list" *ngIf="!isCollapsed('categories')">
+      @for (category of facets()?.categories; track category.key) {
+        <li class="facet-item"
+            [class.selected]="isCategorySelected(category)"
+            (click)="onCategoryClick(category)">
+          <span class="checkbox" [class.checked]="isCategorySelected(category)"></span>
+          <span class="facet-label">{{ category.key }}</span>
+          <span class="facet-count">({{ category.count }})</span>
+        </li>
+      }
+    </ul>
+  </div>
+
+  <!-- Price Range Section -->
+  <div class="facet-section" *ngIf="facets()?.priceRanges?.length">
+    <div class="facet-header" (click)="toggleSection('priceRanges')">
+      <h3>Price</h3>
+      <span class="toggle-icon" [class.collapsed]="isCollapsed('priceRanges')"></span>
+    </div>
+    <ul class="facet-list" *ngIf="!isCollapsed('priceRanges')">
+      @for (priceRange of facets()?.priceRanges; track priceRange.key) {
+        <li class="facet-item"
+            [class.selected]="isPriceRangeSelected(priceRange)"
+            (click)="onPriceRangeClick(priceRange)"
+            *ngIf="priceRange.count > 0">
+          <span class="radio" [class.checked]="isPriceRangeSelected(priceRange)"></span>
+          <span class="facet-label">{{ formatPriceRange(priceRange.key) }}</span>
+          <span class="facet-count">({{ priceRange.count }})</span>
+        </li>
+      }
+    </ul>
+  </div>
+
+  <!-- Rating Section -->
+  <div class="facet-section" *ngIf="getSortedRatings().length">
+    <div class="facet-header" (click)="toggleSection('ratings')">
+      <h3>Customer Rating</h3>
+      <span class="toggle-icon" [class.collapsed]="isCollapsed('ratings')"></span>
+    </div>
+    <ul class="facet-list" *ngIf="!isCollapsed('ratings')">
+      @for (rating of getSortedRatings(); track rating.key) {
+        <li class="facet-item rating-item"
+            [class.selected]="isRatingSelected(rating)"
+            (click)="onRatingClick(rating)">
+          <span class="radio" [class.checked]="isRatingSelected(rating)"></span>
+          <span class="stars">
+            @for (star of [1,2,3,4,5]; track star) {
+              <span class="star" [class.filled]="star <= formatRating(rating.key)">&#9733;</span>
+            }
+          </span>
+          <span class="rating-text">& Up</span>
+          <span class="facet-count">({{ rating.count }})</span>
+        </li>
+      }
+    </ul>
+  </div>
+</aside>

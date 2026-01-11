@@ -41,6 +41,10 @@ export const API_CONFIG = {
     UPDATE_PROFILE: '/api/users/profile',
     CHANGE_PASSWORD: '/api/users/change-password',
     USER_ADDRESSES: '/api/user/addresses',
+
+    // Search
+    SEARCH_PRODUCTS: '/api/search/products',
+    SEARCH_AUTOCOMPLETE: '/api/search/autocomplete',
   },
   TIMEOUT: 30000,
 };

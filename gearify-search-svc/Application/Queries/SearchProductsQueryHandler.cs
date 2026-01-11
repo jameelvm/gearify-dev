@@ -82,23 +82,28 @@ public class SearchProductsQueryHandler : IRequestHandler<SearchProductsQuery, S
             ));
         }
 
+        // Apply all filters
+        ApplyFilters(q, must, request);
+
+        return q.Bool(b => b.Must(must.ToArray()));
+    }
+
+    private void ApplyFilters(
+        QueryContainerDescriptor<ProductSearchDocument> q,
+        List<QueryContainer> must,
+        SearchProductsQuery request)
+    {
         // Category filter
         if (!string.IsNullOrWhiteSpace(request.Category))
-        {
             must.Add(q.Term(t => t.Field(f => f.CategorySlug).Value(request.Category.ToLowerInvariant())));
-        }
 
         // Brand filter
         if (!string.IsNullOrWhiteSpace(request.Brand))
-        {
             must.Add(q.Term(t => t.Field(f => f.BrandSlug).Value(request.Brand.ToLowerInvariant())));
-        }
 
         // Department filter
         if (!string.IsNullOrWhiteSpace(request.Department))
-        {
             must.Add(q.Term(t => t.Field(f => f.DepartmentSlug).Value(request.Department.ToLowerInvariant())));
-        }
 
         // Price range filter
         if (request.MinPrice.HasValue || request.MaxPrice.HasValue)
@@ -116,50 +121,27 @@ public class SearchProductsQueryHandler : IRequestHandler<SearchProductsQuery, S
 
         // Rating filter
         if (request.MinRating.HasValue)
-        {
-            must.Add(q.Range(r => r
-                .Field(f => f.RatingAverage)
-                .GreaterThanOrEquals((double)request.MinRating.Value)
-            ));
-        }
+            must.Add(q.Range(r => r.Field(f => f.RatingAverage).GreaterThanOrEquals((double)request.MinRating.Value)));
 
         // Tags filter
         if (request.Tags != null && request.Tags.Any())
-        {
             must.Add(q.Terms(t => t.Field(f => f.Tags).Terms(request.Tags)));
-        }
 
-        // Deals filter
+        // Special collection filters
         if (request.DealsOnly == true)
-        {
             must.Add(q.Term(t => t.Field(f => f.IsDeal).Value(true)));
-        }
 
-        // Clearance filter
         if (request.ClearanceOnly == true)
-        {
             must.Add(q.Term(t => t.Field(f => f.IsClearance).Value(true)));
-        }
 
-        // New arrivals filter
         if (request.NewArrivalsOnly == true)
-        {
             must.Add(q.Term(t => t.Field(f => f.IsNewArrival).Value(true)));
-        }
 
-        // Best sellers filter
         if (request.BestSellersOnly == true)
-        {
             must.Add(q.Term(t => t.Field(f => f.IsBestSeller).Value(true)));
-        }
-
-        return q.Bool(b => b.Must(must.ToArray()));
     }
 
-    private SortDescriptor<ProductSearchDocument> BuildSort(
-        SortDescriptor<ProductSearchDocument> sort,
-        string? sortBy,
-        string? sortDirection)
+    private SortDescriptor<ProductSearchDocument> BuildSort(SortDescriptor<ProductSearchDocument> sort, string? sortBy, string? sortDirection)
     {
         var order = sortDirection?.ToLowerInvariant() == "asc" ? SortOrder.Ascending : SortOrder.Descending;
 
@@ -187,8 +169,7 @@ public class SearchProductsQueryHandler : IRequestHandler<SearchProductsQuery, S
         };
     }
 
-    private AggregationContainerDescriptor<ProductSearchDocument> BuildAggregations(
-        AggregationContainerDescriptor<ProductSearchDocument> a)
+    private AggregationContainerDescriptor<ProductSearchDocument> BuildAggregations(AggregationContainerDescriptor<ProductSearchDocument> a)
     {
         return a
             .Terms("brands", t => t

@@ -192,6 +192,55 @@
   max-width: var(--container-max-width);
   margin: 0 auto;
   padding: var(--spacing-4) var(--spacing-3);
+
+  // With facet sidebar layout
+  &.with-facets {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: var(--spacing-4);
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 220px 1fr;
+      gap: var(--spacing-3);
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// Facet Sidebar Container
+.facet-sidebar-container {
+  position: sticky;
+  top: 1rem;
+  height: fit-content;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  padding-right: var(--spacing-2);
+
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 2px;
+  }
+
+  @media (max-width: 768px) {
+    position: static;
+    max-height: none;
+    padding: var(--spacing-3);
+    background: #f9fafb;
+    border-radius: 0.5rem;
+    margin-bottom: var(--spacing-3);
+  }
 }
 
 // Filters Sidebar

@@ -25,19 +25,76 @@
       </div>
     </div>
 
-    <div class="search-container">
+    <!-- Search with Autocomplete -->
+    <div class="search-container" [class.has-suggestions]="showAutocomplete()">
       <input
         type="text"
         class="search-input"
         placeholder="Search products..."
-        [(ngModel)]="searchQuery"
-        (keyup.enter)="onSearch()"
+        [value]="searchQuery()"
+        (input)="onSearchInput($event)"
+        (keydown)="onSearchKeydown($event)"
+        (focus)="onSearchFocus()"
+        autocomplete="off"
+        role="combobox"
+        aria-haspopup="listbox"
+        [attr.aria-expanded]="showAutocomplete()"
+        aria-controls="autocomplete-list"
       />
-      <button class="search-button" (click)="onSearch()" aria-label="Search">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+      <button
+        class="search-button"
+        (click)="onSearch()"
+        aria-label="Search"
+        [class.loading]="isSearching()">
+        <svg *ngIf="!isSearching()" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
         </svg>
+        <span *ngIf="isSearching()" class="search-spinner"></span>
       </button>
+
+      <!-- Autocomplete Dropdown -->
+      <div
+        *ngIf="showAutocomplete()"
+        class="autocomplete-dropdown"
+        id="autocomplete-list"
+        role="listbox">
+        <div
+          *ngFor="let suggestion of autocompleteSuggestions(); let i = index"
+          class="autocomplete-item"
+          [class.selected]="selectedSuggestionIndex() === i"
+          (click)="selectSuggestion(suggestion)"
+          (mouseenter)="selectedSuggestionIndex.set(i)"
+          role="option"
+          [attr.aria-selected]="selectedSuggestionIndex() === i">
+
+          <!-- Suggestion Icon -->
+          <span class="suggestion-icon" [ngSwitch]="suggestion.type">
+            <svg *ngSwitchCase="'brand'" width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+            </svg>
+            <svg *ngSwitchCase="'category'" width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/>
+            </svg>
+            <svg *ngSwitchCase="'product'" width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"/>
+            </svg>
+            <svg *ngSwitchDefault width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+            </svg>
+          </span>
+
+          <!-- Suggestion Content -->
+          <div class="suggestion-content">
+            <span class="suggestion-text">{{ suggestion.text }}</span>
+            <span class="suggestion-type">{{ suggestion.type }}</span>
+          </div>
+        </div>
+
+        <!-- No Results State -->
+        <div *ngIf="autocompleteSuggestions().length === 0 && !isSearching()" class="autocomplete-empty">
+          No suggestions found
+        </div>
+      </div>
     </div>
   </div>
 

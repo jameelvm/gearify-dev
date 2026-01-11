@@ -22,6 +22,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/products/products-list.component').then(m => m.ProductsListComponent)
   },
   {
+    path: 'search',
+    canActivate: [tenantGuard],
+    loadComponent: () => import('./features/products/products-list.component').then(m => m.ProductsListComponent)
+  },
+  {
     path: 'products/:id',
     canActivate: [tenantGuard],
     loadComponent: () => import('./features/products/product-detail.component').then(m => m.ProductDetailComponent)
