@@ -139,6 +139,34 @@
           },
           "GSI5SK": {
             "S": "NAME#ss ton reserve edition english willow cricket bat#PRODUCT#022f46ce-1882-4966-b1fa-7636c6c62351"
+          },
+          "Attributes": {
+            "M": {
+              "Material": {
+                "S": "English Willow (Grade 1)"
+              },
+              "Weight": {
+                "S": "1.18 - 1.25 kg"
+              },
+              "Handle": {
+                "S": "Singapore Cane with Sarawak"
+              },
+              "Blade": {
+                "S": "Full Profile, Thick Edges"
+              },
+              "Sweet Spot": {
+                "S": "Mid to Low"
+              },
+              "Grip": {
+                "S": "Octopus Premium Grip"
+              },
+              "Suitable For": {
+                "S": "Leather Ball"
+              },
+              "Player Type": {
+                "S": "All Rounder"
+              }
+            }
           }
         }
       }
@@ -273,6 +301,25 @@
           },
           "GSI5SK": {
             "S": "NAME#ss master 1000 kashmir willow bat#PRODUCT#c1fb96da-2df2-44df-8df6-37966e71d3ea"
+          },
+          "Attributes": {
+            "M": {
+              "Material": {
+                "S": "Premium Quality"
+              },
+              "Weight": {
+                "S": "500g"
+              },
+              "Size": {
+                "S": "Standard"
+              },
+              "Color": {
+                "S": "Multi"
+              },
+              "Country of Origin": {
+                "S": "India"
+              }
+            }
           }
         }
       }
@@ -417,6 +464,22 @@
           },
           "GSI6SK": {
             "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#1a53a237-e4f4-4ce8-bcd2-140e15d243c0"
+          },
+          "Attributes": {
+            "M": {
+              "Material": {
+                "S": "High Grade"
+              },
+              "Dimensions": {
+                "S": "30 x 20 x 10 cm"
+              },
+              "Weight": {
+                "S": "350g"
+              },
+              "Warranty": {
+                "S": "1 Year"
+              }
+            }
           }
         }
       }
@@ -536,6 +599,22 @@
           },
           "GSI5SK": {
             "S": "NAME#mrf genius grand edition bat#PRODUCT#6c46fdea-91b2-430a-a5af-fe7077449643"
+          },
+          "Attributes": {
+            "M": {
+              "Material": {
+                "S": "Synthetic Leather"
+              },
+              "Size": {
+                "S": "Medium"
+              },
+              "Color": {
+                "S": "White/Red"
+              },
+              "Usage": {
+                "S": "Professional"
+              }
+            }
           }
         }
       }
@@ -655,6 +734,22 @@
           },
           "GSI5SK": {
             "S": "NAME#sg king cobra english willow bat#PRODUCT#ab99e592-ae00-4b73-a2ce-2071d2c6182a"
+          },
+          "Attributes": {
+            "M": {
+              "Material": {
+                "S": "Carbon Fiber"
+              },
+              "Weight": {
+                "S": "280g"
+              },
+              "Grip Size": {
+                "S": "G2"
+              },
+              "Balance": {
+                "S": "Head Heavy"
+              }
+            }
           }
         }
       }

@@ -7,28 +7,28 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#e29ee9c2-275b-49a0-8893-ae8c442e058a"
+            "S": "PRODUCT#022f46ce-1882-4966-b1fa-7636c6c62351"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#e29ee9c2-275b-49a0-8893-ae8c442e058a"
+            "S": "PRODUCT#022f46ce-1882-4966-b1fa-7636c6c62351"
           },
           "Id": {
-            "S": "e29ee9c2-275b-49a0-8893-ae8c442e058a"
+            "S": "022f46ce-1882-4966-b1fa-7636c6c62351"
           },
           "TenantId": {
             "S": "default"
           },
           "Sku": {
-            "S": "SG-BAG-TEAMPRO-002"
+            "S": "SS-BAT-PRO-001"
           },
           "Name": {
-            "S": "SG Teampro Cricket Wheelie Bag"
+            "S": "SS Ton Reserve Edition English Willow Cricket Bat"
           },
           "Description": {
-            "S": "Professional team bag with wheels and dedicated compartments for all equipment"
+            "S": "Premium English willow cricket bat by SS with balanced pick-up and powerful hitting"
           },
           "Department": {
             "S": "Cricket"
@@ -37,10 +37,2666 @@
             "S": "cricket"
           },
           "Category": {
-            "S": "Bags"
+            "S": "Bats"
           },
           "CategorySlug": {
-            "S": "bags"
+            "S": "bats"
+          },
+          "Subcategory": {
+            "S": "SS"
+          },
+          "SubcategorySlug": {
+            "S": "ss"
+          },
+          "Brand": {
+            "S": "SS"
+          },
+          "BrandSlug": {
+            "S": "ss"
+          },
+          "Price": {
+            "N": "310.0"
+          },
+          "CompareAtPrice": {
+            "N": "370.0"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "17"
+          },
+          "OfferBadge": {
+            "S": "Hot Deal"
+          },
+          "RatingAverage": {
+            "N": "4.5"
+          },
+          "RatingCount": {
+            "N": "28"
+          },
+          "IsDeal": {
+            "BOOL": true
+          },
+          "DealStartDate": {
+            "S": "2026-01-01T00:00:00.000Z"
+          },
+          "DealEndDate": {
+            "S": "2026-01-15T00:00:00.000Z"
+          },
+          "IsClearance": {
+            "BOOL": false
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": false
+          },
+          "IsFeatured": {
+            "BOOL": false
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "bat",
+              "ss",
+              "english-willow"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000031000#PRODUCT#022f46ce-1882-4966-b1fa-7636c6c62351"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00450#PRODUCT#022f46ce-1882-4966-b1fa-7636c6c62351"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#022f46ce-1882-4966-b1fa-7636c6c62351"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#ss ton reserve edition english willow cricket bat#PRODUCT#022f46ce-1882-4966-b1fa-7636c6c62351"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#c1fb96da-2df2-44df-8df6-37966e71d3ea"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#c1fb96da-2df2-44df-8df6-37966e71d3ea"
+          },
+          "Id": {
+            "S": "c1fb96da-2df2-44df-8df6-37966e71d3ea"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "SS-BAT-MAS-002"
+          },
+          "Name": {
+            "S": "SS Master 1000 Kashmir Willow Bat"
+          },
+          "Description": {
+            "S": "Excellent Kashmir willow bat for club level cricket with great balance"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Bats"
+          },
+          "CategorySlug": {
+            "S": "bats"
+          },
+          "Subcategory": {
+            "S": "SS"
+          },
+          "SubcategorySlug": {
+            "S": "ss"
+          },
+          "Brand": {
+            "S": "SS"
+          },
+          "BrandSlug": {
+            "S": "ss"
+          },
+          "Price": {
+            "N": "54.0"
+          },
+          "CompareAtPrice": {
+            "N": "66.0"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "18"
+          },
+          "RatingAverage": {
+            "N": "4.2"
+          },
+          "RatingCount": {
+            "N": "45"
+          },
+          "IsDeal": {
+            "BOOL": false
+          },
+          "IsClearance": {
+            "BOOL": false
+          },
+          "IsNewArrival": {
+            "BOOL": true
+          },
+          "IsBestSeller": {
+            "BOOL": false
+          },
+          "IsFeatured": {
+            "BOOL": false
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "bat",
+              "ss",
+              "kashmir-willow"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000005400#PRODUCT#c1fb96da-2df2-44df-8df6-37966e71d3ea"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00420#PRODUCT#c1fb96da-2df2-44df-8df6-37966e71d3ea"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#c1fb96da-2df2-44df-8df6-37966e71d3ea"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#ss master 1000 kashmir willow bat#PRODUCT#c1fb96da-2df2-44df-8df6-37966e71d3ea"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#1a53a237-e4f4-4ce8-bcd2-140e15d243c0"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#1a53a237-e4f4-4ce8-bcd2-140e15d243c0"
+          },
+          "Id": {
+            "S": "1a53a237-e4f4-4ce8-bcd2-140e15d243c0"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "MRF-BAT-LEG-001"
+          },
+          "Name": {
+            "S": "MRF Legend VK18 English Willow Bat"
+          },
+          "Description": {
+            "S": "Signature Virat Kohli bat with superb balance and power - preferred by professionals"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Bats"
+          },
+          "CategorySlug": {
+            "S": "bats"
+          },
+          "Subcategory": {
+            "S": "MRF"
+          },
+          "SubcategorySlug": {
+            "S": "mrf"
+          },
+          "Brand": {
+            "S": "MRF"
+          },
+          "BrandSlug": {
+            "S": "mrf"
+          },
+          "Price": {
+            "N": "380.0"
+          },
+          "CompareAtPrice": {
+            "N": "450.0"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "16"
+          },
+          "OfferBadge": {
+            "S": "Premium"
+          },
+          "RatingAverage": {
+            "N": "4.8"
+          },
+          "RatingCount": {
+            "N": "67"
+          },
+          "IsDeal": {
+            "BOOL": false
+          },
+          "IsClearance": {
+            "BOOL": false
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": true
+          },
+          "IsFeatured": {
+            "BOOL": true
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "bat",
+              "mrf",
+              "english-willow",
+              "signature"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000038000#PRODUCT#1a53a237-e4f4-4ce8-bcd2-140e15d243c0"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00480#PRODUCT#1a53a237-e4f4-4ce8-bcd2-140e15d243c0"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#1a53a237-e4f4-4ce8-bcd2-140e15d243c0"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#mrf legend vk18 english willow bat#PRODUCT#1a53a237-e4f4-4ce8-bcd2-140e15d243c0"
+          },
+          "GSI6PK": {
+            "S": "TENANT#default#FEATURED"
+          },
+          "GSI6SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#1a53a237-e4f4-4ce8-bcd2-140e15d243c0"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#6c46fdea-91b2-430a-a5af-fe7077449643"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#6c46fdea-91b2-430a-a5af-fe7077449643"
+          },
+          "Id": {
+            "S": "6c46fdea-91b2-430a-a5af-fe7077449643"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "MRF-BAT-GEN-002"
+          },
+          "Name": {
+            "S": "MRF Genius Grand Edition Bat"
+          },
+          "Description": {
+            "S": "Professional grade English willow bat with thick edges and powerful middle"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Bats"
+          },
+          "CategorySlug": {
+            "S": "bats"
+          },
+          "Subcategory": {
+            "S": "MRF"
+          },
+          "SubcategorySlug": {
+            "S": "mrf"
+          },
+          "Brand": {
+            "S": "MRF"
+          },
+          "BrandSlug": {
+            "S": "mrf"
+          },
+          "Price": {
+            "N": "340.0"
+          },
+          "CompareAtPrice": {
+            "N": "400.0"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "15"
+          },
+          "RatingAverage": {
+            "N": "4.6"
+          },
+          "RatingCount": {
+            "N": "52"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "bat",
+              "mrf",
+              "english-willow"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000034000#PRODUCT#6c46fdea-91b2-430a-a5af-fe7077449643"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00459#PRODUCT#6c46fdea-91b2-430a-a5af-fe7077449643"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#6c46fdea-91b2-430a-a5af-fe7077449643"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#mrf genius grand edition bat#PRODUCT#6c46fdea-91b2-430a-a5af-fe7077449643"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#ab99e592-ae00-4b73-a2ce-2071d2c6182a"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#ab99e592-ae00-4b73-a2ce-2071d2c6182a"
+          },
+          "Id": {
+            "S": "ab99e592-ae00-4b73-a2ce-2071d2c6182a"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "SG-BAT-KING-001"
+          },
+          "Name": {
+            "S": "SG King Cobra English Willow Bat"
+          },
+          "Description": {
+            "S": "Top-grade English willow with spine contours for maximum power and control"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Bats"
+          },
+          "CategorySlug": {
+            "S": "bats"
+          },
+          "Subcategory": {
+            "S": "SG"
+          },
+          "SubcategorySlug": {
+            "S": "sg"
+          },
+          "Brand": {
+            "S": "SG"
+          },
+          "BrandSlug": {
+            "S": "sg"
+          },
+          "Price": {
+            "N": "550.0"
+          },
+          "CompareAtPrice": {
+            "N": "650.0"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "18"
+          },
+          "RatingAverage": {
+            "N": "4.4"
+          },
+          "RatingCount": {
+            "N": "38"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "bat",
+              "sg",
+              "english-willow"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000055000#PRODUCT#ab99e592-ae00-4b73-a2ce-2071d2c6182a"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00440#PRODUCT#ab99e592-ae00-4b73-a2ce-2071d2c6182a"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#ab99e592-ae00-4b73-a2ce-2071d2c6182a"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg king cobra english willow bat#PRODUCT#ab99e592-ae00-4b73-a2ce-2071d2c6182a"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#d5d45a36-98d9-4e4e-b632-2a6425de7605"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#d5d45a36-98d9-4e4e-b632-2a6425de7605"
+          },
+          "Id": {
+            "S": "d5d45a36-98d9-4e4e-b632-2a6425de7605"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "SG-BAT-SUP-002"
+          },
+          "Name": {
+            "S": "SG Superpro Kashmir Willow Bat"
+          },
+          "Description": {
+            "S": "Affordable Kashmir willow bat perfect for beginners and intermediate players"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Bats"
+          },
+          "CategorySlug": {
+            "S": "bats"
+          },
+          "Subcategory": {
+            "S": "SG"
+          },
+          "SubcategorySlug": {
+            "S": "sg"
+          },
+          "Brand": {
+            "S": "SG"
+          },
+          "BrandSlug": {
+            "S": "sg"
+          },
+          "Price": {
+            "N": "42.0"
+          },
+          "CompareAtPrice": {
+            "N": "50.4"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "17"
+          },
+          "RatingAverage": {
+            "N": "4.0"
+          },
+          "RatingCount": {
+            "N": "62"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "bat",
+              "sg",
+              "kashmir-willow",
+              "beginner"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000004200#PRODUCT#d5d45a36-98d9-4e4e-b632-2a6425de7605"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00400#PRODUCT#d5d45a36-98d9-4e4e-b632-2a6425de7605"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#d5d45a36-98d9-4e4e-b632-2a6425de7605"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg superpro kashmir willow bat#PRODUCT#d5d45a36-98d9-4e4e-b632-2a6425de7605"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#fb7a7159-acdb-4868-a35f-834548a91c38"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#fb7a7159-acdb-4868-a35f-834548a91c38"
+          },
+          "Id": {
+            "S": "fb7a7159-acdb-4868-a35f-834548a91c38"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "KOOK-BAT-KAHUNA-001"
+          },
+          "Name": {
+            "S": "Kookaburra Kahuna Pro English Willow Bat"
+          },
+          "Description": {
+            "S": "Australian craftsmanship with massive edges and powerful sweet spot"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Bats"
+          },
+          "CategorySlug": {
+            "S": "bats"
+          },
+          "Subcategory": {
+            "S": "Kookaburra"
+          },
+          "SubcategorySlug": {
+            "S": "kookaburra"
+          },
+          "Brand": {
+            "S": "Kookaburra"
+          },
+          "BrandSlug": {
+            "S": "kookaburra"
+          },
+          "Price": {
+            "N": "1200.0"
+          },
+          "CompareAtPrice": {
+            "N": "1500.0"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "15"
+          },
+          "OfferBadge": {
+            "S": "Bestseller"
+          },
+          "RatingAverage": {
+            "N": "4.7"
+          },
+          "RatingCount": {
+            "N": "41"
+          },
+          "IsDeal": {
+            "BOOL": false
+          },
+          "IsClearance": {
+            "BOOL": false
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": true
+          },
+          "IsFeatured": {
+            "BOOL": true
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "bat",
+              "kookaburra",
+              "english-willow"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000120000#PRODUCT#fb7a7159-acdb-4868-a35f-834548a91c38"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00470#PRODUCT#fb7a7159-acdb-4868-a35f-834548a91c38"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#fb7a7159-acdb-4868-a35f-834548a91c38"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#kookaburra kahuna pro english willow bat#PRODUCT#fb7a7159-acdb-4868-a35f-834548a91c38"
+          },
+          "GSI6PK": {
+            "S": "TENANT#default#FEATURED"
+          },
+          "GSI6SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#fb7a7159-acdb-4868-a35f-834548a91c38"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#7c38eac2-15ef-4738-941b-f8db16bc1b5d"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#7c38eac2-15ef-4738-941b-f8db16bc1b5d"
+          },
+          "Id": {
+            "S": "7c38eac2-15ef-4738-941b-f8db16bc1b5d"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "KOOK-BAT-BUB-002"
+          },
+          "Name": {
+            "S": "Kookaburra Bubble Kashmir Willow Bat"
+          },
+          "Description": {
+            "S": "Quality Kashmir willow bat with iconic Kookaburra balance and feel"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Bats"
+          },
+          "CategorySlug": {
+            "S": "bats"
+          },
+          "Subcategory": {
+            "S": "Kookaburra"
+          },
+          "SubcategorySlug": {
+            "S": "kookaburra"
+          },
+          "Brand": {
+            "S": "Kookaburra"
+          },
+          "BrandSlug": {
+            "S": "kookaburra"
+          },
+          "Price": {
+            "N": "1100.0"
+          },
+          "CompareAtPrice": {
+            "N": "1400.0"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "19"
+          },
+          "RatingAverage": {
+            "N": "4.3"
+          },
+          "RatingCount": {
+            "N": "56"
+          },
+          "IsDeal": {
+            "BOOL": false
+          },
+          "IsClearance": {
+            "BOOL": true
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": false
+          },
+          "IsFeatured": {
+            "BOOL": false
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "bat",
+              "kookaburra",
+              "kashmir-willow"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000110000#PRODUCT#7c38eac2-15ef-4738-941b-f8db16bc1b5d"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00430#PRODUCT#7c38eac2-15ef-4738-941b-f8db16bc1b5d"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#7c38eac2-15ef-4738-941b-f8db16bc1b5d"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#kookaburra bubble kashmir willow bat#PRODUCT#7c38eac2-15ef-4738-941b-f8db16bc1b5d"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#4278f80e-a480-4440-a465-0b835c4b5f1a"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#4278f80e-a480-4440-a465-0b835c4b5f1a"
+          },
+          "Id": {
+            "S": "4278f80e-a480-4440-a465-0b835c4b5f1a"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "DSC-BAT-CON-001"
+          },
+          "Name": {
+            "S": "DSC Condor Flite English Willow Bat"
+          },
+          "Description": {
+            "S": "Premium English willow with innovative concave design for explosive hitting"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Bats"
+          },
+          "CategorySlug": {
+            "S": "bats"
+          },
+          "Subcategory": {
+            "S": "DSC"
+          },
+          "SubcategorySlug": {
+            "S": "dsc"
+          },
+          "Brand": {
+            "S": "DSC"
+          },
+          "BrandSlug": {
+            "S": "dsc"
+          },
+          "Price": {
+            "N": "320.0"
+          },
+          "CompareAtPrice": {
+            "N": "380.0"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "16"
+          },
+          "RatingAverage": {
+            "N": "4.5"
+          },
+          "RatingCount": {
+            "N": "34"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "bat",
+              "dsc",
+              "english-willow"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000032000#PRODUCT#4278f80e-a480-4440-a465-0b835c4b5f1a"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00450#PRODUCT#4278f80e-a480-4440-a465-0b835c4b5f1a"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#4278f80e-a480-4440-a465-0b835c4b5f1a"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#dsc condor flite english willow bat#PRODUCT#4278f80e-a480-4440-a465-0b835c4b5f1a"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#116c11d6-7b43-4300-b877-a26bb67ea06f"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#116c11d6-7b43-4300-b877-a26bb67ea06f"
+          },
+          "Id": {
+            "S": "116c11d6-7b43-4300-b877-a26bb67ea06f"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "DSC-BAT-PEA-002"
+          },
+          "Name": {
+            "S": "DSC Pearla Stroke Kashmir Willow Bat"
+          },
+          "Description": {
+            "S": "Lightweight Kashmir willow bat ideal for stroke players and match play"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Bats"
+          },
+          "CategorySlug": {
+            "S": "bats"
+          },
+          "Subcategory": {
+            "S": "DSC"
+          },
+          "SubcategorySlug": {
+            "S": "dsc"
+          },
+          "Brand": {
+            "S": "DSC"
+          },
+          "BrandSlug": {
+            "S": "dsc"
+          },
+          "Price": {
+            "N": "50.4"
+          },
+          "CompareAtPrice": {
+            "N": "60.0"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "16"
+          },
+          "RatingAverage": {
+            "N": "4.1"
+          },
+          "RatingCount": {
+            "N": "47"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "bat",
+              "dsc",
+              "kashmir-willow"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000005040#PRODUCT#116c11d6-7b43-4300-b877-a26bb67ea06f"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00409#PRODUCT#116c11d6-7b43-4300-b877-a26bb67ea06f"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#116c11d6-7b43-4300-b877-a26bb67ea06f"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#dsc pearla stroke kashmir willow bat#PRODUCT#116c11d6-7b43-4300-b877-a26bb67ea06f"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#f7a1db8f-b6f7-49f3-9b76-bf672f926454"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#f7a1db8f-b6f7-49f3-9b76-bf672f926454"
+          },
+          "Id": {
+            "S": "f7a1db8f-b6f7-49f3-9b76-bf672f926454"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "SG-BALL-CLUB-001"
+          },
+          "Name": {
+            "S": "SG Club Leather Cricket Ball - Red"
+          },
+          "Description": {
+            "S": "Premium quality red leather ball for competitive club cricket matches"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Balls"
+          },
+          "CategorySlug": {
+            "S": "balls"
+          },
+          "Subcategory": {
+            "S": "SG"
+          },
+          "SubcategorySlug": {
+            "S": "sg"
+          },
+          "Brand": {
+            "S": "SG"
+          },
+          "BrandSlug": {
+            "S": "sg"
+          },
+          "Price": {
+            "N": "10.2"
+          },
+          "CompareAtPrice": {
+            "N": "12.0"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "15"
+          },
+          "RatingAverage": {
+            "N": "4.5"
+          },
+          "RatingCount": {
+            "N": "89"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "ball",
+              "sg",
+              "leather",
+              "red"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000001019#PRODUCT#f7a1db8f-b6f7-49f3-9b76-bf672f926454"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00450#PRODUCT#f7a1db8f-b6f7-49f3-9b76-bf672f926454"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#f7a1db8f-b6f7-49f3-9b76-bf672f926454"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg club leather cricket ball - red#PRODUCT#f7a1db8f-b6f7-49f3-9b76-bf672f926454"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#eb7a8769-04e5-45dc-97e4-51e0143511c6"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#eb7a8769-04e5-45dc-97e4-51e0143511c6"
+          },
+          "Id": {
+            "S": "eb7a8769-04e5-45dc-97e4-51e0143511c6"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "SG-BALL-TEST-002"
+          },
+          "Name": {
+            "S": "SG Test Leather Ball - White"
+          },
+          "Description": {
+            "S": "Official white leather cricket ball for limited overs cricket"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Balls"
+          },
+          "CategorySlug": {
+            "S": "balls"
+          },
+          "Subcategory": {
+            "S": "SG"
+          },
+          "SubcategorySlug": {
+            "S": "sg"
+          },
+          "Brand": {
+            "S": "SG"
+          },
+          "BrandSlug": {
+            "S": "sg"
+          },
+          "Price": {
+            "N": "11.4"
+          },
+          "CompareAtPrice": {
+            "N": "13.2"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "14"
+          },
+          "RatingAverage": {
+            "N": "4.6"
+          },
+          "RatingCount": {
+            "N": "72"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "ball",
+              "sg",
+              "leather",
+              "white"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000001140#PRODUCT#eb7a8769-04e5-45dc-97e4-51e0143511c6"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00459#PRODUCT#eb7a8769-04e5-45dc-97e4-51e0143511c6"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#eb7a8769-04e5-45dc-97e4-51e0143511c6"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg test leather ball - white#PRODUCT#eb7a8769-04e5-45dc-97e4-51e0143511c6"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#77f93ec6-4e79-4d90-a39e-0b785f122e2a"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#77f93ec6-4e79-4d90-a39e-0b785f122e2a"
+          },
+          "Id": {
+            "S": "77f93ec6-4e79-4d90-a39e-0b785f122e2a"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "KOOK-BALL-REG-001"
+          },
+          "Name": {
+            "S": "Kookaburra Regulation Cricket Ball - Red"
+          },
+          "Description": {
+            "S": "Australian made premium leather ball used in international cricket"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Balls"
+          },
+          "CategorySlug": {
+            "S": "balls"
+          },
+          "Subcategory": {
+            "S": "Kookaburra"
+          },
+          "SubcategorySlug": {
+            "S": "kookaburra"
+          },
+          "Brand": {
+            "S": "Kookaburra"
+          },
+          "BrandSlug": {
+            "S": "kookaburra"
+          },
+          "Price": {
+            "N": "14.4"
+          },
+          "CompareAtPrice": {
+            "N": "17.4"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "17"
+          },
+          "OfferBadge": {
+            "S": "Premium"
+          },
+          "RatingAverage": {
+            "N": "4.8"
+          },
+          "RatingCount": {
+            "N": "95"
+          },
+          "IsDeal": {
+            "BOOL": false
+          },
+          "IsClearance": {
+            "BOOL": false
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": true
+          },
+          "IsFeatured": {
+            "BOOL": true
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "ball",
+              "kookaburra",
+              "leather",
+              "red",
+              "professional"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000001440#PRODUCT#77f93ec6-4e79-4d90-a39e-0b785f122e2a"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00480#PRODUCT#77f93ec6-4e79-4d90-a39e-0b785f122e2a"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#77f93ec6-4e79-4d90-a39e-0b785f122e2a"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#kookaburra regulation cricket ball - red#PRODUCT#77f93ec6-4e79-4d90-a39e-0b785f122e2a"
+          },
+          "GSI6PK": {
+            "S": "TENANT#default#FEATURED"
+          },
+          "GSI6SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#77f93ec6-4e79-4d90-a39e-0b785f122e2a"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#12713f8e-bce8-474a-bc74-2a55b5bde035"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#12713f8e-bce8-474a-bc74-2a55b5bde035"
+          },
+          "Id": {
+            "S": "12713f8e-bce8-474a-bc74-2a55b5bde035"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "KOOK-BALL-TUR-002"
+          },
+          "Name": {
+            "S": "Kookaburra Turf Ball - White"
+          },
+          "Description": {
+            "S": "High-quality white ball for ODI and T20 cricket with excellent durability"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Balls"
+          },
+          "CategorySlug": {
+            "S": "balls"
+          },
+          "Subcategory": {
+            "S": "Kookaburra"
+          },
+          "SubcategorySlug": {
+            "S": "kookaburra"
+          },
+          "Brand": {
+            "S": "Kookaburra"
+          },
+          "BrandSlug": {
+            "S": "kookaburra"
+          },
+          "Price": {
+            "N": "15.6"
+          },
+          "CompareAtPrice": {
+            "N": "18.6"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "16"
+          },
+          "RatingAverage": {
+            "N": "4.7"
+          },
+          "RatingCount": {
+            "N": "83"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "ball",
+              "kookaburra",
+              "leather",
+              "white"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000001560#PRODUCT#12713f8e-bce8-474a-bc74-2a55b5bde035"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00470#PRODUCT#12713f8e-bce8-474a-bc74-2a55b5bde035"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#12713f8e-bce8-474a-bc74-2a55b5bde035"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#kookaburra turf ball - white#PRODUCT#12713f8e-bce8-474a-bc74-2a55b5bde035"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#bd8fbb6f-afb3-43af-8968-c75be2123986"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#bd8fbb6f-afb3-43af-8968-c75be2123986"
+          },
+          "Id": {
+            "S": "bd8fbb6f-afb3-43af-8968-c75be2123986"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "SS-BALL-TON-001"
+          },
+          "Name": {
+            "S": "SS Ton Elite Leather Cricket Ball"
+          },
+          "Description": {
+            "S": "Match quality leather ball with excellent seam and consistent bounce"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Balls"
+          },
+          "CategorySlug": {
+            "S": "balls"
+          },
+          "Subcategory": {
+            "S": "SS"
+          },
+          "SubcategorySlug": {
+            "S": "ss"
+          },
+          "Brand": {
+            "S": "SS"
+          },
+          "BrandSlug": {
+            "S": "ss"
+          },
+          "Price": {
+            "N": "10.8"
+          },
+          "CompareAtPrice": {
+            "N": "12.6"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "14"
+          },
+          "RatingAverage": {
+            "N": "4.4"
+          },
+          "RatingCount": {
+            "N": "67"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "ball",
+              "ss",
+              "leather"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000001080#PRODUCT#bd8fbb6f-afb3-43af-8968-c75be2123986"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00440#PRODUCT#bd8fbb6f-afb3-43af-8968-c75be2123986"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#bd8fbb6f-afb3-43af-8968-c75be2123986"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#ss ton elite leather cricket ball#PRODUCT#bd8fbb6f-afb3-43af-8968-c75be2123986"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#c16b3397-d8c6-4ecb-acb7-c1ae03728861"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#c16b3397-d8c6-4ecb-acb7-c1ae03728861"
+          },
+          "Id": {
+            "S": "c16b3397-d8c6-4ecb-acb7-c1ae03728861"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "DSC-BALL-PEARLA-001"
+          },
+          "Name": {
+            "S": "DSC Pearla Match Cricket Ball"
+          },
+          "Description": {
+            "S": "Professional grade leather ball with superior grip and swing control"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Balls"
+          },
+          "CategorySlug": {
+            "S": "balls"
+          },
+          "Subcategory": {
+            "S": "DSC"
+          },
+          "SubcategorySlug": {
+            "S": "dsc"
+          },
+          "Brand": {
+            "S": "DSC"
+          },
+          "BrandSlug": {
+            "S": "dsc"
+          },
+          "Price": {
+            "N": "10.56"
+          },
+          "CompareAtPrice": {
+            "N": "12.0"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "12"
+          },
+          "RatingAverage": {
+            "N": "4.3"
+          },
+          "RatingCount": {
+            "N": "54"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "ball",
+              "dsc",
+              "leather"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000001056#PRODUCT#c16b3397-d8c6-4ecb-acb7-c1ae03728861"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00430#PRODUCT#c16b3397-d8c6-4ecb-acb7-c1ae03728861"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#c16b3397-d8c6-4ecb-acb7-c1ae03728861"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#dsc pearla match cricket ball#PRODUCT#c16b3397-d8c6-4ecb-acb7-c1ae03728861"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#469fabdb-4ab4-4a8f-879b-ddeeb005db6c"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#469fabdb-4ab4-4a8f-879b-ddeeb005db6c"
+          },
+          "Id": {
+            "S": "469fabdb-4ab4-4a8f-879b-ddeeb005db6c"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "SG-SHOES-VEL-001"
+          },
+          "Name": {
+            "S": "SG Velocity Spike Cricket Shoes"
+          },
+          "Description": {
+            "S": "Professional cricket shoes with metal spikes for superior grip on turf"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Shoes"
+          },
+          "CategorySlug": {
+            "S": "shoes"
+          },
+          "Subcategory": {
+            "S": "SG"
+          },
+          "SubcategorySlug": {
+            "S": "sg"
+          },
+          "Brand": {
+            "S": "SG"
+          },
+          "BrandSlug": {
+            "S": "sg"
+          },
+          "Price": {
+            "N": "42.0"
+          },
+          "CompareAtPrice": {
+            "N": "50.4"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "17"
+          },
+          "RatingAverage": {
+            "N": "4.4"
+          },
+          "RatingCount": {
+            "N": "76"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "shoes",
+              "sg",
+              "spike"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000004200#PRODUCT#469fabdb-4ab4-4a8f-879b-ddeeb005db6c"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00440#PRODUCT#469fabdb-4ab4-4a8f-879b-ddeeb005db6c"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#469fabdb-4ab4-4a8f-879b-ddeeb005db6c"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg velocity spike cricket shoes#PRODUCT#469fabdb-4ab4-4a8f-879b-ddeeb005db6c"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#d8832388-2384-492b-80ef-d96a1cf3bd35"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#d8832388-2384-492b-80ef-d96a1cf3bd35"
+          },
+          "Id": {
+            "S": "d8832388-2384-492b-80ef-d96a1cf3bd35"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "SG-SHOES-RUB-002"
+          },
+          "Name": {
+            "S": "SG Strike Rubber Cricket Shoes"
+          },
+          "Description": {
+            "S": "All-surface rubber sole cricket shoes ideal for practice and matches"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Shoes"
+          },
+          "CategorySlug": {
+            "S": "shoes"
+          },
+          "Subcategory": {
+            "S": "SG"
+          },
+          "SubcategorySlug": {
+            "S": "sg"
+          },
+          "Brand": {
+            "S": "SG"
+          },
+          "BrandSlug": {
+            "S": "sg"
+          },
+          "Price": {
+            "N": "30.0"
+          },
+          "CompareAtPrice": {
+            "N": "36.0"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "17"
+          },
+          "RatingAverage": {
+            "N": "4.2"
+          },
+          "RatingCount": {
+            "N": "92"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "shoes",
+              "sg",
+              "rubber"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000003000#PRODUCT#d8832388-2384-492b-80ef-d96a1cf3bd35"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00420#PRODUCT#d8832388-2384-492b-80ef-d96a1cf3bd35"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#d8832388-2384-492b-80ef-d96a1cf3bd35"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg strike rubber cricket shoes#PRODUCT#d8832388-2384-492b-80ef-d96a1cf3bd35"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#a25ce22b-8f3d-4544-8a38-ac9c24e7103e"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#a25ce22b-8f3d-4544-8a38-ac9c24e7103e"
+          },
+          "Id": {
+            "S": "a25ce22b-8f3d-4544-8a38-ac9c24e7103e"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "KOOK-SHOES-PRO-001"
+          },
+          "Name": {
+            "S": "Kookaburra Pro Player Spike Shoes"
+          },
+          "Description": {
+            "S": "Premium cricket footwear with advanced cushioning and spike technology"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Shoes"
+          },
+          "CategorySlug": {
+            "S": "shoes"
+          },
+          "Subcategory": {
+            "S": "Kookaburra"
+          },
+          "SubcategorySlug": {
+            "S": "kookaburra"
+          },
+          "Brand": {
+            "S": "Kookaburra"
+          },
+          "BrandSlug": {
+            "S": "kookaburra"
+          },
+          "Price": {
+            "N": "520.0"
+          },
+          "CompareAtPrice": {
+            "N": "620.0"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "16"
+          },
+          "OfferBadge": {
+            "S": "Premium"
+          },
+          "RatingAverage": {
+            "N": "4.6"
+          },
+          "RatingCount": {
+            "N": "58"
+          },
+          "IsDeal": {
+            "BOOL": false
+          },
+          "IsClearance": {
+            "BOOL": false
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": false
+          },
+          "IsFeatured": {
+            "BOOL": true
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "shoes",
+              "kookaburra",
+              "spike"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000052000#PRODUCT#a25ce22b-8f3d-4544-8a38-ac9c24e7103e"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00459#PRODUCT#a25ce22b-8f3d-4544-8a38-ac9c24e7103e"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#a25ce22b-8f3d-4544-8a38-ac9c24e7103e"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#kookaburra pro player spike shoes#PRODUCT#a25ce22b-8f3d-4544-8a38-ac9c24e7103e"
+          },
+          "GSI6PK": {
+            "S": "TENANT#default#FEATURED"
+          },
+          "GSI6SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#a25ce22b-8f3d-4544-8a38-ac9c24e7103e"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#1e0c2dca-727b-4571-a59e-46540a733071"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#1e0c2dca-727b-4571-a59e-46540a733071"
+          },
+          "Id": {
+            "S": "1e0c2dca-727b-4571-a59e-46540a733071"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "SS-SHOES-RANG-001"
+          },
+          "Name": {
+            "S": "SS Ranger Cricket Shoes with Spikes"
+          },
+          "Description": {
+            "S": "Durable cricket shoes with reinforced toe and excellent ankle support"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Shoes"
+          },
+          "CategorySlug": {
+            "S": "shoes"
+          },
+          "Subcategory": {
+            "S": "SS"
+          },
+          "SubcategorySlug": {
+            "S": "ss"
+          },
+          "Brand": {
+            "S": "SS"
+          },
+          "BrandSlug": {
+            "S": "ss"
+          },
+          "Price": {
+            "N": "38.4"
+          },
+          "CompareAtPrice": {
+            "N": "45.6"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "16"
+          },
+          "RatingAverage": {
+            "N": "4.3"
+          },
+          "RatingCount": {
+            "N": "64"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "shoes",
+              "ss",
+              "spike"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000003840#PRODUCT#1e0c2dca-727b-4571-a59e-46540a733071"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00430#PRODUCT#1e0c2dca-727b-4571-a59e-46540a733071"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#1e0c2dca-727b-4571-a59e-46540a733071"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#ss ranger cricket shoes with spikes#PRODUCT#1e0c2dca-727b-4571-a59e-46540a733071"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#862cef10-117b-4b8d-bfe9-1eb4cdbc0709"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#862cef10-117b-4b8d-bfe9-1eb4cdbc0709"
+          },
+          "Id": {
+            "S": "862cef10-117b-4b8d-bfe9-1eb4cdbc0709"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "SG-HEL-AEROGYM-001"
+          },
+          "Name": {
+            "S": "SG Aerogym Cricket Helmet with Titanium Grill"
+          },
+          "Description": {
+            "S": "Lightweight helmet with superior protection and ventilation for all formats"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Helmets"
+          },
+          "CategorySlug": {
+            "S": "helmets"
+          },
+          "Subcategory": {
+            "S": "SG"
+          },
+          "SubcategorySlug": {
+            "S": "sg"
+          },
+          "Brand": {
+            "S": "SG"
+          },
+          "BrandSlug": {
+            "S": "sg"
+          },
+          "Price": {
+            "N": "33.6"
+          },
+          "CompareAtPrice": {
+            "N": "39.6"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "15"
+          },
+          "RatingAverage": {
+            "N": "4.5"
+          },
+          "RatingCount": {
+            "N": "48"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "helmet",
+              "sg",
+              "safety"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000003360#PRODUCT#862cef10-117b-4b8d-bfe9-1eb4cdbc0709"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00450#PRODUCT#862cef10-117b-4b8d-bfe9-1eb4cdbc0709"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#862cef10-117b-4b8d-bfe9-1eb4cdbc0709"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#sg aerogym cricket helmet with titanium grill#PRODUCT#862cef10-117b-4b8d-bfe9-1eb4cdbc0709"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#f5d9af35-db0d-4208-9ace-d2f8aff65bf5"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#f5d9af35-db0d-4208-9ace-d2f8aff65bf5"
+          },
+          "Id": {
+            "S": "f5d9af35-db0d-4208-9ace-d2f8aff65bf5"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "SG-HEL-PRO-002"
+          },
+          "Name": {
+            "S": "SG Pro Guard Cricket Helmet"
+          },
+          "Description": {
+            "S": "Professional grade helmet with neck guard and adjustable fit system"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Helmets"
+          },
+          "CategorySlug": {
+            "S": "helmets"
           },
           "Subcategory": {
             "S": "SG"
@@ -70,7 +2726,7 @@
             "N": "4.6"
           },
           "RatingCount": {
-            "N": "56"
+            "N": "39"
           },
           "IsActive": {
             "BOOL": true
@@ -78,152 +2734,9 @@
           "Tags": {
             "SS": [
               "cricket",
-              "bag",
+              "helmet",
               "sg",
-              "wheelie"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          },
-          "GSI2PK": {
-            "S": "TENANT#default"
-          },
-          "GSI2SK": {
-            "S": "PRICE#0000004200#PRODUCT#e29ee9c2-275b-49a0-8893-ae8c442e058a"
-          },
-          "GSI3PK": {
-            "S": "TENANT#default"
-          },
-          "GSI3SK": {
-            "S": "RATING#00459#PRODUCT#e29ee9c2-275b-49a0-8893-ae8c442e058a"
-          },
-          "GSI4PK": {
-            "S": "TENANT#default"
-          },
-          "GSI4SK": {
-            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#e29ee9c2-275b-49a0-8893-ae8c442e058a"
-          },
-          "GSI5PK": {
-            "S": "TENANT#default"
-          },
-          "GSI5SK": {
-            "S": "NAME#sg teampro cricket wheelie bag#PRODUCT#e29ee9c2-275b-49a0-8893-ae8c442e058a"
-          },
-          "Attributes": {
-            "M": {
-              "Upper Material": {
-                "S": "Mesh with Synthetic Overlays"
-              },
-              "Sole": {
-                "S": "Rubber"
-              },
-              "Closure": {
-                "S": "Lace-Up"
-              },
-              "Weight": {
-                "S": "320g per shoe"
-              },
-              "Arch Support": {
-                "S": "Medium"
-              },
-              "Cushioning": {
-                "S": "EVA Midsole"
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#9c15938d-9f05-4374-9044-f9a84bf2a096"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#9c15938d-9f05-4374-9044-f9a84bf2a096"
-          },
-          "Id": {
-            "S": "9c15938d-9f05-4374-9044-f9a84bf2a096"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "KOOK-BAG-PRO-001"
-          },
-          "Name": {
-            "S": "Kookaburra Pro Players Cricket Bag"
-          },
-          "Description": {
-            "S": "Premium kit bag used by professionals with reinforced base and ample storage"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Bags"
-          },
-          "CategorySlug": {
-            "S": "bags"
-          },
-          "Subcategory": {
-            "S": "Kookaburra"
-          },
-          "SubcategorySlug": {
-            "S": "kookaburra"
-          },
-          "Brand": {
-            "S": "Kookaburra"
-          },
-          "BrandSlug": {
-            "S": "kookaburra"
-          },
-          "Price": {
-            "N": "600.0"
-          },
-          "CompareAtPrice": {
-            "N": "720.0"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "16"
-          },
-          "OfferBadge": {
-            "S": "Bestseller"
-          },
-          "RatingAverage": {
-            "N": "4.7"
-          },
-          "RatingCount": {
-            "N": "64"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "bag",
-              "kookaburra",
+              "safety",
               "professional"
             ]
           },
@@ -240,44 +2753,25 @@
             "S": "TENANT#default"
           },
           "GSI2SK": {
-            "S": "PRICE#0000060000#PRODUCT#9c15938d-9f05-4374-9044-f9a84bf2a096"
+            "S": "PRICE#0000004200#PRODUCT#f5d9af35-db0d-4208-9ace-d2f8aff65bf5"
           },
           "GSI3PK": {
             "S": "TENANT#default"
           },
           "GSI3SK": {
-            "S": "RATING#00470#PRODUCT#9c15938d-9f05-4374-9044-f9a84bf2a096"
+            "S": "RATING#00459#PRODUCT#f5d9af35-db0d-4208-9ace-d2f8aff65bf5"
           },
           "GSI4PK": {
             "S": "TENANT#default"
           },
           "GSI4SK": {
-            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#9c15938d-9f05-4374-9044-f9a84bf2a096"
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#f5d9af35-db0d-4208-9ace-d2f8aff65bf5"
           },
           "GSI5PK": {
             "S": "TENANT#default"
           },
           "GSI5SK": {
-            "S": "NAME#kookaburra pro players cricket bag#PRODUCT#9c15938d-9f05-4374-9044-f9a84bf2a096"
-          },
-          "Attributes": {
-            "M": {
-              "Fabric": {
-                "S": "100% Polyester"
-              },
-              "Fit": {
-                "S": "Regular"
-              },
-              "Sleeve": {
-                "S": "Short"
-              },
-              "Neck": {
-                "S": "Round"
-              },
-              "Care": {
-                "S": "Machine Washable"
-              }
-            }
+            "S": "NAME#sg pro guard cricket helmet#PRODUCT#f5d9af35-db0d-4208-9ace-d2f8aff65bf5"
           }
         }
       }
@@ -289,28 +2783,28 @@
             "S": "TENANT#default"
           },
           "SK": {
-            "S": "PRODUCT#6a0d5877-3a3c-49f8-b4db-29be3dedd683"
+            "S": "PRODUCT#18e29e9f-f3bb-4fba-b9d4-4a00eedd35a6"
           },
           "GSI1PK": {
             "S": "TENANT#default#PRODUCTS"
           },
           "GSI1SK": {
-            "S": "PRODUCT#6a0d5877-3a3c-49f8-b4db-29be3dedd683"
+            "S": "PRODUCT#18e29e9f-f3bb-4fba-b9d4-4a00eedd35a6"
           },
           "Id": {
-            "S": "6a0d5877-3a3c-49f8-b4db-29be3dedd683"
+            "S": "18e29e9f-f3bb-4fba-b9d4-4a00eedd35a6"
           },
           "TenantId": {
             "S": "default"
           },
           "Sku": {
-            "S": "SS-BAG-CLUB-001"
+            "S": "KOOK-HEL-KAH-001"
           },
           "Name": {
-            "S": "SS Club Cricket Kit Bag"
+            "S": "Kookaburra Kahuna Cricket Helmet"
           },
           "Description": {
-            "S": "Durable cricket bag with organized compartments for bats, pads and accessories"
+            "S": "Australian standard helmet with carbon steel grill and maximum protection"
           },
           "Department": {
             "S": "Cricket"
@@ -319,10 +2813,153 @@
             "S": "cricket"
           },
           "Category": {
-            "S": "Bags"
+            "S": "Helmets"
           },
           "CategorySlug": {
-            "S": "bags"
+            "S": "helmets"
+          },
+          "Subcategory": {
+            "S": "Kookaburra"
+          },
+          "SubcategorySlug": {
+            "S": "kookaburra"
+          },
+          "Brand": {
+            "S": "Kookaburra"
+          },
+          "BrandSlug": {
+            "S": "kookaburra"
+          },
+          "Price": {
+            "N": "580.0"
+          },
+          "CompareAtPrice": {
+            "N": "680.0"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "15"
+          },
+          "OfferBadge": {
+            "S": "Premium"
+          },
+          "RatingAverage": {
+            "N": "4.8"
+          },
+          "RatingCount": {
+            "N": "52"
+          },
+          "IsDeal": {
+            "BOOL": false
+          },
+          "IsClearance": {
+            "BOOL": false
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": false
+          },
+          "IsFeatured": {
+            "BOOL": true
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "helmet",
+              "kookaburra",
+              "safety"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000058000#PRODUCT#18e29e9f-f3bb-4fba-b9d4-4a00eedd35a6"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00480#PRODUCT#18e29e9f-f3bb-4fba-b9d4-4a00eedd35a6"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#18e29e9f-f3bb-4fba-b9d4-4a00eedd35a6"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#kookaburra kahuna cricket helmet#PRODUCT#18e29e9f-f3bb-4fba-b9d4-4a00eedd35a6"
+          },
+          "GSI6PK": {
+            "S": "TENANT#default#FEATURED"
+          },
+          "GSI6SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#18e29e9f-f3bb-4fba-b9d4-4a00eedd35a6"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#13601e8c-43e5-4bca-8dd9-3c3b328dbf75"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#13601e8c-43e5-4bca-8dd9-3c3b328dbf75"
+          },
+          "Id": {
+            "S": "13601e8c-43e5-4bca-8dd9-3c3b328dbf75"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "SS-HEL-MAS-001"
+          },
+          "Name": {
+            "S": "SS Master Cricket Helmet"
+          },
+          "Description": {
+            "S": "Quality cricket helmet with comfortable padding and secure face protection"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Helmets"
+          },
+          "CategorySlug": {
+            "S": "helmets"
           },
           "Subcategory": {
             "S": "SS"
@@ -352,7 +2989,141 @@
             "N": "4.3"
           },
           "RatingCount": {
-            "N": "82"
+            "N": "61"
+          },
+          "IsActive": {
+            "BOOL": true
+          },
+          "Tags": {
+            "SS": [
+              "cricket",
+              "helmet",
+              "ss",
+              "safety"
+            ]
+          },
+          "CreatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "UpdatedAt": {
+            "S": "2025-12-29T00:00:00.000Z"
+          },
+          "ThumbnailUrl": {
+            "NULL": true
+          },
+          "GSI2PK": {
+            "S": "TENANT#default"
+          },
+          "GSI2SK": {
+            "S": "PRICE#0000003000#PRODUCT#13601e8c-43e5-4bca-8dd9-3c3b328dbf75"
+          },
+          "GSI3PK": {
+            "S": "TENANT#default"
+          },
+          "GSI3SK": {
+            "S": "RATING#00430#PRODUCT#13601e8c-43e5-4bca-8dd9-3c3b328dbf75"
+          },
+          "GSI4PK": {
+            "S": "TENANT#default"
+          },
+          "GSI4SK": {
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#13601e8c-43e5-4bca-8dd9-3c3b328dbf75"
+          },
+          "GSI5PK": {
+            "S": "TENANT#default"
+          },
+          "GSI5SK": {
+            "S": "NAME#ss master cricket helmet#PRODUCT#13601e8c-43e5-4bca-8dd9-3c3b328dbf75"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "TENANT#default"
+          },
+          "SK": {
+            "S": "PRODUCT#0853b39a-ab73-40de-a456-13ad24cad034"
+          },
+          "GSI1PK": {
+            "S": "TENANT#default#PRODUCTS"
+          },
+          "GSI1SK": {
+            "S": "PRODUCT#0853b39a-ab73-40de-a456-13ad24cad034"
+          },
+          "Id": {
+            "S": "0853b39a-ab73-40de-a456-13ad24cad034"
+          },
+          "TenantId": {
+            "S": "default"
+          },
+          "Sku": {
+            "S": "SG-BAG-ECOPAK-001"
+          },
+          "Name": {
+            "S": "SG Ecopak Cricket Kit Bag"
+          },
+          "Description": {
+            "S": "Spacious cricket bag with multiple compartments and wheel system"
+          },
+          "Department": {
+            "S": "Cricket"
+          },
+          "DepartmentSlug": {
+            "S": "cricket"
+          },
+          "Category": {
+            "S": "Bags"
+          },
+          "CategorySlug": {
+            "S": "bags"
+          },
+          "Subcategory": {
+            "S": "SG"
+          },
+          "SubcategorySlug": {
+            "S": "sg"
+          },
+          "Brand": {
+            "S": "SG"
+          },
+          "BrandSlug": {
+            "S": "sg"
+          },
+          "Price": {
+            "N": "33.6"
+          },
+          "CompareAtPrice": {
+            "N": "42.0"
+          },
+          "Currency": {
+            "S": "USD"
+          },
+          "DiscountPercentage": {
+            "N": "20"
+          },
+          "RatingAverage": {
+            "N": "4.4"
+          },
+          "RatingCount": {
+            "N": "73"
+          },
+          "IsDeal": {
+            "BOOL": false
+          },
+          "IsClearance": {
+            "BOOL": true
+          },
+          "IsNewArrival": {
+            "BOOL": false
+          },
+          "IsBestSeller": {
+            "BOOL": false
+          },
+          "IsFeatured": {
+            "BOOL": false
           },
           "IsActive": {
             "BOOL": true
@@ -361,145 +3132,8 @@
             "SS": [
               "cricket",
               "bag",
-              "ss"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          },
-          "GSI2PK": {
-            "S": "TENANT#default"
-          },
-          "GSI2SK": {
-            "S": "PRICE#0000003000#PRODUCT#6a0d5877-3a3c-49f8-b4db-29be3dedd683"
-          },
-          "GSI3PK": {
-            "S": "TENANT#default"
-          },
-          "GSI3SK": {
-            "S": "RATING#00430#PRODUCT#6a0d5877-3a3c-49f8-b4db-29be3dedd683"
-          },
-          "GSI4PK": {
-            "S": "TENANT#default"
-          },
-          "GSI4SK": {
-            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#6a0d5877-3a3c-49f8-b4db-29be3dedd683"
-          },
-          "GSI5PK": {
-            "S": "TENANT#default"
-          },
-          "GSI5SK": {
-            "S": "NAME#ss club cricket kit bag#PRODUCT#6a0d5877-3a3c-49f8-b4db-29be3dedd683"
-          },
-          "Attributes": {
-            "M": {
-              "Frame Material": {
-                "S": "Graphite"
-              },
-              "String Pattern": {
-                "S": "16x19"
-              },
-              "Head Size": {
-                "S": "100 sq in"
-              },
-              "Balance": {
-                "S": "Even"
-              },
-              "Recommended String Tension": {
-                "S": "50-60 lbs"
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#6b83bbe4-3c0e-4b7d-ad1f-f9613fde119c"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#6b83bbe4-3c0e-4b7d-ad1f-f9613fde119c"
-          },
-          "Id": {
-            "S": "6b83bbe4-3c0e-4b7d-ad1f-f9613fde119c"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "SG-PADS-CLUB-001"
-          },
-          "Name": {
-            "S": "SG Club Batting Pads"
-          },
-          "Description": {
-            "S": "Quality batting pads with triple layer foam protection and comfortable fit"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Pads"
-          },
-          "CategorySlug": {
-            "S": "pads"
-          },
-          "Subcategory": {
-            "S": "SG"
-          },
-          "SubcategorySlug": {
-            "S": "sg"
-          },
-          "Brand": {
-            "S": "SG"
-          },
-          "BrandSlug": {
-            "S": "sg"
-          },
-          "Price": {
-            "N": "26.4"
-          },
-          "CompareAtPrice": {
-            "N": "32.4"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "19"
-          },
-          "RatingAverage": {
-            "N": "4.4"
-          },
-          "RatingCount": {
-            "N": "58"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "pads",
               "sg",
-              "batting"
+              "kitbag"
             ]
           },
           "CreatedAt": {
@@ -515,2185 +3149,25 @@
             "S": "TENANT#default"
           },
           "GSI2SK": {
-            "S": "PRICE#0000002640#PRODUCT#6b83bbe4-3c0e-4b7d-ad1f-f9613fde119c"
+            "S": "PRICE#0000003360#PRODUCT#0853b39a-ab73-40de-a456-13ad24cad034"
           },
           "GSI3PK": {
             "S": "TENANT#default"
           },
           "GSI3SK": {
-            "S": "RATING#00440#PRODUCT#6b83bbe4-3c0e-4b7d-ad1f-f9613fde119c"
+            "S": "RATING#00440#PRODUCT#0853b39a-ab73-40de-a456-13ad24cad034"
           },
           "GSI4PK": {
             "S": "TENANT#default"
           },
           "GSI4SK": {
-            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#6b83bbe4-3c0e-4b7d-ad1f-f9613fde119c"
+            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#0853b39a-ab73-40de-a456-13ad24cad034"
           },
           "GSI5PK": {
             "S": "TENANT#default"
           },
           "GSI5SK": {
-            "S": "NAME#sg club batting pads#PRODUCT#6b83bbe4-3c0e-4b7d-ad1f-f9613fde119c"
-          },
-          "Attributes": {
-            "M": {
-              "Shell": {
-                "S": "ABS Plastic"
-              },
-              "Padding": {
-                "S": "EVA Foam"
-              },
-              "Ventilation": {
-                "S": "12 Vents"
-              },
-              "Certification": {
-                "S": "CE Certified"
-              },
-              "Adjustable": {
-                "S": "Yes"
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#0a18b01e-6896-4c19-aa04-c8a3cbeb9685"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#0a18b01e-6896-4c19-aa04-c8a3cbeb9685"
-          },
-          "Id": {
-            "S": "0a18b01e-6896-4c19-aa04-c8a3cbeb9685"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "SG-PADS-TEST-002"
-          },
-          "Name": {
-            "S": "SG Test Batting Pads"
-          },
-          "Description": {
-            "S": "Professional grade pads with superior protection and lightweight design"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Pads"
-          },
-          "CategorySlug": {
-            "S": "pads"
-          },
-          "Subcategory": {
-            "S": "SG"
-          },
-          "SubcategorySlug": {
-            "S": "sg"
-          },
-          "Brand": {
-            "S": "SG"
-          },
-          "BrandSlug": {
-            "S": "sg"
-          },
-          "Price": {
-            "N": "38.4"
-          },
-          "CompareAtPrice": {
-            "N": "45.6"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "16"
-          },
-          "RatingAverage": {
-            "N": "4.6"
-          },
-          "RatingCount": {
-            "N": "42"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "pads",
-              "sg",
-              "professional"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          },
-          "GSI2PK": {
-            "S": "TENANT#default"
-          },
-          "GSI2SK": {
-            "S": "PRICE#0000003840#PRODUCT#0a18b01e-6896-4c19-aa04-c8a3cbeb9685"
-          },
-          "GSI3PK": {
-            "S": "TENANT#default"
-          },
-          "GSI3SK": {
-            "S": "RATING#00459#PRODUCT#0a18b01e-6896-4c19-aa04-c8a3cbeb9685"
-          },
-          "GSI4PK": {
-            "S": "TENANT#default"
-          },
-          "GSI4SK": {
-            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#0a18b01e-6896-4c19-aa04-c8a3cbeb9685"
-          },
-          "GSI5PK": {
-            "S": "TENANT#default"
-          },
-          "GSI5SK": {
-            "S": "NAME#sg test batting pads#PRODUCT#0a18b01e-6896-4c19-aa04-c8a3cbeb9685"
-          },
-          "Attributes": {
-            "M": {
-              "Core": {
-                "S": "Cork"
-              },
-              "Cover": {
-                "S": "Leather"
-              },
-              "Weight": {
-                "S": "156-163g"
-              },
-              "Circumference": {
-                "S": "22.4-22.9 cm"
-              },
-              "Seam": {
-                "S": "Hand Stitched"
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#b25b0b53-c7a9-483f-81f7-7d08bd4c4ebd"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#b25b0b53-c7a9-483f-81f7-7d08bd4c4ebd"
-          },
-          "Id": {
-            "S": "b25b0b53-c7a9-483f-81f7-7d08bd4c4ebd"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "KOOK-PADS-KAH-001"
-          },
-          "Name": {
-            "S": "Kookaburra Kahuna Pro Batting Pads"
-          },
-          "Description": {
-            "S": "Premium batting pads with advanced protection system and anatomical design"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Pads"
-          },
-          "CategorySlug": {
-            "S": "pads"
-          },
-          "Subcategory": {
-            "S": "Kookaburra"
-          },
-          "SubcategorySlug": {
-            "S": "kookaburra"
-          },
-          "Brand": {
-            "S": "Kookaburra"
-          },
-          "BrandSlug": {
-            "S": "kookaburra"
-          },
-          "Price": {
-            "N": "540.0"
-          },
-          "CompareAtPrice": {
-            "N": "640.0"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "16"
-          },
-          "OfferBadge": {
-            "S": "Premium"
-          },
-          "RatingAverage": {
-            "N": "4.7"
-          },
-          "RatingCount": {
-            "N": "49"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "pads",
-              "kookaburra",
-              "professional"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          },
-          "GSI2PK": {
-            "S": "TENANT#default"
-          },
-          "GSI2SK": {
-            "S": "PRICE#0000054000#PRODUCT#b25b0b53-c7a9-483f-81f7-7d08bd4c4ebd"
-          },
-          "GSI3PK": {
-            "S": "TENANT#default"
-          },
-          "GSI3SK": {
-            "S": "RATING#00470#PRODUCT#b25b0b53-c7a9-483f-81f7-7d08bd4c4ebd"
-          },
-          "GSI4PK": {
-            "S": "TENANT#default"
-          },
-          "GSI4SK": {
-            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#b25b0b53-c7a9-483f-81f7-7d08bd4c4ebd"
-          },
-          "GSI5PK": {
-            "S": "TENANT#default"
-          },
-          "GSI5SK": {
-            "S": "NAME#kookaburra kahuna pro batting pads#PRODUCT#b25b0b53-c7a9-483f-81f7-7d08bd4c4ebd"
-          },
-          "Attributes": {
-            "M": {
-              "Upper Material": {
-                "S": "Mesh with Synthetic Overlays"
-              },
-              "Sole": {
-                "S": "Rubber"
-              },
-              "Closure": {
-                "S": "Lace-Up"
-              },
-              "Weight": {
-                "S": "320g per shoe"
-              },
-              "Arch Support": {
-                "S": "Medium"
-              },
-              "Cushioning": {
-                "S": "EVA Midsole"
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#b03c898d-471a-415e-af9b-46ada2a7b093"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#b03c898d-471a-415e-af9b-46ada2a7b093"
-          },
-          "Id": {
-            "S": "b03c898d-471a-415e-af9b-46ada2a7b093"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "SS-PADS-TON-001"
-          },
-          "Name": {
-            "S": "SS Ton Reserve Batting Pads"
-          },
-          "Description": {
-            "S": "High-quality pads with excellent mobility and comprehensive leg protection"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Pads"
-          },
-          "CategorySlug": {
-            "S": "pads"
-          },
-          "Subcategory": {
-            "S": "SS"
-          },
-          "SubcategorySlug": {
-            "S": "ss"
-          },
-          "Brand": {
-            "S": "SS"
-          },
-          "BrandSlug": {
-            "S": "ss"
-          },
-          "Price": {
-            "N": "42.0"
-          },
-          "CompareAtPrice": {
-            "N": "50.4"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "17"
-          },
-          "RatingAverage": {
-            "N": "4.5"
-          },
-          "RatingCount": {
-            "N": "53"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "pads",
-              "ss"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          },
-          "GSI2PK": {
-            "S": "TENANT#default"
-          },
-          "GSI2SK": {
-            "S": "PRICE#0000004200#PRODUCT#b03c898d-471a-415e-af9b-46ada2a7b093"
-          },
-          "GSI3PK": {
-            "S": "TENANT#default"
-          },
-          "GSI3SK": {
-            "S": "RATING#00450#PRODUCT#b03c898d-471a-415e-af9b-46ada2a7b093"
-          },
-          "GSI4PK": {
-            "S": "TENANT#default"
-          },
-          "GSI4SK": {
-            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#b03c898d-471a-415e-af9b-46ada2a7b093"
-          },
-          "GSI5PK": {
-            "S": "TENANT#default"
-          },
-          "GSI5SK": {
-            "S": "NAME#ss ton reserve batting pads#PRODUCT#b03c898d-471a-415e-af9b-46ada2a7b093"
-          },
-          "Attributes": {
-            "M": {
-              "Fabric": {
-                "S": "100% Polyester"
-              },
-              "Fit": {
-                "S": "Regular"
-              },
-              "Sleeve": {
-                "S": "Short"
-              },
-              "Neck": {
-                "S": "Round"
-              },
-              "Care": {
-                "S": "Machine Washable"
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#c27c1f4c-08a3-4721-b9c2-51ecd390623c"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#c27c1f4c-08a3-4721-b9c2-51ecd390623c"
-          },
-          "Id": {
-            "S": "c27c1f4c-08a3-4721-b9c2-51ecd390623c"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "SG-GLOVES-CLUB-001"
-          },
-          "Name": {
-            "S": "SG Club Batting Gloves"
-          },
-          "Description": {
-            "S": "Premium batting gloves with superior grip and impact protection"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Gloves"
-          },
-          "CategorySlug": {
-            "S": "gloves"
-          },
-          "Subcategory": {
-            "S": "SG"
-          },
-          "SubcategorySlug": {
-            "S": "sg"
-          },
-          "Brand": {
-            "S": "SG"
-          },
-          "BrandSlug": {
-            "S": "sg"
-          },
-          "Price": {
-            "N": "18.0"
-          },
-          "CompareAtPrice": {
-            "N": "21.6"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "17"
-          },
-          "RatingAverage": {
-            "N": "4.4"
-          },
-          "RatingCount": {
-            "N": "86"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "gloves",
-              "sg",
-              "batting"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          },
-          "GSI2PK": {
-            "S": "TENANT#default"
-          },
-          "GSI2SK": {
-            "S": "PRICE#0000001800#PRODUCT#c27c1f4c-08a3-4721-b9c2-51ecd390623c"
-          },
-          "GSI3PK": {
-            "S": "TENANT#default"
-          },
-          "GSI3SK": {
-            "S": "RATING#00440#PRODUCT#c27c1f4c-08a3-4721-b9c2-51ecd390623c"
-          },
-          "GSI4PK": {
-            "S": "TENANT#default"
-          },
-          "GSI4SK": {
-            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#c27c1f4c-08a3-4721-b9c2-51ecd390623c"
-          },
-          "GSI5PK": {
-            "S": "TENANT#default"
-          },
-          "GSI5SK": {
-            "S": "NAME#sg club batting gloves#PRODUCT#c27c1f4c-08a3-4721-b9c2-51ecd390623c"
-          },
-          "Attributes": {
-            "M": {
-              "Frame Material": {
-                "S": "Graphite"
-              },
-              "String Pattern": {
-                "S": "16x19"
-              },
-              "Head Size": {
-                "S": "100 sq in"
-              },
-              "Balance": {
-                "S": "Even"
-              },
-              "Recommended String Tension": {
-                "S": "50-60 lbs"
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#18e5c43e-831a-4b9b-bb4b-bca3f1b19758"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#18e5c43e-831a-4b9b-bb4b-bca3f1b19758"
-          },
-          "Id": {
-            "S": "18e5c43e-831a-4b9b-bb4b-bca3f1b19758"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "SG-GLOVES-TEST-002"
-          },
-          "Name": {
-            "S": "SG Test Batting Gloves"
-          },
-          "Description": {
-            "S": "Professional grade gloves with ergonomic design and maximum comfort"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Gloves"
-          },
-          "CategorySlug": {
-            "S": "gloves"
-          },
-          "Subcategory": {
-            "S": "SG"
-          },
-          "SubcategorySlug": {
-            "S": "sg"
-          },
-          "Brand": {
-            "S": "SG"
-          },
-          "BrandSlug": {
-            "S": "sg"
-          },
-          "Price": {
-            "N": "26.4"
-          },
-          "CompareAtPrice": {
-            "N": "32.4"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "19"
-          },
-          "RatingAverage": {
-            "N": "4.6"
-          },
-          "RatingCount": {
-            "N": "67"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "gloves",
-              "sg",
-              "professional"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          },
-          "GSI2PK": {
-            "S": "TENANT#default"
-          },
-          "GSI2SK": {
-            "S": "PRICE#0000002640#PRODUCT#18e5c43e-831a-4b9b-bb4b-bca3f1b19758"
-          },
-          "GSI3PK": {
-            "S": "TENANT#default"
-          },
-          "GSI3SK": {
-            "S": "RATING#00459#PRODUCT#18e5c43e-831a-4b9b-bb4b-bca3f1b19758"
-          },
-          "GSI4PK": {
-            "S": "TENANT#default"
-          },
-          "GSI4SK": {
-            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#18e5c43e-831a-4b9b-bb4b-bca3f1b19758"
-          },
-          "GSI5PK": {
-            "S": "TENANT#default"
-          },
-          "GSI5SK": {
-            "S": "NAME#sg test batting gloves#PRODUCT#18e5c43e-831a-4b9b-bb4b-bca3f1b19758"
-          },
-          "Attributes": {
-            "M": {
-              "Shell": {
-                "S": "ABS Plastic"
-              },
-              "Padding": {
-                "S": "EVA Foam"
-              },
-              "Ventilation": {
-                "S": "12 Vents"
-              },
-              "Certification": {
-                "S": "CE Certified"
-              },
-              "Adjustable": {
-                "S": "Yes"
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#1a7d2605-e514-4cbf-80f9-8c44445ff172"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#1a7d2605-e514-4cbf-80f9-8c44445ff172"
-          },
-          "Id": {
-            "S": "1a7d2605-e514-4cbf-80f9-8c44445ff172"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "KOOK-GLOVES-KAH-001"
-          },
-          "Name": {
-            "S": "Kookaburra Kahuna Batting Gloves"
-          },
-          "Description": {
-            "S": "Elite batting gloves with dual-layer finger protection and superior feel"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Gloves"
-          },
-          "CategorySlug": {
-            "S": "gloves"
-          },
-          "Subcategory": {
-            "S": "Kookaburra"
-          },
-          "SubcategorySlug": {
-            "S": "kookaburra"
-          },
-          "Brand": {
-            "S": "Kookaburra"
-          },
-          "BrandSlug": {
-            "S": "kookaburra"
-          },
-          "Price": {
-            "N": "33.6"
-          },
-          "CompareAtPrice": {
-            "N": "39.6"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "15"
-          },
-          "OfferBadge": {
-            "S": "Premium"
-          },
-          "RatingAverage": {
-            "N": "4.7"
-          },
-          "RatingCount": {
-            "N": "54"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "gloves",
-              "kookaburra",
-              "professional"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          },
-          "GSI2PK": {
-            "S": "TENANT#default"
-          },
-          "GSI2SK": {
-            "S": "PRICE#0000003360#PRODUCT#1a7d2605-e514-4cbf-80f9-8c44445ff172"
-          },
-          "GSI3PK": {
-            "S": "TENANT#default"
-          },
-          "GSI3SK": {
-            "S": "RATING#00470#PRODUCT#1a7d2605-e514-4cbf-80f9-8c44445ff172"
-          },
-          "GSI4PK": {
-            "S": "TENANT#default"
-          },
-          "GSI4SK": {
-            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#1a7d2605-e514-4cbf-80f9-8c44445ff172"
-          },
-          "GSI5PK": {
-            "S": "TENANT#default"
-          },
-          "GSI5SK": {
-            "S": "NAME#kookaburra kahuna batting gloves#PRODUCT#1a7d2605-e514-4cbf-80f9-8c44445ff172"
-          },
-          "Attributes": {
-            "M": {
-              "Core": {
-                "S": "Cork"
-              },
-              "Cover": {
-                "S": "Leather"
-              },
-              "Weight": {
-                "S": "156-163g"
-              },
-              "Circumference": {
-                "S": "22.4-22.9 cm"
-              },
-              "Seam": {
-                "S": "Hand Stitched"
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#e6625d34-96c5-4856-a3a9-0aa6563e4f41"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#e6625d34-96c5-4856-a3a9-0aa6563e4f41"
-          },
-          "Id": {
-            "S": "e6625d34-96c5-4856-a3a9-0aa6563e4f41"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "SS-GLOVES-TON-001"
-          },
-          "Name": {
-            "S": "SS Ton Reserve Batting Gloves"
-          },
-          "Description": {
-            "S": "Top quality gloves with reinforced protection and breathable design"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Gloves"
-          },
-          "CategorySlug": {
-            "S": "gloves"
-          },
-          "Subcategory": {
-            "S": "SS"
-          },
-          "SubcategorySlug": {
-            "S": "ss"
-          },
-          "Brand": {
-            "S": "SS"
-          },
-          "BrandSlug": {
-            "S": "ss"
-          },
-          "Price": {
-            "N": "21.6"
-          },
-          "CompareAtPrice": {
-            "N": "26.4"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "18"
-          },
-          "RatingAverage": {
-            "N": "4.5"
-          },
-          "RatingCount": {
-            "N": "72"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "gloves",
-              "ss"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          },
-          "GSI2PK": {
-            "S": "TENANT#default"
-          },
-          "GSI2SK": {
-            "S": "PRICE#0000002160#PRODUCT#e6625d34-96c5-4856-a3a9-0aa6563e4f41"
-          },
-          "GSI3PK": {
-            "S": "TENANT#default"
-          },
-          "GSI3SK": {
-            "S": "RATING#00450#PRODUCT#e6625d34-96c5-4856-a3a9-0aa6563e4f41"
-          },
-          "GSI4PK": {
-            "S": "TENANT#default"
-          },
-          "GSI4SK": {
-            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#e6625d34-96c5-4856-a3a9-0aa6563e4f41"
-          },
-          "GSI5PK": {
-            "S": "TENANT#default"
-          },
-          "GSI5SK": {
-            "S": "NAME#ss ton reserve batting gloves#PRODUCT#e6625d34-96c5-4856-a3a9-0aa6563e4f41"
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#e48cef85-faaa-4487-8d13-f6aac49ce7ce"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#e48cef85-faaa-4487-8d13-f6aac49ce7ce"
-          },
-          "Id": {
-            "S": "e48cef85-faaa-4487-8d13-f6aac49ce7ce"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "ACC-GRIPS-SG-001"
-          },
-          "Name": {
-            "S": "SG Premium Bat Grip - Pack of 3"
-          },
-          "Description": {
-            "S": "High-quality replacement bat grips with superior tackiness and comfort"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Accessories"
-          },
-          "CategorySlug": {
-            "S": "accessories"
-          },
-          "Subcategory": {
-            "S": "Grips"
-          },
-          "SubcategorySlug": {
-            "S": "grips"
-          },
-          "Brand": {
-            "S": "SG"
-          },
-          "BrandSlug": {
-            "S": "sg"
-          },
-          "Price": {
-            "N": "4.2"
-          },
-          "CompareAtPrice": {
-            "N": "5.4"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "22"
-          },
-          "RatingAverage": {
-            "N": "4.3"
-          },
-          "RatingCount": {
-            "N": "124"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "accessories",
-              "grips"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          },
-          "GSI2PK": {
-            "S": "TENANT#default"
-          },
-          "GSI2SK": {
-            "S": "PRICE#0000000420#PRODUCT#e48cef85-faaa-4487-8d13-f6aac49ce7ce"
-          },
-          "GSI3PK": {
-            "S": "TENANT#default"
-          },
-          "GSI3SK": {
-            "S": "RATING#00430#PRODUCT#e48cef85-faaa-4487-8d13-f6aac49ce7ce"
-          },
-          "GSI4PK": {
-            "S": "TENANT#default"
-          },
-          "GSI4SK": {
-            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#e48cef85-faaa-4487-8d13-f6aac49ce7ce"
-          },
-          "GSI5PK": {
-            "S": "TENANT#default"
-          },
-          "GSI5SK": {
-            "S": "NAME#sg premium bat grip - pack of 3#PRODUCT#e48cef85-faaa-4487-8d13-f6aac49ce7ce"
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#fce2bb97-5f2b-4d8f-9dfb-95491442e91c"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#fce2bb97-5f2b-4d8f-9dfb-95491442e91c"
-          },
-          "Id": {
-            "S": "fce2bb97-5f2b-4d8f-9dfb-95491442e91c"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "ACC-GRIPS-SS-002"
-          },
-          "Name": {
-            "S": "SS Super Soft Bat Grip - Multicolor"
-          },
-          "Description": {
-            "S": "Ultra-soft bat grips with anti-slip surface for better control"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Accessories"
-          },
-          "CategorySlug": {
-            "S": "accessories"
-          },
-          "Subcategory": {
-            "S": "Grips"
-          },
-          "SubcategorySlug": {
-            "S": "grips"
-          },
-          "Brand": {
-            "S": "SS"
-          },
-          "BrandSlug": {
-            "S": "ss"
-          },
-          "Price": {
-            "N": "5.04"
-          },
-          "CompareAtPrice": {
-            "N": "6.6"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "24"
-          },
-          "RatingAverage": {
-            "N": "4.4"
-          },
-          "RatingCount": {
-            "N": "98"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "accessories",
-              "grips"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          },
-          "GSI2PK": {
-            "S": "TENANT#default"
-          },
-          "GSI2SK": {
-            "S": "PRICE#0000000504#PRODUCT#fce2bb97-5f2b-4d8f-9dfb-95491442e91c"
-          },
-          "GSI3PK": {
-            "S": "TENANT#default"
-          },
-          "GSI3SK": {
-            "S": "RATING#00440#PRODUCT#fce2bb97-5f2b-4d8f-9dfb-95491442e91c"
-          },
-          "GSI4PK": {
-            "S": "TENANT#default"
-          },
-          "GSI4SK": {
-            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#fce2bb97-5f2b-4d8f-9dfb-95491442e91c"
-          },
-          "GSI5PK": {
-            "S": "TENANT#default"
-          },
-          "GSI5SK": {
-            "S": "NAME#ss super soft bat grip - multicolor#PRODUCT#fce2bb97-5f2b-4d8f-9dfb-95491442e91c"
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#1fc69297-d74c-4a75-a387-f83dae4ef75d"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#1fc69297-d74c-4a75-a387-f83dae4ef75d"
-          },
-          "Id": {
-            "S": "1fc69297-d74c-4a75-a387-f83dae4ef75d"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "ACC-GUARDS-AB-001"
-          },
-          "Name": {
-            "S": "SG Abdominal Guard - Men"
-          },
-          "Description": {
-            "S": "Essential protection gear with comfortable fit and maximum safety"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Accessories"
-          },
-          "CategorySlug": {
-            "S": "accessories"
-          },
-          "Subcategory": {
-            "S": "Guards"
-          },
-          "SubcategorySlug": {
-            "S": "guards"
-          },
-          "Brand": {
-            "S": "SG"
-          },
-          "BrandSlug": {
-            "S": "sg"
-          },
-          "Price": {
-            "N": "7.8"
-          },
-          "CompareAtPrice": {
-            "N": "9.6"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "19"
-          },
-          "RatingAverage": {
-            "N": "4.5"
-          },
-          "RatingCount": {
-            "N": "156"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "accessories",
-              "guards",
-              "protection"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          },
-          "GSI2PK": {
-            "S": "TENANT#default"
-          },
-          "GSI2SK": {
-            "S": "PRICE#0000000780#PRODUCT#1fc69297-d74c-4a75-a387-f83dae4ef75d"
-          },
-          "GSI3PK": {
-            "S": "TENANT#default"
-          },
-          "GSI3SK": {
-            "S": "RATING#00450#PRODUCT#1fc69297-d74c-4a75-a387-f83dae4ef75d"
-          },
-          "GSI4PK": {
-            "S": "TENANT#default"
-          },
-          "GSI4SK": {
-            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#1fc69297-d74c-4a75-a387-f83dae4ef75d"
-          },
-          "GSI5PK": {
-            "S": "TENANT#default"
-          },
-          "GSI5SK": {
-            "S": "NAME#sg abdominal guard - men#PRODUCT#1fc69297-d74c-4a75-a387-f83dae4ef75d"
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#9fa86e00-8c7e-422f-ba16-c7a1d5ed1a89"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#9fa86e00-8c7e-422f-ba16-c7a1d5ed1a89"
-          },
-          "Id": {
-            "S": "9fa86e00-8c7e-422f-ba16-c7a1d5ed1a89"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "ACC-GUARDS-THIGH-002"
-          },
-          "Name": {
-            "S": "Kookaburra Thigh Guard - Pair"
-          },
-          "Description": {
-            "S": "Professional thigh protection with foam padding and secure straps"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Accessories"
-          },
-          "CategorySlug": {
-            "S": "accessories"
-          },
-          "Subcategory": {
-            "S": "Guards"
-          },
-          "SubcategorySlug": {
-            "S": "guards"
-          },
-          "Brand": {
-            "S": "Kookaburra"
-          },
-          "BrandSlug": {
-            "S": "kookaburra"
-          },
-          "Price": {
-            "N": "14.4"
-          },
-          "CompareAtPrice": {
-            "N": "18.0"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "20"
-          },
-          "RatingAverage": {
-            "N": "4.6"
-          },
-          "RatingCount": {
-            "N": "78"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "accessories",
-              "guards",
-              "protection"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          },
-          "GSI2PK": {
-            "S": "TENANT#default"
-          },
-          "GSI2SK": {
-            "S": "PRICE#0000001440#PRODUCT#9fa86e00-8c7e-422f-ba16-c7a1d5ed1a89"
-          },
-          "GSI3PK": {
-            "S": "TENANT#default"
-          },
-          "GSI3SK": {
-            "S": "RATING#00459#PRODUCT#9fa86e00-8c7e-422f-ba16-c7a1d5ed1a89"
-          },
-          "GSI4PK": {
-            "S": "TENANT#default"
-          },
-          "GSI4SK": {
-            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#9fa86e00-8c7e-422f-ba16-c7a1d5ed1a89"
-          },
-          "GSI5PK": {
-            "S": "TENANT#default"
-          },
-          "GSI5SK": {
-            "S": "NAME#kookaburra thigh guard - pair#PRODUCT#9fa86e00-8c7e-422f-ba16-c7a1d5ed1a89"
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#ff312369-0ca6-4e31-b646-3cdf6b760056"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#ff312369-0ca6-4e31-b646-3cdf6b760056"
-          },
-          "Id": {
-            "S": "ff312369-0ca6-4e31-b646-3cdf6b760056"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "ACC-OIL-BAT-001"
-          },
-          "Name": {
-            "S": "Cricket Bat Linseed Oil - 100ml"
-          },
-          "Description": {
-            "S": "Premium quality raw linseed oil for bat preparation and maintenance"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Accessories"
-          },
-          "CategorySlug": {
-            "S": "accessories"
-          },
-          "Subcategory": {
-            "S": "Bat Care"
-          },
-          "SubcategorySlug": {
-            "S": "bat-care"
-          },
-          "Brand": {
-            "S": "Generic"
-          },
-          "BrandSlug": {
-            "S": "generic"
-          },
-          "Price": {
-            "N": "2.16"
-          },
-          "CompareAtPrice": {
-            "N": "3.0"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "28"
-          },
-          "RatingAverage": {
-            "N": "4.2"
-          },
-          "RatingCount": {
-            "N": "203"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "accessories",
-              "bat-care",
-              "maintenance"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          },
-          "GSI2PK": {
-            "S": "TENANT#default"
-          },
-          "GSI2SK": {
-            "S": "PRICE#0000000216#PRODUCT#ff312369-0ca6-4e31-b646-3cdf6b760056"
-          },
-          "GSI3PK": {
-            "S": "TENANT#default"
-          },
-          "GSI3SK": {
-            "S": "RATING#00420#PRODUCT#ff312369-0ca6-4e31-b646-3cdf6b760056"
-          },
-          "GSI4PK": {
-            "S": "TENANT#default"
-          },
-          "GSI4SK": {
-            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#ff312369-0ca6-4e31-b646-3cdf6b760056"
-          },
-          "GSI5PK": {
-            "S": "TENANT#default"
-          },
-          "GSI5SK": {
-            "S": "NAME#cricket bat linseed oil - 100ml#PRODUCT#ff312369-0ca6-4e31-b646-3cdf6b760056"
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#dcb11a13-7ae6-4d8a-8d37-83915466e7c3"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#dcb11a13-7ae6-4d8a-8d37-83915466e7c3"
-          },
-          "Id": {
-            "S": "dcb11a13-7ae6-4d8a-8d37-83915466e7c3"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "ACC-MALLET-BAT-002"
-          },
-          "Name": {
-            "S": "Cricket Bat Knocking Mallet"
-          },
-          "Description": {
-            "S": "Essential tool for bat preparation and knock-in process"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Accessories"
-          },
-          "CategorySlug": {
-            "S": "accessories"
-          },
-          "Subcategory": {
-            "S": "Bat Care"
-          },
-          "SubcategorySlug": {
-            "S": "bat-care"
-          },
-          "Brand": {
-            "S": "Generic"
-          },
-          "BrandSlug": {
-            "S": "generic"
-          },
-          "Price": {
-            "N": "4.2"
-          },
-          "CompareAtPrice": {
-            "N": "5.4"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "22"
-          },
-          "RatingAverage": {
-            "N": "4.3"
-          },
-          "RatingCount": {
-            "N": "145"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "accessories",
-              "bat-care",
-              "tools"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          },
-          "GSI2PK": {
-            "S": "TENANT#default"
-          },
-          "GSI2SK": {
-            "S": "PRICE#0000000420#PRODUCT#dcb11a13-7ae6-4d8a-8d37-83915466e7c3"
-          },
-          "GSI3PK": {
-            "S": "TENANT#default"
-          },
-          "GSI3SK": {
-            "S": "RATING#00430#PRODUCT#dcb11a13-7ae6-4d8a-8d37-83915466e7c3"
-          },
-          "GSI4PK": {
-            "S": "TENANT#default"
-          },
-          "GSI4SK": {
-            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#dcb11a13-7ae6-4d8a-8d37-83915466e7c3"
-          },
-          "GSI5PK": {
-            "S": "TENANT#default"
-          },
-          "GSI5SK": {
-            "S": "NAME#cricket bat knocking mallet#PRODUCT#dcb11a13-7ae6-4d8a-8d37-83915466e7c3"
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#b2c8f067-d3b6-46c3-9fef-26225789055d"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#b2c8f067-d3b6-46c3-9fef-26225789055d"
-          },
-          "Id": {
-            "S": "b2c8f067-d3b6-46c3-9fef-26225789055d"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "ACC-STUMPS-WOOD-001"
-          },
-          "Name": {
-            "S": "Wooden Cricket Stumps Set with Bails"
-          },
-          "Description": {
-            "S": "Official size wooden stumps and bails for practice and matches"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Accessories"
-          },
-          "CategorySlug": {
-            "S": "accessories"
-          },
-          "Subcategory": {
-            "S": "Stumps"
-          },
-          "SubcategorySlug": {
-            "S": "stumps"
-          },
-          "Brand": {
-            "S": "Generic"
-          },
-          "BrandSlug": {
-            "S": "generic"
-          },
-          "Price": {
-            "N": "10.2"
-          },
-          "CompareAtPrice": {
-            "N": "13.2"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "23"
-          },
-          "RatingAverage": {
-            "N": "4.1"
-          },
-          "RatingCount": {
-            "N": "89"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "accessories",
-              "stumps"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          },
-          "GSI2PK": {
-            "S": "TENANT#default"
-          },
-          "GSI2SK": {
-            "S": "PRICE#0000001019#PRODUCT#b2c8f067-d3b6-46c3-9fef-26225789055d"
-          },
-          "GSI3PK": {
-            "S": "TENANT#default"
-          },
-          "GSI3SK": {
-            "S": "RATING#00409#PRODUCT#b2c8f067-d3b6-46c3-9fef-26225789055d"
-          },
-          "GSI4PK": {
-            "S": "TENANT#default"
-          },
-          "GSI4SK": {
-            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#b2c8f067-d3b6-46c3-9fef-26225789055d"
-          },
-          "GSI5PK": {
-            "S": "TENANT#default"
-          },
-          "GSI5SK": {
-            "S": "NAME#wooden cricket stumps set with bails#PRODUCT#b2c8f067-d3b6-46c3-9fef-26225789055d"
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#fd26db42-e382-41cc-bd7d-a0c65472ee4d"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#fd26db42-e382-41cc-bd7d-a0c65472ee4d"
-          },
-          "Id": {
-            "S": "fd26db42-e382-41cc-bd7d-a0c65472ee4d"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "ACC-STUMPS-SPRING-002"
-          },
-          "Name": {
-            "S": "Spring Return Cricket Stumps Set"
-          },
-          "Description": {
-            "S": "Innovative spring-loaded stumps that automatically return to position"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Accessories"
-          },
-          "CategorySlug": {
-            "S": "accessories"
-          },
-          "Subcategory": {
-            "S": "Stumps"
-          },
-          "SubcategorySlug": {
-            "S": "stumps"
-          },
-          "Brand": {
-            "S": "Generic"
-          },
-          "BrandSlug": {
-            "S": "generic"
-          },
-          "Price": {
-            "N": "18.0"
-          },
-          "CompareAtPrice": {
-            "N": "22.8"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "21"
-          },
-          "RatingAverage": {
-            "N": "4.4"
-          },
-          "RatingCount": {
-            "N": "64"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "accessories",
-              "stumps",
-              "innovative"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          },
-          "GSI2PK": {
-            "S": "TENANT#default"
-          },
-          "GSI2SK": {
-            "S": "PRICE#0000001800#PRODUCT#fd26db42-e382-41cc-bd7d-a0c65472ee4d"
-          },
-          "GSI3PK": {
-            "S": "TENANT#default"
-          },
-          "GSI3SK": {
-            "S": "RATING#00440#PRODUCT#fd26db42-e382-41cc-bd7d-a0c65472ee4d"
-          },
-          "GSI4PK": {
-            "S": "TENANT#default"
-          },
-          "GSI4SK": {
-            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#fd26db42-e382-41cc-bd7d-a0c65472ee4d"
-          },
-          "GSI5PK": {
-            "S": "TENANT#default"
-          },
-          "GSI5SK": {
-            "S": "NAME#spring return cricket stumps set#PRODUCT#fd26db42-e382-41cc-bd7d-a0c65472ee4d"
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#b8578749-3285-4770-8faa-b9c05fb5edfe"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#b8578749-3285-4770-8faa-b9c05fb5edfe"
-          },
-          "Id": {
-            "S": "b8578749-3285-4770-8faa-b9c05fb5edfe"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "ACC-TSHIRT-SS-001"
-          },
-          "Name": {
-            "S": "SS Cricket T-Shirt - Polyester Dri-Fit"
-          },
-          "Description": {
-            "S": "Breathable cricket jersey with moisture-wicking technology"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Accessories"
-          },
-          "CategorySlug": {
-            "S": "accessories"
-          },
-          "Subcategory": {
-            "S": "Clothing"
-          },
-          "SubcategorySlug": {
-            "S": "clothing"
-          },
-          "Brand": {
-            "S": "SS"
-          },
-          "BrandSlug": {
-            "S": "ss"
-          },
-          "Price": {
-            "N": "10.2"
-          },
-          "CompareAtPrice": {
-            "N": "13.2"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "23"
-          },
-          "RatingAverage": {
-            "N": "4.3"
-          },
-          "RatingCount": {
-            "N": "112"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "accessories",
-              "clothing",
-              "jersey"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          },
-          "GSI2PK": {
-            "S": "TENANT#default"
-          },
-          "GSI2SK": {
-            "S": "PRICE#0000001019#PRODUCT#b8578749-3285-4770-8faa-b9c05fb5edfe"
-          },
-          "GSI3PK": {
-            "S": "TENANT#default"
-          },
-          "GSI3SK": {
-            "S": "RATING#00430#PRODUCT#b8578749-3285-4770-8faa-b9c05fb5edfe"
-          },
-          "GSI4PK": {
-            "S": "TENANT#default"
-          },
-          "GSI4SK": {
-            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#b8578749-3285-4770-8faa-b9c05fb5edfe"
-          },
-          "GSI5PK": {
-            "S": "TENANT#default"
-          },
-          "GSI5SK": {
-            "S": "NAME#ss cricket t-shirt - polyester dri-fit#PRODUCT#b8578749-3285-4770-8faa-b9c05fb5edfe"
-          }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "PK": {
-            "S": "TENANT#default"
-          },
-          "SK": {
-            "S": "PRODUCT#098947fa-0b8c-4d2f-bb5c-99a127cfdeb0"
-          },
-          "GSI1PK": {
-            "S": "TENANT#default#PRODUCTS"
-          },
-          "GSI1SK": {
-            "S": "PRODUCT#098947fa-0b8c-4d2f-bb5c-99a127cfdeb0"
-          },
-          "Id": {
-            "S": "098947fa-0b8c-4d2f-bb5c-99a127cfdeb0"
-          },
-          "TenantId": {
-            "S": "default"
-          },
-          "Sku": {
-            "S": "ACC-TROUSERS-SG-002"
-          },
-          "Name": {
-            "S": "SG Cricket Trousers - White"
-          },
-          "Description": {
-            "S": "Traditional cricket whites with comfortable fit and durable fabric"
-          },
-          "Department": {
-            "S": "Cricket"
-          },
-          "DepartmentSlug": {
-            "S": "cricket"
-          },
-          "Category": {
-            "S": "Accessories"
-          },
-          "CategorySlug": {
-            "S": "accessories"
-          },
-          "Subcategory": {
-            "S": "Clothing"
-          },
-          "SubcategorySlug": {
-            "S": "clothing"
-          },
-          "Brand": {
-            "S": "SG"
-          },
-          "BrandSlug": {
-            "S": "sg"
-          },
-          "Price": {
-            "N": "14.4"
-          },
-          "CompareAtPrice": {
-            "N": "18.0"
-          },
-          "Currency": {
-            "S": "USD"
-          },
-          "DiscountPercentage": {
-            "N": "20"
-          },
-          "RatingAverage": {
-            "N": "4.4"
-          },
-          "RatingCount": {
-            "N": "87"
-          },
-          "IsActive": {
-            "BOOL": true
-          },
-          "Tags": {
-            "SS": [
-              "cricket",
-              "accessories",
-              "clothing",
-              "trousers"
-            ]
-          },
-          "CreatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "UpdatedAt": {
-            "S": "2025-12-29T00:00:00.000Z"
-          },
-          "ThumbnailUrl": {
-            "NULL": true
-          },
-          "GSI2PK": {
-            "S": "TENANT#default"
-          },
-          "GSI2SK": {
-            "S": "PRICE#0000001440#PRODUCT#098947fa-0b8c-4d2f-bb5c-99a127cfdeb0"
-          },
-          "GSI3PK": {
-            "S": "TENANT#default"
-          },
-          "GSI3SK": {
-            "S": "RATING#00440#PRODUCT#098947fa-0b8c-4d2f-bb5c-99a127cfdeb0"
-          },
-          "GSI4PK": {
-            "S": "TENANT#default"
-          },
-          "GSI4SK": {
-            "S": "CREATEDAT#2025-12-29T00:00:00.000Z#PRODUCT#098947fa-0b8c-4d2f-bb5c-99a127cfdeb0"
-          },
-          "GSI5PK": {
-            "S": "TENANT#default"
-          },
-          "GSI5SK": {
-            "S": "NAME#sg cricket trousers - white#PRODUCT#098947fa-0b8c-4d2f-bb5c-99a127cfdeb0"
+            "S": "NAME#sg ecopak cricket kit bag#PRODUCT#0853b39a-ab73-40de-a456-13ad24cad034"
           }
         }
       }
