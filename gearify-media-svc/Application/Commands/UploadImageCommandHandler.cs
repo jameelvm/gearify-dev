@@ -1,11 +1,12 @@
-using Gearify.MediaService.Application.Events;
 using Gearify.MediaService.Application.Services;
 using Gearify.MediaService.Domain.Entities;
 using Gearify.MediaService.Domain.Enums;
+using Gearify.MediaService.Domain.Events;
 using Gearify.MediaService.Infrastructure.Configuration;
 using Gearify.MediaService.Infrastructure.Constants;
 using Gearify.MediaService.Infrastructure.Repositories;
 using Gearify.MediaService.Infrastructure.Storage;
+using Gearify.SharedKernel.Events;
 using MediatR;
 using Microsoft.Extensions.Options;
 
@@ -20,7 +21,7 @@ public class UploadImageCommandHandler : IRequestHandler<UploadImageCommand, Upl
     private readonly IImageProcessor _imageProcessor;
     private readonly IMediaRepository _mediaRepository;
     private readonly IMediaUrlFactory _urlFactory;
-    private readonly IEventPublisher _eventPublisher;
+    private readonly ISnsEventPublisher _eventFactory;
     private readonly ProductUploadSettings _uploadSettings;
     private readonly ILogger<UploadImageCommandHandler> _logger;
 
@@ -29,7 +30,7 @@ public class UploadImageCommandHandler : IRequestHandler<UploadImageCommand, Upl
         IImageProcessor imageProcessor,
         IMediaRepository mediaRepository,
         IMediaUrlFactory urlFactory,
-        IEventPublisher eventPublisher,
+        ISnsEventPublisher eventFactory,
         IOptions<ProductUploadSettings> uploadSettings,
         ILogger<UploadImageCommandHandler> logger)
     {
@@ -37,7 +38,7 @@ public class UploadImageCommandHandler : IRequestHandler<UploadImageCommand, Upl
         _imageProcessor = imageProcessor;
         _mediaRepository = mediaRepository;
         _urlFactory = urlFactory;
-        _eventPublisher = eventPublisher;
+        _eventFactory = eventFactory;
         _uploadSettings = uploadSettings.Value;
         _logger = logger;
     }
@@ -125,8 +126,8 @@ public class UploadImageCommandHandler : IRequestHandler<UploadImageCommand, Upl
             // Save metadata to DynamoDB
             await _mediaRepository.CreateAsync(media);
 
-            // Publish event for async processing
-            var uploadEvent = new MediaUploadedEvent(
+            // Publish domain event
+            await _eventFactory.PublishAsync(new MediaUploadedEvent(
                 MediaId: mediaId,
                 TenantId: request.TenantId,
                 EntityType: request.EntityType,
@@ -135,9 +136,7 @@ public class UploadImageCommandHandler : IRequestHandler<UploadImageCommand, Upl
                 ContentType: request.ContentType,
                 Width: width,
                 Height: height,
-                UploadedAt: DateTime.UtcNow);
-
-            await _eventPublisher.PublishAsync(uploadEvent, cancellationToken);
+                OccurredAt: DateTime.UtcNow), cancellationToken);
 
             // Generate URLs (only original is available now)
             var urls = _urlFactory.GetUrls(media);

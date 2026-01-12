@@ -1,7 +1,9 @@
-namespace Gearify.MediaService.Application.Events;
+using Gearify.SharedKernel.Events;
+
+namespace Gearify.MediaService.Domain.Events;
 
 /// <summary>
-/// Event published when original media file is uploaded
+/// Domain event raised when original media file is uploaded.
 /// </summary>
 public record MediaUploadedEvent(
     string MediaId,
@@ -12,4 +14,4 @@ public record MediaUploadedEvent(
     string ContentType,
     int Width,
     int Height,
-    DateTime UploadedAt);
+    DateTime OccurredAt) : IDomainEvent;

@@ -1,6 +1,7 @@
 using Gearify.MediaService.Application.BackgroundJobs.Models;
-using Gearify.MediaService.Application.Events;
 using Gearify.MediaService.Application.Services;
+using Gearify.MediaService.Domain.Events;
+using Gearify.SharedKernel.Events;
 using Gearify.MediaService.Domain.Enums;
 using Gearify.MediaService.Infrastructure.Constants;
 using Gearify.MediaService.Infrastructure.Repositories;
@@ -59,7 +60,7 @@ public class ImageProcessingBackgroundService : BackgroundService
         var storageService = scope.ServiceProvider.GetRequiredService<IStorageService>();
         var imageProcessor = scope.ServiceProvider.GetRequiredService<IImageProcessor>();
         var mediaRepository = scope.ServiceProvider.GetRequiredService<IMediaRepository>();
-        var eventPublisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+        var eventFactory = scope.ServiceProvider.GetRequiredService<ISnsEventPublisher>();
         var urlFactory = scope.ServiceProvider.GetRequiredService<IMediaUrlFactory>();
 
         // Receive messages from queue (long polling)
@@ -82,7 +83,7 @@ public class ImageProcessingBackgroundService : BackgroundService
             storageService,
             imageProcessor,
             mediaRepository,
-            eventPublisher,
+            eventFactory,
             urlFactory,
             cancellationToken));
 
@@ -95,7 +96,7 @@ public class ImageProcessingBackgroundService : BackgroundService
         IStorageService storageService,
         IImageProcessor imageProcessor,
         IMediaRepository mediaRepository,
-        IEventPublisher eventPublisher,
+        ISnsEventPublisher eventFactory,
         IMediaUrlFactory urlFactory,
         CancellationToken cancellationToken)
     {
@@ -199,10 +200,11 @@ public class ImageProcessingBackgroundService : BackgroundService
                     LargeUrl: urlFactory.GetUrl(keys[ImageSize.Large]),
                     OriginalUrl: urlFactory.GetUrl(message.OriginalKey),
                     DisplayOrder: media.DisplayOrder,
-                    AltText: media.AltText
+                    AltText: media.AltText,
+                    OccurredAt: DateTime.UtcNow
                 );
 
-                await eventPublisher.PublishAsync(completedEvent, cancellationToken);
+                await eventFactory.PublishAsync(completedEvent, cancellationToken);
 
                 _logger.LogInformation(
                     "Published ImageProcessingCompletedEvent for {EntityType} {EntityId}",

@@ -4,8 +4,8 @@ using Amazon.S3;
 using Amazon.SimpleNotificationService;
 using Amazon.SQS;
 using Gearify.MediaService.Application.BackgroundJobs;
-using Gearify.MediaService.Application.Events;
 using Gearify.MediaService.Application.Services;
+using Gearify.SharedKernel.Events;
 using Gearify.MediaService.Infrastructure.Messaging;
 using Gearify.MediaService.Infrastructure.Repositories;
 using Gearify.MediaService.Infrastructure.Storage;
@@ -123,7 +123,7 @@ public class Startup
         services.AddScoped<IMediaRepository, DynamoDbMediaRepository>();
 
         // Messaging Services (for async image processing)
-        services.AddScoped<IEventPublisher, SnsEventPublisher>();
+        services.AddScoped<ISnsEventPublisher, SnsEventPublisher>();
         services.AddScoped<IImageProcessingQueue, SqsImageProcessingQueue>();
 
         // Background Services

@@ -1,20 +1,29 @@
 using System.Text.Json;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
-using Gearify.MediaService.Application.Events;
+using Gearify.MediaService.Domain.Events;
 using Gearify.MediaService.Infrastructure.Configuration;
+using Gearify.SharedKernel.Events;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Gearify.MediaService.Infrastructure.Messaging;
 
 /// <summary>
-/// SNS implementation of event publisher
+/// SNS implementation of ISnsEventPublisher.
+/// Handles topic routing and publishing for all domain events.
 /// </summary>
-public class SnsEventPublisher : IEventPublisher
+public class SnsEventPublisher : ISnsEventPublisher
 {
     private readonly IAmazonSimpleNotificationService _snsClient;
     private readonly MessagingSettings _messagingSettings;
     private readonly ILogger<SnsEventPublisher> _logger;
+
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        WriteIndented = false
+    };
 
     public SnsEventPublisher(
         IAmazonSimpleNotificationService snsClient,
@@ -26,50 +35,55 @@ public class SnsEventPublisher : IEventPublisher
         _logger = logger;
     }
 
-    public async Task PublishAsync<T>(T eventData, CancellationToken cancellationToken = default) where T : class
+    public async Task PublishAsync<TEvent>(TEvent domainEvent, CancellationToken cancellationToken = default)
+        where TEvent : IDomainEvent
     {
+        var topicArn = GetTopicArn<TEvent>();
+
+        if (string.IsNullOrEmpty(topicArn))
+        {
+            _logger.LogWarning(
+                "Topic ARN not configured for event type {EventType}, skipping publish",
+                typeof(TEvent).Name);
+            return;
+        }
+
         try
         {
-            var topicArn = GetTopicArnForEventType<T>();
-            var message = JsonSerializer.Serialize(eventData);
+            var message = JsonSerializer.Serialize(domainEvent, JsonOptions);
 
             var request = new PublishRequest
             {
                 TopicArn = topicArn,
                 Message = message,
-                Subject = typeof(T).Name
+                Subject = typeof(TEvent).Name
             };
 
             var response = await _snsClient.PublishAsync(request, cancellationToken);
 
             _logger.LogInformation(
-                "Published event {EventType} to topic ARN {TopicArn}. MessageId: {MessageId}",
-                typeof(T).Name,
+                "Published {EventType} to topic {TopicArn}. MessageId: {MessageId}",
+                typeof(TEvent).Name,
                 topicArn,
                 response.MessageId);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error publishing event {EventType}", typeof(T).Name);
+            _logger.LogError(ex,
+                "Error publishing {EventType} to topic {TopicArn}",
+                typeof(TEvent).Name,
+                topicArn);
             throw;
         }
     }
 
-    private string GetTopicArnForEventType<T>()
+    private string GetTopicArn<TEvent>() where TEvent : IDomainEvent
     {
-        // Map event type to configured topic ARN
-        var topicArn = typeof(T).Name switch
+        return typeof(TEvent).Name switch
         {
             nameof(MediaUploadedEvent) => _messagingSettings.SNS.MediaUploadedTopicArn,
             nameof(ImageProcessingCompletedEvent) => _messagingSettings.SNS.ImageProcessingCompletedTopicArn,
-            _ => throw new InvalidOperationException($"No topic ARN configured for event type {typeof(T).Name}")
+            _ => throw new InvalidOperationException($"No topic ARN configured for event type {typeof(TEvent).Name}")
         };
-
-        if (string.IsNullOrEmpty(topicArn))
-        {
-            throw new InvalidOperationException($"Topic ARN for event type {typeof(T).Name} is not configured in appsettings");
-        }
-
-        return topicArn;
     }
 }
