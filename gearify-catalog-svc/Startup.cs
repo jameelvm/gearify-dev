@@ -5,8 +5,8 @@ using Amazon.SimpleNotificationService;
 using Amazon.SQS;
 using FluentValidation;
 using Gearify.CatalogService.Application.Commands;
-using Gearify.CatalogService.Application.Events;
 using Gearify.CatalogService.Application.Mappers;
+using Gearify.SharedKernel.Events;
 using Gearify.CatalogService.Application.Validators;
 using Gearify.CatalogService.Infrastructure.BackgroundJobs;
 using Gearify.CatalogService.Infrastructure.Clients;
@@ -159,7 +159,7 @@ public class Startup
         services.AddScoped<IDepartmentRepository, DynamoDbDepartmentRepository>();
 
         // Event Publishing (for Search Service sync)
-        services.AddScoped<IEventPublisher, SnsEventPublisher>();
+        services.AddScoped<ISnsEventPublisher, SnsEventPublisher>();
 
         // Section Mappers (Strategy Pattern)
         services.AddScoped<ISectionMapper, BrandSectionMapper>();

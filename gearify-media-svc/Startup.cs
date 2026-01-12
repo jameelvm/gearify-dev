@@ -3,7 +3,6 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.SimpleNotificationService;
 using Amazon.SQS;
-using Gearify.MediaService.Application.BackgroundJobs;
 using Gearify.MediaService.Application.Services;
 using Gearify.SharedKernel.Events;
 using Gearify.MediaService.Infrastructure.Messaging;
@@ -127,7 +126,7 @@ public class Startup
         services.AddScoped<IImageProcessingQueue, SqsImageProcessingQueue>();
 
         // Background Services
-        services.AddHostedService<ImageProcessingBackgroundService>();
+        services.AddHostedService<ImageProcessingEventHandler>();
 
         // Swagger
         services.AddSwaggerGen(c =>

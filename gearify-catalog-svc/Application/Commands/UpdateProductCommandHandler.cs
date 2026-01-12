@@ -1,5 +1,6 @@
-using Gearify.CatalogService.Application.Events;
+using Gearify.CatalogService.Domain.Events;
 using Gearify.CatalogService.Infrastructure.Repositories;
+using Gearify.SharedKernel.Events;
 using Gearify.SharedKernel.Multitenancy;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -9,13 +10,13 @@ namespace Gearify.CatalogService.Application.Commands;
 public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, UpdateProductResult>
 {
     private readonly IProductRepository _repository;
-    private readonly IEventPublisher _eventPublisher;
+    private readonly ISnsEventPublisher _eventPublisher;
     private readonly ITenantContext _tenantContext;
     private readonly ILogger<UpdateProductCommandHandler> _logger;
 
     public UpdateProductCommandHandler(
         IProductRepository repository,
-        IEventPublisher eventPublisher,
+        ISnsEventPublisher eventPublisher,
         ITenantContext tenantContext,
         ILogger<UpdateProductCommandHandler> logger)
     {
@@ -49,7 +50,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
             _logger.LogInformation("Product updated: {ProductId}", product.Id);
 
             // Publish event for Search Service to update the index
-            await _eventPublisher.PublishProductUpdatedAsync(product, cancellationToken);
+            await _eventPublisher.PublishAsync(product.ToUpdatedEvent(), cancellationToken);
 
             return new UpdateProductResult(true);
         }

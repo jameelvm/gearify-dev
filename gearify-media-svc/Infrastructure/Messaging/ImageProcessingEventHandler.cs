@@ -1,4 +1,3 @@
-using Gearify.MediaService.Application.BackgroundJobs.Models;
 using Gearify.MediaService.Application.Services;
 using Gearify.MediaService.Domain.Events;
 using Gearify.SharedKernel.Events;
@@ -6,11 +5,9 @@ using Gearify.MediaService.Domain.Enums;
 using Gearify.MediaService.Infrastructure.Constants;
 using Gearify.MediaService.Infrastructure.Repositories;
 using Gearify.MediaService.Infrastructure.Storage;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Gearify.MediaService.Infrastructure.Messaging.Models;
 
-namespace Gearify.MediaService.Application.BackgroundJobs;
+namespace Gearify.MediaService.Infrastructure.Messaging;
 
 /// <summary>
 /// Background service that processes images asynchronously
@@ -19,14 +16,14 @@ namespace Gearify.MediaService.Application.BackgroundJobs;
 /// 1. Moving this folder to new project
 /// 2. Replacing IImageProcessingQueue with HTTP client to call Media Service API
 /// </summary>
-public class ImageProcessingBackgroundService : BackgroundService
+public class ImageProcessingEventHandler : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<ImageProcessingBackgroundService> _logger;
+    private readonly ILogger<ImageProcessingEventHandler> _logger;
 
-    public ImageProcessingBackgroundService(
+    public ImageProcessingEventHandler(
         IServiceProvider serviceProvider,
-        ILogger<ImageProcessingBackgroundService> logger)
+        ILogger<ImageProcessingEventHandler> logger)
     {
         _serviceProvider = serviceProvider;
         _logger = logger;

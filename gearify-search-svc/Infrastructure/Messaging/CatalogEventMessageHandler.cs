@@ -4,9 +4,6 @@ using Amazon.SQS.Model;
 using Gearify.SearchService.Application.Events;
 using Gearify.SearchService.Domain.Events;
 using Gearify.SearchService.Infrastructure.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Gearify.SearchService.Infrastructure.Messaging;
@@ -15,23 +12,23 @@ namespace Gearify.SearchService.Infrastructure.Messaging;
 /// Background service that continuously polls SQS for catalog events
 /// and processes them to keep the search index in sync
 /// </summary>
-public class CatalogEventConsumer : BackgroundService
+public class CatalogEventMessageHandler : BackgroundService
 {
     private readonly IAmazonSQS _sqsClient;
     private readonly IServiceProvider _serviceProvider;
     private readonly MessagingSettings _settings;
-    private readonly ILogger<CatalogEventConsumer> _logger;
+    private readonly ILogger<CatalogEventMessageHandler> _logger;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public CatalogEventConsumer(
+    public CatalogEventMessageHandler(
         IAmazonSQS sqsClient,
         IServiceProvider serviceProvider,
         IOptions<MessagingSettings> settings,
-        ILogger<CatalogEventConsumer> logger)
+        ILogger<CatalogEventMessageHandler> logger)
     {
         _sqsClient = sqsClient;
         _serviceProvider = serviceProvider;
@@ -75,8 +72,8 @@ public class CatalogEventConsumer : BackgroundService
             MaxNumberOfMessages = _settings.SQS.MaxNumberOfMessages,
             WaitTimeSeconds = _settings.SQS.WaitTimeSeconds,
             VisibilityTimeout = _settings.SQS.VisibilityTimeoutSeconds,
-            AttributeNames = new List<string> { "All" },
-            MessageAttributeNames = new List<string> { "All" }
+            AttributeNames = ["All"],
+            MessageAttributeNames = ["All"]
         };
 
         var response = await _sqsClient.ReceiveMessageAsync(request, cancellationToken);

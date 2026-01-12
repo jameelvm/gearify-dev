@@ -1,9 +1,8 @@
 using System.Text.Json;
 using Amazon.SQS;
 using Amazon.SQS.Model;
-using Gearify.MediaService.Application.BackgroundJobs;
-using Gearify.MediaService.Application.BackgroundJobs.Models;
 using Gearify.MediaService.Infrastructure.Configuration;
+using Gearify.MediaService.Infrastructure.Messaging.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 

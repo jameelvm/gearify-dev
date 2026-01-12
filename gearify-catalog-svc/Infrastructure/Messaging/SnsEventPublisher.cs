@@ -1,18 +1,19 @@
 using System.Text.Json;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
-using Gearify.CatalogService.Application.Events;
-using Gearify.CatalogService.Domain.Entities;
+using Gearify.CatalogService.Domain.Events;
 using Gearify.CatalogService.Infrastructure.Configuration;
+using Gearify.SharedKernel.Events;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Gearify.CatalogService.Infrastructure.Messaging;
 
 /// <summary>
-/// Publishes catalog events to SNS for consumption by other services (e.g., Search Service)
+/// SNS implementation of ISnsEventPublisher for catalog events.
+/// Wraps domain events in CatalogEvent envelope for backward compatibility.
 /// </summary>
-public class SnsEventPublisher : IEventPublisher
+public class SnsEventPublisher : ISnsEventPublisher
 {
     private readonly IAmazonSimpleNotificationService _snsClient;
     private readonly EventPublisherSettings _settings;
@@ -34,104 +35,8 @@ public class SnsEventPublisher : IEventPublisher
         _logger = logger;
     }
 
-    public async Task PublishProductCreatedAsync(Product product, CancellationToken cancellationToken = default)
-    {
-        var catalogEvent = CreateCatalogEvent("ProductCreated", product.TenantId, product);
-        await PublishEventAsync(catalogEvent, cancellationToken);
-
-        _logger.LogInformation(
-            "Published ProductCreated event: ProductId={ProductId}, TenantId={TenantId}",
-            product.Id,
-            product.TenantId);
-    }
-
-    public async Task PublishProductUpdatedAsync(Product product, CancellationToken cancellationToken = default)
-    {
-        var catalogEvent = CreateCatalogEvent("ProductUpdated", product.TenantId, product);
-        await PublishEventAsync(catalogEvent, cancellationToken);
-
-        _logger.LogInformation(
-            "Published ProductUpdated event: ProductId={ProductId}, TenantId={TenantId}",
-            product.Id,
-            product.TenantId);
-    }
-
-    public async Task PublishProductDeletedAsync(string productId, string tenantId, CancellationToken cancellationToken = default)
-    {
-        // For delete, we only need the ID and tenant
-        var payload = new DeletedProductPayload
-        {
-            Id = productId,
-            TenantId = tenantId
-        };
-
-        var catalogEvent = new CatalogEvent
-        {
-            EventId = Guid.NewGuid().ToString(),
-            EventType = "ProductDeleted",
-            TenantId = tenantId,
-            Timestamp = DateTime.UtcNow,
-            Payload = payload
-        };
-
-        await PublishEventAsync(catalogEvent, cancellationToken);
-
-        _logger.LogInformation(
-            "Published ProductDeleted event: ProductId={ProductId}, TenantId={TenantId}",
-            productId,
-            tenantId);
-    }
-
-    private CatalogEvent CreateCatalogEvent(string eventType, string tenantId, Product product)
-    {
-        return new CatalogEvent
-        {
-            EventId = Guid.NewGuid().ToString(),
-            EventType = eventType,
-            TenantId = tenantId,
-            Timestamp = DateTime.UtcNow,
-            Payload = MapProductToPayload(product)
-        };
-    }
-
-    private ProductPayload MapProductToPayload(Product product)
-    {
-        return new ProductPayload
-        {
-            Id = product.Id,
-            TenantId = product.TenantId,
-            Sku = product.Sku,
-            Name = product.Name,
-            Description = product.Description,
-            Brand = product.Brand,
-            BrandSlug = product.BrandSlug,
-            Department = product.Department,
-            DepartmentSlug = product.DepartmentSlug,
-            Category = product.Category,
-            CategorySlug = product.CategorySlug,
-            Subcategory = product.Subcategory,
-            SubcategorySlug = product.SubcategorySlug,
-            Price = product.Price,
-            CompareAtPrice = product.CompareAtPrice,
-            DiscountPercentage = product.DiscountPercentage,
-            Currency = product.Currency,
-            RatingAverage = product.RatingAverage,
-            RatingCount = product.RatingCount,
-            ThumbnailUrl = product.ThumbnailUrl,
-            ImageUrls = product.ImageUrls ?? new List<string>(),
-            Tags = product.Tags ?? new List<string>(),
-            IsActive = product.IsActive,
-            IsDeal = product.IsDeal,
-            IsClearance = product.IsClearance,
-            IsNewArrival = product.IsNewArrival,
-            IsBestSeller = product.IsBestSeller,
-            IsFeatured = product.IsFeatured,
-            CreatedAt = product.CreatedAt,
-            UpdatedAt = product.UpdatedAt
-        };
-    }
-
-    private async Task PublishEventAsync(object catalogEvent, CancellationToken cancellationToken)
+    public async Task PublishAsync<TEvent>(TEvent domainEvent, CancellationToken cancellationToken = default)
+        where TEvent : IDomainEvent
     {
         if (!_settings.Enabled)
         {
@@ -147,37 +52,128 @@ public class SnsEventPublisher : IEventPublisher
 
         try
         {
+            var catalogEvent = CreateCatalogEvent(domainEvent);
             var message = JsonSerializer.Serialize(catalogEvent, JsonOptions);
 
             var request = new PublishRequest
             {
                 TopicArn = _settings.CatalogEventsTopicArn,
-                Message = message
+                Message = message,
+                Subject = typeof(TEvent).Name
             };
 
             var response = await _snsClient.PublishAsync(request, cancellationToken);
 
-            _logger.LogDebug(
-                "Event published to SNS: MessageId={MessageId}, TopicArn={TopicArn}",
-                response.MessageId,
-                _settings.CatalogEventsTopicArn);
+            _logger.LogInformation(
+                "Published {EventType} to topic {TopicArn}. MessageId: {MessageId}",
+                typeof(TEvent).Name,
+                _settings.CatalogEventsTopicArn,
+                response.MessageId);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex,
-                "Failed to publish event to SNS: TopicArn={TopicArn}",
+                "Failed to publish {EventType} to SNS: TopicArn={TopicArn}",
+                typeof(TEvent).Name,
                 _settings.CatalogEventsTopicArn);
 
             // Don't throw - event publishing failure shouldn't fail the main operation
-            // In production, you might want to implement retry logic or dead-letter queue
         }
     }
+
+    private CatalogEvent CreateCatalogEvent<TEvent>(TEvent domainEvent) where TEvent : IDomainEvent
+    {
+        var (eventType, tenantId, payload) = domainEvent switch
+        {
+            ProductCreatedEvent e => ("ProductCreated", e.TenantId, MapToPayload(e)),
+            ProductUpdatedEvent e => ("ProductUpdated", e.TenantId, MapToPayload(e)),
+            ProductDeletedEvent e => ("ProductDeleted", e.TenantId, (object)new DeletedProductPayload { Id = e.ProductId, TenantId = e.TenantId }),
+            _ => throw new InvalidOperationException($"Unknown event type: {typeof(TEvent).Name}")
+        };
+
+        return new CatalogEvent
+        {
+            EventId = Guid.NewGuid().ToString(),
+            EventType = eventType,
+            TenantId = tenantId,
+            Timestamp = domainEvent.OccurredAt,
+            Payload = payload
+        };
+    }
+
+    private ProductPayload MapToPayload(ProductCreatedEvent e) => new()
+    {
+        Id = e.ProductId,
+        TenantId = e.TenantId,
+        Sku = e.Sku,
+        Name = e.Name,
+        Description = e.Description,
+        Brand = e.Brand,
+        BrandSlug = e.BrandSlug,
+        Department = e.Department,
+        DepartmentSlug = e.DepartmentSlug,
+        Category = e.Category,
+        CategorySlug = e.CategorySlug,
+        Subcategory = e.Subcategory,
+        SubcategorySlug = e.SubcategorySlug,
+        Price = e.Price,
+        CompareAtPrice = e.CompareAtPrice,
+        DiscountPercentage = e.DiscountPercentage,
+        Currency = e.Currency,
+        RatingAverage = e.RatingAverage,
+        RatingCount = e.RatingCount,
+        ThumbnailUrl = e.ThumbnailUrl,
+        ImageUrls = e.ImageUrls,
+        Tags = e.Tags,
+        IsActive = e.IsActive,
+        IsDeal = e.IsDeal,
+        IsClearance = e.IsClearance,
+        IsNewArrival = e.IsNewArrival,
+        IsBestSeller = e.IsBestSeller,
+        IsFeatured = e.IsFeatured,
+        CreatedAt = e.CreatedAt,
+        UpdatedAt = e.UpdatedAt
+    };
+
+    private ProductPayload MapToPayload(ProductUpdatedEvent e) => new()
+    {
+        Id = e.ProductId,
+        TenantId = e.TenantId,
+        Sku = e.Sku,
+        Name = e.Name,
+        Description = e.Description,
+        Brand = e.Brand,
+        BrandSlug = e.BrandSlug,
+        Department = e.Department,
+        DepartmentSlug = e.DepartmentSlug,
+        Category = e.Category,
+        CategorySlug = e.CategorySlug,
+        Subcategory = e.Subcategory,
+        SubcategorySlug = e.SubcategorySlug,
+        Price = e.Price,
+        CompareAtPrice = e.CompareAtPrice,
+        DiscountPercentage = e.DiscountPercentage,
+        Currency = e.Currency,
+        RatingAverage = e.RatingAverage,
+        RatingCount = e.RatingCount,
+        ThumbnailUrl = e.ThumbnailUrl,
+        ImageUrls = e.ImageUrls,
+        Tags = e.Tags,
+        IsActive = e.IsActive,
+        IsDeal = e.IsDeal,
+        IsClearance = e.IsClearance,
+        IsNewArrival = e.IsNewArrival,
+        IsBestSeller = e.IsBestSeller,
+        IsFeatured = e.IsFeatured,
+        CreatedAt = e.CreatedAt,
+        UpdatedAt = e.UpdatedAt
+    };
 }
 
 #region Event DTOs
 
 /// <summary>
-/// Catalog event envelope
+/// Catalog event envelope for backward compatibility with consumers
 /// </summary>
 public class CatalogEvent
 {

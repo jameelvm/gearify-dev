@@ -3,10 +3,10 @@ using Gearify.SharedKernel.Events;
 namespace Gearify.CatalogService.Domain.Events;
 
 /// <summary>
-/// Domain event raised when a new product is created.
-/// Contains all product data needed for consumers (e.g., Search Service indexing).
+/// Domain event raised when a product is updated.
+/// Contains all product data needed for consumers (e.g., Search Service re-indexing).
 /// </summary>
-public record ProductCreatedEvent(
+public record ProductUpdatedEvent(
     string ProductId,
     string TenantId,
     string Sku,

@@ -128,7 +128,7 @@ public class Startup
         });
 
         services.AddScoped<ICatalogEventHandler, CatalogEventHandler>();
-        services.AddHostedService<CatalogEventConsumer>();
+        services.AddHostedService<CatalogEventMessageHandler>();
 
         Console.WriteLine("Messaging services registered successfully");
 

@@ -1,4 +1,4 @@
-namespace Gearify.MediaService.Application.BackgroundJobs.Models;
+namespace Gearify.MediaService.Infrastructure.Messaging.Models;
 
 /// <summary>
 /// Message for image processing queue

@@ -1,6 +1,6 @@
-using Gearify.MediaService.Application.BackgroundJobs.Models;
+using Gearify.MediaService.Infrastructure.Messaging.Models;
 
-namespace Gearify.MediaService.Application.BackgroundJobs;
+namespace Gearify.MediaService.Infrastructure.Messaging;
 
 /// <summary>
 /// Abstraction for image processing queue
