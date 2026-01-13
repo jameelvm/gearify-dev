@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Amazon.SQS;
 using Amazon.SQS.Model;
 using Gearify.MediaService.Infrastructure.Configuration;
@@ -16,6 +17,11 @@ public class SqsImageProcessingQueue : IImageProcessingQueue
     private readonly IAmazonSQS _sqsClient;
     private readonly ILogger<SqsImageProcessingQueue> _logger;
     private readonly string _queueUrl;
+
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
 
     public SqsImageProcessingQueue(
         IAmazonSQS sqsClient,
@@ -57,7 +63,7 @@ public class SqsImageProcessingQueue : IImageProcessingQueue
             {
                 // SNS wraps the message, so we need to extract it
                 var messageBody = ExtractSnsMessage(msg.Body);
-                var processingMessage = JsonSerializer.Deserialize<ImageProcessingMessage>(messageBody);
+                var processingMessage = JsonSerializer.Deserialize<ImageProcessingMessage>(messageBody, JsonOptions);
 
                 return new QueueMessage<ImageProcessingMessage>
                 {

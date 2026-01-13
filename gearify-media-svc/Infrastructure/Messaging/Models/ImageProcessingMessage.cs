@@ -14,4 +14,7 @@ public class ImageProcessingMessage
     public int Width { get; set; }
     public int Height { get; set; }
     public DateTime UploadedAt { get; set; }
+
+    // Alias for SNS event compatibility (MediaUploadedEvent uses OccurredAt)
+    public DateTime OccurredAt { set => UploadedAt = value; }
 }

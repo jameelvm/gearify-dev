@@ -16,6 +16,11 @@ public class SqsProductThumbnailUpdateQueue : IProductThumbnailUpdateQueue
     private readonly ILogger<SqsProductThumbnailUpdateQueue> _logger;
     private readonly string _queueUrl;
 
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
     public SqsProductThumbnailUpdateQueue(
         IAmazonSQS sqsClient,
         IOptions<MessagingSettings> messagingSettings,
@@ -60,11 +65,11 @@ public class SqsProductThumbnailUpdateQueue : IProductThumbnailUpdateQueue
                 try
                 {
                     // SNS wraps the message in a JSON envelope
-                    var snsMessage = JsonSerializer.Deserialize<SnsMessageWrapper>(message.Body);
+                    var snsMessage = JsonSerializer.Deserialize<SnsMessageWrapper>(message.Body, JsonOptions);
 
                     if (snsMessage?.Message != null)
                     {
-                        var eventData = JsonSerializer.Deserialize<ImageProcessingCompletedEvent>(snsMessage.Message);
+                        var eventData = JsonSerializer.Deserialize<ImageProcessingCompletedEvent>(snsMessage.Message, JsonOptions);
 
                         if (eventData != null)
                         {
