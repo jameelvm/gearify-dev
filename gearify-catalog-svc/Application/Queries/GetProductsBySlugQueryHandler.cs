@@ -24,13 +24,13 @@ public class GetProductsBySlugQueryHandler : IRequestHandler<GetProductsBySlugQu
 
     public GetProductsBySlugQueryHandler(
         IAmazonDynamoDB dynamoDb,
-        IOptions<CatalogDataSettings> catalogDataSettings,
+        IOptions<StorageConfiguration> storageConfigurationOptions,
         ITenantContext tenantContext,
         ILogger<GetProductsBySlugQueryHandler> logger)
     {
         _dynamoDb = dynamoDb;
-        _tableName = catalogDataSettings.Value.ProductsTableName;
-        _catalogTableName = catalogDataSettings.Value.CatalogTableName;
+        _tableName = storageConfigurationOptions.Value.DynamoDb.ProductsTableName;
+        _catalogTableName = storageConfigurationOptions.Value.DynamoDb.CatalogTableName;
         _tenantContext = tenantContext;
         _logger = logger;
     }

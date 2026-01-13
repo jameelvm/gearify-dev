@@ -23,7 +23,7 @@ public class SqsProductThumbnailUpdateQueue : IProductThumbnailUpdateQueue
 
     public SqsProductThumbnailUpdateQueue(
         IAmazonSQS sqsClient,
-        IOptions<MessagingSettings> messagingSettings,
+        IOptions<MessagingConfiguration> messagingSettings,
         ILogger<SqsProductThumbnailUpdateQueue> logger)
     {
         _sqsClient = sqsClient;

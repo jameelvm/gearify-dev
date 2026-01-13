@@ -16,14 +16,14 @@ namespace Gearify.MediaService.Infrastructure.Messaging;
 /// 1. Moving this folder to new project
 /// 2. Replacing IImageProcessingQueue with HTTP client to call Media Service API
 /// </summary>
-public class ImageProcessingEventHandler : BackgroundService
+public class ImageProcessingQueueProcessor : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<ImageProcessingEventHandler> _logger;
+    private readonly ILogger<ImageProcessingQueueProcessor> _logger;
 
-    public ImageProcessingEventHandler(
+    public ImageProcessingQueueProcessor(
         IServiceProvider serviceProvider,
-        ILogger<ImageProcessingEventHandler> logger)
+        ILogger<ImageProcessingQueueProcessor> logger)
     {
         _serviceProvider = serviceProvider;
         _logger = logger;

@@ -8,7 +8,6 @@ using Gearify.CatalogService.Application.Commands;
 using Gearify.CatalogService.Application.Mappers;
 using Gearify.SharedKernel.Events;
 using Gearify.CatalogService.Application.Validators;
-using Gearify.CatalogService.Infrastructure.BackgroundJobs;
 using Gearify.CatalogService.Infrastructure.Clients;
 using Gearify.CatalogService.Infrastructure.Messaging;
 using Gearify.CatalogService.Infrastructure.Repositories;
@@ -72,10 +71,10 @@ public class Startup
         services.AddMultitenancy();
 
         // Configuration
-        services.Configure<Infrastructure.Configuration.ProductImageUploadSettings>(Configuration.GetSection("ProductImageUpload"));
-        services.Configure<Infrastructure.Configuration.MessagingSettings>(Configuration.GetSection("Messaging"));
-        services.Configure<Infrastructure.Configuration.CatalogDataSettings>(Configuration.GetSection("CatalogData"));
-        services.Configure<Infrastructure.Configuration.EventPublisherSettings>(Configuration.GetSection("EventPublisher"));
+        services.Configure<Infrastructure.Configuration.ProductImageUploadConfiguration>(Configuration.GetSection("ProductImageUploadConfiguration"));
+        services.Configure<Infrastructure.Configuration.MessagingConfiguration>(Configuration.GetSection("MessagingConfiguration"));
+        services.Configure<Infrastructure.Configuration.StorageConfiguration>(Configuration.GetSection("StorageConfiguration"));
+ 
 
         // CORS
         services.AddCors(options =>
@@ -173,7 +172,7 @@ public class Startup
         services.AddScoped<IProductThumbnailUpdateQueue, SqsProductThumbnailUpdateQueue>();
 
         // Background Services
-        services.AddHostedService<ProductThumbnailUpdateBackgroundService>();
+        services.AddHostedService<ProductThumbnailUpdateQueueProcessor>();
 
         // OpenTelemetry
         var otlpEndpoint = Environment.GetEnvironmentVariable("OTLP_ENDPOINT") ?? "http://otel-collector:4318";

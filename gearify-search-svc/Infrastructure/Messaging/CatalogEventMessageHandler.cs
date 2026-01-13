@@ -16,7 +16,7 @@ public class CatalogEventMessageHandler : BackgroundService
 {
     private readonly IAmazonSQS _sqsClient;
     private readonly IServiceProvider _serviceProvider;
-    private readonly MessagingSettings _settings;
+    private readonly MessagingConfiguration _settings;
     private readonly ILogger<CatalogEventMessageHandler> _logger;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -27,7 +27,7 @@ public class CatalogEventMessageHandler : BackgroundService
     public CatalogEventMessageHandler(
         IAmazonSQS sqsClient,
         IServiceProvider serviceProvider,
-        IOptions<MessagingSettings> settings,
+        IOptions<MessagingConfiguration> settings,
         ILogger<CatalogEventMessageHandler> logger)
     {
         _sqsClient = sqsClient;

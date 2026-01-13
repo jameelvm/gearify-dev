@@ -1,23 +1,19 @@
-using Gearify.CatalogService.Infrastructure.Messaging;
 using Gearify.CatalogService.Infrastructure.Repositories;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
-namespace Gearify.CatalogService.Infrastructure.BackgroundJobs;
+namespace Gearify.CatalogService.Infrastructure.Messaging;
 
 /// <summary>
 /// Background service that listens for ImageProcessingCompleted events from Media Service
 /// and updates Product.ThumbnailUrl when image processing is complete
 /// </summary>
-public class ProductThumbnailUpdateBackgroundService : BackgroundService
+public class ProductThumbnailUpdateQueueProcessor : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<ProductThumbnailUpdateBackgroundService> _logger;
+    private readonly ILogger<ProductThumbnailUpdateQueueProcessor> _logger;
 
-    public ProductThumbnailUpdateBackgroundService(
+    public ProductThumbnailUpdateQueueProcessor(
         IServiceProvider serviceProvider,
-        ILogger<ProductThumbnailUpdateBackgroundService> logger)
+        ILogger<ProductThumbnailUpdateQueueProcessor> logger)
     {
         _serviceProvider = serviceProvider;
         _logger = logger;
@@ -71,7 +67,7 @@ public class ProductThumbnailUpdateBackgroundService : BackgroundService
     }
 
     private async Task ProcessSingleMessageAsync(
-        Messaging.Models.QueueMessage<Messaging.Models.ImageProcessingCompletedEvent> queueMessage,
+        Models.QueueMessage<Models.ImageProcessingCompletedEvent> queueMessage,
         IProductThumbnailUpdateQueue queue,
         IProductRepository productRepository,
         CancellationToken cancellationToken)

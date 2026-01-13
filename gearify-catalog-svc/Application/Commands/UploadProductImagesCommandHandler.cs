@@ -16,14 +16,14 @@ public class UploadProductImagesCommandHandler : IRequestHandler<UploadProductIm
     private readonly IMediaServiceClient _mediaServiceClient;
     private readonly IProductRepository _productRepository;
     private readonly ITenantContext _tenantContext;
-    private readonly ProductImageUploadSettings _uploadSettings;
+    private readonly ProductImageUploadConfiguration _uploadSettings;
     private readonly ILogger<UploadProductImagesCommandHandler> _logger;
 
     public UploadProductImagesCommandHandler(
         IMediaServiceClient mediaServiceClient,
         IProductRepository productRepository,
         ITenantContext tenantContext,
-        IOptions<ProductImageUploadSettings> uploadSettings,
+        IOptions<ProductImageUploadConfiguration> uploadSettings,
         ILogger<UploadProductImagesCommandHandler> logger)
     {
         _mediaServiceClient = mediaServiceClient;

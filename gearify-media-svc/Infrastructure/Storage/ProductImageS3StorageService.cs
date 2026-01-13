@@ -19,7 +19,7 @@ public class ProductImageS3StorageService : IStorageService
     public ProductImageS3StorageService(
         IAmazonS3 s3Client,
         IConfiguration configuration,
-        IOptions<StorageSettings> storageSettings,
+        IOptions<StorageConfiguration> storageSettings,
         ILogger<ProductImageS3StorageService> logger)
     {
         _s3Client = s3Client;

@@ -26,14 +26,14 @@ public class GetMegaMenuDataQueryHandler : IRequestHandler<GetMegaMenuDataQuery,
         IDepartmentRepository departmentRepository,
         ICategoryRepository categoryRepository,
         Amazon.DynamoDBv2.IAmazonDynamoDB dynamoDb,
-        IOptions<CatalogDataSettings> catalogDataSettings,
+        IOptions<StorageConfiguration> storageConfigurationOptions,
         ISectionMapperFactory sectionMapperFactory,
         ITenantContext tenantContext,
         ILogger<GetMegaMenuDataQueryHandler> logger)
     {
         _departmentRepository = departmentRepository;
         _dynamoDb = dynamoDb;
-        _tableName = catalogDataSettings.Value.CatalogTableName;
+        _tableName = storageConfigurationOptions.Value.DynamoDb.CatalogTableName;
         _sectionMapperFactory = sectionMapperFactory;
         _tenantContext = tenantContext;
         _logger = logger;

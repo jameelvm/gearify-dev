@@ -16,9 +16,9 @@ namespace Gearify.CatalogService.Infrastructure.Repositories;
 /// </summary>
 public class DynamoDbPriceRangeRepository(
     IAmazonDynamoDB dynamoDb,
-    IOptions<CatalogDataSettings> catalogDataSettings) : IPriceRangeRepository
+    IOptions<StorageConfiguration> storageConfigurationOptions) : IPriceRangeRepository
 {
-    private readonly string _tableName = catalogDataSettings.Value.PriceRangesTableName;
+    private readonly string _tableName = storageConfigurationOptions.Value.DynamoDb.PriceRangesTableName;
 
     public async Task<List<PriceRange>> GetPriceRangesAsync(string tenantId, string? category = null, bool onlyCategorySpecific = false)
     {

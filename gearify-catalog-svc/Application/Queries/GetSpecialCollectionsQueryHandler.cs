@@ -21,12 +21,12 @@ public class GetSpecialCollectionsQueryHandler : IRequestHandler<GetSpecialColle
 
     public GetSpecialCollectionsQueryHandler(
         IAmazonDynamoDB dynamoDb,
-        IOptions<CatalogDataSettings> catalogDataSettings,
+        IOptions<StorageConfiguration> storageConfigurationOptions,
         ITenantContext tenantContext,
         ILogger<GetSpecialCollectionsQueryHandler> logger)
     {
         _dynamoDb = dynamoDb;
-        _tableName = catalogDataSettings.Value.CatalogTableName;
+        _tableName = storageConfigurationOptions.Value.DynamoDb.CatalogTableName;
         _tenantContext = tenantContext;
         _logger = logger;
     }

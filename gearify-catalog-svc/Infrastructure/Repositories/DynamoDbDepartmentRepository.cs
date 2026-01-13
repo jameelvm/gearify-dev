@@ -16,9 +16,9 @@ namespace Gearify.CatalogService.Infrastructure.Repositories;
 /// </summary>
 public class DynamoDbDepartmentRepository(
     IAmazonDynamoDB dynamoDb,
-    IOptions<CatalogDataSettings> catalogDataSettings) : IDepartmentRepository
+    IOptions<StorageConfiguration> storageConfigurationOptions) : IDepartmentRepository
 {
-    private readonly string _tableName = catalogDataSettings.Value.CatalogTableName;
+    private readonly string _tableName = storageConfigurationOptions.Value.DynamoDb.CatalogTableName;
 
     public async Task<List<Department>> GetAllAsync(string tenantId)
     {

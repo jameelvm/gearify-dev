@@ -25,7 +25,7 @@ public class SqsImageProcessingQueue : IImageProcessingQueue
 
     public SqsImageProcessingQueue(
         IAmazonSQS sqsClient,
-        IOptions<MessagingSettings> messagingSettings,
+        IOptions<MessagingConfiguration> messagingSettings,
         ILogger<SqsImageProcessingQueue> logger)
     {
         _sqsClient = sqsClient;

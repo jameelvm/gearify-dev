@@ -52,9 +52,9 @@ public class Startup
         services.AddMultitenancy();
 
         // Configuration
-        services.Configure<Infrastructure.Configuration.ProductUploadSettings>(Configuration.GetSection("ProductUpload"));
-        services.Configure<Infrastructure.Configuration.MessagingSettings>(Configuration.GetSection("Messaging"));
-        services.Configure<Infrastructure.Configuration.StorageSettings>(Configuration.GetSection("Storage"));
+        services.Configure<Infrastructure.Configuration.ProductImageUploadConfiguration>(Configuration.GetSection("ProductImageUploadConfiguration"));
+        services.Configure<Infrastructure.Configuration.MessagingConfiguration>(Configuration.GetSection("MessagingConfiguration"));
+        services.Configure<Infrastructure.Configuration.StorageConfiguration>(Configuration.GetSection("StorageConfiguration"));
 
         // AWS Services with LocalStack
         services.AddSingleton<IAmazonDynamoDB>(sp =>
@@ -126,7 +126,7 @@ public class Startup
         services.AddScoped<IImageProcessingQueue, SqsImageProcessingQueue>();
 
         // Background Services
-        services.AddHostedService<ImageProcessingEventHandler>();
+        services.AddHostedService<ImageProcessingQueueProcessor>();
 
         // Swagger
         services.AddSwaggerGen(c =>

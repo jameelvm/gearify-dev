@@ -108,7 +108,7 @@ public class Startup
         Console.WriteLine("OpenSearch services registered successfully");
 
         // Messaging Configuration (SQS Consumer)
-        services.Configure<MessagingSettings>(Configuration.GetSection("Messaging"));
+        services.Configure<MessagingConfiguration>(Configuration.GetSection("MessagingConfiguration"));
 
         // Register SQS client with environment variable support
         services.AddSingleton<IAmazonSQS>(sp =>

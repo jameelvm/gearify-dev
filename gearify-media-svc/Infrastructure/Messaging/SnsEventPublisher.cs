@@ -16,7 +16,7 @@ namespace Gearify.MediaService.Infrastructure.Messaging;
 public class SnsEventPublisher : ISnsEventPublisher
 {
     private readonly IAmazonSimpleNotificationService _snsClient;
-    private readonly MessagingSettings _messagingSettings;
+    private readonly MessagingConfiguration _messagingSettings;
     private readonly ILogger<SnsEventPublisher> _logger;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -27,7 +27,7 @@ public class SnsEventPublisher : ISnsEventPublisher
 
     public SnsEventPublisher(
         IAmazonSimpleNotificationService snsClient,
-        IOptions<MessagingSettings> messagingSettings,
+        IOptions<MessagingConfiguration> messagingSettings,
         ILogger<SnsEventPublisher> logger)
     {
         _snsClient = snsClient;

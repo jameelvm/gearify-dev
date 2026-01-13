@@ -32,8 +32,4 @@
     <!-- Shared Kernel Reference -->
     <ProjectReference Include="..\gearify-shared-kernel\Gearify.SharedKernel.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Application\BackgroundJobs\" />
-  </ItemGroup>
 </Project>

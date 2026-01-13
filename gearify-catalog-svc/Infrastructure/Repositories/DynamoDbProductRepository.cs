@@ -11,10 +11,10 @@ namespace Gearify.CatalogService.Infrastructure.Repositories;
 
 public class DynamoDbProductRepository(
     IAmazonDynamoDB dynamoDb,
-    IOptions<CatalogDataSettings> catalogDataSettings) : IProductRepository
+    IOptions<StorageConfiguration> storageConfigurationOptions) : IProductRepository
 {
     private readonly IAmazonDynamoDB _dynamoDb = dynamoDb;
-    private readonly string _tableName = catalogDataSettings.Value.ProductsTableName;
+    private readonly string _tableName = storageConfigurationOptions.Value.DynamoDb.ProductsTableName;
 
     public async Task<Product?> GetByIdAsync(string productId, string tenantId)
     {

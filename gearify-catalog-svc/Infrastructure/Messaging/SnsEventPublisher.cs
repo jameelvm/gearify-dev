@@ -16,7 +16,7 @@ namespace Gearify.CatalogService.Infrastructure.Messaging;
 public class SnsEventPublisher : ISnsEventPublisher
 {
     private readonly IAmazonSimpleNotificationService _snsClient;
-    private readonly EventPublisherSettings _settings;
+    private readonly MessagingConfiguration _settings;
     private readonly ILogger<SnsEventPublisher> _logger;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -27,7 +27,7 @@ public class SnsEventPublisher : ISnsEventPublisher
 
     public SnsEventPublisher(
         IAmazonSimpleNotificationService snsClient,
-        IOptions<EventPublisherSettings> settings,
+        IOptions<MessagingConfiguration> settings,
         ILogger<SnsEventPublisher> logger)
     {
         _snsClient = snsClient;
@@ -38,13 +38,9 @@ public class SnsEventPublisher : ISnsEventPublisher
     public async Task PublishAsync<TEvent>(TEvent domainEvent, CancellationToken cancellationToken = default)
         where TEvent : IDomainEvent
     {
-        if (!_settings.Enabled)
-        {
-            _logger.LogDebug("Event publishing is disabled, skipping");
-            return;
-        }
 
-        if (string.IsNullOrEmpty(_settings.CatalogEventsTopicArn))
+        var catalogEventsTopicArn = _settings.SNS.CatalogEventsTopicArn;
+        if (string.IsNullOrEmpty(catalogEventsTopicArn))
         {
             _logger.LogWarning("CatalogEventsTopicArn is not configured, skipping event publish");
             return;
@@ -57,7 +53,7 @@ public class SnsEventPublisher : ISnsEventPublisher
 
             var request = new PublishRequest
             {
-                TopicArn = _settings.CatalogEventsTopicArn,
+                TopicArn = catalogEventsTopicArn,
                 Message = message,
                 Subject = typeof(TEvent).Name
             };
@@ -67,7 +63,7 @@ public class SnsEventPublisher : ISnsEventPublisher
             _logger.LogInformation(
                 "Published {EventType} to topic {TopicArn}. MessageId: {MessageId}",
                 typeof(TEvent).Name,
-                _settings.CatalogEventsTopicArn,
+                catalogEventsTopicArn,
                 response.MessageId);
         }
         catch (Exception ex)
@@ -75,7 +71,7 @@ public class SnsEventPublisher : ISnsEventPublisher
             _logger.LogError(ex,
                 "Failed to publish {EventType} to SNS: TopicArn={TopicArn}",
                 typeof(TEvent).Name,
-                _settings.CatalogEventsTopicArn);
+                catalogEventsTopicArn);
 
             // Don't throw - event publishing failure shouldn't fail the main operation
         }

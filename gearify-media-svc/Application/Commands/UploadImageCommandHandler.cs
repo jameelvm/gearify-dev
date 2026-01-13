@@ -22,7 +22,7 @@ public class UploadImageCommandHandler : IRequestHandler<UploadImageCommand, Upl
     private readonly IMediaRepository _mediaRepository;
     private readonly IMediaUrlFactory _urlFactory;
     private readonly ISnsEventPublisher _eventFactory;
-    private readonly ProductUploadSettings _uploadSettings;
+    private readonly ProductImageUploadConfiguration _uploadSettings;
     private readonly ILogger<UploadImageCommandHandler> _logger;
 
     public UploadImageCommandHandler(
@@ -31,7 +31,7 @@ public class UploadImageCommandHandler : IRequestHandler<UploadImageCommand, Upl
         IMediaRepository mediaRepository,
         IMediaUrlFactory urlFactory,
         ISnsEventPublisher eventFactory,
-        IOptions<ProductUploadSettings> uploadSettings,
+        IOptions<ProductImageUploadConfiguration> uploadSettings,
         ILogger<UploadImageCommandHandler> logger)
     {
         _storageService = storageService;

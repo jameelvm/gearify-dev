@@ -19,7 +19,7 @@ public class DynamoDbMediaRepository : IMediaRepository
 
     public DynamoDbMediaRepository(
         IAmazonDynamoDB dynamoDb,
-        IOptions<StorageSettings> storageSettings,
+        IOptions<StorageConfiguration> storageSettings,
         ILogger<DynamoDbMediaRepository> logger)
     {
         _dynamoDb = dynamoDb;

@@ -3,7 +3,7 @@ namespace Gearify.SearchService.Infrastructure.Configuration;
 /// <summary>
 /// Configuration for messaging (SQS/SNS)
 /// </summary>
-public class MessagingSettings
+public class MessagingConfiguration
 {
     public SqsSettings SQS { get; set; } = new();
 }

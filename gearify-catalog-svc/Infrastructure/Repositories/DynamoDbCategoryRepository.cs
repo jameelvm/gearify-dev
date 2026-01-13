@@ -13,9 +13,9 @@ namespace Gearify.CatalogService.Infrastructure.Repositories;
 /// </summary>
 public class DynamoDbCategoryRepository(
     IAmazonDynamoDB dynamoDb,
-    IOptions<CatalogDataSettings> catalogDataSettings) : ICategoryRepository
+    IOptions<StorageConfiguration> storageConfigurationOptions) : ICategoryRepository
 {
-    private readonly string _tableName = catalogDataSettings.Value.CatalogTableName;
+    private readonly string _tableName = storageConfigurationOptions.Value.DynamoDb.CatalogTableName;
 
     #region Mega Menu Operations
 

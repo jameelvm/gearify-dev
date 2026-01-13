@@ -21,12 +21,12 @@ public class GetSortOptionsQueryHandler : IRequestHandler<GetSortOptionsQuery, S
 
     public GetSortOptionsQueryHandler(
         IAmazonDynamoDB dynamoDb,
-        IOptions<CatalogDataSettings> catalogDataSettings,
+        IOptions<StorageConfiguration> storageConfigurationOptions,
         ITenantContext tenantContext,
         ILogger<GetSortOptionsQueryHandler> logger)
     {
         _dynamoDb = dynamoDb;
-        _tableName = catalogDataSettings.Value.CatalogTableName;
+        _tableName = storageConfigurationOptions.Value.DynamoDb.CatalogTableName;
         _tenantContext = tenantContext;
         _logger = logger;
     }

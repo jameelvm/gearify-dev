@@ -1,6 +1,5 @@
 using Gearify.MediaService.Domain.Enums;
 using Gearify.MediaService.Infrastructure.Configuration;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
@@ -15,11 +14,11 @@ namespace Gearify.MediaService.Application.Services;
 /// </summary>
 public class ImageProcessor : IImageProcessor
 {
-    private readonly ProductUploadSettings _uploadSettings;
+    private readonly ProductImageUploadConfiguration _uploadSettings;
     private readonly ILogger<ImageProcessor> _logger;
 
     public ImageProcessor(
-        IOptions<ProductUploadSettings> uploadSettings,
+        IOptions<ProductImageUploadConfiguration> uploadSettings,
         ILogger<ImageProcessor> logger)
     {
         _uploadSettings = uploadSettings.Value;
@@ -117,7 +116,7 @@ public class ImageProcessor : IImageProcessor
             imageStream.Position = 0;
 
             // Basic validation - if we can identify it, it's a valid image
-            return imageInfo != null && imageInfo.Width > 0 && imageInfo.Height > 0;
+            return imageInfo is { Width: > 0, Height: > 0 };
         }
         catch
         {
