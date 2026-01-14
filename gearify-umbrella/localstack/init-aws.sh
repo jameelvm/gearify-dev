@@ -216,6 +216,30 @@ awslocal dynamodb create-table \
   --region us-east-1 \
   2>/dev/null || echo "    Table gearify-media already exists, skipping..."
 
+# Carts table
+# PK: TENANT#{tenantId}#USER#{userId}
+# SK: CART#METADATA (cart header) or ITEM#{productId} (cart items)
+# GSI1: Find abandoned carts by status (GSI1PK: TENANT#{tenantId}#STATUS#{status}, GSI1SK: timestamp)
+# GSI2: Find all carts for a user across tenants (GSI2PK: USER#{userId}, GSI2SK: TENANT#{tenantId})
+echo "  - Creating table: gearify-carts"
+awslocal dynamodb create-table \
+  --table-name gearify-carts \
+  --attribute-definitions \
+    AttributeName=PK,AttributeType=S \
+    AttributeName=SK,AttributeType=S \
+    AttributeName=GSI1PK,AttributeType=S \
+    AttributeName=GSI1SK,AttributeType=S \
+    AttributeName=GSI2PK,AttributeType=S \
+    AttributeName=GSI2SK,AttributeType=S \
+  --key-schema \
+    AttributeName=PK,KeyType=HASH \
+    AttributeName=SK,KeyType=RANGE \
+  --global-secondary-indexes \
+    "[{\"IndexName\":\"GSI1\",\"KeySchema\":[{\"AttributeName\":\"GSI1PK\",\"KeyType\":\"HASH\"},{\"AttributeName\":\"GSI1SK\",\"KeyType\":\"RANGE\"}],\"Projection\":{\"ProjectionType\":\"ALL\"}},{\"IndexName\":\"GSI2\",\"KeySchema\":[{\"AttributeName\":\"GSI2PK\",\"KeyType\":\"HASH\"},{\"AttributeName\":\"GSI2SK\",\"KeyType\":\"RANGE\"}],\"Projection\":{\"ProjectionType\":\"ALL\"}}]" \
+  --billing-mode PAY_PER_REQUEST \
+  --region us-east-1 \
+  2>/dev/null || echo "    Table gearify-carts already exists, skipping..."
+
 echo "DynamoDB tables created successfully!"
 
 # ==========================================
