@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Gearify.CartService.Application.Mappers;
 using Gearify.CartService.Infrastructure.Repositories;
 using Gearify.SharedKernel.Multitenancy;
 using MediatR;
@@ -64,7 +65,7 @@ public class UpdateCartItemCommandHandler : IRequestHandler<UpdateCartItemComman
 
             await _repository.SaveCartAsync(cart);
 
-            return new UpdateCartItemResult(true, cart);
+            return new UpdateCartItemResult(true, CartMapper.ToResponse(cart));
         }
         catch (Exception ex)
         {

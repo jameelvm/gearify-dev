@@ -2,11 +2,13 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Gearify.CartService.Application.Mappers;
 using Gearify.CartService.Domain.Entities;
 using Gearify.CartService.Infrastructure.Clients;
 using Gearify.CartService.Infrastructure.Repositories;
 using Gearify.SharedKernel.Multitenancy;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Gearify.CartService.Application.Commands;
@@ -17,17 +19,20 @@ public class AddToCartCommandHandler : IRequestHandler<AddToCartCommand, AddToCa
     private readonly ICatalogServiceClient _catalogClient;
     private readonly ITenantContext _tenantContext;
     private readonly ILogger<AddToCartCommandHandler> _logger;
+    private readonly int _guestCartExpirationDays;
 
     public AddToCartCommandHandler(
         ICartRepository repository,
         ICatalogServiceClient catalogClient,
         ITenantContext tenantContext,
+        IConfiguration configuration,
         ILogger<AddToCartCommandHandler> logger)
     {
         _repository = repository;
         _catalogClient = catalogClient;
         _tenantContext = tenantContext;
         _logger = logger;
+        _guestCartExpirationDays = configuration.GetValue<int>("CartConfiguration:GuestCartExpirationDays", 7);
     }
 
     public async Task<AddToCartResult> Handle(AddToCartCommand request, CancellationToken cancellationToken)
@@ -55,7 +60,7 @@ public class AddToCartCommandHandler : IRequestHandler<AddToCartCommand, AddToCa
                 {
                     UserId = request.UserId,
                     TenantId = tenantId,
-                    ExpiresAt = DateTime.UtcNow.AddDays(7)
+                    ExpiresAt = DateTime.UtcNow.AddDays(_guestCartExpirationDays)
                 };
 
             var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == request.ProductId);
@@ -85,7 +90,7 @@ public class AddToCartCommandHandler : IRequestHandler<AddToCartCommand, AddToCa
 
             _logger.LogInformation("Added product {ProductId} to cart for user {UserId}", request.ProductId, request.UserId);
 
-            return new AddToCartResult(true, cart);
+            return new AddToCartResult(true, CartMapper.ToResponse(cart));
         }
         catch (Exception ex)
         {

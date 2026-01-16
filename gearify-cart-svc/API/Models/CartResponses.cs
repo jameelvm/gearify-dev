@@ -24,3 +24,5 @@ public record CartItemResponse(
     decimal UnitPrice,
     decimal LineTotal
 );
+
+public record GuestCartResponse(Guid GuestId);

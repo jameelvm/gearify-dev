@@ -1,6 +1,5 @@
+using System;
 using Amazon.DynamoDBv2;
-using Amazon.DynamoDBv2.DataModel;
-using Amazon.Runtime;
 using Gearify.CartService.Infrastructure.Clients;
 using Gearify.CartService.Infrastructure.Repositories;
 using Gearify.CartService.Infrastructure.Swagger;
@@ -51,15 +50,18 @@ public class Startup
         services.AddLocalStack(Configuration);
 
         // AWS Service Configuration
-        services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
-        services.AddAWSService<IAmazonDynamoDB>();
+        var awsOptions = Configuration.GetAWSOptions();
 
-        // DynamoDB Context
-        services.AddSingleton<IDynamoDBContext>(sp =>
+        // Override ServiceURL from environment variable if present (for Docker/LocalStack)
+        var dynamoDbEndpoint = Environment.GetEnvironmentVariable("DYNAMODB_ENDPOINT");
+        if (!string.IsNullOrEmpty(dynamoDbEndpoint))
         {
-            var dynamoClient = sp.GetRequiredService<IAmazonDynamoDB>();
-            return new DynamoDBContext(dynamoClient);
-        });
+            awsOptions.DefaultClientConfig.ServiceURL = dynamoDbEndpoint;
+            Console.WriteLine($"[Cart Service] Using DynamoDB endpoint: {dynamoDbEndpoint}");
+        }
+
+        services.AddDefaultAWSOptions(awsOptions);
+        services.AddAWSService<IAmazonDynamoDB>();
 
         // Redis - Using factory pattern
         services.AddSingleton<IConnectionMultiplexer>(sp =>
@@ -78,8 +80,11 @@ public class Startup
             return ConnectionMultiplexer.Connect(configOptions);
         });
 
-        // Cart Repository
-        services.AddScoped<ICartRepository, RedisCartRepository>();
+        // Cart Repositories
+        // DynamoDB as persistent storage
+        services.AddScoped<DynamoDbCartRepository>();
+        // Cached repository: Redis (cache) + DynamoDB (persistent) with write-through
+        services.AddScoped<ICartRepository, CachedCartRepository>();
 
         // Catalog Service Client
         services.AddHttpClient<ICatalogServiceClient, CatalogServiceClient>();

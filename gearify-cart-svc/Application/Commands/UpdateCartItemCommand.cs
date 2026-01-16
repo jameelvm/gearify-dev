@@ -1,4 +1,4 @@
-using Gearify.CartService.Domain.Entities;
+using Gearify.CartService.API.Models;
 using MediatR;
 
 namespace Gearify.CartService.Application.Commands;
@@ -9,4 +9,4 @@ public record UpdateCartItemCommand(
     int Quantity
 ) : IRequest<UpdateCartItemResult>;
 
-public record UpdateCartItemResult(bool Success, Cart? Cart = null, string? ErrorMessage = null);
+public record UpdateCartItemResult(bool Success, CartResponse? Cart = null, string? ErrorMessage = null);

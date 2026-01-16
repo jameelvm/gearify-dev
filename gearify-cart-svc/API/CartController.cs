@@ -1,13 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Gearify.CartService.API.Models;
 using Gearify.CartService.Application.Commands;
 using Gearify.CartService.Application.Queries;
-using Gearify.CartService.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Gearify.CartService.API;
 
@@ -16,8 +14,24 @@ namespace Gearify.CartService.API;
 public class CartController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly ILogger<CartController> _logger;
 
-    public CartController(IMediator mediator) => _mediator = mediator;
+    public CartController(IMediator mediator, ILogger<CartController> logger)
+    {
+        _mediator = mediator;
+        _logger = logger;
+    }
+
+    /// <summary>
+    /// Generate a new guest cart ID (GUID)
+    /// </summary>
+    [HttpPost("guest/new")]
+    public ActionResult<GuestCartResponse> CreateGuestCart()
+    {
+        var guestId = Guid.NewGuid();
+        _logger.LogInformation("Generated new guest cart ID: {GuestId}", guestId);
+        return Ok(new GuestCartResponse(guestId));
+    }
 
     /// <summary>
     /// Get user's cart
@@ -26,22 +40,7 @@ public class CartController : ControllerBase
     public async Task<ActionResult<CartResponse>> GetCart(string userId)
     {
         var cart = await _mediator.Send(new GetCartQuery(userId));
-        if (cart == null)
-        {
-            return Ok(new CartResponse(
-                Id: string.Empty,
-                UserId: userId,
-                Items: new List<CartItemResponse>(),
-                Subtotal: 0m,
-                Total: 0m,
-                Currency: "USD",
-                ItemCount: 0,
-                CreatedAt: DateTime.UtcNow,
-                UpdatedAt: DateTime.UtcNow
-            ));
-        }
-
-        return Ok(MapToResponse(cart));
+        return Ok(cart);
     }
 
     /// <summary>
@@ -50,16 +49,12 @@ public class CartController : ControllerBase
     [HttpPost("{userId}/items")]
     public async Task<ActionResult<CartResponse>> AddToCart(string userId, [FromBody] AddItemRequest request)
     {
-        var result = await _mediator.Send(new AddToCartCommand(
-            userId,
-            request.ProductId,
-            request.Quantity
-        ));
+        var result = await _mediator.Send(new AddToCartCommand(userId, request.ProductId, request.Quantity));
 
         if (!result.Success)
             return BadRequest(new { error = result.ErrorMessage });
 
-        return Ok(MapToResponse(result.Cart!));
+        return Ok(result.Cart);
     }
 
     /// <summary>
@@ -68,16 +63,12 @@ public class CartController : ControllerBase
     [HttpPut("{userId}/items/{productId}")]
     public async Task<ActionResult<CartResponse>> UpdateCartItem(string userId, string productId, [FromBody] UpdateQuantityRequest request)
     {
-        var result = await _mediator.Send(new UpdateCartItemCommand(
-            userId,
-            productId,
-            request.Quantity
-        ));
+        var result = await _mediator.Send(new UpdateCartItemCommand(userId, productId, request.Quantity));
 
         if (!result.Success)
             return BadRequest(new { error = result.ErrorMessage });
 
-        return Ok(MapToResponse(result.Cart!));
+        return Ok(result.Cart);
     }
 
     /// <summary>
@@ -108,28 +99,25 @@ public class CartController : ControllerBase
         return Ok(new { message = "Cart cleared" });
     }
 
-    private static CartResponse MapToResponse(Cart cart)
+    /// <summary>
+    /// Merge guest cart into user cart
+    /// </summary>
+    [HttpPost("merge")]
+    public async Task<ActionResult<CartResponse>> MergeCart([FromBody] MergeCartRequest request)
     {
-        var items = cart.Items.Select(i => new CartItemResponse(
-            ProductId: i.ProductId,
-            ProductName: i.ProductName,
-            Sku: i.Sku,
-            ImageUrl: i.ImageUrl,
-            Quantity: i.Quantity,
-            UnitPrice: i.Price,
-            LineTotal: i.Price * i.Quantity
-        )).ToList();
+        _logger.LogInformation(
+            "Merge request: GuestCartId={GuestCartId}, UserId={UserId}, Strategy={Strategy}",
+            request.GuestCartId, request.UserId, request.Strategy);
 
-        return new CartResponse(
-            Id: cart.Id,
-            UserId: cart.UserId,
-            Items: items,
-            Subtotal: cart.TotalAmount,
-            Total: cart.TotalAmount,
-            Currency: cart.Currency,
-            ItemCount: cart.Items.Count,
-            CreatedAt: cart.CreatedAt,
-            UpdatedAt: cart.UpdatedAt
-        );
+        var result = await _mediator.Send(new MergeCartCommand(
+            request.GuestCartId,
+            request.UserId,
+            request.Strategy
+        ));
+
+        if (!result.Success)
+            return BadRequest(new { error = result.ErrorMessage });
+
+        return Ok(result.Cart);
     }
 }
