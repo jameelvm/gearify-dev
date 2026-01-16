@@ -1,6 +1,8 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.Runtime;
+using Gearify.CartService.Infrastructure.Clients;
+using Gearify.CartService.Infrastructure.Repositories;
 using Gearify.CartService.Infrastructure.Swagger;
 using Gearify.SharedKernel.Extensions;
 using LocalStack.Client.Extensions;
@@ -75,6 +77,12 @@ public class Startup
 
             return ConnectionMultiplexer.Connect(configOptions);
         });
+
+        // Cart Repository
+        services.AddScoped<ICartRepository, RedisCartRepository>();
+
+        // Catalog Service Client
+        services.AddHttpClient<ICatalogServiceClient, CatalogServiceClient>();
 
         // MediatR
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly));

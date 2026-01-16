@@ -115,7 +115,8 @@
       "Bash(dotnet new:*)",
       "Bash(rm:*)",
       "Bash(awslocal dynamodb scan:*)",
-      "Bash(xargs cat:*)"
+      "Bash(xargs cat:*)",
+      "Bash(aws:*)"
     ],
     "deny": [],
     "ask": []

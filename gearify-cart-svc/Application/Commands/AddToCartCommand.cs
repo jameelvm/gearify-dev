@@ -6,11 +6,7 @@ namespace Gearify.CartService.Application.Commands;
 public record AddToCartCommand(
     string UserId,
     string ProductId,
-    string ProductName,
-    string Sku,
-    int Quantity,
-    decimal Price,
-    string? ImageUrl = null
+    int Quantity = 1
 ) : IRequest<AddToCartResult>;
 
 public record AddToCartResult(bool Success, Cart? Cart = null, string? ErrorMessage = null);

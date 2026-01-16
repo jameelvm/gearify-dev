@@ -289,7 +289,7 @@ services:
       - SEQ_URL=${SEQ_URL}
       - OTLP_ENDPOINT=${OTLP_ENDPOINT}
     ports:
-      - "5003:80"
+      - "5013:80"
     networks:
       - gearify-network
     depends_on:
