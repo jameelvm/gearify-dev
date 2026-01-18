@@ -1,9 +1,9 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, tap, of, catchError, map } from 'rxjs';
 import { HttpService } from '@core/services/http.service';
 import { StorageService } from '@core/services/storage.service';
-import { API_CONFIG } from '@shared/constants/api.constants';
+import { API_CONFIG, STORAGE_KEYS } from '@shared/constants/api.constants';
 import { User, AuthTokens, LoginRequest, RegisterRequest, AuthState } from '@app/core/models/user.model';
 
 /**
@@ -15,6 +15,7 @@ export class AuthService {
   private http = inject(HttpService);
   private router = inject(Router);
   private storage = inject(StorageService);
+  private injector = inject(Injector);
 
   private authState = signal<AuthState>({
     user: this.storage.getUser(),
@@ -95,6 +96,9 @@ export class AuthService {
           // Clear auth data from storage
           this.storage.clearAuthData();
 
+          // Reset cart to new guest cart (lazy inject to avoid circular dependency)
+          this.resetCartToGuest();
+
           // Reset auth state
           this.authState.set({
             user: null,
@@ -113,6 +117,9 @@ export class AuthService {
     } else {
       // No refresh token, just clear local data
       this.storage.clearAuthData();
+
+      // Reset cart to new guest cart
+      this.resetCartToGuest();
 
       this.authState.set({
         user: null,
@@ -196,5 +203,24 @@ export class AuthService {
         this.authState.update(state => ({ ...state, user }));
       })
     );
+  }
+
+  /**
+   * Reset cart to a new guest cart (avoids circular dependency with CartService)
+   */
+  private resetCartToGuest(): void {
+    // Generate new guest cart ID
+    const newGuestId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = (Math.random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+    localStorage.setItem(STORAGE_KEYS.CART_ID, newGuestId);
+
+    // Lazy inject CartService to reset its signal
+    import('@core/services/cart.service').then(m => {
+      const cartService = this.injector.get(m.CartService);
+      cartService.resetToGuestCart();
+    });
   }
 }

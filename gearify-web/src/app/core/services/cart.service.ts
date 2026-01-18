@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { Observable, of, tap, map, catchError } from 'rxjs';
 import { HttpService } from './http.service';
-import { Cart, CartItem, CartResponse, CartItemResponse, AddToCartRequest, UpdateCartItemRequest, GuestCartResponse } from '../models/cart.model';
+import { Cart, CartItem, CartResponse, CartItemResponse, AddToCartRequest, UpdateCartItemRequest, GuestCartResponse, MergeCartRequest, MergeStrategy } from '../models/cart.model';
 import { API_CONFIG, STORAGE_KEYS } from '@shared/constants/api.constants';
 
 /**
@@ -24,7 +24,8 @@ export class CartService {
   public total = computed(() => this.cartSignal()?.total ?? 0);
 
   constructor() {
-    this.loadCart();
+    // Don't load cart in constructor - let components trigger the load
+    // This avoids timing issues with HTTP interceptors
   }
 
   /**
@@ -130,6 +131,49 @@ export class CartService {
   }
 
   /**
+   * Merge guest cart into user cart after login
+   */
+  mergeCart(userId: string, strategy: MergeStrategy = MergeStrategy.Combine): Observable<Cart | null> {
+    const guestCartId = localStorage.getItem(STORAGE_KEYS.CART_ID);
+
+    // No guest cart to merge
+    if (!guestCartId) {
+      // Switch to user's cart
+      localStorage.setItem(STORAGE_KEYS.CART_ID, userId);
+      this.loadCart();
+      return of(null);
+    }
+
+    // If guest cart ID is same as user ID, no merge needed
+    if (guestCartId === userId) {
+      this.loadCart();
+      return of(null);
+    }
+
+    const request: MergeCartRequest = {
+      GuestCartId: guestCartId,
+      UserId: userId,
+      Strategy: strategy
+    };
+
+    return this.http.post<CartResponse>(`${API_CONFIG.ENDPOINTS.CART}/merge`, request).pipe(
+      map(response => this.mapResponseToCart(response)),
+      tap(cart => {
+        // Switch to user's cart ID
+        localStorage.setItem(STORAGE_KEYS.CART_ID, userId);
+        this.cartSignal.set(cart);
+      }),
+      catchError(err => {
+        console.error('Failed to merge cart:', err);
+        // On error, just switch to user's cart
+        localStorage.setItem(STORAGE_KEYS.CART_ID, userId);
+        this.loadCart();
+        return of(null);
+      })
+    );
+  }
+
+  /**
    * Create a new guest cart and get the guest ID
    */
   createGuestCart(): Observable<string> {
@@ -146,6 +190,15 @@ export class CartService {
         return of(localId);
       })
     );
+  }
+
+  /**
+   * Reset to a new guest cart (called on logout)
+   */
+  resetToGuestCart(): void {
+    const newGuestId = this.generateUUID();
+    localStorage.setItem(STORAGE_KEYS.CART_ID, newGuestId);
+    this.cartSignal.set(null);
   }
 
   // ============================================

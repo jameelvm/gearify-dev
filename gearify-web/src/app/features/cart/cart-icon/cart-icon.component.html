@@ -1,0 +1,22 @@
+<a routerLink="/cart" class="cart-icon-link" aria-label="Shopping cart">
+  <div class="cart-icon-container">
+    <svg
+      class="cart-icon"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <circle cx="9" cy="21" r="1"></circle>
+      <circle cx="20" cy="21" r="1"></circle>
+      <path d="m1 1 4 4 2.68 12.72a2 2 0 0 0 2 1.58h9.72a2 2 0 0 0 2-1.6L23 6H6"></path>
+    </svg>
+    @if (cartService.itemCount() > 0) {
+      <span class="cart-badge" [class.animate]="isAnimating()">{{ cartService.itemCount() }}</span>
+    }
+  </div>
+</a>

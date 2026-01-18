@@ -64,3 +64,16 @@ export interface AddToCartRequest {
 export interface UpdateCartItemRequest {
   quantity: number;
 }
+
+// Backend expects PascalCase and enum as number
+export interface MergeCartRequest {
+  GuestCartId: string;
+  UserId: string;
+  Strategy: MergeStrategy;
+}
+
+export enum MergeStrategy {
+  Combine = 0,
+  ReplaceWithGuest = 1,
+  KeepUser = 2
+}
