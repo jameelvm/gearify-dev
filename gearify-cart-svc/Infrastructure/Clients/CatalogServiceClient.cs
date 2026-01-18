@@ -15,13 +15,16 @@ using Polly.Retry;
 
 namespace Gearify.CartService.Infrastructure.Clients;
 
+/// <summary>
+/// HTTP client for Catalog Service with resilience policies
+/// </summary>
 public class CatalogServiceClient : ICatalogServiceClient
 {
     private readonly HttpClient _httpClient;
     private readonly ITenantContext _tenantContext;
     private readonly ILogger<CatalogServiceClient> _logger;
-    private readonly AsyncRetryPolicy<HttpResponseMessage> _retryPolicy;
-    private readonly AsyncCircuitBreakerPolicy<HttpResponseMessage> _circuitBreakerPolicy;
+    private readonly AsyncRetryPolicy _retryPolicy;
+    private readonly AsyncCircuitBreakerPolicy _circuitBreakerPolicy;
     private readonly JsonSerializerOptions _jsonOptions;
 
     public CatalogServiceClient(
@@ -34,10 +37,12 @@ public class CatalogServiceClient : ICatalogServiceClient
         _tenantContext = tenantContext;
         _logger = logger;
 
+        // Configure base URL
         var baseUrl = configuration["CatalogService:BaseUrl"] ?? "http://localhost:5001";
         _httpClient.BaseAddress = new Uri(baseUrl);
-        _httpClient.Timeout = TimeSpan.FromSeconds(10);
+        _httpClient.Timeout = TimeSpan.FromSeconds(30);
 
+        // JSON serialization options
         _jsonOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
@@ -45,38 +50,37 @@ public class CatalogServiceClient : ICatalogServiceClient
 
         // Retry policy: 3 retries with exponential backoff
         _retryPolicy = Policy
-            .HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode && r.StatusCode != HttpStatusCode.NotFound)
-            .Or<HttpRequestException>()
+            .Handle<HttpRequestException>()
+            .Or<TaskCanceledException>()
             .WaitAndRetryAsync(
-                3,
-                retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
-                (outcome, timespan, retryCount, context) =>
+                retryCount: 3,
+                sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                onRetry: (exception, timeSpan, retryCount, context) =>
                 {
                     _logger.LogWarning(
-                        "Retry {RetryCount} for catalog service after {Delay}ms. Status: {StatusCode}",
-                        retryCount, timespan.TotalMilliseconds, outcome.Result?.StatusCode);
+                        exception,
+                        "Catalog Service call failed. Retry {RetryCount} after {DelaySeconds}s",
+                        retryCount,
+                        timeSpan.TotalSeconds);
                 });
 
-        // Circuit breaker: break after 5 failures, stay open for 30 seconds
+        // Circuit breaker: break after 5 consecutive failures, stay open for 30 seconds
         _circuitBreakerPolicy = Policy
-            .HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode && r.StatusCode != HttpStatusCode.NotFound)
-            .Or<HttpRequestException>()
+            .Handle<HttpRequestException>()
+            .Or<TaskCanceledException>()
             .CircuitBreakerAsync(
-                5,
-                TimeSpan.FromSeconds(30),
-                onBreak: (outcome, breakDelay) =>
+                exceptionsAllowedBeforeBreaking: 5,
+                durationOfBreak: TimeSpan.FromSeconds(30),
+                onBreak: (exception, duration) =>
                 {
                     _logger.LogError(
-                        "Circuit breaker opened for catalog service. Will retry after {BreakDelay}s",
-                        breakDelay.TotalSeconds);
+                        exception,
+                        "Catalog Service circuit breaker opened for {DurationSeconds}s",
+                        duration.TotalSeconds);
                 },
                 onReset: () =>
                 {
-                    _logger.LogInformation("Circuit breaker reset for catalog service");
-                },
-                onHalfOpen: () =>
-                {
-                    _logger.LogInformation("Circuit breaker half-open for catalog service");
+                    _logger.LogInformation("Catalog Service circuit breaker reset");
                 });
     }
 
@@ -84,30 +88,45 @@ public class CatalogServiceClient : ICatalogServiceClient
     {
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/api/catalog/products/{productId}");
-            request.Headers.Add("X-Tenant-Id", _tenantContext.TenantId);
+            var tenantId = _tenantContext.TenantId;
 
-            var response = await _circuitBreakerPolicy
-                .WrapAsync(_retryPolicy)
-                .ExecuteAsync(async () => await _httpClient.SendAsync(request, cancellationToken));
-
-            if (response.StatusCode == HttpStatusCode.NotFound)
+            return await _retryPolicy.ExecuteAsync(async () =>
             {
-                _logger.LogWarning("Product {ProductId} not found in catalog service", productId);
-                return null;
-            }
+                return await _circuitBreakerPolicy.ExecuteAsync(async () =>
+                {
+                    // Create new request for each attempt (HttpRequestMessage cannot be reused)
+                    var request = new HttpRequestMessage(HttpMethod.Get, $"/api/catalog/products/{productId}");
+                    request.Headers.Add("X-Tenant-Id", tenantId);
 
-            response.EnsureSuccessStatusCode();
+                    var response = await _httpClient.SendAsync(request, cancellationToken);
 
-            var product = await response.Content.ReadFromJsonAsync<ProductValidationResult>(_jsonOptions, cancellationToken);
+                    if (response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        _logger.LogWarning("Product {ProductId} not found in catalog service", productId);
+                        return null;
+                    }
 
-            _logger.LogDebug("Retrieved product {ProductId} from catalog service", productId);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        var error = await response.Content.ReadAsStringAsync(cancellationToken);
+                        _logger.LogError(
+                            "Failed to get product from Catalog Service. Status: {StatusCode}, Error: {Error}",
+                            response.StatusCode,
+                            error);
+                        throw new HttpRequestException($"Catalog service returned {response.StatusCode}");
+                    }
 
-            return product;
+                    var product = await response.Content.ReadFromJsonAsync<ProductValidationResult>(_jsonOptions, cancellationToken);
+
+                    _logger.LogDebug("Retrieved product {ProductId} from catalog service", productId);
+
+                    return product;
+                });
+            });
         }
-        catch (BrokenCircuitException)
+        catch (BrokenCircuitException ex)
         {
-            _logger.LogError("Circuit breaker is open. Cannot reach catalog service for product {ProductId}", productId);
+            _logger.LogError(ex, "Catalog Service circuit breaker is open. Cannot retrieve product {ProductId}", productId);
             throw;
         }
         catch (Exception ex)

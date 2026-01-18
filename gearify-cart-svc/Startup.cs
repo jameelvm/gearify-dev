@@ -1,6 +1,8 @@
 using System;
 using Amazon.DynamoDBv2;
+using Gearify.CartService.Infrastructure.Caching;
 using Gearify.CartService.Infrastructure.Clients;
+using Gearify.CartService.Infrastructure.Configuration;
 using Gearify.CartService.Infrastructure.Repositories;
 using Gearify.CartService.Infrastructure.Swagger;
 using Gearify.SharedKernel.Extensions;
@@ -63,6 +65,9 @@ public class Startup
         services.AddDefaultAWSOptions(awsOptions);
         services.AddAWSService<IAmazonDynamoDB>();
 
+        // Cart Configuration
+        services.Configure<CartConfiguration>(Configuration.GetSection(CartConfiguration.SectionName));
+
         // Redis - Using factory pattern
         services.AddSingleton<IConnectionMultiplexer>(sp =>
         {
@@ -80,11 +85,12 @@ public class Startup
             return ConnectionMultiplexer.Connect(configOptions);
         });
 
-        // Cart Repositories
-        // DynamoDB as persistent storage
-        services.AddScoped<DynamoDbCartRepository>();
-        // Cached repository: Redis (cache) + DynamoDB (persistent) with write-through
-        services.AddScoped<ICartRepository, CachedCartRepository>();
+        // Cache Services
+        services.AddSingleton<ICacheService, RedisCacheService>();
+        services.AddSingleton<ICartCacheService, CartCacheService>();
+
+        // Cart Repository (DynamoDB persistence)
+        services.AddScoped<ICartRepository, DynamoDbCartRepository>();
 
         // Catalog Service Client
         services.AddHttpClient<ICatalogServiceClient, CatalogServiceClient>();

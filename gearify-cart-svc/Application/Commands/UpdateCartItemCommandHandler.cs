@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Gearify.CartService.Application.Mappers;
+using Gearify.CartService.Infrastructure.Caching;
 using Gearify.CartService.Infrastructure.Repositories;
 using Gearify.SharedKernel.Multitenancy;
 using MediatR;
@@ -13,15 +14,18 @@ namespace Gearify.CartService.Application.Commands;
 public class UpdateCartItemCommandHandler : IRequestHandler<UpdateCartItemCommand, UpdateCartItemResult>
 {
     private readonly ICartRepository _repository;
+    private readonly ICartCacheService _cache;
     private readonly ITenantContext _tenantContext;
     private readonly ILogger<UpdateCartItemCommandHandler> _logger;
 
     public UpdateCartItemCommandHandler(
         ICartRepository repository,
+        ICartCacheService cache,
         ITenantContext tenantContext,
         ILogger<UpdateCartItemCommandHandler> logger)
     {
         _repository = repository;
+        _cache = cache;
         _tenantContext = tenantContext;
         _logger = logger;
     }
@@ -31,7 +35,10 @@ public class UpdateCartItemCommandHandler : IRequestHandler<UpdateCartItemComman
         try
         {
             var tenantId = _tenantContext.TenantId;
-            var cart = await _repository.GetCartAsync(request.UserId, tenantId);
+
+            // Check cache first, then repository
+            var cart = await _cache.GetAsync(request.UserId, tenantId)
+                ?? await _repository.GetCartAsync(request.UserId, tenantId);
 
             if (cart == null)
             {
@@ -64,6 +71,7 @@ public class UpdateCartItemCommandHandler : IRequestHandler<UpdateCartItemComman
             cart.UpdatedAt = DateTime.UtcNow;
 
             await _repository.SaveCartAsync(cart);
+            await _cache.SetAsync(cart);
 
             return new UpdateCartItemResult(true, CartMapper.ToResponse(cart));
         }

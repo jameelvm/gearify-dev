@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Product } from '@core/models/product.model';
 import { ProductService } from '@core/services/product.service';
 import { SearchService, ProductSearchItem } from '@core/services/search.service';
+import { CartService } from '@core/services/cart.service';
 import {
   ImageGalleryComponent,
   RatingComponent,
@@ -57,6 +58,7 @@ export class ProductDetailComponent implements OnInit {
   private router = inject(Router);
   private productService = inject(ProductService);
   private searchService = inject(SearchService);
+  private cartService = inject(CartService);
 
   // Loading and error states
   isLoading = signal<boolean>(true);
@@ -284,11 +286,24 @@ export class ProductDetailComponent implements OnInit {
   onAddToCart(): void {
     if (this.isOutOfStock()) return;
 
-    console.log('Adding to cart:', {
-      product: this.product(),
-      quantity: this.quantity()
+    const prod = this.product();
+    if (!prod) return;
+
+    this.cartService.addToCartWithProduct({
+      id: prod.id,
+      name: prod.name,
+      sku: prod.sku,
+      price: prod.price,
+      imageUrl: prod.thumbnailUrl || prod.imageUrls?.[0] || '',
+      brand: prod.brand
+    }, this.quantity()).subscribe({
+      next: () => {
+        console.log('Added to cart successfully');
+      },
+      error: (err) => {
+        console.error('Failed to add to cart:', err);
+      }
     });
-    // Implement cart service call
   }
 
   /**
@@ -324,8 +339,21 @@ export class ProductDetailComponent implements OnInit {
    * Handle add to cart for related products
    */
   onRelatedProductAddToCart(product: Product): void {
-    console.log('Add related product to cart:', product);
-    // Implement cart service call
+    this.cartService.addToCartWithProduct({
+      id: product.id,
+      name: product.name,
+      sku: product.sku,
+      price: product.price,
+      imageUrl: product.thumbnailUrl || product.imageUrls?.[0] || '',
+      brand: product.brand
+    }, 1).subscribe({
+      next: () => {
+        console.log('Related product added to cart successfully');
+      },
+      error: (err) => {
+        console.error('Failed to add related product to cart:', err);
+      }
+    });
   }
 
   /**

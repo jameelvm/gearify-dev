@@ -4,35 +4,40 @@ using System.Threading;
 using System.Threading.Tasks;
 using Gearify.CartService.Application.Mappers;
 using Gearify.CartService.Domain.Entities;
+using Gearify.CartService.Infrastructure.Caching;
 using Gearify.CartService.Infrastructure.Clients;
+using Gearify.CartService.Infrastructure.Configuration;
 using Gearify.CartService.Infrastructure.Repositories;
 using Gearify.SharedKernel.Multitenancy;
 using MediatR;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Gearify.CartService.Application.Commands;
 
 public class AddToCartCommandHandler : IRequestHandler<AddToCartCommand, AddToCartResult>
 {
     private readonly ICartRepository _repository;
+    private readonly ICartCacheService _cache;
     private readonly ICatalogServiceClient _catalogClient;
     private readonly ITenantContext _tenantContext;
     private readonly ILogger<AddToCartCommandHandler> _logger;
-    private readonly int _guestCartExpirationDays;
+    private readonly CartConfiguration _cartConfig;
 
     public AddToCartCommandHandler(
         ICartRepository repository,
+        ICartCacheService cache,
         ICatalogServiceClient catalogClient,
         ITenantContext tenantContext,
-        IConfiguration configuration,
+        IOptions<CartConfiguration> cartConfig,
         ILogger<AddToCartCommandHandler> logger)
     {
         _repository = repository;
+        _cache = cache;
         _catalogClient = catalogClient;
         _tenantContext = tenantContext;
         _logger = logger;
-        _guestCartExpirationDays = configuration.GetValue<int>("CartConfiguration:GuestCartExpirationDays", 7);
+        _cartConfig = cartConfig.Value;
     }
 
     public async Task<AddToCartResult> Handle(AddToCartCommand request, CancellationToken cancellationToken)
@@ -55,12 +60,14 @@ public class AddToCartCommandHandler : IRequestHandler<AddToCartCommand, AddToCa
                 return new AddToCartResult(false, null, "Product is not available");
             }
 
-            var cart = await _repository.GetCartAsync(request.UserId, tenantId)
+            // Check cache first, then repository
+            var cart = await _cache.GetAsync(request.UserId, tenantId)
+                ?? await _repository.GetCartAsync(request.UserId, tenantId)
                 ?? new Cart
                 {
                     UserId = request.UserId,
                     TenantId = tenantId,
-                    ExpiresAt = DateTime.UtcNow.AddDays(_guestCartExpirationDays)
+                    ExpiresAt = DateTime.UtcNow.AddDays(_cartConfig.GuestCartExpirationDays)
                 };
 
             var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == request.ProductId);
@@ -87,6 +94,7 @@ public class AddToCartCommandHandler : IRequestHandler<AddToCartCommand, AddToCa
             cart.UpdatedAt = DateTime.UtcNow;
 
             await _repository.SaveCartAsync(cart);
+            await _cache.SetAsync(cart);
 
             _logger.LogInformation("Added product {ProductId} to cart for user {UserId}", request.ProductId, request.UserId);
 

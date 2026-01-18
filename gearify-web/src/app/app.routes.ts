@@ -47,6 +47,11 @@ export const routes: Routes = [
     loadChildren: () => import('./features/account/account.routes').then(m => m.ACCOUNT_ROUTES)
   },
   {
+    path: 'cart',
+    canActivate: [tenantGuard],
+    loadChildren: () => import('./features/cart/cart.routes').then(m => m.CART_ROUTES)
+  },
+  {
     path: 'tenant-not-found',
     loadComponent: () => import('./features/errors/tenant-not-found.component').then(m => m.TenantNotFoundComponent)
   },

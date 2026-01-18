@@ -5,31 +5,36 @@ using System.Threading.Tasks;
 using Gearify.CartService.API.Models;
 using Gearify.CartService.Application.Mappers;
 using Gearify.CartService.Domain.Entities;
+using Gearify.CartService.Infrastructure.Caching;
+using Gearify.CartService.Infrastructure.Configuration;
 using Gearify.CartService.Infrastructure.Repositories;
 using Gearify.SharedKernel.Multitenancy;
 using MediatR;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Gearify.CartService.Application.Commands;
 
 public class MergeCartCommandHandler : IRequestHandler<MergeCartCommand, MergeCartResult>
 {
     private readonly ICartRepository _repository;
+    private readonly ICartCacheService _cache;
     private readonly ITenantContext _tenantContext;
     private readonly ILogger<MergeCartCommandHandler> _logger;
-    private readonly int _userCartExpirationDays;
+    private readonly CartConfiguration _cartConfig;
 
     public MergeCartCommandHandler(
         ICartRepository repository,
+        ICartCacheService cache,
         ITenantContext tenantContext,
-        IConfiguration configuration,
+        IOptions<CartConfiguration> cartConfig,
         ILogger<MergeCartCommandHandler> logger)
     {
         _repository = repository;
+        _cache = cache;
         _tenantContext = tenantContext;
         _logger = logger;
-        _userCartExpirationDays = configuration.GetValue<int>("CartConfiguration:DefaultExpirationDays", 30);
+        _cartConfig = cartConfig.Value;
     }
 
     public async Task<MergeCartResult> Handle(MergeCartCommand request, CancellationToken cancellationToken)
@@ -44,8 +49,11 @@ public class MergeCartCommandHandler : IRequestHandler<MergeCartCommand, MergeCa
                 "Merging guest cart {GuestCartId} to user cart {UserId} with strategy {Strategy}",
                 guestId, userId, request.Strategy);
 
-            var guestCart = await _repository.GetCartAsync(guestId, tenantId);
-            var userCart = await _repository.GetCartAsync(userId, tenantId);
+            // Check cache first, then repository
+            var guestCart = await _cache.GetAsync(guestId, tenantId)
+                ?? await _repository.GetCartAsync(guestId, tenantId);
+            var userCart = await _cache.GetAsync(userId, tenantId)
+                ?? await _repository.GetCartAsync(userId, tenantId);
 
             Cart resultCart;
 
@@ -71,8 +79,12 @@ public class MergeCartCommandHandler : IRequestHandler<MergeCartCommand, MergeCa
             if (guestCart != null)
             {
                 await _repository.DeleteCartAsync(guestId, tenantId);
+                await _cache.InvalidateAsync(guestId, tenantId);
                 _logger.LogInformation("Deleted guest cart {GuestCartId} after merge", guestId);
             }
+
+            // Update cache with result cart
+            await _cache.SetAsync(resultCart);
 
             return new MergeCartResult(true, CartMapper.ToResponse(resultCart));
         }
@@ -94,7 +106,7 @@ public class MergeCartCommandHandler : IRequestHandler<MergeCartCommand, MergeCa
             }
 
             guestCart.UserId = userId;
-            guestCart.ExpiresAt = DateTime.UtcNow.AddDays(_userCartExpirationDays); // User cart TTL
+            guestCart.ExpiresAt = DateTime.UtcNow.AddDays(_cartConfig.DefaultExpirationDays); // User cart TTL
             guestCart.UpdatedAt = DateTime.UtcNow;
             await _repository.SaveCartAsync(guestCart);
             return guestCart;
@@ -137,6 +149,7 @@ public class MergeCartCommandHandler : IRequestHandler<MergeCartCommand, MergeCa
         if (userCart != null)
         {
             await _repository.DeleteCartAsync(userId, tenantId);
+            await _cache.InvalidateAsync(userId, tenantId);
             _logger.LogDebug("Deleted user cart for ReplaceWithGuest strategy");
         }
 
@@ -150,7 +163,7 @@ public class MergeCartCommandHandler : IRequestHandler<MergeCartCommand, MergeCa
 
         // Transfer guest cart to user
         guestCart.UserId = userId;
-        guestCart.ExpiresAt = DateTime.UtcNow.AddDays(_userCartExpirationDays);
+        guestCart.ExpiresAt = DateTime.UtcNow.AddDays(_cartConfig.DefaultExpirationDays);
         guestCart.UpdatedAt = DateTime.UtcNow;
         await _repository.SaveCartAsync(guestCart);
 
@@ -177,7 +190,7 @@ public class MergeCartCommandHandler : IRequestHandler<MergeCartCommand, MergeCa
         {
             UserId = userId,
             TenantId = tenantId,
-            ExpiresAt = DateTime.UtcNow.AddDays(_userCartExpirationDays)
+            ExpiresAt = DateTime.UtcNow.AddDays(_cartConfig.DefaultExpirationDays)
         };
     }
 }

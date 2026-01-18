@@ -55,6 +55,7 @@ export const STORAGE_KEYS = {
   REFRESH_TOKEN: 'refresh_token',
   USER: 'user',
   CART_ID: 'cart_id',
+  SESSION_ID: 'session_id',
   TENANT_ID: 'tenant_id',
   THEME: 'theme',
 };

@@ -75,14 +75,14 @@ public class CartController : ControllerBase
     /// Remove item from cart
     /// </summary>
     [HttpDelete("{userId}/items/{productId}")]
-    public async Task<IActionResult> RemoveFromCart(string userId, string productId)
+    public async Task<ActionResult<CartResponse>> RemoveFromCart(string userId, string productId)
     {
         var result = await _mediator.Send(new RemoveFromCartCommand(userId, productId));
 
         if (!result.Success)
             return BadRequest(new { error = result.ErrorMessage });
 
-        return Ok(new { message = "Item removed from cart" });
+        return Ok(result.Cart);
     }
 
     /// <summary>
