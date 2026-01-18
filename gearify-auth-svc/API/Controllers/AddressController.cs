@@ -1,6 +1,7 @@
 using Gearify.AuthService.API.DTOs;
 using Gearify.AuthService.Application.Commands;
 using Gearify.AuthService.Application.Queries;
+using Gearify.SharedKernel.Multitenancy;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +18,13 @@ namespace Gearify.AuthService.API.Controllers;
 public class AddressController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly ITenantContext _tenantContext;
     private readonly ILogger<AddressController> _logger;
 
-    public AddressController(IMediator mediator, ILogger<AddressController> logger)
+    public AddressController(IMediator mediator, ITenantContext tenantContext, ILogger<AddressController> logger)
     {
         _mediator = mediator;
+        _tenantContext = tenantContext;
         _logger = logger;
     }
 
@@ -34,7 +37,7 @@ public class AddressController : ControllerBase
     public async Task<IActionResult> GetAddresses()
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var tenantId = Request.Headers["X-Tenant-ID"].FirstOrDefault() ?? "default";
+        var tenantId = _tenantContext.TenantId;
 
         if (string.IsNullOrEmpty(userId))
         {
@@ -57,7 +60,7 @@ public class AddressController : ControllerBase
     public async Task<IActionResult> CreateAddress([FromBody] CreateAddressRequest request)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var tenantId = Request.Headers["X-Tenant-ID"].FirstOrDefault() ?? "default";
+        var tenantId = _tenantContext.TenantId;
 
         if (string.IsNullOrEmpty(userId))
         {
@@ -101,7 +104,7 @@ public class AddressController : ControllerBase
     public async Task<IActionResult> UpdateAddress(string addressId, [FromBody] UpdateAddressRequest request)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var tenantId = Request.Headers["X-Tenant-ID"].FirstOrDefault() ?? "default";
+        var tenantId = _tenantContext.TenantId;
 
         if (string.IsNullOrEmpty(userId))
         {
@@ -149,7 +152,7 @@ public class AddressController : ControllerBase
     public async Task<IActionResult> DeleteAddress(string addressId)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var tenantId = Request.Headers["X-Tenant-ID"].FirstOrDefault() ?? "default";
+        var tenantId = _tenantContext.TenantId;
 
         if (string.IsNullOrEmpty(userId))
         {
