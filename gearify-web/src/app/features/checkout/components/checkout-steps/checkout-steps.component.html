@@ -1,0 +1,23 @@
+<div class="checkout-steps">
+  @for (step of steps; track step.key; let last = $last) {
+    <div
+      class="step"
+      [class.active]="isStepActive(step.key)"
+      [class.completed]="isStepCompleted(step.key)"
+    >
+      <div class="step-indicator">
+        @if (isStepCompleted(step.key)) {
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        } @else {
+          <span>{{ step.number }}</span>
+        }
+      </div>
+      <span class="step-label">{{ step.label }}</span>
+    </div>
+    @if (!last) {
+      <div class="step-connector" [class.completed]="isStepCompleted(step.key)"></div>
+    }
+  }
+</div>

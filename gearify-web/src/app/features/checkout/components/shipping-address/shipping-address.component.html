@@ -1,0 +1,277 @@
+<div class="shipping-address">
+  <h2 class="section-title">Shipping Address</h2>
+
+  <!-- Loading State -->
+  @if (isLoadingAddresses()) {
+    <div class="loading-addresses">
+      <div class="spinner"></div>
+      <span>Loading saved addresses...</span>
+    </div>
+  }
+
+  <!-- Saved Addresses Section (for authenticated users) -->
+  @if (isAuthenticated() && !isLoadingAddresses()) {
+    @if (hasSavedAddresses()) {
+      <div class="address-selection">
+        <div class="saved-addresses">
+          @for (addr of savedAddresses(); track addr.id) {
+            <div
+              class="address-card"
+              [class.selected]="selectedAddressId() === addr.id && addressMode() === 'saved'"
+              (click)="selectSavedAddress(addr.id)"
+            >
+              <div class="address-radio">
+                <input
+                  type="radio"
+                  [id]="'addr-' + addr.id"
+                  name="savedAddress"
+                  [checked]="selectedAddressId() === addr.id && addressMode() === 'saved'"
+                  (change)="selectSavedAddress(addr.id)"
+                />
+              </div>
+              <div class="address-content">
+                <div class="address-header">
+                  <span class="address-label">{{ addr.label }}</span>
+                  @if (addr.isDefault) {
+                    <span class="default-badge">Default</span>
+                  }
+                </div>
+                <p class="address-name">{{ addr.firstName }} {{ addr.lastName }}</p>
+                <p class="address-line">{{ addr.addressLine1 }}</p>
+                @if (addr.addressLine2) {
+                  <p class="address-line">{{ addr.addressLine2 }}</p>
+                }
+                <p class="address-line">{{ addr.city }}, {{ addr.state }} {{ addr.zipCode }}</p>
+                <p class="address-phone">{{ addr.phone }}</p>
+              </div>
+            </div>
+          }
+
+          <!-- Add New Address Option -->
+          <div
+            class="address-card add-new"
+            [class.selected]="addressMode() === 'new'"
+            (click)="switchToNewAddress()"
+          >
+            <div class="address-radio">
+              <input
+                type="radio"
+                id="addr-new"
+                name="savedAddress"
+                [checked]="addressMode() === 'new'"
+                (change)="switchToNewAddress()"
+              />
+            </div>
+            <div class="address-content">
+              <div class="add-new-content">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>Add a new address</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  }
+
+  <!-- New Address Form -->
+  @if (addressMode() === 'new' || !isAuthenticated()) {
+    <div class="new-address-form" [class.has-saved]="hasSavedAddresses() && isAuthenticated()">
+      @if (hasSavedAddresses() && isAuthenticated()) {
+        <div class="form-header">
+          <h3>New Delivery Address</h3>
+          <button type="button" class="btn-link" (click)="switchToSavedAddresses()">
+            Use saved address
+          </button>
+        </div>
+      }
+
+      <form [formGroup]="shippingForm" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">First Name *</label>
+            <input
+              type="text"
+              id="firstName"
+              formControlName="firstName"
+              placeholder="John"
+              [class.error]="shippingForm.get('firstName')?.invalid && shippingForm.get('firstName')?.touched"
+            />
+            <span class="error-message">{{ getErrorMessage('firstName') }}</span>
+          </div>
+
+          <div class="form-group">
+            <label for="lastName">Last Name *</label>
+            <input
+              type="text"
+              id="lastName"
+              formControlName="lastName"
+              placeholder="Doe"
+              [class.error]="shippingForm.get('lastName')?.invalid && shippingForm.get('lastName')?.touched"
+            />
+            <span class="error-message">{{ getErrorMessage('lastName') }}</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input
+              type="email"
+              id="email"
+              formControlName="email"
+              placeholder="john&#64;example.com"
+              [class.error]="shippingForm.get('email')?.invalid && shippingForm.get('email')?.touched"
+            />
+            <span class="error-message">{{ getErrorMessage('email') }}</span>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone *</label>
+            <input
+              type="tel"
+              id="phone"
+              formControlName="phone"
+              placeholder="+1 (555) 123-4567"
+              [class.error]="shippingForm.get('phone')?.invalid && shippingForm.get('phone')?.touched"
+            />
+            <span class="error-message">{{ getErrorMessage('phone') }}</span>
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="address">Street Address *</label>
+          <input
+            type="text"
+            id="address"
+            formControlName="address"
+            placeholder="123 Main Street"
+            [class.error]="shippingForm.get('address')?.invalid && shippingForm.get('address')?.touched"
+          />
+          <span class="error-message">{{ getErrorMessage('address') }}</span>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="apartment">Apartment, suite, etc. (optional)</label>
+          <input
+            type="text"
+            id="apartment"
+            formControlName="apartment"
+            placeholder="Apt 4B"
+          />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="city">City *</label>
+            <input
+              type="text"
+              id="city"
+              formControlName="city"
+              placeholder="San Francisco"
+              [class.error]="shippingForm.get('city')?.invalid && shippingForm.get('city')?.touched"
+            />
+            <span class="error-message">{{ getErrorMessage('city') }}</span>
+          </div>
+
+          <div class="form-group">
+            <label for="state">State *</label>
+            <select
+              id="state"
+              formControlName="state"
+              [class.error]="shippingForm.get('state')?.invalid && shippingForm.get('state')?.touched"
+            >
+              <option value="">Select State</option>
+              @for (state of states; track state.code) {
+                <option [value]="state.code">{{ state.name }}</option>
+              }
+            </select>
+            <span class="error-message">{{ getErrorMessage('state') }}</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="zipCode">ZIP Code *</label>
+            <input
+              type="text"
+              id="zipCode"
+              formControlName="zipCode"
+              placeholder="94102"
+              [class.error]="shippingForm.get('zipCode')?.invalid && shippingForm.get('zipCode')?.touched"
+            />
+            <span class="error-message">{{ getErrorMessage('zipCode') }}</span>
+          </div>
+
+          <div class="form-group">
+            <label for="country">Country *</label>
+            <select
+              id="country"
+              formControlName="country"
+              [class.error]="shippingForm.get('country')?.invalid && shippingForm.get('country')?.touched"
+            >
+              @for (country of countries; track country.code) {
+                <option [value]="country.code">{{ country.name }}</option>
+              }
+            </select>
+            <span class="error-message">{{ getErrorMessage('country') }}</span>
+          </div>
+        </div>
+
+        <!-- Save Address Checkbox (for authenticated users) -->
+        @if (isAuthenticated()) {
+          <div class="save-address-section">
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                [checked]="saveNewAddress()"
+                (change)="toggleSaveAddress()"
+              />
+              <span class="checkmark"></span>
+              Save this address for future orders
+            </label>
+
+            @if (saveNewAddress()) {
+              <div class="address-label-select">
+                <label for="addressLabel">Address Label</label>
+                <select
+                  id="addressLabel"
+                  [value]="newAddressLabel()"
+                  (change)="newAddressLabel.set($any($event.target).value)"
+                >
+                  @for (label of addressLabels; track label) {
+                    <option [value]="label">{{ label }}</option>
+                  }
+                </select>
+              </div>
+            }
+          </div>
+        }
+      </form>
+    </div>
+  }
+
+  <div class="form-actions">
+    <button type="button" class="btn-back" (click)="onBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Back to Cart
+    </button>
+    <button
+      type="button"
+      class="btn-continue"
+      [disabled]="isSubmitting() || (addressMode() === 'saved' && !selectedAddressId())"
+      (click)="onSubmit()"
+    >
+      Continue to Payment
+      @if (isSubmitting()) {
+        <span class="spinner"></span>
+      }
+    </button>
+  </div>
+</div>

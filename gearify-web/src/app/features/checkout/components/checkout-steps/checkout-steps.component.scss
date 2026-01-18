@@ -1,0 +1,94 @@
+.checkout-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 0;
+  margin-bottom: 32px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  .step-indicator {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    background-color: #e5e7eb;
+    color: #6b7280;
+    transition: all 0.3s ease;
+
+    svg {
+      stroke: white;
+    }
+  }
+
+  .step-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #6b7280;
+    transition: color 0.3s ease;
+  }
+
+  &.active {
+    .step-indicator {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .step-label {
+      color: #1f2937;
+      font-weight: 600;
+    }
+  }
+
+  &.completed {
+    .step-indicator {
+      background-color: #10b981;
+      color: white;
+    }
+
+    .step-label {
+      color: #10b981;
+    }
+  }
+}
+
+.step-connector {
+  width: 80px;
+  height: 2px;
+  background-color: #e5e7eb;
+  margin: 0 16px;
+  margin-bottom: 24px;
+  transition: background-color 0.3s ease;
+
+  &.completed {
+    background-color: #10b981;
+  }
+}
+
+@media (max-width: 640px) {
+  .step-connector {
+    width: 40px;
+    margin: 0 8px;
+  }
+
+  .step {
+    .step-label {
+      font-size: 12px;
+    }
+
+    .step-indicator {
+      width: 32px;
+      height: 32px;
+      font-size: 12px;
+    }
+  }
+}

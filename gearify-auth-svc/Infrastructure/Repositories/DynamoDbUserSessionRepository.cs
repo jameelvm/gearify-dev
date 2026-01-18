@@ -1,7 +1,9 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Gearify.AuthService.Domain.Entities;
+using Gearify.AuthService.Infrastructure.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Gearify.AuthService.Infrastructure.Repositories;
 
@@ -12,13 +14,15 @@ public class DynamoDbUserSessionRepository : IUserSessionRepository
 {
     private readonly IAmazonDynamoDB _dynamoDb;
     private readonly ILogger<DynamoDbUserSessionRepository> _logger;
-    private const string TableName = "UserSessions";
+    private readonly string _tableName;
 
     public DynamoDbUserSessionRepository(
         IAmazonDynamoDB dynamoDb,
+        IOptions<StorageConfiguration> storageConfig,
         ILogger<DynamoDbUserSessionRepository> logger)
     {
         _dynamoDb = dynamoDb;
+        _tableName = storageConfig.Value.DynamoDb.SessionsTableName;
         _logger = logger;
     }
 
@@ -49,7 +53,7 @@ public class DynamoDbUserSessionRepository : IUserSessionRepository
 
             var request = new PutItemRequest
             {
-                TableName = TableName,
+                TableName = _tableName,
                 Item = item
             };
 
@@ -69,7 +73,7 @@ public class DynamoDbUserSessionRepository : IUserSessionRepository
         {
             var request = new GetItemRequest
             {
-                TableName = TableName,
+                TableName = _tableName,
                 Key = new Dictionary<string, AttributeValue>
                 {
                     { "PK", new AttributeValue { S = $"USER#{userId}" } },
@@ -113,7 +117,7 @@ public class DynamoDbUserSessionRepository : IUserSessionRepository
         {
             var queryRequest = new QueryRequest
             {
-                TableName = TableName,
+                TableName = _tableName,
                 KeyConditionExpression = "PK = :pk AND begins_with(SK, :sk)",
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>
                 {
@@ -139,7 +143,7 @@ public class DynamoDbUserSessionRepository : IUserSessionRepository
         {
             var queryRequest = new QueryRequest
             {
-                TableName = TableName,
+                TableName = _tableName,
                 KeyConditionExpression = "PK = :pk AND begins_with(SK, :sk)",
                 FilterExpression = "IsActive = :isActive AND ExpiresAt > :now",
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>
@@ -168,7 +172,7 @@ public class DynamoDbUserSessionRepository : IUserSessionRepository
         {
             var updateRequest = new UpdateItemRequest
             {
-                TableName = TableName,
+                TableName = _tableName,
                 Key = new Dictionary<string, AttributeValue>
                 {
                     { "PK", new AttributeValue { S = $"USER#{session.UserId}" } },
@@ -198,7 +202,7 @@ public class DynamoDbUserSessionRepository : IUserSessionRepository
         {
             var deleteRequest = new DeleteItemRequest
             {
-                TableName = TableName,
+                TableName = _tableName,
                 Key = new Dictionary<string, AttributeValue>
                 {
                     { "PK", new AttributeValue { S = $"USER#{userId}" } },

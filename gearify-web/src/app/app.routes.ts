@@ -52,6 +52,11 @@ export const routes: Routes = [
     loadChildren: () => import('./features/cart/cart.routes').then(m => m.CART_ROUTES)
   },
   {
+    path: 'checkout',
+    canActivate: [tenantGuard],
+    loadComponent: () => import('./features/checkout/checkout.component').then(m => m.CheckoutComponent)
+  },
+  {
     path: 'tenant-not-found',
     loadComponent: () => import('./features/errors/tenant-not-found.component').then(m => m.TenantNotFoundComponent)
   },

@@ -1,0 +1,123 @@
+<div class="payment-method">
+  <h2 class="section-title">Payment Method</h2>
+
+  <div class="payment-options">
+    @for (method of paymentMethods; track method.type) {
+      <div
+        class="payment-option"
+        [class.selected]="selectedPaymentType() === method.type"
+        (click)="selectPaymentType(method.type)"
+      >
+        <div class="option-radio">
+          <div class="radio-inner"></div>
+        </div>
+        <div class="option-icon">
+          @switch (method.icon) {
+            @case ('card') {
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+              </svg>
+            }
+            @case ('paypal') {
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797H9.57a.94.94 0 0 0-.928.794l-1.566 9.212z"/>
+              </svg>
+            }
+            @case ('apple') {
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+              </svg>
+            }
+          }
+        </div>
+        <span class="option-label">{{ method.label }}</span>
+      </div>
+    }
+  </div>
+
+  @if (selectedPaymentType() === 'card') {
+    <div class="card-form">
+      <form [formGroup]="cardForm">
+        <div class="form-group">
+          <label for="cardNumber">Card Number *</label>
+          <input
+            type="text"
+            id="cardNumber"
+            formControlName="cardNumber"
+            placeholder="1234 5678 9012 3456"
+            (input)="formatCardNumber($event)"
+            maxlength="16"
+            [class.error]="cardForm.get('cardNumber')?.invalid && cardForm.get('cardNumber')?.touched"
+          />
+          <span class="error-message">{{ getErrorMessage('cardNumber') }}</span>
+        </div>
+
+        <div class="form-group">
+          <label for="cardHolder">Cardholder Name *</label>
+          <input
+            type="text"
+            id="cardHolder"
+            formControlName="cardHolder"
+            placeholder="John Doe"
+            [class.error]="cardForm.get('cardHolder')?.invalid && cardForm.get('cardHolder')?.touched"
+          />
+          <span class="error-message">{{ getErrorMessage('cardHolder') }}</span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="expiryDate">Expiry Date *</label>
+            <input
+              type="text"
+              id="expiryDate"
+              formControlName="expiryDate"
+              placeholder="MM/YY"
+              (input)="formatExpiryDate($event)"
+              maxlength="5"
+              [class.error]="cardForm.get('expiryDate')?.invalid && cardForm.get('expiryDate')?.touched"
+            />
+            <span class="error-message">{{ getErrorMessage('expiryDate') }}</span>
+          </div>
+
+          <div class="form-group">
+            <label for="cvv">CVV *</label>
+            <input
+              type="password"
+              id="cvv"
+              formControlName="cvv"
+              placeholder="123"
+              maxlength="4"
+              [class.error]="cardForm.get('cvv')?.invalid && cardForm.get('cvv')?.touched"
+            />
+            <span class="error-message">{{ getErrorMessage('cvv') }}</span>
+          </div>
+        </div>
+      </form>
+    </div>
+  } @else {
+    <div class="alternative-payment-info">
+      @if (selectedPaymentType() === 'paypal') {
+        <p>You will be redirected to PayPal to complete your payment securely.</p>
+      } @else if (selectedPaymentType() === 'applepay') {
+        <p>Complete your purchase using Apple Pay for a fast and secure checkout.</p>
+      }
+    </div>
+  }
+
+  <div class="form-actions">
+    <button type="button" class="btn-back" (click)="onBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Back to Shipping
+    </button>
+    <button type="button" class="btn-continue" [disabled]="isSubmitting()" (click)="onSubmit()">
+      Review Order
+      @if (isSubmitting()) {
+        <span class="spinner"></span>
+      }
+    </button>
+  </div>
+</div>

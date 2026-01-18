@@ -37,10 +37,13 @@ export const API_CONFIG = {
     ORDER_BY_ID: (id: string) => `/api/orders/${id}`,
     
     // User
-    USER_PROFILE: '/api/users/profile',
-    UPDATE_PROFILE: '/api/users/profile',
-    CHANGE_PASSWORD: '/api/users/change-password',
-    USER_ADDRESSES: '/api/user/addresses',
+    USER_PROFILE: '/api/user/profile',
+    UPDATE_PROFILE: '/api/user/profile',
+    CHANGE_PASSWORD: '/api/user/change-password',
+
+    // Address
+    ADDRESSES: '/api/address',
+    ADDRESS_BY_ID: (id: string) => `/api/address/${id}`,
 
     // Search
     SEARCH_PRODUCTS: '/api/search/products',

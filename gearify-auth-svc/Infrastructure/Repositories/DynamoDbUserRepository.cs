@@ -1,6 +1,8 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Gearify.AuthService.Domain.Entities;
+using Gearify.AuthService.Infrastructure.Configuration;
+using Microsoft.Extensions.Options;
 using System.Text.Json;
 
 namespace Gearify.AuthService.Infrastructure.Repositories;
@@ -11,11 +13,12 @@ namespace Gearify.AuthService.Infrastructure.Repositories;
 public class DynamoDbUserRepository : IUserRepository
 {
     private readonly IAmazonDynamoDB _dynamoDb;
-    private readonly string _tableName = "gearify-users";
+    private readonly string _tableName;
 
-    public DynamoDbUserRepository(IAmazonDynamoDB dynamoDb)
+    public DynamoDbUserRepository(IAmazonDynamoDB dynamoDb, IOptions<StorageConfiguration> storageConfig)
     {
         _dynamoDb = dynamoDb;
+        _tableName = storageConfig.Value.DynamoDb.UsersTableName;
     }
 
     public async Task<User?> GetByIdAsync(string userId, string tenantId)

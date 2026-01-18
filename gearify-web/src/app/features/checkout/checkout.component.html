@@ -1,37 +1,61 @@
-
-    <div class="checkout-container">
-      <h2>Checkout</h2>
-
-      <div class="checkout-steps">
-        <div class="step" [class.active]="currentStep === 1">1. Shipping</div>
-        <div class="step" [class.active]="currentStep === 2">2. Payment</div>
-        <div class="step" [class.active]="currentStep === 3">3. Review</div>
+<div class="checkout-page">
+  @if (orderPlaced()) {
+    <div class="order-success">
+      <div class="success-icon">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
       </div>
-
-      <div *ngIf="currentStep === 1" class="step-content">
-        <h3>Shipping Address</h3>
-        <form [formGroup]="shippingForm">
-          <input formControlName="firstName" placeholder="First Name" />
-          <input formControlName="lastName" placeholder="Last Name" />
-          <input formControlName="street" placeholder="Street Address" />
-          <input formControlName="city" placeholder="City" />
-          <button (click)="nextStep()" [disabled]="!shippingForm.valid">Continue</button>
-        </form>
-      </div>
-
-      <div *ngIf="currentStep === 2" class="step-content">
-        <h3>Payment Method</h3>
-        <button (click)="selectPayment('stripe')">Credit Card</button>
-        <button (click)="selectPayment('paypal')">PayPal</button>
-        <button (click)="nextStep()">Review Order</button>
-      </div>
-
-      <div *ngIf="currentStep === 3" class="step-content">
-        <h3>Review Your Order</h3>
-        <div class="order-summary">
-          <p>Total: $299.99</p>
-        </div>
-        <button (click)="placeOrder()">Place Order</button>
+      <h1>Order Placed Successfully!</h1>
+      <p class="order-number">Order Number: <strong>{{ orderId() }}</strong></p>
+      <p class="confirmation-message">
+        Thank you for your purchase! A confirmation email has been sent to
+        <strong>{{ shippingAddress()?.email }}</strong>
+      </p>
+      <div class="success-actions">
+        <button class="btn-secondary" (click)="onContinueShopping()">Continue Shopping</button>
       </div>
     </div>
-  
+  } @else {
+    <div class="checkout-container">
+      <app-checkout-steps [currentStep]="currentStep()"></app-checkout-steps>
+
+      <div class="checkout-content">
+        <div class="checkout-main">
+          @switch (currentStep()) {
+            @case ('shipping') {
+              <app-shipping-address
+                (addressSubmitted)="onShippingSubmitted($event)"
+                (back)="onBackToCart()"
+              ></app-shipping-address>
+            }
+            @case ('payment') {
+              <app-payment-method
+                (paymentSubmitted)="onPaymentSubmitted($event)"
+                (back)="onBackToShipping()"
+              ></app-payment-method>
+            }
+            @case ('review') {
+              <app-order-review
+                [shippingAddress]="shippingAddress()"
+                [paymentDetails]="paymentDetails()"
+                [total]="orderTotal()"
+                (placeOrder)="onPlaceOrder()"
+                (editShipping)="onEditShipping()"
+                (editPayment)="onEditPayment()"
+              ></app-order-review>
+            }
+          }
+        </div>
+
+        <aside class="checkout-sidebar">
+          <app-order-summary
+            [items]="cartItems()"
+            [showDetails]="true"
+          ></app-order-summary>
+        </aside>
+      </div>
+    </div>
+  }
+</div>

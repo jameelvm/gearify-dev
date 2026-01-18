@@ -1,6 +1,6 @@
 import { Component, inject, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CartService } from '@core/services/cart.service';
 import { ButtonComponent, PriceTagComponent } from '@app/ui-kit/components';
 
@@ -12,6 +12,7 @@ import { ButtonComponent, PriceTagComponent } from '@app/ui-kit/components';
   styleUrl: './cart.component.scss'
 })
 export class CartComponent implements OnInit {
+  private router = inject(Router);
   cartService = inject(CartService);
 
   // Computed values
@@ -44,7 +45,6 @@ export class CartComponent implements OnInit {
   }
 
   proceedToCheckout(): void {
-    console.log('Proceeding to checkout...');
-    // Navigate to checkout
+    this.router.navigate(['/checkout']);
   }
 }

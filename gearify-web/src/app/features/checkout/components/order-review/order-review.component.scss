@@ -1,0 +1,246 @@
+.order-review {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.review-section {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #f3f4f6;
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #374151;
+    margin: 0;
+  }
+}
+
+.edit-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #667eea;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #f9fafb;
+    border-color: #667eea;
+  }
+
+  svg {
+    stroke: #667eea;
+  }
+}
+
+.section-content {
+  background-color: #f9fafb;
+  border-radius: 8px;
+  padding: 16px;
+
+  p {
+    margin: 0;
+    padding: 2px 0;
+    font-size: 14px;
+    color: #4b5563;
+    line-height: 1.5;
+
+    &.name {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 4px;
+    }
+
+    &.contact {
+      margin-top: 8px;
+      color: #6b7280;
+    }
+  }
+}
+
+.payment-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.payment-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e5e7eb;
+  border-radius: 8px;
+  flex-shrink: 0;
+
+  &.card {
+    background-color: #dbeafe;
+    color: #2563eb;
+  }
+
+  &.paypal {
+    background-color: #fef3c7;
+    color: #d97706;
+  }
+
+  &.apple {
+    background-color: #1f2937;
+    color: white;
+  }
+}
+
+.payment-details {
+  .payment-method {
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 4px;
+  }
+
+  .card-number {
+    font-family: 'Monaco', 'Consolas', monospace;
+    color: #4b5563;
+    letter-spacing: 1px;
+  }
+
+  .card-holder {
+    color: #6b7280;
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
+  .payment-note {
+    color: #6b7280;
+    font-size: 13px;
+  }
+}
+
+.order-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border-radius: 10px;
+  margin-bottom: 20px;
+
+  span {
+    font-size: 16px;
+    font-weight: 500;
+    color: #374151;
+  }
+
+  .total-amount {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2937;
+  }
+}
+
+.terms-notice {
+  margin-bottom: 24px;
+  text-align: center;
+
+  p {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0;
+
+    a {
+      color: #667eea;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.btn-place-order {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.8;
+    cursor: not-allowed;
+  }
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid white;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 640px) {
+  .order-review {
+    padding: 24px;
+  }
+
+  .order-total {
+    .total-amount {
+      font-size: 20px;
+    }
+  }
+
+  .btn-place-order {
+    font-size: 16px;
+    padding: 14px 24px;
+  }
+}

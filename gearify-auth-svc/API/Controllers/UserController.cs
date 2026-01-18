@@ -11,7 +11,7 @@ namespace Gearify.AuthService.API.Controllers;
 /// Controller for user profile management operations
 /// </summary>
 [ApiController]
-[Route("api/users")]
+[Route("api/[controller]")]
 [Authorize]
 public class UserController : ControllerBase
 {

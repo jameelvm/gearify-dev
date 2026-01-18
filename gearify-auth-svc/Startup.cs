@@ -6,6 +6,7 @@ using Gearify.AuthService.Application.Models;
 using Gearify.AuthService.Application.Services;
 using Gearify.AuthService.Application.Validators;
 using Gearify.AuthService.Infrastructure.Clients;
+using Gearify.AuthService.Infrastructure.Configuration;
 using Gearify.AuthService.Infrastructure.Repositories;
 using Gearify.AuthService.Infrastructure.Services;
 using Gearify.AuthService.Infrastructure.Swagger;
@@ -177,10 +178,12 @@ public class Startup
 
         // Configuration sections
         services.Configure<SecurityConfiguration>(Configuration.GetSection("Security"));
+        services.Configure<StorageConfiguration>(Configuration.GetSection("StorageConfiguration"));
 
         // Repositories
         services.AddScoped<IUserRepository, DynamoDbUserRepository>();
         services.AddScoped<IUserSessionRepository, DynamoDbUserSessionRepository>();
+        services.AddScoped<IAddressRepository, DynamoDbAddressRepository>();
 
         // Core Services
         services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
