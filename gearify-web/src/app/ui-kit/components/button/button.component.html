@@ -6,16 +6,15 @@
   [class.btn-loading]="loading"
   (click)="handleClick($event)"
 >
-  @if (loading) {
-    <span class="btn-spinner"></span>
-  }
   @if (iconLeft && !loading) {
     <span class="btn-icon-left">{{ iconLeft }}</span>
   }
   <span class="btn-content">
     <ng-content></ng-content>
   </span>
-  @if (iconRight && !loading) {
+  @if (loading) {
+    <span class="btn-spinner"></span>
+  } @else if (iconRight) {
     <span class="btn-icon-right">{{ iconRight }}</span>
   }
 </button>

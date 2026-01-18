@@ -73,6 +73,9 @@ export class ProductDetailComponent implements OnInit {
   // Wishlist state
   isWishlisted = signal<boolean>(false);
 
+  // Add to cart loading state
+  isAddingToCart = signal<boolean>(false);
+
   // Product data from API
   product = signal<Product | null>(null);
 
@@ -284,10 +287,12 @@ export class ProductDetailComponent implements OnInit {
    * Handle add to cart
    */
   onAddToCart(): void {
-    if (this.isOutOfStock()) return;
+    if (this.isOutOfStock() || this.isAddingToCart()) return;
 
     const prod = this.product();
     if (!prod) return;
+
+    this.isAddingToCart.set(true);
 
     this.cartService.addToCartWithProduct({
       id: prod.id,
@@ -298,10 +303,11 @@ export class ProductDetailComponent implements OnInit {
       brand: prod.brand
     }, this.quantity()).subscribe({
       next: () => {
-        console.log('Added to cart successfully');
+        this.isAddingToCart.set(false);
       },
       error: (err) => {
         console.error('Failed to add to cart:', err);
+        this.isAddingToCart.set(false);
       }
     });
   }

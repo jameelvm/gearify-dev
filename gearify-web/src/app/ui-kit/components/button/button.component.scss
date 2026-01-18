@@ -100,16 +100,19 @@
 
   &.btn-loading {
     position: relative;
-    color: transparent;
     pointer-events: none;
+
+    .btn-spinner {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
   }
 }
 
 .btn-spinner {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  display: inline-block;
   width: 16px;
   height: 16px;
   border: 2px solid currentColor;
@@ -119,7 +122,7 @@
 }
 
 @keyframes spin {
-  to { transform: translate(-50%, -50%) rotate(360deg); }
+  to { transform: translateY(-50%) rotate(360deg); }
 }
 
 .btn-content {

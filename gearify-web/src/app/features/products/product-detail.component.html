@@ -187,6 +187,7 @@
             variant="primary"
             size="medium"
             [disabled]="isOutOfStock()"
+            [loading]="isAddingToCart()"
             (clicked)="onAddToCart()"
           >
             Add to Cart
