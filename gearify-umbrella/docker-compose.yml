@@ -62,6 +62,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init-databases.sql:/docker-entrypoint-initdb.d/init-databases.sql
     networks:
       - gearify-network
     healthcheck:
@@ -303,8 +304,9 @@ services:
     container_name: gearify-order-svc
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - DYNAMODB_ENDPOINT=${DYNAMODB_ENDPOINT}
+      - POSTGRES_CONNECTION_STRING=Host=postgres;Port=5432;Database=gearify_orders;Username=postgres;Password=postgres
       - SNS_ENDPOINT=${SNS_ENDPOINT}
+      - SQS_ENDPOINT=${SQS_ENDPOINT}
       - REDIS_URL=${REDIS_URL}
       - SEQ_URL=${SEQ_URL}
       - OTLP_ENDPOINT=${OTLP_ENDPOINT}
@@ -313,6 +315,8 @@ services:
     networks:
       - gearify-network
     depends_on:
+      postgres:
+        condition: service_healthy
       localstack:
         condition: service_healthy
       redis:
@@ -325,8 +329,9 @@ services:
     container_name: gearify-payment-svc
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - POSTGRES_CONNECTION_STRING=${POSTGRES_CONNECTION_STRING}
+      - POSTGRES_CONNECTION_STRING=Host=postgres;Port=5432;Database=gearify_payments;Username=postgres;Password=postgres
       - SNS_ENDPOINT=${SNS_ENDPOINT}
+      - SQS_ENDPOINT=${SQS_ENDPOINT}
       - SECRETS_MANAGER_ENDPOINT=${SECRETS_MANAGER_ENDPOINT}
       - STRIPE_API_KEY=${STRIPE_API_KEY}
       - PAYPAL_CLIENT_ID=${PAYPAL_CLIENT_ID}
@@ -350,8 +355,9 @@ services:
     container_name: gearify-shipping-svc
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - DYNAMODB_ENDPOINT=${DYNAMODB_ENDPOINT}
+      - POSTGRES_CONNECTION_STRING=Host=postgres;Port=5432;Database=gearify_shipping;Username=postgres;Password=postgres
       - SNS_ENDPOINT=${SNS_ENDPOINT}
+      - SQS_ENDPOINT=${SQS_ENDPOINT}
       - SEQ_URL=${SEQ_URL}
       - OTLP_ENDPOINT=${OTLP_ENDPOINT}
     ports:
@@ -359,6 +365,8 @@ services:
     networks:
       - gearify-network
     depends_on:
+      postgres:
+        condition: service_healthy
       localstack:
         condition: service_healthy
 

@@ -388,6 +388,119 @@ awslocal sqs create-queue --queue-name gearify-inventory-updated --region us-eas
 awslocal sqs create-queue --queue-name gearify-notification-requested --region us-east-1 2>/dev/null || echo "  - Queue gearify-notification-requested already exists"
 awslocal sqs create-queue --queue-name gearify-shipping-requested --region us-east-1 2>/dev/null || echo "  - Queue gearify-shipping-requested already exists"
 
+# ==========================================
+# Checkout Flow - Dead Letter Queues (DLQs)
+# ==========================================
+echo "  - Creating checkout DLQs..."
+
+# Create DLQs first (they need to exist before main queues reference them)
+awslocal sqs create-queue \
+  --queue-name gearify-checkout-events-dlq \
+  --attributes '{"MessageRetentionPeriod":"1209600"}' \
+  --region us-east-1 \
+  2>/dev/null || echo "    Queue gearify-checkout-events-dlq already exists"
+
+awslocal sqs create-queue \
+  --queue-name gearify-order-events-dlq \
+  --attributes '{"MessageRetentionPeriod":"1209600"}' \
+  --region us-east-1 \
+  2>/dev/null || echo "    Queue gearify-order-events-dlq already exists"
+
+awslocal sqs create-queue \
+  --queue-name gearify-payment-events-dlq \
+  --attributes '{"MessageRetentionPeriod":"1209600"}' \
+  --region us-east-1 \
+  2>/dev/null || echo "    Queue gearify-payment-events-dlq already exists"
+
+awslocal sqs create-queue \
+  --queue-name gearify-shipping-events-dlq \
+  --attributes '{"MessageRetentionPeriod":"1209600"}' \
+  --region us-east-1 \
+  2>/dev/null || echo "    Queue gearify-shipping-events-dlq already exists"
+
+# Get DLQ ARNs for redrive policy
+CHECKOUT_DLQ_ARN=$(awslocal sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/gearify-checkout-events-dlq --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn' 2>/dev/null || echo "")
+ORDER_DLQ_ARN=$(awslocal sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/gearify-order-events-dlq --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn' 2>/dev/null || echo "")
+PAYMENT_DLQ_ARN=$(awslocal sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/gearify-payment-events-dlq --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn' 2>/dev/null || echo "")
+SHIPPING_DLQ_ARN=$(awslocal sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/gearify-shipping-events-dlq --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn' 2>/dev/null || echo "")
+
+# ==========================================
+# Checkout Flow - Main Event Queues
+# ==========================================
+echo "  - Creating checkout main queues..."
+
+# Checkout initiated queue (order-svc listens)
+awslocal sqs create-queue \
+  --queue-name gearify-checkout-initiated-queue \
+  --attributes "{
+    \"VisibilityTimeout\":\"300\",
+    \"MessageRetentionPeriod\":\"1209600\",
+    \"ReceiveMessageWaitTimeSeconds\":\"20\",
+    \"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$CHECKOUT_DLQ_ARN\\\",\\\"maxReceiveCount\\\":3}\"
+  }" \
+  --region us-east-1 \
+  2>/dev/null || echo "    Queue gearify-checkout-initiated-queue already exists"
+
+# Order created queue (payment-svc listens)
+awslocal sqs create-queue \
+  --queue-name gearify-order-created-queue \
+  --attributes "{
+    \"VisibilityTimeout\":\"300\",
+    \"MessageRetentionPeriod\":\"1209600\",
+    \"ReceiveMessageWaitTimeSeconds\":\"20\",
+    \"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$ORDER_DLQ_ARN\\\",\\\"maxReceiveCount\\\":3}\"
+  }" \
+  --region us-east-1 \
+  2>/dev/null || echo "    Queue gearify-order-created-queue already exists"
+
+# Payment completed queue (order-svc and shipping-svc listen)
+awslocal sqs create-queue \
+  --queue-name gearify-payment-completed-queue \
+  --attributes "{
+    \"VisibilityTimeout\":\"300\",
+    \"MessageRetentionPeriod\":\"1209600\",
+    \"ReceiveMessageWaitTimeSeconds\":\"20\",
+    \"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$PAYMENT_DLQ_ARN\\\",\\\"maxReceiveCount\\\":3}\"
+  }" \
+  --region us-east-1 \
+  2>/dev/null || echo "    Queue gearify-payment-completed-queue already exists"
+
+# Payment failed queue (order-svc listens for saga rollback)
+awslocal sqs create-queue \
+  --queue-name gearify-payment-failed-queue \
+  --attributes "{
+    \"VisibilityTimeout\":\"300\",
+    \"MessageRetentionPeriod\":\"1209600\",
+    \"ReceiveMessageWaitTimeSeconds\":\"20\",
+    \"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$PAYMENT_DLQ_ARN\\\",\\\"maxReceiveCount\\\":3}\"
+  }" \
+  --region us-east-1 \
+  2>/dev/null || echo "    Queue gearify-payment-failed-queue already exists"
+
+# Shipping created queue (order-svc listens)
+awslocal sqs create-queue \
+  --queue-name gearify-shipping-created-queue \
+  --attributes "{
+    \"VisibilityTimeout\":\"300\",
+    \"MessageRetentionPeriod\":\"1209600\",
+    \"ReceiveMessageWaitTimeSeconds\":\"20\",
+    \"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$SHIPPING_DLQ_ARN\\\",\\\"maxReceiveCount\\\":3}\"
+  }" \
+  --region us-east-1 \
+  2>/dev/null || echo "    Queue gearify-shipping-created-queue already exists"
+
+# Shipping status update queue (order-svc listens)
+awslocal sqs create-queue \
+  --queue-name gearify-shipping-status-queue \
+  --attributes "{
+    \"VisibilityTimeout\":\"300\",
+    \"MessageRetentionPeriod\":\"1209600\",
+    \"ReceiveMessageWaitTimeSeconds\":\"20\",
+    \"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$SHIPPING_DLQ_ARN\\\",\\\"maxReceiveCount\\\":3}\"
+  }" \
+  --region us-east-1 \
+  2>/dev/null || echo "    Queue gearify-shipping-status-queue already exists"
+
 # Search Service queue for catalog events
 echo "  - Creating queue: search-catalog-events-queue"
 awslocal sqs create-queue \
@@ -439,12 +552,18 @@ MEDIA_TOPIC_ARN=$(awslocal sns create-topic --name gearify-media-upload-events -
 IMAGE_PROCESSING_COMPLETED_TOPIC_ARN=$(awslocal sns create-topic --name gearify-image-processing-completed --region us-east-1 --output text 2>/dev/null || echo "")
 CATALOG_EVENTS_TOPIC_ARN=$(awslocal sns create-topic --name catalog-events-topic --region us-east-1 --output text 2>/dev/null || echo "")
 
+# Checkout Flow SNS Topics
+CHECKOUT_TOPIC_ARN=$(awslocal sns create-topic --name gearify-checkout-events --region us-east-1 --output text 2>/dev/null || echo "")
+SHIPPING_TOPIC_ARN=$(awslocal sns create-topic --name gearify-shipping-events --region us-east-1 --output text 2>/dev/null || echo "")
+
 echo "  - Created topic: gearify-order-events"
 echo "  - Created topic: gearify-payment-events"
 echo "  - Created topic: gearify-inventory-events"
 echo "  - Created topic: gearify-media-upload-events"
 echo "  - Created topic: gearify-image-processing-completed"
 echo "  - Created topic: catalog-events-topic"
+echo "  - Created topic: gearify-checkout-events"
+echo "  - Created topic: gearify-shipping-events"
 
 # Subscribe SQS queue to SNS topic for media processing
 if [ ! -z "$MEDIA_TOPIC_ARN" ]; then
@@ -472,6 +591,53 @@ if [ ! -z "$CATALOG_EVENTS_TOPIC_ARN" ]; then
     echo "  - Subscribed search-catalog-events-queue to catalog-events-topic"
   fi
 fi
+
+# ==========================================
+# Checkout Flow - SNS to SQS Subscriptions
+# ==========================================
+echo ""
+echo "Creating checkout flow subscriptions..."
+
+# Subscribe order-created-queue to order-events topic (payment-svc listens)
+if [ ! -z "$ORDER_TOPIC_ARN" ]; then
+  ORDER_CREATED_QUEUE_ARN=$(awslocal sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/gearify-order-created-queue --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn' 2>/dev/null || echo "")
+  if [ ! -z "$ORDER_CREATED_QUEUE_ARN" ]; then
+    awslocal sns subscribe --topic-arn $ORDER_TOPIC_ARN --protocol sqs --notification-endpoint $ORDER_CREATED_QUEUE_ARN --attributes '{"FilterPolicy":"{\"eventType\":[\"OrderCreated\"]}"}' --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
+    echo "  - Subscribed gearify-order-created-queue to gearify-order-events (OrderCreated filter)"
+  fi
+fi
+
+# Subscribe payment-completed-queue to payment-events topic (order-svc, shipping-svc listen)
+if [ ! -z "$PAYMENT_TOPIC_ARN" ]; then
+  PAYMENT_COMPLETED_QUEUE_ARN=$(awslocal sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/gearify-payment-completed-queue --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn' 2>/dev/null || echo "")
+  if [ ! -z "$PAYMENT_COMPLETED_QUEUE_ARN" ]; then
+    awslocal sns subscribe --topic-arn $PAYMENT_TOPIC_ARN --protocol sqs --notification-endpoint $PAYMENT_COMPLETED_QUEUE_ARN --attributes '{"FilterPolicy":"{\"eventType\":[\"PaymentCompleted\"]}"}' --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
+    echo "  - Subscribed gearify-payment-completed-queue to gearify-payment-events (PaymentCompleted filter)"
+  fi
+
+  PAYMENT_FAILED_QUEUE_ARN=$(awslocal sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/gearify-payment-failed-queue --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn' 2>/dev/null || echo "")
+  if [ ! -z "$PAYMENT_FAILED_QUEUE_ARN" ]; then
+    awslocal sns subscribe --topic-arn $PAYMENT_TOPIC_ARN --protocol sqs --notification-endpoint $PAYMENT_FAILED_QUEUE_ARN --attributes '{"FilterPolicy":"{\"eventType\":[\"PaymentFailed\"]}"}' --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
+    echo "  - Subscribed gearify-payment-failed-queue to gearify-payment-events (PaymentFailed filter)"
+  fi
+fi
+
+# Subscribe shipping queues to shipping-events topic (order-svc listens)
+if [ ! -z "$SHIPPING_TOPIC_ARN" ]; then
+  SHIPPING_CREATED_QUEUE_ARN=$(awslocal sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/gearify-shipping-created-queue --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn' 2>/dev/null || echo "")
+  if [ ! -z "$SHIPPING_CREATED_QUEUE_ARN" ]; then
+    awslocal sns subscribe --topic-arn $SHIPPING_TOPIC_ARN --protocol sqs --notification-endpoint $SHIPPING_CREATED_QUEUE_ARN --attributes '{"FilterPolicy":"{\"eventType\":[\"ShipmentCreated\"]}"}' --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
+    echo "  - Subscribed gearify-shipping-created-queue to gearify-shipping-events (ShipmentCreated filter)"
+  fi
+
+  SHIPPING_STATUS_QUEUE_ARN=$(awslocal sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/gearify-shipping-status-queue --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn' 2>/dev/null || echo "")
+  if [ ! -z "$SHIPPING_STATUS_QUEUE_ARN" ]; then
+    awslocal sns subscribe --topic-arn $SHIPPING_TOPIC_ARN --protocol sqs --notification-endpoint $SHIPPING_STATUS_QUEUE_ARN --attributes '{"FilterPolicy":"{\"eventType\":[\"ShipmentStatusUpdated\",\"ShipmentDelivered\"]}"}' --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
+    echo "  - Subscribed gearify-shipping-status-queue to gearify-shipping-events (status updates filter)"
+  fi
+fi
+
+echo "Checkout flow subscriptions created successfully!"
 
 echo "SNS topics created successfully!"
 
