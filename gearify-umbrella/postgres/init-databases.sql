@@ -31,27 +31,13 @@ CREATE TABLE IF NOT EXISTS orders (
     total_amount DECIMAL(12, 2) NOT NULL,
     currency VARCHAR(3) NOT NULL DEFAULT 'USD',
 
-    -- Shipping Address (denormalized for immutability)
-    shipping_first_name VARCHAR(100),
-    shipping_last_name VARCHAR(100),
-    shipping_phone VARCHAR(20),
-    shipping_address_line1 VARCHAR(255),
-    shipping_address_line2 VARCHAR(255),
-    shipping_city VARCHAR(100),
-    shipping_state VARCHAR(100),
-    shipping_zip_code VARCHAR(20),
-    shipping_country VARCHAR(100),
+    -- Shipping Address (ID reference + JSONB snapshot)
+    shipping_address_id VARCHAR(100),
+    shipping_address JSONB,  -- Snapshot at order time for immutability
 
-    -- Billing Address
-    billing_first_name VARCHAR(100),
-    billing_last_name VARCHAR(100),
-    billing_phone VARCHAR(20),
-    billing_address_line1 VARCHAR(255),
-    billing_address_line2 VARCHAR(255),
-    billing_city VARCHAR(100),
-    billing_state VARCHAR(100),
-    billing_zip_code VARCHAR(20),
-    billing_country VARCHAR(100),
+    -- Billing Address (ID reference + JSONB snapshot)
+    billing_address_id VARCHAR(100),
+    billing_address JSONB,  -- Snapshot at order time for immutability
 
     -- Payment info (references payment service)
     payment_id UUID,

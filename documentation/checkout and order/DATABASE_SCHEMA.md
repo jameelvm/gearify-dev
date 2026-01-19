@@ -57,24 +57,10 @@ erDiagram
         decimal discount_amount
         decimal total_amount
         varchar currency
-        varchar shipping_first_name
-        varchar shipping_last_name
-        varchar shipping_phone
-        varchar shipping_address_line1
-        varchar shipping_address_line2
-        varchar shipping_city
-        varchar shipping_state
-        varchar shipping_zip_code
-        varchar shipping_country
-        varchar billing_first_name
-        varchar billing_last_name
-        varchar billing_phone
-        varchar billing_address_line1
-        varchar billing_address_line2
-        varchar billing_city
-        varchar billing_state
-        varchar billing_zip_code
-        varchar billing_country
+        varchar shipping_address_id
+        jsonb shipping_address
+        varchar billing_address_id
+        jsonb billing_address
         uuid payment_id FK
         varchar payment_status
         uuid shipment_id FK
@@ -136,8 +122,10 @@ Main order table storing order header information.
 | `discount_amount` | DECIMAL(12,2) | DEFAULT 0 | Total discounts applied |
 | `total_amount` | DECIMAL(12,2) | NOT NULL | Final order total |
 | `currency` | VARCHAR(3) | DEFAULT 'USD' | Currency code |
-| `shipping_*` | VARCHAR | - | Denormalized shipping address |
-| `billing_*` | VARCHAR | - | Denormalized billing address |
+| `shipping_address_id` | VARCHAR(100) | - | Reference to address in DynamoDB (auth-svc) |
+| `shipping_address` | JSONB | - | Snapshot of shipping address at order time |
+| `billing_address_id` | VARCHAR(100) | - | Reference to address in DynamoDB (auth-svc) |
+| `billing_address` | JSONB | - | Snapshot of billing address at order time |
 | `payment_id` | UUID | FK (logical) | Reference to payment in payment-svc |
 | `payment_status` | VARCHAR(30) | - | Cached payment status |
 | `shipment_id` | UUID | FK (logical) | Reference to shipment in shipping-svc |
@@ -172,6 +160,31 @@ Main order table storing order header information.
 - `completed` - Saga completed successfully
 - `compensating` - Running compensation
 - `failed` - Saga failed
+
+**Address JSONB Structure:**
+
+The `shipping_address` and `billing_address` columns store a snapshot of the address from DynamoDB at order time:
+
+```json
+{
+  "id": "addr-123",
+  "label": "Home",
+  "firstName": "John",
+  "lastName": "Doe",
+  "phone": "+1234567890",
+  "addressLine1": "123 Main St",
+  "addressLine2": "Apt 4B",
+  "city": "New York",
+  "state": "NY",
+  "zipCode": "10001",
+  "country": "USA"
+}
+```
+
+This approach provides:
+- **Reference**: `shipping_address_id` links to the original address in auth-svc (DynamoDB)
+- **Immutability**: JSONB snapshot preserves the exact address used at order time
+- **Independence**: No cross-service calls needed to display order details
 
 ### Table: `order_items`
 
