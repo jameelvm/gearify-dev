@@ -7,7 +7,6 @@ This document tracks the implementation progress of the checkout and order manag
 ## Phase 1: Infrastructure Setup
 
 **Status:** ✅ Completed
-**Duration:** -
 **Completed Tasks:** 2/6
 
 ### Overview
