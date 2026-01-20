@@ -138,10 +138,9 @@ public class PayPalPaymentProvider : IPayPalPaymentProvider
 
         var request = new HttpRequestMessage(HttpMethod.Post, "v1/oauth2/token")
         {
-            Content = new FormUrlEncodedContent(new[]
-            {
+            Content = new FormUrlEncodedContent([
                 new KeyValuePair<string, string>("grant_type", "client_credentials")
-            })
+            ])
         };
         request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", authValue);
 

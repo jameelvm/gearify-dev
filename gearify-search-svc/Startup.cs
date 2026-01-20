@@ -6,7 +6,7 @@ using Gearify.SearchService.Infrastructure.Clients;
 using Gearify.SearchService.Infrastructure.Configuration;
 using Gearify.SearchService.Infrastructure.Messaging;
 using Gearify.SearchService.Infrastructure.OpenSearch;
-using Gearify.SearchService.Infrastructure.Swagger;
+using Gearify.SharedKernel.Swagger;
 using Gearify.SharedKernel.Extensions;
 using LocalStack.Client.Extensions;
 using MediatR;

@@ -1,6 +1,6 @@
 using Amazon.DynamoDBv2;
 using Gearify.TenantService.Infrastructure.Repositories;
-using Gearify.TenantService.Infrastructure.Swagger;
+using Gearify.SharedKernel.Swagger;
 using LocalStack.Client.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;

@@ -1,7 +1,8 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Gearify.OrderService.Application.DTOs;
+using Gearify.OrderService.Application.Mappers;
 using Gearify.OrderService.Domain.Entities;
 using Gearify.OrderService.Infrastructure.Repositories;
 using Gearify.SharedKernel.Multitenancy;
@@ -34,22 +35,43 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Cre
 
             var order = new Order
             {
-                Id = Guid.NewGuid().ToString(),
                 TenantId = tenantId,
                 UserId = request.UserId,
-                Items = request.Items,
-                ShippingAddress = request.ShippingAddress,
-                TotalAmount = request.Items.Sum(i => i.Price * i.Quantity),
                 Status = OrderStatus.Pending,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                Subtotal = request.Subtotal,
+                TaxAmount = request.TaxAmount,
+                ShippingAmount = request.ShippingAmount,
+                DiscountAmount = request.DiscountAmount,
+                TotalAmount = request.Subtotal + request.TaxAmount + request.ShippingAmount - request.DiscountAmount,
+                Currency = request.Currency,
+                ShippingAddress = OrderMapper.ToJsonDocument(request.ShippingAddress),
+                ShippingAddressId = request.ShippingAddress.AddressId,
+                BillingAddress = OrderMapper.ToJsonDocument(request.BillingAddress),
+                BillingAddressId = request.BillingAddress?.AddressId,
+                SagaState = SagaState.Created
             };
 
-            await _repository.CreateAsync(order);
+            // Add order items
+            foreach (var itemRequest in request.Items)
+            {
+                order.Items.Add(OrderMapper.ToEntity(itemRequest, order.Id));
+            }
 
-            _logger.LogInformation("Created order {OrderId} for user {UserId}", order.Id, request.UserId);
+            // Add initial status history
+            order.StatusHistory.Add(new OrderStatusHistory
+            {
+                OrderId = order.Id,
+                FromStatus = OrderStatus.Pending.ToString(),
+                ToStatus = OrderStatus.Pending.ToString(),
+                Reason = "Order created"
+            });
 
-            return new CreateOrderResult(true, order.Id);
+            var createdOrder = await _repository.CreateAsync(order, cancellationToken);
+
+            _logger.LogInformation("Created order {OrderId} ({OrderNumber}) for user {UserId} in tenant {TenantId}",
+                createdOrder.Id, createdOrder.OrderNumber, request.UserId, tenantId);
+
+            return new CreateOrderResult(true, OrderMapper.ToDto(createdOrder));
         }
         catch (Exception ex)
         {

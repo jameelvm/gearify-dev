@@ -4,7 +4,7 @@ using Gearify.CartService.Infrastructure.Caching;
 using Gearify.CartService.Infrastructure.Clients;
 using Gearify.CartService.Infrastructure.Configuration;
 using Gearify.CartService.Infrastructure.Repositories;
-using Gearify.CartService.Infrastructure.Swagger;
+using Gearify.SharedKernel.Swagger;
 using Gearify.SharedKernel.Extensions;
 using LocalStack.Client.Extensions;
 using MediatR;

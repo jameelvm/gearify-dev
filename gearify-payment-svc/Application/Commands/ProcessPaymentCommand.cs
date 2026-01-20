@@ -1,4 +1,4 @@
-using System;
+using Gearify.PaymentService.Application.DTOs;
 using Gearify.PaymentService.Domain.Entities;
 using MediatR;
 
@@ -16,7 +16,6 @@ public record ProcessPaymentCommand(
 
 public record ProcessPaymentResult(
     bool Success,
-    Guid? TransactionId = null,
-    PaymentStatus? Status = null,
+    PaymentDto? Payment = null,
     string? ErrorMessage = null
 );

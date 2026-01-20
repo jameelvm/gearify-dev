@@ -1,6 +1,6 @@
 using Gearify.ShippingService.Infrastructure.Adapters;
 using Microsoft.AspNetCore.Http;
-using Gearify.ShippingService.Infrastructure.Swagger;
+using Gearify.SharedKernel.Swagger;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

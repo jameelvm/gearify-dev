@@ -1,29 +1,33 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+using Gearify.PaymentService.Infrastructure.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Stripe;
+using AppStripeConfiguration = Gearify.PaymentService.Infrastructure.Configuration.StripeConfiguration;
 
 namespace Gearify.PaymentService.Infrastructure.PaymentProviders;
 
 public class StripePaymentProvider : IStripePaymentProvider
 {
-    private readonly string _apiKey;
-    private readonly HttpClient _httpClient;
+    private readonly AppStripeConfiguration _config;
     private readonly ILogger<StripePaymentProvider> _logger;
+    private readonly PaymentIntentService _paymentIntentService;
+    private readonly RefundService _refundService;
 
     public StripePaymentProvider(
-        IConfiguration configuration,
-        HttpClient httpClient,
+        IOptions<AppStripeConfiguration> config,
         ILogger<StripePaymentProvider> logger)
     {
-        _apiKey = configuration["Stripe:SecretKey"] ?? throw new InvalidOperationException("Stripe API key not configured");
-        _httpClient = httpClient;
+        _config = config.Value;
         _logger = logger;
 
-        _httpClient.BaseAddress = new Uri("https://api.stripe.com/v1/");
-        _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _apiKey);
+        // Configure Stripe with the secret key
+        Stripe.StripeConfiguration.ApiKey = _config.SecretKey;
+
+        _paymentIntentService = new PaymentIntentService();
+        _refundService = new RefundService();
     }
 
     public async Task<(bool Success, string? TransactionId)> ProcessPaymentAsync(
@@ -34,34 +38,52 @@ public class StripePaymentProvider : IStripePaymentProvider
     {
         try
         {
-            _logger.LogInformation("Processing Stripe payment for order {OrderId}, amount: {Amount}", orderId, amount);
+            _logger.LogInformation("Processing Stripe payment for order {OrderId}, amount: {Amount} {Currency}",
+                orderId, amount, currency);
 
             // Convert amount to cents (Stripe uses smallest currency unit)
-            var amountInCents = (int)(amount * 100);
+            var amountInCents = (long)(amount * 100);
 
-            var content = new FormUrlEncodedContent(new[]
+            var options = new PaymentIntentCreateOptions
             {
-                new KeyValuePair<string, string>("amount", amountInCents.ToString()),
-                new KeyValuePair<string, string>("currency", currency.ToLower()),
-                new KeyValuePair<string, string>("payment_method", paymentMethodToken),
-                new KeyValuePair<string, string>("confirm", "true"),
-                new KeyValuePair<string, string>("description", $"Order {orderId}")
-            });
+                Amount = amountInCents,
+                Currency = currency.ToLower(),
+                PaymentMethod = paymentMethodToken,
+                Confirm = true,
+                Description = $"Order {orderId}",
+                Metadata = new Dictionary<string, string>
+                {
+                    { "order_id", orderId }
+                },
+                // Automatic payment methods allows Stripe to dynamically show payment methods
+                AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
+                {
+                    Enabled = true,
+                    AllowRedirects = "never" // Disable redirect-based methods for API calls
+                }
+            };
 
-            var response = await _httpClient.PostAsync("payment_intents", content);
+            var paymentIntent = await _paymentIntentService.CreateAsync(options);
 
-            if (response.IsSuccessStatusCode)
+            if (paymentIntent.Status == "succeeded")
             {
-                var responseBody = await response.Content.ReadAsStringAsync();
-                // Parse response to get payment intent ID
-                var paymentIntentId = ExtractPaymentIntentId(responseBody);
-
-                _logger.LogInformation("Stripe payment succeeded: {PaymentIntentId}", paymentIntentId);
-                return (true, paymentIntentId);
+                _logger.LogInformation("Stripe payment succeeded: {PaymentIntentId}", paymentIntent.Id);
+                return (true, paymentIntent.Id);
             }
 
-            var error = await response.Content.ReadAsStringAsync();
-            _logger.LogError("Stripe payment failed: {Error}", error);
+            if (paymentIntent.Status == "requires_action" || paymentIntent.Status == "requires_confirmation")
+            {
+                _logger.LogWarning("Stripe payment requires additional action: {Status}", paymentIntent.Status);
+                return (false, paymentIntent.Id);
+            }
+
+            _logger.LogWarning("Stripe payment not successful: {Status}", paymentIntent.Status);
+            return (false, paymentIntent.Id);
+        }
+        catch (StripeException ex)
+        {
+            _logger.LogError(ex, "Stripe API error during payment processing: {Code} - {Message}",
+                ex.StripeError?.Code, ex.StripeError?.Message);
             return (false, null);
         }
         catch (Exception ex)
@@ -75,16 +97,33 @@ public class StripePaymentProvider : IStripePaymentProvider
     {
         try
         {
-            var amountInCents = (int)(amount * 100);
+            _logger.LogInformation("Processing Stripe refund for payment {TransactionId}, amount: {Amount}",
+                transactionId, amount);
 
-            var content = new FormUrlEncodedContent(new[]
+            var amountInCents = (long)(amount * 100);
+
+            var options = new RefundCreateOptions
             {
-                new KeyValuePair<string, string>("payment_intent", transactionId),
-                new KeyValuePair<string, string>("amount", amountInCents.ToString())
-            });
+                PaymentIntent = transactionId,
+                Amount = amountInCents
+            };
 
-            var response = await _httpClient.PostAsync("refunds", content);
-            return response.IsSuccessStatusCode;
+            var refund = await _refundService.CreateAsync(options);
+
+            if (refund.Status == "succeeded")
+            {
+                _logger.LogInformation("Stripe refund succeeded: {RefundId}", refund.Id);
+                return true;
+            }
+
+            _logger.LogWarning("Stripe refund not successful: {Status}", refund.Status);
+            return false;
+        }
+        catch (StripeException ex)
+        {
+            _logger.LogError(ex, "Stripe API error during refund: {Code} - {Message}",
+                ex.StripeError?.Code, ex.StripeError?.Message);
+            return false;
         }
         catch (Exception ex)
         {
@@ -93,15 +132,30 @@ public class StripePaymentProvider : IStripePaymentProvider
         }
     }
 
-    private string? ExtractPaymentIntentId(string responseBody)
+    public async Task<PaymentIntent?> GetPaymentIntentAsync(string paymentIntentId)
     {
-        // Simple extraction - in production, use proper JSON deserialization
-        var idStart = responseBody.IndexOf("\"id\": \"pi_");
-        if (idStart == -1) return null;
+        try
+        {
+            return await _paymentIntentService.GetAsync(paymentIntentId);
+        }
+        catch (StripeException ex)
+        {
+            _logger.LogError(ex, "Failed to retrieve payment intent: {PaymentIntentId}", paymentIntentId);
+            return null;
+        }
+    }
 
-        var idValueStart = responseBody.IndexOf("\"pi_", idStart);
-        var idValueEnd = responseBody.IndexOf("\"", idValueStart + 1);
-
-        return responseBody.Substring(idValueStart + 1, idValueEnd - idValueStart - 1);
+    public async Task<PaymentIntent?> CancelPaymentIntentAsync(string paymentIntentId)
+    {
+        try
+        {
+            _logger.LogInformation("Cancelling payment intent: {PaymentIntentId}", paymentIntentId);
+            return await _paymentIntentService.CancelAsync(paymentIntentId);
+        }
+        catch (StripeException ex)
+        {
+            _logger.LogError(ex, "Failed to cancel payment intent: {PaymentIntentId}", paymentIntentId);
+            return null;
+        }
     }
 }

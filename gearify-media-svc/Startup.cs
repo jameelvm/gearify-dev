@@ -8,7 +8,7 @@ using Gearify.SharedKernel.Events;
 using Gearify.MediaService.Infrastructure.Messaging;
 using Gearify.MediaService.Infrastructure.Repositories;
 using Gearify.MediaService.Infrastructure.Storage;
-using Gearify.MediaService.Infrastructure.Swagger;
+using Gearify.SharedKernel.Swagger;
 using Gearify.SharedKernel.Extensions;
 using Gearify.SharedKernel.Multitenancy;
 using LocalStack.Client.Extensions;

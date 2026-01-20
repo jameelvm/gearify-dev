@@ -9,7 +9,7 @@ using Gearify.AuthService.Infrastructure.Clients;
 using Gearify.AuthService.Infrastructure.Configuration;
 using Gearify.AuthService.Infrastructure.Repositories;
 using Gearify.AuthService.Infrastructure.Services;
-using Gearify.AuthService.Infrastructure.Swagger;
+using Gearify.SharedKernel.Swagger;
 using Gearify.SharedKernel.Extensions;
 using LocalStack.Client.Extensions;
 using MediatR;

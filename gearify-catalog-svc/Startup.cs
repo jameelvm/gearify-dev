@@ -11,7 +11,7 @@ using Gearify.CatalogService.Application.Validators;
 using Gearify.CatalogService.Infrastructure.Clients;
 using Gearify.CatalogService.Infrastructure.Messaging;
 using Gearify.CatalogService.Infrastructure.Repositories;
-using Gearify.CatalogService.Infrastructure.Swagger;
+using Gearify.SharedKernel.Swagger;
 using Gearify.SharedKernel.Extensions;
 using LocalStack.Client.Extensions;
 using MediatR;

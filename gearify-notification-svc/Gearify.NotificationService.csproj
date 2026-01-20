@@ -11,4 +11,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\gearify-shared-kernel\Gearify.SharedKernel.csproj" />
+  </ItemGroup>
 </Project>

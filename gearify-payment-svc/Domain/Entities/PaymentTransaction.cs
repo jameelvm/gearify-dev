@@ -15,10 +15,13 @@ public class PaymentTransaction
     public PaymentProvider Provider { get; set; }
     public string? ProviderTransactionId { get; set; }
     public string? IdempotencyKey { get; set; }
-    public Dictionary<string, string> Metadata { get; set; } = new();
+    public string? ErrorMessage { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-    public string? ErrorMessage { get; set; }
+
+    // Navigation properties
+    public ICollection<PaymentLedgerEntry> LedgerEntries { get; set; } = new List<PaymentLedgerEntry>();
+    public ICollection<Refund> Refunds { get; set; } = new List<Refund>();
 }
 
 public enum PaymentStatus
@@ -28,6 +31,7 @@ public enum PaymentStatus
     Succeeded,
     Failed,
     Refunded,
+    PartiallyRefunded,
     Cancelled
 }
 
@@ -42,9 +46,37 @@ public class PaymentLedgerEntry
     public long Id { get; set; }
     public Guid TransactionId { get; set; }
     public string TenantId { get; set; } = string.Empty;
-    public string AccountType { get; set; } = string.Empty; // "debit" or "credit"
+    public string AccountType { get; set; } = string.Empty;
     public decimal Amount { get; set; }
     public string Currency { get; set; } = "USD";
     public DateTime EntryTime { get; set; } = DateTime.UtcNow;
     public string Description { get; set; } = string.Empty;
+
+    // Navigation property
+    public PaymentTransaction Transaction { get; set; } = null!;
+}
+
+public class Refund
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid TransactionId { get; set; }
+    public string TenantId { get; set; } = string.Empty;
+    public decimal Amount { get; set; }
+    public string Currency { get; set; } = "USD";
+    public RefundStatus Status { get; set; } = RefundStatus.Pending;
+    public string? ProviderRefundId { get; set; }
+    public string Reason { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? CompletedAt { get; set; }
+
+    // Navigation property
+    public PaymentTransaction Transaction { get; set; } = null!;
+}
+
+public enum RefundStatus
+{
+    Pending,
+    Processing,
+    Succeeded,
+    Failed
 }

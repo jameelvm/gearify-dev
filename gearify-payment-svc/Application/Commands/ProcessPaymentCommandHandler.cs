@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Gearify.PaymentService.Application.Mappers;
 using Gearify.PaymentService.Domain.Entities;
 using Gearify.PaymentService.Infrastructure.PaymentProviders;
 using Gearify.PaymentService.Infrastructure.Repositories;
@@ -42,11 +43,13 @@ public class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymentComman
             var tenantId = _tenantContext.TenantId;
 
             // Check idempotency
-            var existingResult = await _idempotency.GetResultAsync(request.IdempotencyKey);
-            if (existingResult != null)
+            var existingTransaction = await _repository.GetByIdempotencyKeyAsync(request.IdempotencyKey);
+            if (existingTransaction != null)
             {
-                _logger.LogInformation("Returning cached result for idempotency key {Key}", request.IdempotencyKey);
-                return existingResult;
+                _logger.LogInformation("Returning existing result for idempotency key {Key}", request.IdempotencyKey);
+                return new ProcessPaymentResult(
+                    existingTransaction.Status == PaymentStatus.Succeeded,
+                    PaymentMapper.ToDto(existingTransaction));
             }
 
             // Create transaction record
@@ -77,7 +80,7 @@ public class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymentComman
                     request.OrderId
                 );
             }
-            else // PayPal
+            else
             {
                 (success, providerTransactionId) = await _paypalProvider.ProcessPaymentAsync(
                     request.Amount,
@@ -90,7 +93,6 @@ public class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymentComman
             // Update transaction
             transaction.Status = success ? PaymentStatus.Succeeded : PaymentStatus.Failed;
             transaction.ProviderTransactionId = providerTransactionId;
-            transaction.UpdatedAt = DateTime.UtcNow;
 
             if (!success)
             {
@@ -113,19 +115,15 @@ public class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymentComman
                 });
             }
 
-            var result = new ProcessPaymentResult(success, transaction.Id, transaction.Status);
+            _logger.LogInformation("Payment processed: {TransactionId}, Status: {Status}",
+                transaction.Id, transaction.Status);
 
-            // Cache result for idempotency
-            await _idempotency.SaveResultAsync(request.IdempotencyKey, result, TimeSpan.FromHours(24));
-
-            _logger.LogInformation("Payment processed: {TransactionId}, Status: {Status}", transaction.Id, transaction.Status);
-
-            return result;
+            return new ProcessPaymentResult(success, PaymentMapper.ToDto(transaction));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to process payment for order {OrderId}", request.OrderId);
-            return new ProcessPaymentResult(false, null, PaymentStatus.Failed, ex.Message);
+            return new ProcessPaymentResult(false, null, ex.Message);
         }
     }
 }

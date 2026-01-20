@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Gearify.PaymentService.Application.Commands;
+using Stripe;
 
 namespace Gearify.PaymentService.Infrastructure.PaymentProviders;
 
@@ -14,6 +15,10 @@ public interface IStripePaymentProvider
     );
 
     Task<bool> RefundPaymentAsync(string transactionId, decimal amount);
+
+    Task<PaymentIntent?> GetPaymentIntentAsync(string paymentIntentId);
+
+    Task<PaymentIntent?> CancelPaymentIntentAsync(string paymentIntentId);
 }
 
 public interface IPayPalPaymentProvider

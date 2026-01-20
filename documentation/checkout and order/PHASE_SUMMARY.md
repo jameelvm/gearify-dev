@@ -7,7 +7,7 @@ This document tracks the implementation progress of the checkout and order manag
 ## Phase 1: Infrastructure Setup
 
 **Status:** ✅ Completed
-**Completed Tasks:** 2/6
+**Completed Tasks:** 6/6
 
 ### Overview
 
@@ -104,56 +104,109 @@ Added checkout-specific SNS topics and SQS queues with dead letter queues for re
 
 ### Task 1.3: Update order-svc to use PostgreSQL with EF Core
 
-**Status:** ⏳ Pending
+**Status:** ✅ Completed
 
-**Planned Work:**
-- Add Entity Framework Core packages
-- Create DbContext and entity configurations
-- Implement repository pattern with EF Core
-- Add database migrations
-- Update `MessagingConfiguration` in appsettings.json
+Migrated order service from DynamoDB to PostgreSQL with Entity Framework Core.
+
+**Files Created/Modified:**
+- `gearify-order-svc/Gearify.OrderService.csproj` (MODIFIED)
+- `gearify-order-svc/Domain/Entities/Order.cs` (REWRITTEN)
+- `gearify-order-svc/Domain/Entities/OrderItem.cs` (NEW)
+- `gearify-order-svc/Domain/Entities/OrderStatusHistory.cs` (NEW)
+- `gearify-order-svc/Infrastructure/Data/OrderDbContext.cs` (NEW)
+- `gearify-order-svc/Infrastructure/Repositories/EfCoreOrderRepository.cs` (NEW)
+- `gearify-order-svc/Infrastructure/Configuration/MessagingConfiguration.cs` (NEW)
+- `gearify-order-svc/Infrastructure/Configuration/DatabaseConfiguration.cs` (NEW)
+- `gearify-order-svc/appsettings.json` (NEW)
+- `gearify-order-svc/appsettings.Development.json` (MODIFIED)
+- `gearify-order-svc/Startup.cs` (REWRITTEN)
+
+**Key Changes:**
+- Added EF Core packages: `Microsoft.EntityFrameworkCore`, `Npgsql.EntityFrameworkCore.PostgreSQL`
+- Added AWS SDK packages for SNS/SQS messaging
+- Created domain entities matching PostgreSQL schema with JSONB support for addresses
+- Implemented `OrderDbContext` with fluent API configurations and snake_case column mapping
+- Created `EfCoreOrderRepository` replacing DynamoDB repository
+- Added health checks for PostgreSQL
+- Configured `MessagingConfiguration` for SNS topics and SQS queues
 
 ---
 
 ### Task 1.4: Add Stripe Package to payment-svc
 
-**Status:** ⏳ Pending
+**Status:** ✅ Completed
 
-**Planned Work:**
-- Add `Stripe.net` NuGet package
-- Create Stripe configuration section
-- Implement `IPaymentProvider` interface
-- Add Stripe webhook handling
-- Update `MessagingConfiguration` in appsettings.json
+Updated payment service with official Stripe SDK and proper service configuration.
+
+**Files Created/Modified:**
+- `gearify-payment-svc/Gearify.PaymentService.csproj` (MODIFIED)
+- `gearify-payment-svc/Infrastructure/PaymentProviders/StripePaymentProvider.cs` (REWRITTEN)
+- `gearify-payment-svc/Infrastructure/PaymentProviders/IStripePaymentProvider.cs` (MODIFIED)
+- `gearify-payment-svc/Infrastructure/Configuration/StripeConfiguration.cs` (NEW)
+- `gearify-payment-svc/Infrastructure/Configuration/MessagingConfiguration.cs` (NEW)
+- `gearify-payment-svc/appsettings.json` (NEW)
+- `gearify-payment-svc/appsettings.Development.json` (MODIFIED)
+- `gearify-payment-svc/Startup.cs` (REWRITTEN)
+
+**Key Changes:**
+- Added `Stripe.net` v45.0.0 NuGet package
+- Added AWS SDK packages for SNS/SQS messaging
+- Added health check packages for PostgreSQL and Redis
+- Rewrote `StripePaymentProvider` using official Stripe SDK:
+  - `PaymentIntentService` for payment processing
+  - `RefundService` for refunds
+  - Added `GetPaymentIntentAsync` and `CancelPaymentIntentAsync` methods
+- Configured DI for all services including Redis, payment providers, repositories
+- Added `StripeConfiguration` for API keys
+- Added `MessagingConfiguration` for SNS/SQS
+- Added PayPal configuration
 
 ---
 
 ### Task 1.5: Create Shared Event Contracts
 
-**Status:** ⏳ Pending
+**Status:** ✅ Completed
 
-**Planned Work:**
-- Create `Gearify.SharedKernel.Events` library
-- Define event base classes
-- Create checkout event contracts:
-  - `OrderCreatedEvent`
-  - `PaymentCompletedEvent`
-  - `PaymentFailedEvent`
-  - `ShipmentCreatedEvent`
-  - `ShipmentStatusUpdatedEvent`
-- Add NuGet package reference to services
+Created comprehensive event contracts for inter-service communication.
+
+**Files Created:**
+- `gearify-shared-kernel/Events/Checkout/CheckoutInitiatedEvent.cs` (NEW)
+- `gearify-shared-kernel/Events/Order/OrderEvents.cs` (NEW)
+- `gearify-shared-kernel/Events/Payment/PaymentEvents.cs` (NEW)
+- `gearify-shared-kernel/Events/Shipping/ShippingEvents.cs` (NEW)
+
+**Events Created:**
+
+| Namespace | Events |
+|-----------|--------|
+| Checkout | `CheckoutInitiatedEvent`, `CheckoutItem`, `CheckoutAddress`, `PaymentInfo` |
+| Order | `OrderCreatedEvent`, `OrderConfirmedEvent`, `OrderCancelledEvent`, `OrderCompletedEvent`, `OrderStatusChangedEvent` |
+| Payment | `PaymentProcessingEvent`, `PaymentCompletedEvent`, `PaymentFailedEvent`, `RefundInitiatedEvent`, `RefundCompletedEvent` |
+| Shipping | `ShippingCreatedEvent`, `ShippingStatusUpdatedEvent`, `ShippingShippedEvent`, `ShippingDeliveredEvent` |
+
+All events implement `IDomainEvent` with `OccurredAt` timestamp.
 
 ---
 
 ### Task 1.6: API Gateway - Verify Checkout Routes
 
-**Status:** ⏳ Pending
+**Status:** ✅ Completed
 
-**Planned Work:**
-- Verify `/api/orders/*` routes to order-svc
-- Verify `/api/payments/*` routes to payment-svc
-- Verify `/api/shipping/*` routes to shipping-svc
-- Add `/api/checkout/*` aggregate routes if needed
+Verified and added checkout routes to API Gateway.
+
+**Files Modified:**
+- `gearify-api-gateway/appsettings.json` (MODIFIED)
+
+**Routes Verified:**
+| Route | Cluster | Service |
+|-------|---------|---------|
+| `/api/checkout/{**catch-all}` | order-cluster | order-svc |
+| `/api/orders/{**catch-all}` | order-cluster | order-svc |
+| `/api/payments/{**catch-all}` | payment-cluster | payment-svc |
+| `/api/shipping/{**catch-all}` | shipping-cluster | shipping-svc |
+
+**Added Route:**
+- `checkout-route` mapping `/api/checkout/*` to order-svc for checkout flow orchestration
 
 ---
 

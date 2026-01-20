@@ -1,13 +1,36 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-  <PropertyGroup><TargetFramework>net8.0</TargetFramework><Nullable>enable</Nullable></PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.66" />
+    <!-- Database - Entity Framework Core -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
+
+    <!-- Stripe Payment Processing -->
+    <PackageReference Include="Stripe.net" Version="45.0.0" />
+
+    <!-- AWS Services -->
+    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.300" />
+    <PackageReference Include="AWSSDK.SQS" Version="3.7.300" />
     <PackageReference Include="LocalStack.Client.Extensions" Version="1.4.0" />
-    <PackageReference Include="MediatR" Version="13.0.0" />
-    <PackageReference Include="Npgsql" Version="9.0.4" />
+
+    <!-- Caching -->
     <PackageReference Include="StackExchange.Redis" Version="2.9.32" />
+
+    <!-- Application -->
+    <PackageReference Include="MediatR" Version="13.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
+
+    <!-- Health Checks -->
+    <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="8.0.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.Redis" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\gearify-shared-kernel\Gearify.SharedKernel.csproj" />

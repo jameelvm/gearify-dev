@@ -1,7 +1,7 @@
 using System;
 using Amazon.Runtime;
 using Gearify.NotificationService.Infrastructure.Email;
-using Gearify.NotificationService.Infrastructure.Swagger;
+using Gearify.SharedKernel.Swagger;
 using LocalStack.Client.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;

@@ -1,4 +1,4 @@
-using Gearify.InventoryService.Infrastructure.Swagger;
+using Gearify.SharedKernel.Swagger;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
