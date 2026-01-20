@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Gearify.PaymentService.Application.Mappers;
 using Gearify.PaymentService.Domain.Entities;
 using Gearify.PaymentService.Infrastructure.PaymentProviders;
-using Gearify.PaymentService.Infrastructure.Repositories;
+using Gearify.PaymentService.Infrastructure.UnitOfWork;
 using Gearify.SharedKernel.Multitenancy;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -13,7 +13,7 @@ namespace Gearify.PaymentService.Application.Commands;
 
 public class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymentCommand, ProcessPaymentResult>
 {
-    private readonly IPaymentRepository _repository;
+    private readonly IUnitOfWorkFactory _unitOfWorkFactory;
     private readonly IIdempotencyService _idempotency;
     private readonly IStripePaymentProvider _stripeProvider;
     private readonly IPayPalPaymentProvider _paypalProvider;
@@ -21,14 +21,14 @@ public class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymentComman
     private readonly ILogger<ProcessPaymentCommandHandler> _logger;
 
     public ProcessPaymentCommandHandler(
-        IPaymentRepository repository,
+        IUnitOfWorkFactory unitOfWorkFactory,
         IIdempotencyService idempotency,
         IStripePaymentProvider stripeProvider,
         IPayPalPaymentProvider paypalProvider,
         ITenantContext tenantContext,
         ILogger<ProcessPaymentCommandHandler> logger)
     {
-        _repository = repository;
+        _unitOfWorkFactory = unitOfWorkFactory;
         _idempotency = idempotency;
         _stripeProvider = stripeProvider;
         _paypalProvider = paypalProvider;
@@ -38,12 +38,14 @@ public class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymentComman
 
     public async Task<ProcessPaymentResult> Handle(ProcessPaymentCommand request, CancellationToken cancellationToken)
     {
+        await using var unitOfWork = await _unitOfWorkFactory.CreateWithTransactionAsync(cancellationToken);
+
         try
         {
             var tenantId = _tenantContext.TenantId;
 
             // Check idempotency
-            var existingTransaction = await _repository.GetByIdempotencyKeyAsync(request.IdempotencyKey);
+            var existingTransaction = await unitOfWork.Payments.GetByIdempotencyKeyAsync(request.IdempotencyKey);
             if (existingTransaction != null)
             {
                 _logger.LogInformation("Returning existing result for idempotency key {Key}", request.IdempotencyKey);
@@ -65,7 +67,8 @@ public class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymentComman
                 IdempotencyKey = request.IdempotencyKey
             };
 
-            await _repository.CreateTransactionAsync(transaction);
+            await unitOfWork.Payments.CreateTransactionAsync(transaction);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             // Process payment based on provider
             string? providerTransactionId;
@@ -99,12 +102,12 @@ public class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymentComman
                 transaction.ErrorMessage = "Payment processing failed";
             }
 
-            await _repository.UpdateTransactionAsync(transaction);
+            await unitOfWork.Payments.UpdateTransactionAsync(transaction);
 
             // Record ledger entry if successful
             if (success)
             {
-                await _repository.CreateLedgerEntryAsync(new PaymentLedgerEntry
+                await unitOfWork.Payments.CreateLedgerEntryAsync(new PaymentLedgerEntry
                 {
                     TransactionId = transaction.Id,
                     TenantId = transaction.TenantId,
@@ -114,6 +117,8 @@ public class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymentComman
                     Description = $"Payment for order {request.OrderId}"
                 });
             }
+
+            await unitOfWork.CommitAsync(cancellationToken);
 
             _logger.LogInformation("Payment processed: {TransactionId}, Status: {Status}",
                 transaction.Id, transaction.Status);

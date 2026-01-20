@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Gearify.PaymentService.Application.Mappers;
 using Gearify.PaymentService.Domain.Entities;
 using Gearify.PaymentService.Infrastructure.PaymentProviders;
-using Gearify.PaymentService.Infrastructure.Repositories;
+using Gearify.PaymentService.Infrastructure.UnitOfWork;
 using Gearify.SharedKernel.Multitenancy;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -13,20 +13,20 @@ namespace Gearify.PaymentService.Application.Commands;
 
 public class RefundPaymentCommandHandler : IRequestHandler<RefundPaymentCommand, RefundPaymentResult>
 {
-    private readonly IPaymentRepository _repository;
+    private readonly IUnitOfWorkFactory _unitOfWorkFactory;
     private readonly IStripePaymentProvider _stripeProvider;
     private readonly IPayPalPaymentProvider _paypalProvider;
     private readonly ITenantContext _tenantContext;
     private readonly ILogger<RefundPaymentCommandHandler> _logger;
 
     public RefundPaymentCommandHandler(
-        IPaymentRepository repository,
+        IUnitOfWorkFactory unitOfWorkFactory,
         IStripePaymentProvider stripeProvider,
         IPayPalPaymentProvider paypalProvider,
         ITenantContext tenantContext,
         ILogger<RefundPaymentCommandHandler> logger)
     {
-        _repository = repository;
+        _unitOfWorkFactory = unitOfWorkFactory;
         _stripeProvider = stripeProvider;
         _paypalProvider = paypalProvider;
         _tenantContext = tenantContext;
@@ -35,11 +35,13 @@ public class RefundPaymentCommandHandler : IRequestHandler<RefundPaymentCommand,
 
     public async Task<RefundPaymentResult> Handle(RefundPaymentCommand request, CancellationToken cancellationToken)
     {
+        await using var unitOfWork = await _unitOfWorkFactory.CreateWithTransactionAsync(cancellationToken);
+
         try
         {
             var tenantId = _tenantContext.TenantId;
 
-            var transaction = await _repository.GetTransactionByIdAsync(request.TransactionId);
+            var transaction = await unitOfWork.Payments.GetTransactionByIdAsync(request.TransactionId);
             if (transaction == null)
             {
                 return new RefundPaymentResult(false, null, "Transaction not found");
@@ -56,7 +58,7 @@ public class RefundPaymentCommandHandler : IRequestHandler<RefundPaymentCommand,
             }
 
             // Check if refund amount is valid
-            var totalRefunded = await _repository.GetTotalRefundedAmountAsync(request.TransactionId);
+            var totalRefunded = await unitOfWork.Payments.GetTotalRefundedAmountAsync(request.TransactionId);
             var availableForRefund = transaction.Amount - totalRefunded;
 
             if (request.Amount > availableForRefund)
@@ -76,7 +78,8 @@ public class RefundPaymentCommandHandler : IRequestHandler<RefundPaymentCommand,
                 Reason = request.Reason
             };
 
-            await _repository.CreateRefundAsync(refund);
+            await unitOfWork.Payments.CreateRefundAsync(refund);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             // Process refund with provider
             bool success;
@@ -102,7 +105,7 @@ public class RefundPaymentCommandHandler : IRequestHandler<RefundPaymentCommand,
                 refund.CompletedAt = DateTime.UtcNow;
             }
 
-            await _repository.UpdateRefundAsync(refund);
+            await unitOfWork.Payments.UpdateRefundAsync(refund);
 
             // Update transaction status if fully refunded
             if (success)
@@ -116,10 +119,10 @@ public class RefundPaymentCommandHandler : IRequestHandler<RefundPaymentCommand,
                 {
                     transaction.Status = PaymentStatus.PartiallyRefunded;
                 }
-                await _repository.UpdateTransactionAsync(transaction);
+                await unitOfWork.Payments.UpdateTransactionAsync(transaction);
 
                 // Record ledger entry
-                await _repository.CreateLedgerEntryAsync(new PaymentLedgerEntry
+                await unitOfWork.Payments.CreateLedgerEntryAsync(new PaymentLedgerEntry
                 {
                     TransactionId = transaction.Id,
                     TenantId = tenantId,
@@ -129,6 +132,8 @@ public class RefundPaymentCommandHandler : IRequestHandler<RefundPaymentCommand,
                     Description = $"Refund for order {transaction.OrderId}: {request.Reason}"
                 });
             }
+
+            await unitOfWork.CommitAsync(cancellationToken);
 
             _logger.LogInformation("Refund processed: {RefundId}, Status: {Status}",
                 refund.Id, refund.Status);

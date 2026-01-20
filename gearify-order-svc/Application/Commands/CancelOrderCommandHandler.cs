@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Gearify.OrderService.Application.Mappers;
 using Gearify.OrderService.Domain.Entities;
-using Gearify.OrderService.Infrastructure.Repositories;
+using Gearify.OrderService.Infrastructure.UnitOfWork;
 using Gearify.SharedKernel.Multitenancy;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -12,27 +12,29 @@ namespace Gearify.OrderService.Application.Commands;
 
 public class CancelOrderCommandHandler : IRequestHandler<CancelOrderCommand, CancelOrderResult>
 {
-    private readonly IOrderRepository _repository;
+    private readonly IUnitOfWorkFactory _unitOfWorkFactory;
     private readonly ITenantContext _tenantContext;
     private readonly ILogger<CancelOrderCommandHandler> _logger;
 
     public CancelOrderCommandHandler(
-        IOrderRepository repository,
+        IUnitOfWorkFactory unitOfWorkFactory,
         ITenantContext tenantContext,
         ILogger<CancelOrderCommandHandler> logger)
     {
-        _repository = repository;
+        _unitOfWorkFactory = unitOfWorkFactory;
         _tenantContext = tenantContext;
         _logger = logger;
     }
 
     public async Task<CancelOrderResult> Handle(CancelOrderCommand request, CancellationToken cancellationToken)
     {
+        await using var unitOfWork = await _unitOfWorkFactory.CreateWithTransactionAsync(cancellationToken);
+
         try
         {
             var tenantId = _tenantContext.TenantId;
 
-            var order = await _repository.GetByIdAsync(request.OrderId, tenantId, cancellationToken);
+            var order = await unitOfWork.Orders.GetByIdAsync(request.OrderId, tenantId, cancellationToken);
             if (order == null)
             {
                 return new CancelOrderResult(false, null, "Order not found");
@@ -50,7 +52,7 @@ public class CancelOrderCommandHandler : IRequestHandler<CancelOrderCommand, Can
             order.CancelledAt = DateTime.UtcNow;
 
             // Add status history
-            await _repository.AddStatusHistoryAsync(new OrderStatusHistory
+            await unitOfWork.Orders.AddStatusHistoryAsync(new OrderStatusHistory
             {
                 OrderId = order.Id,
                 FromStatus = previousStatus.ToString(),
@@ -59,13 +61,15 @@ public class CancelOrderCommandHandler : IRequestHandler<CancelOrderCommand, Can
                 ChangedBy = request.CancelledBy
             }, cancellationToken);
 
-            await _repository.UpdateAsync(order, cancellationToken);
+            await unitOfWork.Orders.UpdateAsync(order, cancellationToken);
+            await unitOfWork.CommitAsync(cancellationToken);
 
             _logger.LogInformation("Cancelled order {OrderId} from status {FromStatus}. Reason: {Reason}",
                 request.OrderId, previousStatus, request.Reason);
 
             // Reload to get updated status history
-            order = await _repository.GetByIdAsync(request.OrderId, tenantId, cancellationToken);
+            await using var readUow = _unitOfWorkFactory.Create();
+            order = await readUow.Orders.GetByIdAsync(request.OrderId, tenantId, cancellationToken);
 
             return new CancelOrderResult(true, OrderMapper.ToDto(order!));
         }

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Gearify.OrderService.Application.DTOs;
 using Gearify.OrderService.Application.Mappers;
 using Gearify.OrderService.Domain.Entities;
-using Gearify.OrderService.Infrastructure.Repositories;
+using Gearify.OrderService.Infrastructure.UnitOfWork;
 using Gearify.SharedKernel.Multitenancy;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -13,22 +13,24 @@ namespace Gearify.OrderService.Application.Commands;
 
 public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, CreateOrderResult>
 {
-    private readonly IOrderRepository _repository;
+    private readonly IUnitOfWorkFactory _unitOfWorkFactory;
     private readonly ITenantContext _tenantContext;
     private readonly ILogger<CreateOrderCommandHandler> _logger;
 
     public CreateOrderCommandHandler(
-        IOrderRepository repository,
+        IUnitOfWorkFactory unitOfWorkFactory,
         ITenantContext tenantContext,
         ILogger<CreateOrderCommandHandler> logger)
     {
-        _repository = repository;
+        _unitOfWorkFactory = unitOfWorkFactory;
         _tenantContext = tenantContext;
         _logger = logger;
     }
 
     public async Task<CreateOrderResult> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
+        await using var unitOfWork = await _unitOfWorkFactory.CreateWithTransactionAsync(cancellationToken);
+
         try
         {
             var tenantId = _tenantContext.TenantId;
@@ -66,7 +68,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Cre
                 Reason = "Order created"
             });
 
-            var createdOrder = await _repository.CreateAsync(order, cancellationToken);
+            var createdOrder = await unitOfWork.Orders.CreateAsync(order, cancellationToken);
+            await unitOfWork.CommitAsync(cancellationToken);
 
             _logger.LogInformation("Created order {OrderId} ({OrderNumber}) for user {UserId} in tenant {TenantId}",
                 createdOrder.Id, createdOrder.OrderNumber, request.UserId, tenantId);

@@ -87,23 +87,23 @@ public class PaymentRepository : IPaymentRepository
             .FirstOrDefaultAsync(t => t.IdempotencyKey == idempotencyKey);
     }
 
-    public async Task CreateTransactionAsync(PaymentTransaction transaction)
+    public Task CreateTransactionAsync(PaymentTransaction transaction)
     {
         _context.PaymentTransactions.Add(transaction);
-        await _context.SaveChangesAsync();
+        return Task.CompletedTask;
     }
 
-    public async Task UpdateTransactionAsync(PaymentTransaction transaction)
+    public Task UpdateTransactionAsync(PaymentTransaction transaction)
     {
         transaction.UpdatedAt = DateTime.UtcNow;
         _context.PaymentTransactions.Update(transaction);
-        await _context.SaveChangesAsync();
+        return Task.CompletedTask;
     }
 
-    public async Task CreateLedgerEntryAsync(PaymentLedgerEntry entry)
+    public Task CreateLedgerEntryAsync(PaymentLedgerEntry entry)
     {
         _context.PaymentLedgerEntries.Add(entry);
-        await _context.SaveChangesAsync();
+        return Task.CompletedTask;
     }
 
     public async Task<List<PaymentLedgerEntry>> GetLedgerEntriesAsync(Guid transactionId)
@@ -128,16 +128,16 @@ public class PaymentRepository : IPaymentRepository
             .ToListAsync();
     }
 
-    public async Task CreateRefundAsync(Refund refund)
+    public Task CreateRefundAsync(Refund refund)
     {
         _context.Refunds.Add(refund);
-        await _context.SaveChangesAsync();
+        return Task.CompletedTask;
     }
 
-    public async Task UpdateRefundAsync(Refund refund)
+    public Task UpdateRefundAsync(Refund refund)
     {
         _context.Refunds.Update(refund);
-        await _context.SaveChangesAsync();
+        return Task.CompletedTask;
     }
 
     public async Task<decimal> GetTotalRefundedAmountAsync(Guid transactionId)

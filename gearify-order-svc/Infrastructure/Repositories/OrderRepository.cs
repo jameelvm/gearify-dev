@@ -6,19 +6,16 @@ using System.Threading.Tasks;
 using Gearify.OrderService.Domain.Entities;
 using Gearify.OrderService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Gearify.OrderService.Infrastructure.Repositories;
 
 public class OrderRepository : IOrderRepository
 {
     private readonly OrderDbContext _context;
-    private readonly ILogger<OrderRepository> _logger;
 
-    public OrderRepository(OrderDbContext context, ILogger<OrderRepository> logger)
+    public OrderRepository(OrderDbContext context)
     {
         _context = context;
-        _logger = logger;
     }
 
     public async Task<Order?> GetByIdAsync(Guid orderId, string tenantId, CancellationToken cancellationToken = default)
@@ -55,39 +52,30 @@ public class OrderRepository : IOrderRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Order> CreateAsync(Order order, CancellationToken cancellationToken = default)
+    public Task<Order> CreateAsync(Order order, CancellationToken cancellationToken = default)
     {
         order.OrderNumber = Order.GenerateOrderNumber();
         order.CreatedAt = DateTime.UtcNow;
         order.UpdatedAt = DateTime.UtcNow;
 
         _context.Orders.Add(order);
-        await _context.SaveChangesAsync(cancellationToken);
 
-        _logger.LogInformation("Created order {OrderId} with number {OrderNumber} for tenant {TenantId}",
-            order.Id, order.OrderNumber, order.TenantId);
-
-        return order;
+        return Task.FromResult(order);
     }
 
-    public async Task UpdateAsync(Order order, CancellationToken cancellationToken = default)
+    public Task UpdateAsync(Order order, CancellationToken cancellationToken = default)
     {
         order.UpdatedAt = DateTime.UtcNow;
-
         _context.Orders.Update(order);
-        await _context.SaveChangesAsync(cancellationToken);
 
-        _logger.LogInformation("Updated order {OrderId} for tenant {TenantId}", order.Id, order.TenantId);
+        return Task.CompletedTask;
     }
 
-    public async Task AddStatusHistoryAsync(OrderStatusHistory history, CancellationToken cancellationToken = default)
+    public Task AddStatusHistoryAsync(OrderStatusHistory history, CancellationToken cancellationToken = default)
     {
         history.CreatedAt = DateTime.UtcNow;
-
         _context.OrderStatusHistory.Add(history);
-        await _context.SaveChangesAsync(cancellationToken);
 
-        _logger.LogInformation("Added status history for order {OrderId}: {FromStatus} -> {ToStatus}",
-            history.OrderId, history.FromStatus, history.ToStatus);
+        return Task.CompletedTask;
     }
 }

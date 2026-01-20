@@ -119,7 +119,10 @@
       "Bash(aws:*)",
       "Bash(dotnet ef migrations add:*)",
       "Bash(dotnet tool install:*)",
-      "Bash(dotnet tool:*)"
+      "Bash(dotnet tool:*)",
+      "Bash(winget search:*)",
+      "Bash(psql:*)",
+      "Bash(dotnet ef database update:*)"
     ],
     "deny": [],
     "ask": []

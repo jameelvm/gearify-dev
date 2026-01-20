@@ -3,6 +3,7 @@ using Gearify.PaymentService.Infrastructure.Configuration;
 using Gearify.PaymentService.Infrastructure.Data;
 using Gearify.PaymentService.Infrastructure.PaymentProviders;
 using Gearify.PaymentService.Infrastructure.Repositories;
+using Gearify.PaymentService.Infrastructure.UnitOfWork;
 using Gearify.SharedKernel.Swagger;
 using Gearify.SharedKernel.Multitenancy;
 using Microsoft.AspNetCore.Builder;
@@ -30,6 +31,7 @@ public class Startup
         // Configuration
         services.Configure<StripeConfiguration>(Configuration.GetSection("Stripe"));
         services.Configure<MessagingConfiguration>(Configuration.GetSection("MessagingConfiguration"));
+        services.Configure<PaymentProviderConfiguration>(Configuration.GetSection("PaymentProvider"));
 
         // Database - Entity Framework Core
         var connectionString = Configuration.GetConnectionString("PaymentDb")
@@ -37,6 +39,16 @@ public class Startup
             ?? "Host=localhost;Port=5432;Database=gearify_payments;Username=postgres;Password=postgres";
 
         services.AddDbContext<PaymentDbContext>(options =>
+        {
+            options.UseNpgsql(connectionString, npgsqlOptions =>
+            {
+                npgsqlOptions.EnableRetryOnFailure(3);
+                npgsqlOptions.CommandTimeout(30);
+            });
+        });
+
+        // DbContext Factory for UnitOfWork
+        services.AddDbContextFactory<PaymentDbContext>(options =>
         {
             options.UseNpgsql(connectionString, npgsqlOptions =>
             {
@@ -53,12 +65,26 @@ public class Startup
         services.AddSingleton<IConnectionMultiplexer>(sp =>
             ConnectionMultiplexer.Connect(redisConnectionString));
 
-        // Repositories
+        // Repositories & Unit of Work
         services.AddScoped<IPaymentRepository, PaymentRepository>();
+        services.AddSingleton<IUnitOfWorkFactory, UnitOfWorkFactory>();
 
-        // Payment Providers
-        services.AddScoped<IStripePaymentProvider, StripePaymentProvider>();
-        services.AddHttpClient<IPayPalPaymentProvider, PayPalPaymentProvider>();
+        // Payment Providers - conditionally use mock or real
+        var useMockProviders = Configuration.GetValue<bool>("PaymentProvider:UseMockProviders", true);
+
+        if (useMockProviders)
+        {
+            // Mock providers for local development and testing
+            services.AddScoped<IStripePaymentProvider, MockStripePaymentProvider>();
+            services.AddScoped<IPayPalPaymentProvider, MockPayPalPaymentProvider>();
+        }
+        else
+        {
+            // Real providers for staging/production
+            services.AddScoped<IStripePaymentProvider, StripePaymentProvider>();
+            services.AddHttpClient<IPayPalPaymentProvider, PayPalPaymentProvider>();
+        }
+
         services.AddScoped<IIdempotencyService, RedisIdempotencyService>();
 
         // Multitenancy

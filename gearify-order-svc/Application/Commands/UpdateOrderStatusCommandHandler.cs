@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Gearify.OrderService.Application.Mappers;
 using Gearify.OrderService.Domain.Entities;
-using Gearify.OrderService.Infrastructure.Repositories;
+using Gearify.OrderService.Infrastructure.UnitOfWork;
 using Gearify.SharedKernel.Multitenancy;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -12,27 +12,29 @@ namespace Gearify.OrderService.Application.Commands;
 
 public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatusCommand, UpdateOrderStatusResult>
 {
-    private readonly IOrderRepository _repository;
+    private readonly IUnitOfWorkFactory _unitOfWorkFactory;
     private readonly ITenantContext _tenantContext;
     private readonly ILogger<UpdateOrderStatusCommandHandler> _logger;
 
     public UpdateOrderStatusCommandHandler(
-        IOrderRepository repository,
+        IUnitOfWorkFactory unitOfWorkFactory,
         ITenantContext tenantContext,
         ILogger<UpdateOrderStatusCommandHandler> logger)
     {
-        _repository = repository;
+        _unitOfWorkFactory = unitOfWorkFactory;
         _tenantContext = tenantContext;
         _logger = logger;
     }
 
     public async Task<UpdateOrderStatusResult> Handle(UpdateOrderStatusCommand request, CancellationToken cancellationToken)
     {
+        await using var unitOfWork = await _unitOfWorkFactory.CreateWithTransactionAsync(cancellationToken);
+
         try
         {
             var tenantId = _tenantContext.TenantId;
 
-            var order = await _repository.GetByIdAsync(request.OrderId, tenantId, cancellationToken);
+            var order = await unitOfWork.Orders.GetByIdAsync(request.OrderId, tenantId, cancellationToken);
             if (order == null)
             {
                 return new UpdateOrderStatusResult(false, null, "Order not found");
@@ -50,7 +52,7 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
             order.Status = request.NewStatus;
 
             // Add status history
-            await _repository.AddStatusHistoryAsync(new OrderStatusHistory
+            await unitOfWork.Orders.AddStatusHistoryAsync(new OrderStatusHistory
             {
                 OrderId = order.Id,
                 FromStatus = previousStatus.ToString(),
@@ -59,23 +61,26 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
                 ChangedBy = request.ChangedBy
             }, cancellationToken);
 
-            // Update timestamps for terminal statuses
-            if (request.NewStatus == OrderStatus.Delivered)
+            switch (request.NewStatus)
             {
-                order.CompletedAt = DateTime.UtcNow;
-            }
-            else if (request.NewStatus == OrderStatus.Cancelled)
-            {
-                order.CancelledAt = DateTime.UtcNow;
+                // Update timestamps for terminal statuses
+                case OrderStatus.Delivered:
+                    order.CompletedAt = DateTime.UtcNow;
+                    break;
+                case OrderStatus.Cancelled:
+                    order.CancelledAt = DateTime.UtcNow;
+                    break;
             }
 
-            await _repository.UpdateAsync(order, cancellationToken);
+            await unitOfWork.Orders.UpdateAsync(order, cancellationToken);
+            await unitOfWork.CommitAsync(cancellationToken);
 
             _logger.LogInformation("Updated order {OrderId} status from {FromStatus} to {ToStatus}",
                 request.OrderId, previousStatus, request.NewStatus);
 
             // Reload to get updated status history
-            order = await _repository.GetByIdAsync(request.OrderId, tenantId, cancellationToken);
+            await using var readUow = _unitOfWorkFactory.Create();
+            order = await readUow.Orders.GetByIdAsync(request.OrderId, tenantId, cancellationToken);
 
             return new UpdateOrderStatusResult(true, OrderMapper.ToDto(order!));
         }

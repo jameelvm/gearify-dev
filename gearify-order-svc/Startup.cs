@@ -2,6 +2,7 @@ using System;
 using Gearify.OrderService.Infrastructure.Configuration;
 using Gearify.OrderService.Infrastructure.Data;
 using Gearify.OrderService.Infrastructure.Repositories;
+using Gearify.OrderService.Infrastructure.UnitOfWork;
 using Gearify.SharedKernel.Swagger;
 using Gearify.SharedKernel.Multitenancy;
 using Microsoft.AspNetCore.Builder;
@@ -43,8 +44,19 @@ public class Startup
             });
         });
 
-        // Repositories
+        // DbContext Factory for UnitOfWork
+        services.AddDbContextFactory<OrderDbContext>(options =>
+        {
+            options.UseNpgsql(connectionString, npgsqlOptions =>
+            {
+                npgsqlOptions.EnableRetryOnFailure(3);
+                npgsqlOptions.CommandTimeout(30);
+            });
+        });
+
+        // Repositories & Unit of Work
         services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddSingleton<IUnitOfWorkFactory, UnitOfWorkFactory>();
 
         // Multitenancy
         services.AddHttpContextAccessor();
