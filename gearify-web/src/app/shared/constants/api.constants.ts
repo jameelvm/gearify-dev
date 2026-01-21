@@ -35,6 +35,15 @@ export const API_CONFIG = {
     // Orders
     ORDERS: '/api/orders',
     ORDER_BY_ID: (id: string) => `/api/orders/${id}`,
+    ORDER_BY_NUMBER: (orderNumber: string) => `/api/orders/by-number/${orderNumber}`,
+    CANCEL_ORDER: (id: string) => `/api/orders/${id}/cancel`,
+    UPDATE_ORDER_STATUS: (id: string) => `/api/orders/${id}/status`,
+
+    // Payments
+    PAYMENTS: '/api/payments',
+    PAYMENT_BY_ID: (id: string) => `/api/payments/${id}`,
+    PAYMENT_BY_ORDER: (orderId: string) => `/api/payments/order/${orderId}`,
+    REFUND_PAYMENT: (id: string) => `/api/payments/${id}/refunds`,
     
     // User
     USER_PROFILE: '/api/user/profile',

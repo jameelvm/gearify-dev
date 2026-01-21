@@ -8,12 +8,16 @@
         </svg>
       </div>
       <h1>Order Placed Successfully!</h1>
-      <p class="order-number">Order Number: <strong>{{ orderId() }}</strong></p>
+      <p class="order-number">Order Number: <strong>{{ orderNumber() }}</strong></p>
       <p class="confirmation-message">
         Thank you for your purchase! A confirmation email has been sent to
         <strong>{{ shippingAddress()?.email }}</strong>
       </p>
+      <div class="order-summary-brief">
+        <p>Total: <strong>{{ createdOrder()?.totalAmount | currency }}</strong></p>
+      </div>
       <div class="success-actions">
+        <button class="btn-primary" (click)="onViewOrder()">View Order Details</button>
         <button class="btn-secondary" (click)="onContinueShopping()">Continue Shopping</button>
       </div>
     </div>
@@ -41,9 +45,14 @@
                 [shippingAddress]="shippingAddress()"
                 [paymentDetails]="paymentDetails()"
                 [total]="orderTotal()"
+                [isProcessing]="isProcessing()"
+                [errorMessage]="errorMessage()"
+                [useSameAsBilling]="useSameAsBilling()"
                 (placeOrder)="onPlaceOrder()"
                 (editShipping)="onEditShipping()"
                 (editPayment)="onEditPayment()"
+                (clearError)="clearError()"
+                (billingAddressToggle)="onBillingAddressToggle($event)"
               ></app-order-review>
             }
           }

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ShippingAddress } from '../shipping-address/shipping-address.component';
 import { PaymentDetails } from '../payment-method/payment-method.component';
@@ -14,12 +14,15 @@ export class OrderReviewComponent {
   @Input() shippingAddress: ShippingAddress | null = null;
   @Input() paymentDetails: PaymentDetails | null = null;
   @Input() total = 0;
+  @Input() isProcessing = false;
+  @Input() errorMessage: string | null = null;
+  @Input() useSameAsBilling = true;
 
   @Output() placeOrder = new EventEmitter<void>();
   @Output() editShipping = new EventEmitter<void>();
   @Output() editPayment = new EventEmitter<void>();
-
-  isPlacingOrder = signal(false);
+  @Output() clearError = new EventEmitter<void>();
+  @Output() billingAddressToggle = new EventEmitter<boolean>();
 
   get maskedCardNumber(): string {
     if (this.paymentDetails?.cardNumber) {
@@ -42,18 +45,29 @@ export class OrderReviewComponent {
   }
 
   onPlaceOrder(): void {
-    this.isPlacingOrder.set(true);
-    setTimeout(() => {
+    if (!this.isProcessing) {
       this.placeOrder.emit();
-      this.isPlacingOrder.set(false);
-    }, 1500);
+    }
   }
 
   onEditShipping(): void {
-    this.editShipping.emit();
+    if (!this.isProcessing) {
+      this.editShipping.emit();
+    }
   }
 
   onEditPayment(): void {
-    this.editPayment.emit();
+    if (!this.isProcessing) {
+      this.editPayment.emit();
+    }
+  }
+
+  onClearError(): void {
+    this.clearError.emit();
+  }
+
+  onBillingToggle(event: Event): void {
+    const checkbox = event.target as HTMLInputElement;
+    this.billingAddressToggle.emit(checkbox.checked);
   }
 }

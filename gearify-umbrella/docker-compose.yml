@@ -311,7 +311,7 @@ services:
       - SEQ_URL=${SEQ_URL}
       - OTLP_ENDPOINT=${OTLP_ENDPOINT}
     ports:
-      - "5004:80"
+      - "5014:80"
     networks:
       - gearify-network
     depends_on:
@@ -339,7 +339,7 @@ services:
       - SEQ_URL=${SEQ_URL}
       - OTLP_ENDPOINT=${OTLP_ENDPOINT}
     ports:
-      - "5005:80"
+      - "5015:80"
     networks:
       - gearify-network
     depends_on:

@@ -1,0 +1,124 @@
+<div class="orders-container">
+  <div class="orders-header">
+    <h1>My Orders</h1>
+    <p class="orders-subtitle">Track and manage your orders</p>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="filter-tabs">
+    <button
+      class="filter-tab"
+      [class.active]="statusFilter() === 'all'"
+      (click)="onFilterChange('all')">
+      All Orders
+    </button>
+    <button
+      class="filter-tab"
+      [class.active]="statusFilter() === 'pending'"
+      (click)="onFilterChange('pending')">
+      Pending
+    </button>
+    <button
+      class="filter-tab"
+      [class.active]="statusFilter() === 'processing'"
+      (click)="onFilterChange('processing')">
+      Processing
+    </button>
+    <button
+      class="filter-tab"
+      [class.active]="statusFilter() === 'shipped'"
+      (click)="onFilterChange('shipped')">
+      Shipped
+    </button>
+    <button
+      class="filter-tab"
+      [class.active]="statusFilter() === 'delivered'"
+      (click)="onFilterChange('delivered')">
+      Delivered
+    </button>
+    <button
+      class="filter-tab"
+      [class.active]="statusFilter() === 'cancelled'"
+      (click)="onFilterChange('cancelled')">
+      Cancelled
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading your orders...</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (error()) {
+    <div class="error-state">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      <p>{{ error() }}</p>
+    </div>
+  }
+
+  <!-- Orders List -->
+  @if (!loading() && !error()) {
+    @if (filteredOrders().length === 0) {
+      <div class="empty-state">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+        </svg>
+        <h3>No orders found</h3>
+        @if (statusFilter() === 'all') {
+          <p>You haven't placed any orders yet.</p>
+          <button class="btn-primary" routerLink="/products">Start Shopping</button>
+        } @else {
+          <p>No orders with status "{{ statusFilter() }}"</p>
+          <button class="btn-secondary" (click)="onFilterChange('all')">View All Orders</button>
+        }
+      </div>
+    } @else {
+      <div class="orders-list">
+        @for (order of filteredOrders(); track order.id) {
+          <div class="order-card" (click)="onViewOrder(order.id)">
+            <div class="order-card-header">
+              <div class="order-info">
+                <span class="order-number">{{ order.orderNumber }}</span>
+                <span class="order-date">{{ formatDate(order.createdAt) }}</span>
+              </div>
+              <span class="order-status" [class]="getStatusClass(order.status)">
+                {{ formatStatus(order.status) }}
+              </span>
+            </div>
+            <div class="order-card-body">
+              <div class="order-details">
+                <div class="detail-item">
+                  <span class="detail-label">Items</span>
+                  <span class="detail-value">{{ order.itemCount }} {{ order.itemCount === 1 ? 'item' : 'items' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Total</span>
+                  <span class="detail-value total">{{ order.totalAmount | currency:order.currency }}</span>
+                </div>
+              </div>
+              <button class="btn-view-order">
+                <span>View Details</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Orders Summary -->
+      <div class="orders-summary">
+        <p>Showing {{ filteredOrders().length }} of {{ orders().length }} orders</p>
+      </div>
+    }
+  }
+</div>

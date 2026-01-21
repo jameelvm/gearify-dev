@@ -7,7 +7,11 @@ export const ACCOUNT_ROUTES: Routes = [
   },
   {
     path: 'orders',
-    loadComponent: () => import('./profile/profile.component').then(m => m.ProfileComponent) // Placeholder - will be replaced later
+    loadComponent: () => import('./orders/orders.component').then(m => m.OrdersComponent)
+  },
+  {
+    path: 'orders/:id',
+    loadComponent: () => import('./orders/order-detail/order-detail.component').then(m => m.OrderDetailComponent)
   },
   {
     path: '',

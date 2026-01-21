@@ -87,6 +87,49 @@
   }
 }
 
+.billing-section {
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    margin-bottom: 12px;
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #667eea;
+      cursor: pointer;
+    }
+
+    .checkbox-text {
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+    }
+  }
+
+  .billing-preview {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e5e7eb;
+
+    p {
+      margin: 0;
+      padding: 2px 0;
+      font-size: 13px;
+      color: #6b7280;
+      line-height: 1.5;
+
+      &.name {
+        font-weight: 600;
+        color: #4b5563;
+        margin-bottom: 4px;
+      }
+    }
+  }
+}
+
 .payment-info {
   display: flex;
   align-items: flex-start;
@@ -182,6 +225,47 @@
       &:hover {
         text-decoration: underline;
       }
+    }
+  }
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  margin-bottom: 16px;
+
+  svg {
+    flex-shrink: 0;
+    stroke: #dc2626;
+  }
+
+  span {
+    flex: 1;
+    font-size: 14px;
+    color: #dc2626;
+  }
+
+  .close-error {
+    padding: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background-color: #fee2e2;
+    }
+
+    svg {
+      stroke: #dc2626;
     }
   }
 }

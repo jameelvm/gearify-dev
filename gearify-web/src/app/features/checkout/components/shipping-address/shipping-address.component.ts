@@ -6,6 +6,7 @@ import { AuthService } from '@app/features/auth/auth.service';
 import { Address, CreateAddressRequest } from '@core/models/address.model';
 
 export interface ShippingAddress {
+  addressId?: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -156,6 +157,7 @@ export class ShippingAddressComponent implements OnInit {
 
     setTimeout(() => {
       this.addressSubmitted.emit({
+        addressId: savedAddr.id,
         firstName: savedAddr.firstName,
         lastName: savedAddr.lastName,
         email,

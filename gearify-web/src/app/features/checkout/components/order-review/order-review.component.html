@@ -27,6 +27,32 @@
     }
   </div>
 
+  <div class="review-section billing-section">
+    <div class="section-header">
+      <h3>Billing Address</h3>
+    </div>
+    <div class="section-content">
+      <label class="checkbox-label">
+        <input
+          type="checkbox"
+          [checked]="useSameAsBilling"
+          (change)="onBillingToggle($event)"
+        />
+        <span class="checkbox-text">Use shipping address as billing address</span>
+      </label>
+      @if (useSameAsBilling && shippingAddress) {
+        <div class="billing-preview">
+          <p class="name">{{ shippingAddress.firstName }} {{ shippingAddress.lastName }}</p>
+          <p>{{ shippingAddress.address }}</p>
+          @if (shippingAddress.apartment) {
+            <p>{{ shippingAddress.apartment }}</p>
+          }
+          <p>{{ shippingAddress.city }}, {{ shippingAddress.state }} {{ shippingAddress.zipCode }}</p>
+        </div>
+      }
+    </div>
+  </div>
+
   <div class="review-section">
     <div class="section-header">
       <h3>Payment Method</h3>
@@ -94,10 +120,27 @@
     <p>By placing your order, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
   </div>
 
-  <button class="btn-place-order" [disabled]="isPlacingOrder()" (click)="onPlaceOrder()">
-    @if (isPlacingOrder()) {
+  @if (errorMessage) {
+    <div class="error-message">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      <span>{{ errorMessage }}</span>
+      <button class="close-error" (click)="onClearError()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  }
+
+  <button class="btn-place-order" [disabled]="isProcessing" (click)="onPlaceOrder()">
+    @if (isProcessing) {
       <span class="spinner"></span>
-      Processing...
+      Processing Order...
     } @else {
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>

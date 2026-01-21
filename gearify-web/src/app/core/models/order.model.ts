@@ -1,56 +1,121 @@
 /**
- * Order models
+ * Order models - aligned with backend API (gearify-order-svc)
  */
-export interface Order {
+
+// API Response models
+export interface OrderDto {
   id: string;
+  orderNumber: string;
   tenantId: string;
   userId: string;
-  orderNumber: string;
-  status: OrderStatus;
-  items: OrderItem[];
-  shippingAddress: Address;
-  billingAddress: Address;
+  status: string;
+  items: OrderItemDto[];
   subtotal: number;
-  tax: number;
-  shipping: number;
-  discount: number;
-  total: number;
+  taxAmount: number;
+  shippingAmount: number;
+  discountAmount: number;
+  totalAmount: number;
   currency: string;
-  paymentMethod: PaymentMethod;
-  paymentStatus: PaymentStatus;
-  shippingMethod: string;
-  trackingNumber?: string;
-  notes?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  shippingAddress: OrderAddressDto | null;
+  billingAddress: OrderAddressDto | null;
+  paymentId: string | null;
+  paymentStatus: string | null;
+  shipmentId: string | null;
+  shippingStatus: string | null;
+  sagaState: string;
+  statusHistory: OrderStatusHistoryDto[];
+  createdAt: string;
+  updatedAt: string;
+  completedAt: string | null;
+  cancelledAt: string | null;
 }
 
-export interface OrderItem {
+export interface OrderItemDto {
   id: string;
   productId: string;
-  productName: string;
   productSku: string;
+  productName: string;
+  productImageUrl: string | null;
   quantity: number;
-  price: number;
-  subtotal: number;
-  imageUrl: string;
+  unitPrice: number;
+  discountAmount: number;
+  totalPrice: number;
 }
 
-export interface Address {
-  firstName: string;
-  lastName: string;
-  company?: string;
-  address1: string;
-  address2?: string;
+export interface OrderAddressDto {
+  addressId?: string;
+  fullName: string;
+  street: string;
+  street2?: string;
   city: string;
   state: string;
   postalCode: string;
   country: string;
-  phone: string;
+  phone?: string;
 }
 
+export interface OrderStatusHistoryDto {
+  fromStatus: string;
+  toStatus: string;
+  reason: string | null;
+  changedBy: string | null;
+  createdAt: string;
+}
+
+export interface OrderSummaryDto {
+  id: string;
+  orderNumber: string;
+  status: string;
+  itemCount: number;
+  totalAmount: number;
+  currency: string;
+  createdAt: string;
+}
+
+export interface OrderListResponse {
+  orders: OrderSummaryDto[];
+  totalCount: number;
+}
+
+// Request models
+export interface CreateOrderRequest {
+  userId: string;
+  items: CreateOrderItemRequest[];
+  shippingAddress: OrderAddressDto;
+  billingAddress?: OrderAddressDto;
+  subtotal: number;
+  taxAmount: number;
+  shippingAmount: number;
+  discountAmount: number;
+  currency: string;
+}
+
+export interface CreateOrderItemRequest {
+  productId: string;
+  productSku: string;
+  productName: string;
+  productImageUrl?: string;
+  quantity: number;
+  unitPrice: number;
+}
+
+export interface CancelOrderRequest {
+  reason: string;
+  cancelledBy?: string;
+}
+
+export interface UpdateOrderStatusRequest {
+  status: string;
+  reason?: string;
+  changedBy?: string;
+}
+
+// Enums
 export enum OrderStatus {
   Pending = 'Pending',
+  PaymentProcessing = 'PaymentProcessing',
+  PaymentFailed = 'PaymentFailed',
+  Paid = 'Paid',
   Processing = 'Processing',
   Shipped = 'Shipped',
   Delivered = 'Delivered',
@@ -58,16 +123,7 @@ export enum OrderStatus {
   Refunded = 'Refunded'
 }
 
-export enum PaymentMethod {
-  CreditCard = 'CreditCard',
-  PayPal = 'PayPal',
-  Stripe = 'Stripe'
-}
-
-export enum PaymentStatus {
-  Pending = 'Pending',
-  Authorized = 'Authorized',
-  Captured = 'Captured',
-  Failed = 'Failed',
-  Refunded = 'Refunded'
+export enum PaymentProvider {
+  Stripe = 'Stripe',
+  PayPal = 'PayPal'
 }

@@ -4,7 +4,7 @@ using Gearify.OrderService.Infrastructure.Data;
 using Gearify.OrderService.Infrastructure.Repositories;
 using Gearify.OrderService.Infrastructure.UnitOfWork;
 using Gearify.SharedKernel.Swagger;
-using Gearify.SharedKernel.Multitenancy;
+using Gearify.SharedKernel.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -35,24 +35,17 @@ public class Startup
             ?? Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING")
             ?? "Host=localhost;Port=5432;Database=gearify_orders;Username=postgres;Password=postgres";
 
-        services.AddDbContext<OrderDbContext>(options =>
+        // Use pooled DbContext factory - this allows both DI and factory pattern
+        services.AddPooledDbContextFactory<OrderDbContext>(options =>
         {
             options.UseNpgsql(connectionString, npgsqlOptions =>
             {
-                npgsqlOptions.EnableRetryOnFailure(3);
                 npgsqlOptions.CommandTimeout(30);
             });
         });
 
-        // DbContext Factory for UnitOfWork
-        services.AddDbContextFactory<OrderDbContext>(options =>
-        {
-            options.UseNpgsql(connectionString, npgsqlOptions =>
-            {
-                npgsqlOptions.EnableRetryOnFailure(3);
-                npgsqlOptions.CommandTimeout(30);
-            });
-        });
+        // Register DbContext as scoped (created from factory)
+        services.AddScoped(sp => sp.GetRequiredService<IDbContextFactory<OrderDbContext>>().CreateDbContext());
 
         // Repositories & Unit of Work
         services.AddScoped<IOrderRepository, OrderRepository>();
@@ -60,7 +53,7 @@ public class Startup
 
         // Multitenancy
         services.AddHttpContextAccessor();
-        services.AddScoped<ITenantContext, TenantContext>();
+        services.AddMultitenancy();
 
         // MediatR
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly));
@@ -94,6 +87,9 @@ public class Startup
             var dbContext = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
             dbContext.Database.EnsureCreated();
         }
+
+        // Tenant resolution middleware (must be before controllers)
+        app.UseMultitenancy();
 
         // Swagger
         app.UseSwagger();

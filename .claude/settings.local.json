@@ -122,7 +122,8 @@
       "Bash(dotnet tool:*)",
       "Bash(winget search:*)",
       "Bash(psql:*)",
-      "Bash(dotnet ef database update:*)"
+      "Bash(dotnet ef database update:*)",
+      "Bash(xargs ls:*)"
     ],
     "deny": [],
     "ask": []

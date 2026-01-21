@@ -1,14 +1,38 @@
 {
   "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "http": {
+    "payment-svc": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:6005",
+      "applicationUrl": "http://localhost:5015",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5015",
+        "AWS_ACCESS_KEY_ID": "test",
+        "AWS_SECRET_ACCESS_KEY": "test",
+        "AWS_REGION": "us-east-1",
+        "SNS_ENDPOINT": "http://localhost:4566",
+        "SQS_ENDPOINT": "http://localhost:4566",
+        "REDIS_URL": "localhost:6379",
+        "SEQ_URL": "http://localhost:5341",
+        "OTLP_ENDPOINT": "http://localhost:4318",
+        "STRIPE_SECRET_KEY": "sk_test_your_stripe_key",
+        "PAYPAL_CLIENT_ID": "your_paypal_client_id",
+        "PAYPAL_SECRET": "your_paypal_secret"
+      }
+    },
+    "Gearify.PaymentService": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "http://localhost:5015",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SNS_ENDPOINT": "http://localhost:4566",
+        "SQS_ENDPOINT": "http://localhost:4566",
         "REDIS_URL": "localhost:6379",
         "SEQ_URL": "http://localhost:5341",
         "OTLP_ENDPOINT": "http://localhost:4318",
