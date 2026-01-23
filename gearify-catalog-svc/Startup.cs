@@ -10,6 +10,8 @@ using Gearify.SharedKernel.Events;
 using Gearify.CatalogService.Application.Validators;
 using Gearify.CatalogService.Infrastructure.Clients;
 using Gearify.CatalogService.Infrastructure.Messaging;
+using Gearify.CatalogService.Infrastructure.Messaging.Events.Inbound;
+using Gearify.SharedKernel.Messaging;
 using Gearify.CatalogService.Infrastructure.Repositories;
 using Gearify.SharedKernel.Swagger;
 using Gearify.SharedKernel.Extensions;
@@ -169,7 +171,7 @@ public class Startup
         services.AddHttpClient<IMediaServiceClient, Gearify.CatalogService.Infrastructure.Clients.MediaServiceClient>();
 
         // Messaging Services (for receiving image processing events)
-        services.AddScoped<IProductThumbnailUpdateQueue, SqsProductThumbnailUpdateQueue>();
+        services.AddScoped<IEventQueue<ImageProcessingCompletedEventMessage>, SqsProductThumbnailUpdateQueue>();
 
         // Background Services
         services.AddHostedService<ProductThumbnailUpdateQueueProcessor>();

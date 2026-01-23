@@ -12,7 +12,13 @@
   "Subscriptions": [
     {
       "Protocol": "sqs",
-      "Endpoint": "arn:aws:sqs:us-east-1:000000000000:gearify-order-created"
+      "Endpoint": "arn:aws:sqs:us-east-1:000000000000:gearify-payment-processed",
+      "Comment": "Order Service subscribes to update order status after payment"
+    },
+    {
+      "Protocol": "sqs",
+      "Endpoint": "arn:aws:sqs:us-east-1:000000000000:gearify-notification-requested",
+      "Comment": "Notification Service subscribes for payment notifications"
     }
   ]
 }

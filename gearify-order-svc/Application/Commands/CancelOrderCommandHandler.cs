@@ -32,7 +32,7 @@ public class CancelOrderCommandHandler : IRequestHandler<CancelOrderCommand, Can
 
         try
         {
-            var tenantId = _tenantContext.TenantId;
+            var tenantId = request.TenantIdOverride ?? _tenantContext.TenantId;
 
             var order = await unitOfWork.Orders.GetByIdAsync(request.OrderId, tenantId, cancellationToken);
             if (order == null)

@@ -1,3 +1,5 @@
+using Gearify.CatalogService.Infrastructure.Messaging.Events.Inbound;
+using Gearify.SharedKernel.Messaging;
 using Gearify.CatalogService.Infrastructure.Repositories;
 
 namespace Gearify.CatalogService.Infrastructure.Messaging;
@@ -43,7 +45,7 @@ public class ProductThumbnailUpdateQueueProcessor : BackgroundService
     {
         using var scope = _serviceProvider.CreateScope();
 
-        var queue = scope.ServiceProvider.GetRequiredService<IProductThumbnailUpdateQueue>();
+        var queue = scope.ServiceProvider.GetRequiredService<IEventQueue<ImageProcessingCompletedEventMessage>>();
         var productRepository = scope.ServiceProvider.GetRequiredService<IProductRepository>();
 
         // Receive messages from queue (long polling)
@@ -67,8 +69,8 @@ public class ProductThumbnailUpdateQueueProcessor : BackgroundService
     }
 
     private async Task ProcessSingleMessageAsync(
-        Models.QueueMessage<Models.ImageProcessingCompletedEvent> queueMessage,
-        IProductThumbnailUpdateQueue queue,
+        QueueMessage<ImageProcessingCompletedEventMessage> queueMessage,
+        IEventQueue<ImageProcessingCompletedEventMessage> queue,
         IProductRepository productRepository,
         CancellationToken cancellationToken)
     {

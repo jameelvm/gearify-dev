@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using Gearify.SharedKernel.Events;
 
 namespace Gearify.OrderService.Events;
 
 /// <summary>
 /// Published when an order is created from checkout.
 /// </summary>
-public record OrderCreatedEvent
+public record OrderCreatedEvent : IDomainEvent
 {
     public Guid OrderId { get; init; }
     public string OrderNumber { get; init; } = string.Empty;

@@ -1,20 +1,25 @@
+using System;
+using System.Collections.Generic;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 using Amazon.SQS;
 using Amazon.SQS.Model;
-using Gearify.CatalogService.Infrastructure.Configuration;
-using Gearify.CatalogService.Infrastructure.Messaging.Events.Inbound;
+using Gearify.OrderService.Infrastructure.Configuration;
+using Gearify.OrderService.Infrastructure.Messaging.Events.Inbound;
 using Gearify.SharedKernel.Messaging;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Text.Json;
 
-namespace Gearify.CatalogService.Infrastructure.Messaging;
+namespace Gearify.OrderService.Infrastructure.Messaging;
 
 /// <summary>
-/// SQS implementation for receiving product thumbnail update messages
+/// SQS implementation for receiving payment events from Payment Service
 /// </summary>
-public class SqsProductThumbnailUpdateQueue : IEventQueue<ImageProcessingCompletedEventMessage>
+public class SqsPaymentEventQueue : IEventQueue<PaymentEventMessage>
 {
     private readonly IAmazonSQS _sqsClient;
-    private readonly ILogger<SqsProductThumbnailUpdateQueue> _logger;
+    private readonly ILogger<SqsPaymentEventQueue> _logger;
     private readonly string _queueUrl;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -22,30 +27,35 @@ public class SqsProductThumbnailUpdateQueue : IEventQueue<ImageProcessingComplet
         PropertyNameCaseInsensitive = true
     };
 
-    public SqsProductThumbnailUpdateQueue(
+    public SqsPaymentEventQueue(
         IAmazonSQS sqsClient,
         IOptions<MessagingConfiguration> messagingSettings,
-        ILogger<SqsProductThumbnailUpdateQueue> logger)
+        ILogger<SqsPaymentEventQueue> logger)
     {
         _sqsClient = sqsClient;
         _logger = logger;
-
-        // Use configured queue URL
-        _queueUrl = messagingSettings.Value.SQS.ProductThumbnailUpdateQueueUrl;
+        _queueUrl = messagingSettings.Value.SQS.PaymentProcessedQueueUrl;
 
         if (string.IsNullOrEmpty(_queueUrl))
         {
-            throw new InvalidOperationException("ProductThumbnailUpdateQueueUrl is not configured in Messaging:SQS section");
+            _logger.LogWarning("PaymentProcessedQueueUrl is not configured");
         }
-
-        _logger.LogInformation("Using configured queue URL: {QueueUrl}", _queueUrl);
+        else
+        {
+            _logger.LogInformation("Using configured queue URL: {QueueUrl}", _queueUrl);
+        }
     }
 
-    public async Task<List<QueueMessage<ImageProcessingCompletedEventMessage>>> ReceiveMessagesAsync(
+    public async Task<List<QueueMessage<PaymentEventMessage>>> ReceiveMessagesAsync(
         int maxMessages = 10,
         int waitTimeSeconds = 20,
         CancellationToken cancellationToken = default)
     {
+        if (string.IsNullOrEmpty(_queueUrl))
+        {
+            return new List<QueueMessage<PaymentEventMessage>>();
+        }
+
         try
         {
             var request = new ReceiveMessageRequest
@@ -58,8 +68,7 @@ public class SqsProductThumbnailUpdateQueue : IEventQueue<ImageProcessingComplet
             };
 
             var response = await _sqsClient.ReceiveMessageAsync(request, cancellationToken);
-
-            var messages = new List<QueueMessage<ImageProcessingCompletedEventMessage>>();
+            var messages = new List<QueueMessage<PaymentEventMessage>>();
 
             foreach (var message in response.Messages)
             {
@@ -70,16 +79,26 @@ public class SqsProductThumbnailUpdateQueue : IEventQueue<ImageProcessingComplet
 
                     if (snsMessage?.Message != null)
                     {
-                        var eventData = JsonSerializer.Deserialize<ImageProcessingCompletedEventMessage>(snsMessage.Message, JsonOptions);
+                        // Parse event envelope from SNS message
+                        var envelope = JsonSerializer.Deserialize<PaymentEventEnvelope>(snsMessage.Message, JsonOptions);
 
-                        if (eventData != null)
+                        if (envelope?.Payload != null)
                         {
-                            messages.Add(new QueueMessage<ImageProcessingCompletedEventMessage>
+                            var payloadJson = JsonSerializer.Serialize(envelope.Payload, JsonOptions);
+                            var paymentEvent = JsonSerializer.Deserialize<PaymentEventMessage>(payloadJson, JsonOptions);
+
+                            if (paymentEvent != null)
                             {
-                                MessageId = message.MessageId,
-                                ReceiptHandle = message.ReceiptHandle,
-                                Body = eventData
-                            });
+                                // Set the event type from the envelope
+                                var eventWithType = paymentEvent with { EventType = envelope.EventType };
+
+                                messages.Add(new QueueMessage<PaymentEventMessage>
+                                {
+                                    MessageId = message.MessageId,
+                                    ReceiptHandle = message.ReceiptHandle,
+                                    Body = eventWithType
+                                });
+                            }
                         }
                     }
                 }
@@ -100,12 +119,17 @@ public class SqsProductThumbnailUpdateQueue : IEventQueue<ImageProcessingComplet
 
     public async Task DeleteMessageAsync(string receiptHandle, CancellationToken cancellationToken = default)
     {
+        if (string.IsNullOrEmpty(_queueUrl))
+        {
+            return;
+        }
+
         try
         {
             var request = new DeleteMessageRequest
             {
                 QueueUrl = _queueUrl,
-                ReceiptHandle = receiptHandle
+                ReceiptHandle = receiptHandlei
             };
 
             await _sqsClient.DeleteMessageAsync(request, cancellationToken);
@@ -125,5 +149,17 @@ public class SqsProductThumbnailUpdateQueue : IEventQueue<ImageProcessingComplet
         public string? Message { get; set; }
         public string? MessageId { get; set; }
         public string? TopicArn { get; set; }
+    }
+
+    /// <summary>
+    /// Payment event envelope from Payment Service
+    /// </summary>
+    private class PaymentEventEnvelope
+    {
+        public string EventId { get; set; } = string.Empty;
+        public string EventType { get; set; } = string.Empty;
+        public string TenantId { get; set; } = string.Empty;
+        public DateTime Timestamp { get; set; }
+        public object? Payload { get; set; }
     }
 }

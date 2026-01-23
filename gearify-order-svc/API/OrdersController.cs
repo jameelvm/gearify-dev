@@ -126,7 +126,7 @@ public class OrdersController : ControllerBase
         [FromBody] CancelOrderRequest request,
         CancellationToken cancellationToken)
     {
-        var command = new CancelOrderCommand(id, request.Reason, request.CancelledBy);
+        var command = new CancelOrderCommand(id, null, request.Reason ?? "Cancelled by user", request.CancelledBy);
         var result = await _mediator.Send(command, cancellationToken);
 
         if (!result.Success)

@@ -73,6 +73,16 @@ public class Refund
     public PaymentTransaction Transaction { get; set; } = null!;
 }
 
+public enum PaymentErrorCode
+{
+    None,
+    PaymentFailed,
+    Exception,
+    InsufficientFunds,
+    CardDeclined,
+    ProviderError
+}
+
 public enum RefundStatus
 {
     Pending,

@@ -52,7 +52,7 @@ export class OrderService {
   }
 
   /**
-   * Get order by ID
+   * Get order by ID (with state management)
    */
   getOrderById(orderId: string): Observable<OrderDto> {
     this.loadingSignal.set(true);
@@ -70,6 +70,13 @@ export class OrderService {
         }
       })
     );
+  }
+
+  /**
+   * Get order by ID (without state management - for polling)
+   */
+  getOrder(orderId: string): Observable<OrderDto> {
+    return this.http.get<OrderDto>(API_CONFIG.ENDPOINTS.ORDER_BY_ID(orderId));
   }
 
   /**

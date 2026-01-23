@@ -6,6 +6,8 @@ using Amazon.SQS;
 using Gearify.MediaService.Application.Services;
 using Gearify.SharedKernel.Events;
 using Gearify.MediaService.Infrastructure.Messaging;
+using Gearify.MediaService.Infrastructure.Messaging.Events.Inbound;
+using Gearify.SharedKernel.Messaging;
 using Gearify.MediaService.Infrastructure.Repositories;
 using Gearify.MediaService.Infrastructure.Storage;
 using Gearify.SharedKernel.Swagger;
@@ -123,7 +125,7 @@ public class Startup
 
         // Messaging Services (for async image processing)
         services.AddScoped<ISnsEventPublisher, SnsEventPublisher>();
-        services.AddScoped<IImageProcessingQueue, SqsImageProcessingQueue>();
+        services.AddScoped<IEventQueue<ImageProcessingEventMessage>, SqsImageProcessingQueue>();
 
         // Background Services
         services.AddHostedService<ImageProcessingQueueProcessor>();

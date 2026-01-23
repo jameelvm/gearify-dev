@@ -15,6 +15,7 @@ export class OrderReviewComponent {
   @Input() paymentDetails: PaymentDetails | null = null;
   @Input() total = 0;
   @Input() isProcessing = false;
+  @Input() processingStatus = 'Processing...';
   @Input() errorMessage: string | null = null;
   @Input() useSameAsBilling = true;
 

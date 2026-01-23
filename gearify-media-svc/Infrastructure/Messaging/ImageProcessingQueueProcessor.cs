@@ -5,7 +5,8 @@ using Gearify.MediaService.Domain.Enums;
 using Gearify.MediaService.Infrastructure.Constants;
 using Gearify.MediaService.Infrastructure.Repositories;
 using Gearify.MediaService.Infrastructure.Storage;
-using Gearify.MediaService.Infrastructure.Messaging.Models;
+using Gearify.MediaService.Infrastructure.Messaging.Events.Inbound;
+using Gearify.SharedKernel.Messaging;
 
 namespace Gearify.MediaService.Infrastructure.Messaging;
 
@@ -14,7 +15,7 @@ namespace Gearify.MediaService.Infrastructure.Messaging;
 /// Polls SQS queue for image processing messages
 /// NOTE: This can be extracted into a separate microservice later by:
 /// 1. Moving this folder to new project
-/// 2. Replacing IImageProcessingQueue with HTTP client to call Media Service API
+/// 2. Replacing IEventQueue<ImageProcessingEventMessage> with HTTP client to call Media Service API
 /// </summary>
 public class ImageProcessingQueueProcessor : BackgroundService
 {
@@ -53,7 +54,7 @@ public class ImageProcessingQueueProcessor : BackgroundService
     {
         using var scope = _serviceProvider.CreateScope();
 
-        var queue = scope.ServiceProvider.GetRequiredService<IImageProcessingQueue>();
+        var queue = scope.ServiceProvider.GetRequiredService<IEventQueue<ImageProcessingEventMessage>>();
         var storageService = scope.ServiceProvider.GetRequiredService<IStorageService>();
         var imageProcessor = scope.ServiceProvider.GetRequiredService<IImageProcessor>();
         var mediaRepository = scope.ServiceProvider.GetRequiredService<IMediaRepository>();
@@ -88,8 +89,8 @@ public class ImageProcessingQueueProcessor : BackgroundService
     }
 
     private async Task ProcessSingleMessageAsync(
-        QueueMessage<ImageProcessingMessage> queueMessage,
-        IImageProcessingQueue queue,
+        QueueMessage<ImageProcessingEventMessage> queueMessage,
+        IEventQueue<ImageProcessingEventMessage> queue,
         IStorageService storageService,
         IImageProcessor imageProcessor,
         IMediaRepository mediaRepository,

@@ -9,9 +9,12 @@ public class MessagingConfiguration
 public class SnsConfiguration
 {
     public string PaymentEventsTopicArn { get; set; } = string.Empty;
+    public string Region { get; set; } = "us-east-1";
 }
 
 public class SqsConfiguration
 {
-    public string CheckoutInitiatedQueueUrl { get; set; } = string.Empty;
+    public string OrderCreatedQueueUrl { get; set; } = string.Empty;
+    public int PollingIntervalSeconds { get; set; } = 5;
+    public int MaxNumberOfMessages { get; set; } = 10;
 }

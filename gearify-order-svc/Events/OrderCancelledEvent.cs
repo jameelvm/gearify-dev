@@ -1,11 +1,12 @@
 using System;
+using Gearify.SharedKernel.Events;
 
 namespace Gearify.OrderService.Events;
 
 /// <summary>
 /// Published when an order is cancelled.
 /// </summary>
-public record OrderCancelledEvent
+public record OrderCancelledEvent : IDomainEvent
 {
     public Guid OrderId { get; init; }
     public string OrderNumber { get; init; } = string.Empty;

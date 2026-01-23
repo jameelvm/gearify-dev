@@ -1,4 +1,6 @@
 using System;
+using Gearify.PaymentService.Domain.Entities;
+using Gearify.SharedKernel.Events;
 
 namespace Gearify.PaymentService.Events;
 
@@ -6,7 +8,7 @@ namespace Gearify.PaymentService.Events;
 /// Published when payment is successfully completed.
 /// Triggers order confirmation and shipping creation.
 /// </summary>
-public record PaymentCompletedEvent
+public record PaymentCompletedEvent : IDomainEvent
 {
     public Guid TransactionId { get; init; }
     public string TenantId { get; init; } = string.Empty;
@@ -15,7 +17,7 @@ public record PaymentCompletedEvent
     public string UserId { get; init; } = string.Empty;
     public decimal Amount { get; init; }
     public string Currency { get; init; } = "USD";
-    public string Provider { get; init; } = string.Empty;
+    public PaymentProvider Provider { get; init; }
     public string ProviderTransactionId { get; init; } = string.Empty;
     public DateTime OccurredAt { get; init; } = DateTime.UtcNow;
 }

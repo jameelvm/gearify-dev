@@ -1,10 +1,13 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Gearify.OrderService.Application.DTOs;
 using Gearify.OrderService.Application.Mappers;
 using Gearify.OrderService.Domain.Entities;
+using Gearify.OrderService.Events;
 using Gearify.OrderService.Infrastructure.UnitOfWork;
+using Gearify.SharedKernel.Events;
 using Gearify.SharedKernel.Multitenancy;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -15,15 +18,18 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Cre
 {
     private readonly IUnitOfWorkFactory _unitOfWorkFactory;
     private readonly ITenantContext _tenantContext;
+    private readonly ISnsEventPublisher _eventPublisher;
     private readonly ILogger<CreateOrderCommandHandler> _logger;
 
     public CreateOrderCommandHandler(
         IUnitOfWorkFactory unitOfWorkFactory,
         ITenantContext tenantContext,
+        ISnsEventPublisher eventPublisher,
         ILogger<CreateOrderCommandHandler> logger)
     {
         _unitOfWorkFactory = unitOfWorkFactory;
         _tenantContext = tenantContext;
+        _eventPublisher = eventPublisher;
         _logger = logger;
     }
 
@@ -74,6 +80,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Cre
             _logger.LogInformation("Created order {OrderId} ({OrderNumber}) for user {UserId} in tenant {TenantId}",
                 createdOrder.Id, createdOrder.OrderNumber, request.UserId, tenantId);
 
+            await PublishOrderCreatedEvent(request, createdOrder, tenantId, cancellationToken);
+
             return new CreateOrderResult(true, OrderMapper.ToDto(createdOrder));
         }
         catch (Exception ex)
@@ -81,5 +89,58 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Cre
             _logger.LogError(ex, "Failed to create order for user {UserId}", request.UserId);
             return new CreateOrderResult(false, null, ex.Message);
         }
+    }
+
+    private async Task PublishOrderCreatedEvent(CreateOrderCommand request, Order createdOrder, string tenantId, CancellationToken cancellationToken)
+    {
+        // Publish OrderCreatedEvent to trigger payment processing
+        var orderCreatedEvent = new OrderCreatedEvent
+        {
+            OrderId = createdOrder.Id,
+            OrderNumber = createdOrder.OrderNumber,
+            TenantId = tenantId,
+            UserId = request.UserId,
+            Items = createdOrder.Items.Select(i => new OrderCreatedEvent.OrderItemInfo
+            {
+                ProductId = i.ProductId,
+                ProductName = i.ProductName,
+                Quantity = i.Quantity,
+                UnitPrice = i.UnitPrice,
+                TotalPrice = i.TotalPrice
+            }).ToList(),
+            Subtotal = createdOrder.Subtotal,
+            Tax = createdOrder.TaxAmount,
+            ShippingCost = createdOrder.ShippingAmount,
+            Total = createdOrder.TotalAmount,
+            Currency = createdOrder.Currency,
+            ShippingAddress = new OrderCreatedEvent.OrderAddressInfo
+            {
+                AddressId = request.ShippingAddress.AddressId,
+                FullName = request.ShippingAddress.FullName,
+                Street = request.ShippingAddress.Street,
+                Street2 = request.ShippingAddress.Street2,
+                City = request.ShippingAddress.City,
+                State = request.ShippingAddress.State,
+                PostalCode = request.ShippingAddress.PostalCode,
+                Country = request.ShippingAddress.Country,
+                Phone = request.ShippingAddress.Phone
+            },
+            BillingAddress = request.BillingAddress != null
+                ? new OrderCreatedEvent.OrderAddressInfo
+                {
+                    AddressId = request.BillingAddress.AddressId,
+                    FullName = request.BillingAddress.FullName,
+                    Street = request.BillingAddress.Street,
+                    Street2 = request.BillingAddress.Street2,
+                    City = request.BillingAddress.City,
+                    State = request.BillingAddress.State,
+                    PostalCode = request.BillingAddress.PostalCode,
+                    Country = request.BillingAddress.Country,
+                    Phone = request.BillingAddress.Phone
+                }
+                : null
+        };
+
+        await _eventPublisher.PublishAsync(orderCreatedEvent, cancellationToken);
     }
 }

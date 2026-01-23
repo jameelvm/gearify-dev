@@ -1,11 +1,12 @@
 using System;
+using Gearify.SharedKernel.Events;
 
 namespace Gearify.OrderService.Events;
 
 /// <summary>
 /// Published when order status changes.
 /// </summary>
-public record OrderStatusChangedEvent
+public record OrderStatusChangedEvent : IDomainEvent
 {
     public Guid OrderId { get; init; }
     public string OrderNumber { get; init; } = string.Empty;

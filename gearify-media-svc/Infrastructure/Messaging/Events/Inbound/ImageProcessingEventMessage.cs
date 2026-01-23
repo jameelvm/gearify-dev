@@ -1,9 +1,9 @@
-namespace Gearify.MediaService.Infrastructure.Messaging.Models;
+namespace Gearify.MediaService.Infrastructure.Messaging.Events.Inbound;
 
 /// <summary>
-/// Message for image processing queue
+/// Image processing event message received via SQS.
 /// </summary>
-public class ImageProcessingMessage
+public class ImageProcessingEventMessage
 {
     public string MediaId { get; set; } = string.Empty;
     public string TenantId { get; set; } = string.Empty;

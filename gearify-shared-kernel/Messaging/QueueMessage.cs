@@ -1,4 +1,4 @@
-namespace Gearify.CatalogService.Infrastructure.Messaging.Models;
+namespace Gearify.SharedKernel.Messaging;
 
 /// <summary>
 /// Wrapper for SQS queue messages

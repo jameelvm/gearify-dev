@@ -1,8 +1,14 @@
 using System;
+using Amazon.SimpleNotificationService;
+using Amazon.SQS;
 using Gearify.OrderService.Infrastructure.Configuration;
 using Gearify.OrderService.Infrastructure.Data;
+using Gearify.OrderService.Infrastructure.Messaging;
 using Gearify.OrderService.Infrastructure.Repositories;
 using Gearify.OrderService.Infrastructure.UnitOfWork;
+using Gearify.OrderService.Infrastructure.Messaging.Events.Inbound;
+using Gearify.SharedKernel.Events;
+using Gearify.SharedKernel.Messaging;
 using Gearify.SharedKernel.Swagger;
 using Gearify.SharedKernel.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -54,6 +60,36 @@ public class Startup
         // Multitenancy
         services.AddHttpContextAccessor();
         services.AddMultitenancy();
+
+        // AWS SNS Client
+        var snsConfig = Configuration.GetSection("MessagingConfiguration:SNS").Get<SnsConfiguration>() ?? new SnsConfiguration();
+        services.AddSingleton<IAmazonSimpleNotificationService>(sp =>
+        {
+            var config = new AmazonSimpleNotificationServiceConfig
+            {
+                ServiceURL = Environment.GetEnvironmentVariable("AWS_ENDPOINT_URL") ?? "http://localhost:4566",
+                AuthenticationRegion = snsConfig.Region
+            };
+            return new AmazonSimpleNotificationServiceClient(config);
+        });
+        services.AddScoped<ISnsEventPublisher, SnsEventPublisher>();
+
+        // AWS SQS Client
+        services.AddSingleton<IAmazonSQS>(sp =>
+        {
+            var config = new AmazonSQSConfig
+            {
+                ServiceURL = Environment.GetEnvironmentVariable("AWS_ENDPOINT_URL") ?? "http://localhost:4566",
+                AuthenticationRegion = snsConfig.Region
+            };
+            return new AmazonSQSClient(config);
+        });
+
+        // Messaging Services (for receiving payment events)
+        services.AddScoped<IEventQueue<PaymentEventMessage>, SqsPaymentEventQueue>();
+
+        // Background services
+        services.AddHostedService<PaymentEventQueueProcessor>();
 
         // MediatR
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly));

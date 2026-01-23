@@ -3,7 +3,8 @@ using System.Text.Json.Serialization;
 using Amazon.SQS;
 using Amazon.SQS.Model;
 using Gearify.MediaService.Infrastructure.Configuration;
-using Gearify.MediaService.Infrastructure.Messaging.Models;
+using Gearify.MediaService.Infrastructure.Messaging.Events.Inbound;
+using Gearify.SharedKernel.Messaging;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -12,7 +13,7 @@ namespace Gearify.MediaService.Infrastructure.Messaging;
 /// <summary>
 /// SQS implementation of image processing queue
 /// </summary>
-public class SqsImageProcessingQueue : IImageProcessingQueue
+public class SqsImageProcessingQueue : IEventQueue<ImageProcessingEventMessage>
 {
     private readonly IAmazonSQS _sqsClient;
     private readonly ILogger<SqsImageProcessingQueue> _logger;
@@ -42,7 +43,7 @@ public class SqsImageProcessingQueue : IImageProcessingQueue
         _logger.LogInformation("Using configured queue URL: {QueueUrl}", _queueUrl);
     }
 
-    public async Task<List<QueueMessage<ImageProcessingMessage>>> ReceiveMessagesAsync(
+    public async Task<List<QueueMessage<ImageProcessingEventMessage>>> ReceiveMessagesAsync(
         int maxMessages = 10,
         int waitTimeSeconds = 20,
         CancellationToken cancellationToken = default)
@@ -63,11 +64,11 @@ public class SqsImageProcessingQueue : IImageProcessingQueue
             {
                 // SNS wraps the message, so we need to extract it
                 var messageBody = ExtractSnsMessage(msg.Body);
-                var processingMessage = JsonSerializer.Deserialize<ImageProcessingMessage>(messageBody, JsonOptions);
+                var processingMessage = JsonSerializer.Deserialize<ImageProcessingEventMessage>(messageBody, JsonOptions);
 
-                return new QueueMessage<ImageProcessingMessage>
+                return new QueueMessage<ImageProcessingEventMessage>
                 {
-                    Body = processingMessage ?? new ImageProcessingMessage(),
+                    Body = processingMessage ?? new ImageProcessingEventMessage(),
                     ReceiptHandle = msg.ReceiptHandle,
                     MessageId = msg.MessageId
                 };
@@ -76,7 +77,7 @@ public class SqsImageProcessingQueue : IImageProcessingQueue
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error receiving messages from SQS queue");
-            return new List<QueueMessage<ImageProcessingMessage>>();
+            return new List<QueueMessage<ImageProcessingEventMessage>>();
         }
     }
 

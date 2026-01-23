@@ -1,6 +1,7 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { Subject, takeUntil, interval, switchMap, filter, take, tap } from 'rxjs';
 import { CheckoutStepsComponent, CheckoutStep } from './components/checkout-steps/checkout-steps.component';
 import { ShippingAddressComponent, ShippingAddress } from './components/shipping-address/shipping-address.component';
 import { PaymentMethodComponent, PaymentDetails } from './components/payment-method/payment-method.component';
@@ -8,7 +9,6 @@ import { OrderSummaryComponent } from './components/order-summary/order-summary.
 import { OrderReviewComponent } from './components/order-review/order-review.component';
 import { CartService } from '../../core/services/cart.service';
 import { OrderService } from '@core/services/order.service';
-import { PaymentService } from '@core/services/payment.service';
 import { AuthService } from '@app/features/auth/auth.service';
 import {
   CreateOrderRequest,
@@ -16,7 +16,6 @@ import {
   OrderAddressDto,
   OrderDto
 } from '@core/models/order.model';
-import { ProcessPaymentRequest, PaymentProviderType } from '@core/models/payment.model';
 
 @Component({
   selector: 'app-checkout',
@@ -32,13 +31,12 @@ import { ProcessPaymentRequest, PaymentProviderType } from '@core/models/payment
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.scss'
 })
-export class CheckoutComponent implements OnInit {
+export class CheckoutComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private cartService = inject(CartService);
   private orderService = inject(OrderService);
-  private paymentService = inject(PaymentService);
   private authService = inject(AuthService);
-  
+  private destroy$ = new Subject<void>();
 
   currentStep = signal<CheckoutStep>('shipping');
   shippingAddress = signal<ShippingAddress | null>(null);
@@ -51,7 +49,12 @@ export class CheckoutComponent implements OnInit {
 
   // Loading and error states
   isProcessing = signal(false);
+  processingStatus = signal<string>('Creating order...');
   errorMessage = signal<string | null>(null);
+
+  // Polling config
+  private readonly POLL_INTERVAL = 2000; // 2 seconds
+  private readonly MAX_POLL_ATTEMPTS = 30; // 1 minute max wait
 
   cart = this.cartService.cart;
   cartItems = computed(() => this.cart()?.items ?? []);
@@ -85,6 +88,11 @@ export class CheckoutComponent implements OnInit {
     this.currentStep.set('review');
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   onPlaceOrder(): void {
     const address = this.shippingAddress();
     const payment = this.paymentDetails();
@@ -96,26 +104,89 @@ export class CheckoutComponent implements OnInit {
     }
 
     this.isProcessing.set(true);
+    this.processingStatus.set('Creating order...');
     this.errorMessage.set(null);
 
     // Build the order request
     const orderRequest = this.buildOrderRequest(address, items);
 
-    // Step 1: Create the order
+    // Create the order - payment will be processed automatically via event-driven saga
     this.orderService.createOrder(orderRequest).subscribe({
       next: (order) => {
         this.createdOrder.set(order);
         this.orderId.set(order.id);
         this.orderNumber.set(order.orderNumber);
 
-        // Step 2: Process payment
-        this.processPayment(order, payment);
+        this.processingStatus.set('Processing payment...');
+
+        // Poll for order status until payment is complete
+        this.pollOrderStatus(order.id);
       },
       error: (err) => {
         this.isProcessing.set(false);
         this.errorMessage.set(err.error?.detail || 'Failed to create order. Please try again.');
       }
     });
+  }
+
+  private pollOrderStatus(orderId: string): void {
+    let attempts = 0;
+
+    interval(this.POLL_INTERVAL).pipe(
+      takeUntil(this.destroy$),
+      take(this.MAX_POLL_ATTEMPTS),
+      tap(() => {
+        attempts++;
+        if (attempts > 5) {
+          this.processingStatus.set('Verifying payment...');
+        }
+      }),
+      switchMap(() => this.orderService.getOrder(orderId)),
+      filter(order => {
+        // Update the order in state
+        this.createdOrder.set(order);
+
+        // Check if order has reached a terminal state
+        const terminalStatuses = ['Paid', 'PaymentFailed', 'Cancelled'];
+        return terminalStatuses.includes(order.status);
+      }),
+      take(1)
+    ).subscribe({
+      next: (order) => {
+        this.handleOrderStatusUpdate(order);
+      },
+      error: (err) => {
+        console.error('Error polling order status:', err);
+        // On error, still consider order created successfully
+        // User can check order details later
+        this.cartService.clearCart().subscribe();
+        this.orderPlaced.set(true);
+        this.isProcessing.set(false);
+      },
+      complete: () => {
+        // If polling completes without finding terminal status, show success anyway
+        if (this.isProcessing()) {
+          this.cartService.clearCart().subscribe();
+          this.orderPlaced.set(true);
+          this.isProcessing.set(false);
+        }
+      }
+    });
+  }
+
+  private handleOrderStatusUpdate(order: OrderDto): void {
+    this.createdOrder.set(order);
+
+    if (order.status === 'Paid') {
+      // Payment successful
+      this.cartService.clearCart().subscribe();
+      this.orderPlaced.set(true);
+      this.isProcessing.set(false);
+    } else if (order.status === 'PaymentFailed' || order.status === 'Cancelled') {
+      // Payment failed
+      this.isProcessing.set(false);
+      this.errorMessage.set('Payment failed. Please try again or contact support.');
+    }
   }
 
   private buildOrderRequest(address: ShippingAddress, items: any[]): CreateOrderRequest {
@@ -159,79 +230,6 @@ export class CheckoutComponent implements OnInit {
       discountAmount: 0,
       currency: 'USD'
     };
-  }
-
-  private processPayment(order: OrderDto, payment: PaymentDetails): void {
-    const user = this.authService.user();
-    const userId = user?.user?.id || `guest-${Date.now()}`;
-
-    // Determine payment provider and token
-    const provider = this.getPaymentProvider(payment.type);
-    const paymentMethodToken = this.getPaymentToken(payment);
-
-    const paymentRequest: ProcessPaymentRequest = {
-      orderId: order.id,
-      userId,
-      amount: order.totalAmount,
-      currency: order.currency,
-      provider,
-      paymentMethodToken,
-      idempotencyKey: this.paymentService.generateIdempotencyKey(order.id)
-    };
-
-    this.paymentService.processPayment(paymentRequest).subscribe({
-      next: (paymentResult) => {
-        if (paymentResult.status === 'Succeeded') {
-          // Payment successful - clear cart and show success
-          this.cartService.clearCart().subscribe();
-          this.orderPlaced.set(true);
-          this.isProcessing.set(false);
-        } else if (paymentResult.status === 'Failed') {
-          this.isProcessing.set(false);
-          this.errorMessage.set(paymentResult.errorMessage || 'Payment failed. Please try a different payment method.');
-        } else {
-          // Payment pending/processing - still show success for now
-          this.cartService.clearCart().subscribe();
-          this.orderPlaced.set(true);
-          this.isProcessing.set(false);
-        }
-      },
-      error: (err) => {
-        this.isProcessing.set(false);
-        this.errorMessage.set(err.error?.detail || 'Payment processing failed. Please try again.');
-      }
-    });
-  }
-
-  private getPaymentProvider(paymentType: string): string {
-    switch (paymentType) {
-      case 'paypal':
-        return PaymentProviderType.PayPal;
-      case 'card':
-      case 'applepay':
-      default:
-        return PaymentProviderType.Stripe;
-    }
-  }
-
-  private getPaymentToken(payment: PaymentDetails): string {
-    // For mock providers in development:
-    // - Cards ending in 0000 or 4242 will succeed
-    // - Cards ending in 9999 will fail
-    // - PayPal tokens containing "success" will succeed
-
-    if (payment.type === 'card' && payment.cardNumber) {
-      // Use the card number as a mock token (last 4 digits determine behavior)
-      return `tok_${payment.cardNumber}`;
-    } else if (payment.type === 'paypal') {
-      // Mock PayPal token
-      return 'paypal_success_token';
-    } else if (payment.type === 'applepay') {
-      // Mock Apple Pay token (processed via Stripe)
-      return 'tok_applepay_success';
-    }
-
-    return 'tok_default';
   }
 
   onBackToCart(): void {

@@ -1,11 +1,12 @@
 using System;
+using Gearify.SharedKernel.Events;
 
 namespace Gearify.PaymentService.Events;
 
 /// <summary>
 /// Published when payment processing begins.
 /// </summary>
-public record PaymentProcessingEvent
+public record PaymentProcessingEvent : IDomainEvent
 {
     public Guid TransactionId { get; init; }
     public string TenantId { get; init; } = string.Empty;

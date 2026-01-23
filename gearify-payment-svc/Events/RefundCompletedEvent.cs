@@ -1,11 +1,12 @@
 using System;
+using Gearify.SharedKernel.Events;
 
 namespace Gearify.PaymentService.Events;
 
 /// <summary>
 /// Published when a refund is successfully completed.
 /// </summary>
-public record RefundCompletedEvent
+public record RefundCompletedEvent : IDomainEvent
 {
     public Guid RefundId { get; init; }
     public Guid OriginalTransactionId { get; init; }

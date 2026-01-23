@@ -123,7 +123,9 @@
       "Bash(winget search:*)",
       "Bash(psql:*)",
       "Bash(dotnet ef database update:*)",
-      "Bash(xargs ls:*)"
+      "Bash(xargs ls:*)",
+      "Bash(del \"C:\\\\Gearify\\\\gearify-payment-svc\\\\Infrastructure\\\\Messaging\\\\ISnsEventPublisher.cs\")",
+      "Bash(del \"C:\\\\Gearify\\\\gearify-order-svc\\\\Infrastructure\\\\Messaging\\\\ISnsEventPublisher.cs\")"
     ],
     "deny": [],
     "ask": []
