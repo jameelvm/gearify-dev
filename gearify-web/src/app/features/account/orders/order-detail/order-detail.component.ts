@@ -2,8 +2,10 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrderService } from '@core/services/order.service';
+import { PaymentService } from '@core/services/payment.service';
 import { AuthService } from '@features/auth/auth.service';
 import { OrderDto } from '@core/models/order.model';
+import { PaymentDto } from '@core/models/payment.model';
 
 @Component({
   selector: 'app-order-detail',
@@ -14,6 +16,7 @@ import { OrderDto } from '@core/models/order.model';
 })
 export class OrderDetailComponent implements OnInit {
   private orderService = inject(OrderService);
+  private paymentService = inject(PaymentService);
   private authService = inject(AuthService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -21,6 +24,9 @@ export class OrderDetailComponent implements OnInit {
   order = this.orderService.currentOrder;
   loading = this.orderService.loading;
   error = this.orderService.error;
+
+  payment = signal<PaymentDto | null>(null);
+  paymentLoading = signal(false);
 
   showCancelModal = signal(false);
   cancelReason = signal('');
@@ -42,10 +48,44 @@ export class OrderDetailComponent implements OnInit {
 
   private loadOrder(orderId: string): void {
     this.orderService.getOrderById(orderId).subscribe({
+      next: () => {
+        this.loadPaymentDetails(orderId);
+      },
       error: () => {
         // Error is handled by the service
       }
     });
+  }
+
+  private loadPaymentDetails(orderId: string): void {
+    this.paymentLoading.set(true);
+    this.paymentService.getPaymentByOrderId(orderId).subscribe({
+      next: (payment) => {
+        this.payment.set(payment);
+        this.paymentLoading.set(false);
+      },
+      error: () => {
+        this.paymentLoading.set(false);
+      }
+    });
+  }
+
+  getPaymentStatusClass(status: string): string {
+    switch (status.toLowerCase()) {
+      case 'succeeded':
+        return 'payment-succeeded';
+      case 'pending':
+      case 'processing':
+        return 'payment-pending';
+      case 'failed':
+      case 'cancelled':
+        return 'payment-failed';
+      case 'refunded':
+      case 'partiallyrefunded':
+        return 'payment-refunded';
+      default:
+        return 'payment-default';
+    }
   }
 
   onBackToOrders(): void {

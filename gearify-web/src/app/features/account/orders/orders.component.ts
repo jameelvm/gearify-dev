@@ -2,8 +2,10 @@ import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { OrderService } from '@core/services/order.service';
+import { PaymentService } from '@core/services/payment.service';
 import { AuthService } from '@features/auth/auth.service';
 import { OrderSummaryDto } from '@core/models/order.model';
+import { PaymentDto } from '@core/models/payment.model';
 
 @Component({
   selector: 'app-orders',
@@ -14,12 +16,20 @@ import { OrderSummaryDto } from '@core/models/order.model';
 })
 export class OrdersComponent implements OnInit {
   private orderService = inject(OrderService);
+  private paymentService = inject(PaymentService);
   private authService = inject(AuthService);
   private router = inject(Router);
 
   orders = this.orderService.orders;
   loading = this.orderService.loading;
   error = this.orderService.error;
+
+  // Payment details map: orderId -> PaymentDto
+  paymentDetails = signal<Record<string, PaymentDto>>({});
+  // Track which orders have payment section expanded
+  expandedPayments = signal<Record<string, boolean>>({});
+  // Track loading state per order
+  paymentLoading = signal<Record<string, boolean>>({});
 
   // Filter state
   statusFilter = signal<string>('all');
@@ -47,6 +57,44 @@ export class OrdersComponent implements OnInit {
 
   private loadOrders(userId: string): void {
     this.orderService.getOrdersByUser(userId).subscribe();
+  }
+
+  togglePaymentDetails(orderId: string, event: Event): void {
+    event.stopPropagation();
+    const isExpanded = this.expandedPayments()[orderId];
+
+    if (isExpanded) {
+      this.expandedPayments.update(map => ({ ...map, [orderId]: false }));
+      return;
+    }
+
+    this.expandedPayments.update(map => ({ ...map, [orderId]: true }));
+
+    // Fetch if not already loaded
+    if (!this.paymentDetails()[orderId]) {
+      this.paymentLoading.update(map => ({ ...map, [orderId]: true }));
+      this.paymentService.getPaymentByOrderId(orderId).subscribe({
+        next: (payment) => {
+          this.paymentDetails.update(map => ({ ...map, [orderId]: payment }));
+          this.paymentLoading.update(map => ({ ...map, [orderId]: false }));
+        },
+        error: () => {
+          this.paymentLoading.update(map => ({ ...map, [orderId]: false }));
+        }
+      });
+    }
+  }
+
+  isPaymentExpanded(orderId: string): boolean {
+    return !!this.expandedPayments()[orderId];
+  }
+
+  isPaymentLoading(orderId: string): boolean {
+    return !!this.paymentLoading()[orderId];
+  }
+
+  getPayment(orderId: string): PaymentDto | undefined {
+    return this.paymentDetails()[orderId];
   }
 
   onViewOrder(orderId: string): void {
@@ -79,6 +127,24 @@ export class OrdersComponent implements OnInit {
         return 'status-failed';
       default:
         return 'status-default';
+    }
+  }
+
+  getPaymentStatusClass(status: string): string {
+    switch (status.toLowerCase()) {
+      case 'succeeded':
+        return 'payment-succeeded';
+      case 'pending':
+      case 'processing':
+        return 'payment-pending';
+      case 'failed':
+      case 'cancelled':
+        return 'payment-failed';
+      case 'refunded':
+      case 'partiallyrefunded':
+        return 'payment-refunded';
+      default:
+        return 'payment-default';
     }
   }
 

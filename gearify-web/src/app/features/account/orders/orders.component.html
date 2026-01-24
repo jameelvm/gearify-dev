@@ -83,8 +83,8 @@
     } @else {
       <div class="orders-list">
         @for (order of filteredOrders(); track order.id) {
-          <div class="order-card" (click)="onViewOrder(order.id)">
-            <div class="order-card-header">
+          <div class="order-card">
+            <div class="order-card-header" (click)="onViewOrder(order.id)">
               <div class="order-info">
                 <span class="order-number">{{ order.orderNumber }}</span>
                 <span class="order-date">{{ formatDate(order.createdAt) }}</span>
@@ -104,13 +104,63 @@
                   <span class="detail-value total">{{ order.totalAmount | currency:order.currency }}</span>
                 </div>
               </div>
-              <button class="btn-view-order">
+              <button class="btn-view-order" (click)="onViewOrder(order.id)">
                 <span>View Details</span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
               </button>
             </div>
+            <!-- Expandable Payment Details -->
+            <div class="payment-toggle" (click)="togglePaymentDetails(order.id, $event)">
+              <div class="payment-toggle-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                  <line x1="1" y1="10" x2="23" y2="10"></line>
+                </svg>
+                <span>Payment Details</span>
+              </div>
+              <svg class="chevron" [class.expanded]="isPaymentExpanded(order.id)" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+            @if (isPaymentExpanded(order.id)) {
+              <div class="order-payment-details">
+                @if (isPaymentLoading(order.id)) {
+                  <div class="payment-loading">
+                    <div class="spinner-sm"></div>
+                    <span>Loading payment info...</span>
+                  </div>
+                } @else if (getPayment(order.id)) {
+                  <div class="payment-info-grid">
+                    <div class="payment-info-row">
+                      <span class="payment-label">Provider</span>
+                      <span class="payment-value provider">{{ getPayment(order.id)!.provider }}</span>
+                    </div>
+                    <div class="payment-info-row">
+                      <span class="payment-label">Status</span>
+                      <span class="payment-status-badge" [class]="getPaymentStatusClass(getPayment(order.id)!.status)">
+                        {{ getPayment(order.id)!.status }}
+                      </span>
+                    </div>
+                    <div class="payment-info-row">
+                      <span class="payment-label">Amount</span>
+                      <span class="payment-value">{{ getPayment(order.id)!.amount | currency:getPayment(order.id)!.currency }}</span>
+                    </div>
+                    @if (getPayment(order.id)!.providerTransactionId) {
+                      <div class="payment-info-row">
+                        <span class="payment-label">Transaction ID</span>
+                        <span class="payment-value mono">{{ getPayment(order.id)!.providerTransactionId }}</span>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <div class="payment-empty">
+                    <span>No payment information available</span>
+                  </div>
+                }
+              </div>
+            }
           </div>
         }
       </div>

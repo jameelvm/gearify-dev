@@ -307,6 +307,7 @@ services:
       - POSTGRES_CONNECTION_STRING=Host=postgres;Port=5432;Database=gearify_orders;Username=postgres;Password=postgres
       - SNS_ENDPOINT=${SNS_ENDPOINT}
       - SQS_ENDPOINT=${SQS_ENDPOINT}
+      - MessagingConfiguration__SQS__PaymentProcessedQueueUrl=http://localstack:4566/000000000000/gearify-payment-completed-queue
       - REDIS_URL=${REDIS_URL}
       - SEQ_URL=${SEQ_URL}
       - OTLP_ENDPOINT=${OTLP_ENDPOINT}
@@ -332,6 +333,7 @@ services:
       - POSTGRES_CONNECTION_STRING=Host=postgres;Port=5432;Database=gearify_payments;Username=postgres;Password=postgres
       - SNS_ENDPOINT=${SNS_ENDPOINT}
       - SQS_ENDPOINT=${SQS_ENDPOINT}
+      - MessagingConfiguration__SQS__OrderCreatedQueueUrl=http://localstack:4566/000000000000/gearify-order-created-queue
       - SECRETS_MANAGER_ENDPOINT=${SECRETS_MANAGER_ENDPOINT}
       - STRIPE_API_KEY=${STRIPE_API_KEY}
       - PAYPAL_CLIENT_ID=${PAYPAL_CLIENT_ID}

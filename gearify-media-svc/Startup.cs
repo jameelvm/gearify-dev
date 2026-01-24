@@ -126,9 +126,10 @@ public class Startup
         // Messaging Services (for async image processing)
         services.AddScoped<ISnsEventPublisher, SnsEventPublisher>();
         services.AddScoped<IEventQueue<ImageProcessingEventMessage>, SqsImageProcessingQueue>();
+        services.AddScoped<IEventHandler<ImageProcessingEventMessage>, ImageProcessingEventHandler>();
 
         // Background Services
-        services.AddHostedService<ImageProcessingQueueProcessor>();
+        services.AddHostedService<EventQueueProcessor<ImageProcessingEventMessage>>();
 
         // Swagger
         services.AddSwaggerGen(c =>

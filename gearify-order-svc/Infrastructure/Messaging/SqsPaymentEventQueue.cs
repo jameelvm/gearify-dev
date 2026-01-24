@@ -129,7 +129,7 @@ public class SqsPaymentEventQueue : IEventQueue<PaymentEventMessage>
             var request = new DeleteMessageRequest
             {
                 QueueUrl = _queueUrl,
-                ReceiptHandle = receiptHandlei
+                ReceiptHandle = receiptHandle
             };
 
             await _sqsClient.DeleteMessageAsync(request, cancellationToken);

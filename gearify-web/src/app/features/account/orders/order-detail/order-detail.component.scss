@@ -426,6 +426,27 @@
   gap: 0.75rem;
 }
 
+.payment-loading-state {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+
+  .spinner-sm {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #e5e7eb;
+    border-top-color: #667eea;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  span {
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+}
+
 .payment-row {
   display: flex;
   justify-content: space-between;
@@ -438,26 +459,86 @@
 
   .payment-value {
     font-size: 0.875rem;
-    font-family: 'Monaco', 'Consolas', monospace;
     color: #374151;
+
+    &.mono {
+      font-family: 'Monaco', 'Consolas', monospace;
+      font-size: 0.8125rem;
+    }
+
+    &.provider-badge {
+      font-weight: 600;
+      color: #111827;
+    }
   }
 
-  .payment-status {
+  .payment-status-badge {
     padding: 0.25rem 0.75rem;
     border-radius: 9999px;
     font-size: 0.8125rem;
     font-weight: 500;
-    background: #d1fae5;
-    color: #065f46;
 
-    &.pending {
+    &.payment-succeeded {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    &.payment-pending {
       background: #fef3c7;
       color: #92400e;
     }
 
-    &.failed {
+    &.payment-failed {
       background: #fee2e2;
       color: #991b1b;
+    }
+
+    &.payment-refunded {
+      background: #e0e7ff;
+      color: #3730a3;
+    }
+
+    &.payment-default {
+      background: #f3f4f6;
+      color: #4b5563;
+    }
+  }
+}
+
+.payment-refunds {
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f3f4f6;
+
+  .payment-label {
+    font-size: 0.8125rem;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .refund-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    font-size: 0.8125rem;
+
+    .refund-amount {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .refund-status {
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      background: #f3f4f6;
+      color: #4b5563;
+      font-size: 0.75rem;
+    }
+
+    .refund-reason {
+      color: #6b7280;
     }
   }
 }

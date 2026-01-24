@@ -602,23 +602,17 @@ echo "Creating checkout flow subscriptions..."
 if [ ! -z "$ORDER_TOPIC_ARN" ]; then
   ORDER_CREATED_QUEUE_ARN=$(awslocal sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/gearify-order-created-queue --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn' 2>/dev/null || echo "")
   if [ ! -z "$ORDER_CREATED_QUEUE_ARN" ]; then
-    awslocal sns subscribe --topic-arn $ORDER_TOPIC_ARN --protocol sqs --notification-endpoint $ORDER_CREATED_QUEUE_ARN --attributes '{"FilterPolicy":"{\"eventType\":[\"OrderCreated\"]}"}' --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
-    echo "  - Subscribed gearify-order-created-queue to gearify-order-events (OrderCreated filter)"
+    awslocal sns subscribe --topic-arn $ORDER_TOPIC_ARN --protocol sqs --notification-endpoint $ORDER_CREATED_QUEUE_ARN --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
+    echo "  - Subscribed gearify-order-created-queue to gearify-order-events"
   fi
 fi
 
-# Subscribe payment-completed-queue to payment-events topic (order-svc, shipping-svc listen)
+# Subscribe payment-completed-queue to payment-events topic (order-svc listens)
 if [ ! -z "$PAYMENT_TOPIC_ARN" ]; then
   PAYMENT_COMPLETED_QUEUE_ARN=$(awslocal sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/gearify-payment-completed-queue --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn' 2>/dev/null || echo "")
   if [ ! -z "$PAYMENT_COMPLETED_QUEUE_ARN" ]; then
-    awslocal sns subscribe --topic-arn $PAYMENT_TOPIC_ARN --protocol sqs --notification-endpoint $PAYMENT_COMPLETED_QUEUE_ARN --attributes '{"FilterPolicy":"{\"eventType\":[\"PaymentCompleted\"]}"}' --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
-    echo "  - Subscribed gearify-payment-completed-queue to gearify-payment-events (PaymentCompleted filter)"
-  fi
-
-  PAYMENT_FAILED_QUEUE_ARN=$(awslocal sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/gearify-payment-failed-queue --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn' 2>/dev/null || echo "")
-  if [ ! -z "$PAYMENT_FAILED_QUEUE_ARN" ]; then
-    awslocal sns subscribe --topic-arn $PAYMENT_TOPIC_ARN --protocol sqs --notification-endpoint $PAYMENT_FAILED_QUEUE_ARN --attributes '{"FilterPolicy":"{\"eventType\":[\"PaymentFailed\"]}"}' --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
-    echo "  - Subscribed gearify-payment-failed-queue to gearify-payment-events (PaymentFailed filter)"
+    awslocal sns subscribe --topic-arn $PAYMENT_TOPIC_ARN --protocol sqs --notification-endpoint $PAYMENT_COMPLETED_QUEUE_ARN --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
+    echo "  - Subscribed gearify-payment-completed-queue to gearify-payment-events"
   fi
 fi
 

@@ -172,9 +172,10 @@ public class Startup
 
         // Messaging Services (for receiving image processing events)
         services.AddScoped<IEventQueue<ImageProcessingCompletedEventMessage>, SqsProductThumbnailUpdateQueue>();
+        services.AddScoped<IEventHandler<ImageProcessingCompletedEventMessage>, ImageProcessingCompletedEventHandler>();
 
         // Background Services
-        services.AddHostedService<ProductThumbnailUpdateQueueProcessor>();
+        services.AddHostedService<EventQueueProcessor<ImageProcessingCompletedEventMessage>>();
 
         // OpenTelemetry
         var otlpEndpoint = Environment.GetEnvironmentVariable("OTLP_ENDPOINT") ?? "http://otel-collector:4318";

@@ -96,7 +96,9 @@ public class Startup
         {
             var config = new AmazonSimpleNotificationServiceConfig
             {
-                ServiceURL = Environment.GetEnvironmentVariable("AWS_ENDPOINT_URL") ?? "http://localhost:4566",
+                ServiceURL = Environment.GetEnvironmentVariable("SNS_ENDPOINT")
+                    ?? Environment.GetEnvironmentVariable("AWS_ENDPOINT_URL")
+                    ?? "http://localhost:4566",
                 AuthenticationRegion = snsConfig.Region
             };
             return new AmazonSimpleNotificationServiceClient(config);
@@ -108,7 +110,9 @@ public class Startup
         {
             var config = new AmazonSQSConfig
             {
-                ServiceURL = Environment.GetEnvironmentVariable("AWS_ENDPOINT_URL") ?? "http://localhost:4566",
+                ServiceURL = Environment.GetEnvironmentVariable("SQS_ENDPOINT")
+                    ?? Environment.GetEnvironmentVariable("AWS_ENDPOINT_URL")
+                    ?? "http://localhost:4566",
                 AuthenticationRegion = snsConfig.Region
             };
             return new AmazonSQSClient(config);
@@ -116,9 +120,10 @@ public class Startup
 
         // Messaging Services (for receiving order events)
         services.AddScoped<IEventQueue<OrderCreatedEventMessage>, SqsOrderEventQueue>();
+        services.AddScoped<IEventHandler<OrderCreatedEventMessage>, OrderCreatedEventHandler>();
 
         // Background services
-        services.AddHostedService<OrderEventQueueProcessor>();
+        services.AddHostedService<EventQueueProcessor<OrderCreatedEventMessage>>();
 
         // MediatR
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly));

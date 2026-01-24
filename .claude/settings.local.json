@@ -125,7 +125,10 @@
       "Bash(dotnet ef database update:*)",
       "Bash(xargs ls:*)",
       "Bash(del \"C:\\\\Gearify\\\\gearify-payment-svc\\\\Infrastructure\\\\Messaging\\\\ISnsEventPublisher.cs\")",
-      "Bash(del \"C:\\\\Gearify\\\\gearify-order-svc\\\\Infrastructure\\\\Messaging\\\\ISnsEventPublisher.cs\")"
+      "Bash(del \"C:\\\\Gearify\\\\gearify-order-svc\\\\Infrastructure\\\\Messaging\\\\ISnsEventPublisher.cs\")",
+      "Bash(del \"C:\\\\Gearify\\\\gearify-order-svc\\\\Infrastructure\\\\Messaging\\\\PaymentEventQueueProcessor.cs\")",
+      "Bash(del \"C:\\\\Gearify\\\\gearify-order-svc\\\\Infrastructure\\\\Data\\\\Migrations\\\\20260123010000_AddPaymentProvider.cs\")",
+      "Bash(npx ng build)"
     ],
     "deny": [],
     "ask": []
