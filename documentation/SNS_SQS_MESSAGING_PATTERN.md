@@ -328,7 +328,7 @@ public interface IEventHandler<T>
 │  │   SERVICE   │  (OrderCreatedEvent,                   │                 │                   │
 │  │             │   OrderStatusChangedEvent)              └────────┬────────┘                   │
 │  │             │                                                 │                            │
-│  │             │◄─── gearify-payment-completed-queue ◄───┐       │                            │
+│  │             │◄─── order-payment-events-queue ◄───┐       │                            │
 │  └─────────────┘                                         │       ▼                            │
 │                                                          │  gearify-order-created-queue       │
 │                                                          │       │                            │
@@ -345,7 +345,7 @@ public interface IEventHandler<T>
 │        │                                                                                      │
 │        ├────────────────────────────────────────────────────┐                                 │
 │        ▼                                                    ▼                                 │
-│  gearify-payment-completed-queue                notification-payment-events-queue             │
+│  order-payment-events-queue                notification-payment-events-queue             │
 │  (Order Service)                                (Notification Service)                        │
 │                                                                                               │
 │                                                 ┌─────────────────┐                          │
@@ -419,7 +419,7 @@ public interface IEventHandler<T>
 | # | SQS Queue Name | Queue URL | Subscribes To (SNS Topic) | Consumer Service | Event Type Filter | Message Type |
 |---|---------------|-----------|---------------------------|------------------|-------------------|--------------|
 | 1 | `gearify-order-created-queue` | `http://localstack:4566/000000000000/gearify-order-created-queue` | `gearify-order-events` | **Payment Service** | `OrderCreatedEvent` | `OrderCreatedEventMessage` |
-| 2 | `gearify-payment-completed-queue` | `http://localstack:4566/000000000000/gearify-payment-completed-queue` | `gearify-payment-events` | **Order Service** | `PaymentCompletedEvent`, `PaymentFailedEvent` | `PaymentEventMessage` |
+| 2 | `order-payment-events-queue` | `http://localstack:4566/000000000000/order-payment-events-queue` | `gearify-payment-events` | **Order Service** | `PaymentCompletedEvent`, `PaymentFailedEvent` | `PaymentEventMessage` |
 | 3 | `notification-payment-events-queue` | `http://localstack:4566/000000000000/notification-payment-events-queue` | `gearify-payment-events` | **Notification Service** | `PaymentFailedEvent` | `PaymentFailedEventMessage` |
 | 4 | `gearify-image-processing-queue` | `http://localstack:4566/000000000000/gearify-image-processing-queue` | `gearify-media-upload-events` | **Media Service** (self) | `MediaUploadedEvent` | `ImageProcessingEventMessage` |
 | 5 | `gearify-product-thumbnail-update-queue` | `http://localstack:4566/000000000000/gearify-product-thumbnail-update-queue` | `gearify-image-processing-completed` | **Catalog Service** | `ImageProcessingCompletedEvent` | `ImageProcessingCompletedEventMessage` |
@@ -503,8 +503,8 @@ Shipping Service
 |-------|-------------|-----------|---------------------|
 | `OrderCreatedEvent` | Order Service | `gearify-order-events` | Payment Service (`gearify-order-created-queue`) |
 | `OrderStatusChangedEvent` | Order Service | `gearify-order-events` | *(no consumer yet)* |
-| `PaymentCompletedEvent` | Payment Service | `gearify-payment-events` | Order Service (`gearify-payment-completed-queue`) |
-| `PaymentFailedEvent` | Payment Service | `gearify-payment-events` | Order Service (`gearify-payment-completed-queue`), Notification Service (`notification-payment-events-queue`) |
+| `PaymentCompletedEvent` | Payment Service | `gearify-payment-events` | Order Service (`order-payment-events-queue`) |
+| `PaymentFailedEvent` | Payment Service | `gearify-payment-events` | Order Service (`order-payment-events-queue`), Notification Service (`notification-payment-events-queue`) |
 | `PaymentProcessingEvent` | Payment Service | `gearify-payment-events` | *(no consumer yet)* |
 | `MediaUploadedEvent` | Media Service | `gearify-media-upload-events` | Media Service (`gearify-image-processing-queue`) |
 | `ImageProcessingCompletedEvent` | Media Service | `gearify-image-processing-completed` | Catalog Service (`gearify-product-thumbnail-update-queue`) |

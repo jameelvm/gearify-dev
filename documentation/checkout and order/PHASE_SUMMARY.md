@@ -79,7 +79,7 @@ Added checkout-specific SNS topics and SQS queues with dead letter queues for re
 |-------|-----|---------|----------|
 | `gearify-checkout-initiated-queue` | `gearify-checkout-events-dlq` | Checkout started | order-svc |
 | `gearify-order-created-queue` | `gearify-order-events-dlq` | Order created | payment-svc |
-| `gearify-payment-completed-queue` | `gearify-payment-events-dlq` | Payment success | order-svc, shipping-svc |
+| `order-payment-events-queue` | `gearify-payment-events-dlq` | Payment success | order-svc, shipping-svc |
 | `gearify-payment-failed-queue` | `gearify-payment-events-dlq` | Payment failed | order-svc (saga rollback) |
 | `gearify-shipping-created-queue` | `gearify-shipping-events-dlq` | Shipment created | order-svc |
 | `gearify-shipping-status-queue` | `gearify-shipping-events-dlq` | Shipping updates | order-svc |
@@ -95,7 +95,7 @@ Added checkout-specific SNS topics and SQS queues with dead letter queues for re
 | Subscription | Topic | Queue | Filter |
 |--------------|-------|-------|--------|
 | Order Created | `gearify-order-events` | `gearify-order-created-queue` | `{"eventType":["OrderCreated"]}` |
-| Payment Completed | `gearify-payment-events` | `gearify-payment-completed-queue` | `{"eventType":["PaymentCompleted"]}` |
+| Payment Completed | `gearify-payment-events` | `order-payment-events-queue` | `{"eventType":["PaymentCompleted"]}` |
 | Payment Failed | `gearify-payment-events` | `gearify-payment-failed-queue` | `{"eventType":["PaymentFailed"]}` |
 | Shipment Created | `gearify-shipping-events` | `gearify-shipping-created-queue` | `{"eventType":["ShipmentCreated"]}` |
 | Shipping Status | `gearify-shipping-events` | `gearify-shipping-status-queue` | `{"eventType":["ShipmentStatusUpdated","ShipmentDelivered"]}` |
@@ -242,7 +242,7 @@ Verified and added checkout routes to API Gateway.
 │  │  ┌─────────────────────────────────────────────────────┐    │           │
 │  │  │ SQS Queues                                          │    │           │
 │  │  │ • gearify-order-created-queue (+ DLQ)              │    │           │
-│  │  │ • gearify-payment-completed-queue (+ DLQ)          │    │           │
+│  │  │ • order-payment-events-queue (+ DLQ)          │    │           │
 │  │  │ • gearify-payment-failed-queue (+ DLQ)             │    │           │
 │  │  │ • gearify-shipping-created-queue (+ DLQ)           │    │           │
 │  │  │ • gearify-shipping-status-queue (+ DLQ)            │    │           │
@@ -351,7 +351,7 @@ arn:aws:sns:us-east-1:000000000000:gearify-checkout-events
 
 ```bash
 http://localhost:4566/000000000000/gearify-order-created-queue
-http://localhost:4566/000000000000/gearify-payment-completed-queue
+http://localhost:4566/000000000000/order-payment-events-queue
 http://localhost:4566/000000000000/gearify-payment-failed-queue
 http://localhost:4566/000000000000/gearify-shipping-created-queue
 http://localhost:4566/000000000000/gearify-shipping-status-queue
