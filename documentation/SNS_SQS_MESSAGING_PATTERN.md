@@ -314,26 +314,206 @@ public interface IEventHandler<T>
 
 ---
 
-## Current Implementations
+## Event Communication Map
 
-### Publishers
+### Complete Service Communication Diagram
 
-| Service | Publisher Class | Topic | Events Published |
-|---------|-----------------|-------|------------------|
-| Order Service | `SnsEventPublisher` | `order-events` | `OrderCreatedEvent`, `OrderStatusChangedEvent` |
-| Payment Service | `SnsEventPublisher` | `payment-events` | `PaymentCompletedEvent`, `PaymentFailedEvent`, `PaymentProcessingEvent` |
-| Catalog Service | `SnsEventPublisher` | `catalog-events` | `ProductCreatedEvent`, `ProductUpdatedEvent`, `ProductDeletedEvent` |
-| Media Service | `SnsEventPublisher` | `media-uploaded`, `image-processing-completed` | `MediaUploadedEvent`, `ImageProcessingCompletedEvent` |
+```
+┌──────────────────────────────────────────────────────────────────────────────────────────────┐
+│                              GEARIFY EVENT COMMUNICATION MAP                                  │
+│                                                                                               │
+│                                                                                               │
+│  ┌─────────────┐         gearify-order-events          ┌─────────────────┐                   │
+│  │   ORDER     │ ──────────────────────────────────────>│  SNS Topic      │                   │
+│  │   SERVICE   │  (OrderCreatedEvent,                   │                 │                   │
+│  │             │   OrderStatusChangedEvent)              └────────┬────────┘                   │
+│  │             │                                                 │                            │
+│  │             │◄─── gearify-payment-completed-queue ◄───┐       │                            │
+│  └─────────────┘                                         │       ▼                            │
+│                                                          │  gearify-order-created-queue       │
+│                                                          │       │                            │
+│                                                          │       ▼                            │
+│  ┌─────────────┐         gearify-payment-events          │  ┌─────────────────┐              │
+│  │  PAYMENT    │ ──────────────────────────────────────>│  │   PAYMENT       │              │
+│  │  SERVICE    │  (PaymentCompletedEvent,               │  │   SERVICE       │              │
+│  │             │   PaymentFailedEvent,                  │  │   (Consumer)    │              │
+│  │             │   PaymentProcessingEvent)               │  └─────────────────┘              │
+│  │             │◄─── gearify-order-created-queue ◄──────┘                                    │
+│  └─────────────┘                                                                              │
+│        │                                                                                      │
+│        │ gearify-payment-events (Fan-out)                                                     │
+│        │                                                                                      │
+│        ├────────────────────────────────────────────────────┐                                 │
+│        ▼                                                    ▼                                 │
+│  gearify-payment-completed-queue                notification-payment-events-queue             │
+│  (Order Service)                                (Notification Service)                        │
+│                                                                                               │
+│                                                 ┌─────────────────┐                          │
+│                                                 │  NOTIFICATION   │                          │
+│                                                 │  SERVICE        │                          │
+│                                                 │  (Consumer only)│                          │
+│                                                 └─────────────────┘                          │
+│                                                                                               │
+│                                                                                               │
+│  ┌─────────────┐      gearify-media-upload-events       ┌─────────────────┐                  │
+│  │   MEDIA     │ ─────────────────────────────────────> │  SNS Topic      │                  │
+│  │   SERVICE   │  (MediaUploadedEvent)                  └────────┬────────┘                  │
+│  │             │                                                 │                            │
+│  │             │◄── gearify-image-processing-queue ◄─────────────┘ (self-subscribe)          │
+│  │             │                                                                              │
+│  │             │      gearify-image-processing-completed                                      │
+│  │             │ ─────────────────────────────────────> ┌────────────────┐                    │
+│  │             │  (ImageProcessingCompletedEvent)       │  SNS Topic     │                    │
+│  └─────────────┘                                        └───────┬────────┘                    │
+│                                                                 │                             │
+│                                                                 ▼                             │
+│                                        gearify-product-thumbnail-update-queue                 │
+│                                                                 │                             │
+│                                                                 ▼                             │
+│  ┌─────────────┐       catalog-events-topic            ┌─────────────────┐                   │
+│  │  CATALOG    │ ─────────────────────────────────────>│  SNS Topic      │                   │
+│  │  SERVICE    │  (ProductCreatedEvent,                │                 │                   │
+│  │             │   ProductUpdatedEvent,                └────────┬────────┘                   │
+│  │             │   ProductDeletedEvent)                         │                            │
+│  │             │                                                ▼                            │
+│  │             │◄── gearify-product-thumbnail-          search-catalog-events-queue           │
+│  │             │    update-queue                                │                            │
+│  └─────────────┘                                                ▼                            │
+│                                                         ┌─────────────────┐                  │
+│                                                         │  SEARCH         │                  │
+│                                                         │  SERVICE        │                  │
+│                                                         │  (Consumer only)│                  │
+│                                                         └─────────────────┘                  │
+│                                                                                               │
+│  ┌─────────────┐      gearify-shipping-events           ┌────────────────┐                   │
+│  │  SHIPPING   │ ─────────────────────────────────────> │  SNS Topic     │                   │
+│  │  SERVICE    │  (ShipmentCreated,                     └───────┬────────┘                   │
+│  │             │   ShipmentStatusUpdated,                       │                            │
+│  │             │   ShipmentDelivered)                  ┌────────┴────────┐                   │
+│  └─────────────┘                                       ▼                ▼                    │
+│                                            gearify-shipping-   gearify-shipping-             │
+│                                            created-queue       status-queue                  │
+│                                                                                               │
+└──────────────────────────────────────────────────────────────────────────────────────────────┘
+```
 
-### Consumers
+---
 
-| Service | Message Type | Queue | Event Type Filter | Source |
-|---------|--------------|-------|-------------------|--------|
-| Order Service | `PaymentEventMessage` | `order-payment-events` | `PaymentCompletedEvent`, `PaymentFailedEvent` | Payment Service |
-| Payment Service | `OrderCreatedEventMessage` | `payment-order-created` | `OrderCreatedEvent` | Order Service |
-| Notification Service | `PaymentFailedEventMessage` | `notification-payment-failed` | `PaymentFailedEvent` | Payment Service |
-| Media Service | `ImageProcessingEventMessage` | `media-image-processing` | `MediaUploadedEvent` | Media Service (self) |
-| Catalog Service | `ImageProcessingCompletedEventMessage` | `catalog-thumbnail-updates` | `ImageProcessingCompletedEvent` | Media Service |
+### SNS Topics
+
+| # | SNS Topic Name | Topic ARN | Publisher Service | Events Published |
+|---|---------------|-----------|-------------------|------------------|
+| 1 | `gearify-order-events` | `arn:aws:sns:us-east-1:000000000000:gearify-order-events` | **Order Service** | `OrderCreatedEvent`, `OrderStatusChangedEvent` |
+| 2 | `gearify-payment-events` | `arn:aws:sns:us-east-1:000000000000:gearify-payment-events` | **Payment Service** | `PaymentCompletedEvent`, `PaymentFailedEvent`, `PaymentProcessingEvent` |
+| 3 | `gearify-media-upload-events` | `arn:aws:sns:us-east-1:000000000000:gearify-media-upload-events` | **Media Service** | `MediaUploadedEvent` |
+| 4 | `gearify-image-processing-completed` | `arn:aws:sns:us-east-1:000000000000:gearify-image-processing-completed` | **Media Service** | `ImageProcessingCompletedEvent` |
+| 5 | `catalog-events-topic` | `arn:aws:sns:us-east-1:000000000000:catalog-events-topic` | **Catalog Service** | `ProductCreatedEvent`, `ProductUpdatedEvent`, `ProductDeletedEvent` |
+| 6 | `gearify-shipping-events` | `arn:aws:sns:us-east-1:000000000000:gearify-shipping-events` | **Shipping Service** | `ShipmentCreated`, `ShipmentStatusUpdated`, `ShipmentDelivered` |
+| 7 | `gearify-inventory-events` | `arn:aws:sns:us-east-1:000000000000:gearify-inventory-events` | **Inventory Service** | *(No subscribers yet)* |
+| 8 | `gearify-checkout-events` | `arn:aws:sns:us-east-1:000000000000:gearify-checkout-events` | **Checkout Service** | *(No subscribers yet)* |
+
+---
+
+### SQS Queues & Subscriptions
+
+| # | SQS Queue Name | Queue URL | Subscribes To (SNS Topic) | Consumer Service | Event Type Filter | Message Type |
+|---|---------------|-----------|---------------------------|------------------|-------------------|--------------|
+| 1 | `gearify-order-created-queue` | `http://localstack:4566/000000000000/gearify-order-created-queue` | `gearify-order-events` | **Payment Service** | `OrderCreatedEvent` | `OrderCreatedEventMessage` |
+| 2 | `gearify-payment-completed-queue` | `http://localstack:4566/000000000000/gearify-payment-completed-queue` | `gearify-payment-events` | **Order Service** | `PaymentCompletedEvent`, `PaymentFailedEvent` | `PaymentEventMessage` |
+| 3 | `notification-payment-events-queue` | `http://localstack:4566/000000000000/notification-payment-events-queue` | `gearify-payment-events` | **Notification Service** | `PaymentFailedEvent` | `PaymentFailedEventMessage` |
+| 4 | `gearify-image-processing-queue` | `http://localstack:4566/000000000000/gearify-image-processing-queue` | `gearify-media-upload-events` | **Media Service** (self) | `MediaUploadedEvent` | `ImageProcessingEventMessage` |
+| 5 | `gearify-product-thumbnail-update-queue` | `http://localstack:4566/000000000000/gearify-product-thumbnail-update-queue` | `gearify-image-processing-completed` | **Catalog Service** | `ImageProcessingCompletedEvent` | `ImageProcessingCompletedEventMessage` |
+| 6 | `search-catalog-events-queue` | `http://localstack:4566/000000000000/search-catalog-events-queue` | `catalog-events-topic` | **Search Service** | `ProductCreatedEvent`, `ProductUpdatedEvent`, `ProductDeletedEvent` | `CatalogEventMessage` |
+| 7 | `gearify-shipping-created-queue` | `http://localstack:4566/000000000000/gearify-shipping-created-queue` | `gearify-shipping-events` | *(TBD)* | `ShipmentCreated` | *(TBD)* |
+| 8 | `gearify-shipping-status-queue` | `http://localstack:4566/000000000000/gearify-shipping-status-queue` | `gearify-shipping-events` | *(TBD)* | `ShipmentStatusUpdated`, `ShipmentDelivered` | *(TBD)* |
+
+---
+
+### Fan-Out: Topics With Multiple Subscribers
+
+The following topics deliver to more than one queue:
+
+**`gearify-payment-events`** (2 subscribers)
+
+```
+Payment Service
+      │
+      │ publishes PaymentCompletedEvent / PaymentFailedEvent
+      ▼
+┌──────────────────────────┐
+│ gearify-payment-events   │
+│ (SNS Topic)              │
+└─────────────┬────────────┘
+              │
+     ┌────────┴──────────────────────────┐
+     │                                   │
+     ▼                                   ▼
+┌──────────────────────────┐   ┌──────────────────────────────────┐
+│gearify-payment-completed │   │notification-payment-events-queue │
+│-queue                    │   │                                  │
+│                          │   │                                  │
+│ → Order Service          │   │ → Notification Service           │
+│   Filters: Completed,    │   │   Filters: FailedEvent only     │
+│            FailedEvent   │   │                                  │
+│   Handles: Update order  │   │   Handles: Send failure email   │
+│            status        │   │            to customer           │
+└──────────────────────────┘   └──────────────────────────────────┘
+```
+
+**`gearify-shipping-events`** (2 subscribers)
+
+```
+Shipping Service
+      │
+      │ publishes ShipmentCreated / StatusUpdated / Delivered
+      ▼
+┌──────────────────────────┐
+│ gearify-shipping-events  │
+│ (SNS Topic)              │
+└─────────────┬────────────┘
+              │
+     ┌────────┴──────────────────────────┐
+     │                                   │
+     ▼                                   ▼
+┌──────────────────────────┐   ┌──────────────────────────────────┐
+│gearify-shipping-created  │   │gearify-shipping-status-queue     │
+│-queue                    │   │                                  │
+│                          │   │                                  │
+│ Filters: ShipmentCreated │   │ Filters: ShipmentStatusUpdated,  │
+│                          │   │          ShipmentDelivered        │
+└──────────────────────────┘   └──────────────────────────────────┘
+```
+
+---
+
+### Dead Letter Queues (DLQs)
+
+| DLQ Name | Protects Queue | Max Receive Count |
+|----------|----------------|-------------------|
+| `gearify-checkout-events-dlq` | checkout event queues | 3 |
+| `gearify-order-events-dlq` | order event queues | 3 |
+| `gearify-payment-events-dlq` | payment event queues | 3 |
+| `gearify-shipping-events-dlq` | shipping event queues | 3 |
+
+---
+
+### Quick Reference: "Where does this event go?"
+
+| Event | Published By | SNS Topic | Consumed By (Queue) |
+|-------|-------------|-----------|---------------------|
+| `OrderCreatedEvent` | Order Service | `gearify-order-events` | Payment Service (`gearify-order-created-queue`) |
+| `OrderStatusChangedEvent` | Order Service | `gearify-order-events` | *(no consumer yet)* |
+| `PaymentCompletedEvent` | Payment Service | `gearify-payment-events` | Order Service (`gearify-payment-completed-queue`) |
+| `PaymentFailedEvent` | Payment Service | `gearify-payment-events` | Order Service (`gearify-payment-completed-queue`), Notification Service (`notification-payment-events-queue`) |
+| `PaymentProcessingEvent` | Payment Service | `gearify-payment-events` | *(no consumer yet)* |
+| `MediaUploadedEvent` | Media Service | `gearify-media-upload-events` | Media Service (`gearify-image-processing-queue`) |
+| `ImageProcessingCompletedEvent` | Media Service | `gearify-image-processing-completed` | Catalog Service (`gearify-product-thumbnail-update-queue`) |
+| `ProductCreatedEvent` | Catalog Service | `catalog-events-topic` | Search Service (`search-catalog-events-queue`) |
+| `ProductUpdatedEvent` | Catalog Service | `catalog-events-topic` | Search Service (`search-catalog-events-queue`) |
+| `ProductDeletedEvent` | Catalog Service | `catalog-events-topic` | Search Service (`search-catalog-events-queue`) |
+| `ShipmentCreated` | Shipping Service | `gearify-shipping-events` | *(TBD)* (`gearify-shipping-created-queue`) |
+| `ShipmentStatusUpdated` | Shipping Service | `gearify-shipping-events` | *(TBD)* (`gearify-shipping-status-queue`) |
+| `ShipmentDelivered` | Shipping Service | `gearify-shipping-events` | *(TBD)* (`gearify-shipping-status-queue`) |
 
 ---
 
