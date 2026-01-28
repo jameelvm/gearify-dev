@@ -307,7 +307,7 @@ services:
       - POSTGRES_CONNECTION_STRING=Host=postgres;Port=5432;Database=gearify_orders;Username=postgres;Password=postgres
       - SNS_ENDPOINT=${SNS_ENDPOINT}
       - SQS_ENDPOINT=${SQS_ENDPOINT}
-      - MessagingConfiguration__SQS__PaymentProcessedQueueUrl=http://localstack:4566/000000000000/gearify-payment-completed-queue
+      - MessagingConfiguration__SQS__PaymentEventsQueueUrl=http://localstack:4566/000000000000/order-payment-events-queue
       - REDIS_URL=${REDIS_URL}
       - SEQ_URL=${SEQ_URL}
       - OTLP_ENDPOINT=${OTLP_ENDPOINT}
@@ -426,6 +426,8 @@ services:
       - LocalStack__Config__LocalStackHost=localstack:4566
       - SES_ENDPOINT=http://localstack:4566
       - SQS_ENDPOINT=${SQS_ENDPOINT}
+      - MessagingConfiguration__SQS__PaymentEventsQueueUrl=http://localstack:4566/000000000000/notification-payment-events-queue
+      - AuthService__BaseUrl=http://host.docker.internal:5001
       - SMTP_HOST=mailhog
       - SMTP_PORT=1025
       - SEQ_URL=${SEQ_URL}

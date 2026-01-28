@@ -5,6 +5,8 @@ EXPOSE 5010
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
+# Copy shared kernel project
+COPY gearify-shared-kernel/Gearify.SharedKernel.csproj gearify-shared-kernel/
 # Copy notification service project
 COPY gearify-notification-svc/Gearify.NotificationService.csproj gearify-notification-svc/
 
@@ -12,6 +14,7 @@ COPY gearify-notification-svc/Gearify.NotificationService.csproj gearify-notific
 RUN dotnet restore gearify-notification-svc/Gearify.NotificationService.csproj
 
 # Copy all source files
+COPY gearify-shared-kernel/ gearify-shared-kernel/
 COPY gearify-notification-svc/ gearify-notification-svc/
 
 # Build the project

@@ -37,7 +37,9 @@ public class EmailTemplateService : IEmailTemplateService
             { "PasswordResetSuccess", "Password Reset Successful" },
             { "PasswordChanged", "Your Password Has Been Changed" },
             { "MfaEnabled", "Multi-Factor Authentication Enabled" },
-            { "MfaDisabled", "Multi-Factor Authentication Disabled" }
+            { "MfaDisabled", "Multi-Factor Authentication Disabled" },
+            { "PaymentFailed", "Payment Failed for Your Gearify Order" },
+            { "PaymentSucceeded", "Payment Successful - Your Gearify Order is Confirmed" }
         };
 
         // Ensure template directory exists

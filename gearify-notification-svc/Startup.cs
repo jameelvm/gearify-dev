@@ -1,6 +1,10 @@
 using System;
-using Amazon.Runtime;
+using Amazon.SQS;
+using Gearify.NotificationService.Infrastructure.Clients;
+using Gearify.NotificationService.Infrastructure.Configuration;
 using Gearify.NotificationService.Infrastructure.Email;
+using Gearify.NotificationService.Infrastructure.Messaging;
+using Gearify.SharedKernel.Messaging;
 using Gearify.SharedKernel.Swagger;
 using LocalStack.Client.Extensions;
 using Microsoft.AspNetCore.Http;
@@ -8,6 +12,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
 namespace Gearify.NotificationService;
@@ -58,6 +64,46 @@ public class Startup
         // Email Services
         services.AddScoped<IEmailTemplateService, EmailTemplateService>();
         services.AddScoped<IEmailService, SesEmailService>();
+
+        // Configuration
+        services.Configure<MessagingConfiguration>(Configuration.GetSection("MessagingConfiguration"));
+
+        // AWS SQS Client
+        services.AddSingleton<IAmazonSQS>(sp =>
+        {
+            var config = new AmazonSQSConfig
+            {
+                ServiceURL = Environment.GetEnvironmentVariable("SQS_ENDPOINT")
+                    ?? Environment.GetEnvironmentVariable("AWS_ENDPOINT_URL")
+                    ?? "http://localhost:4566",
+                AuthenticationRegion = "us-east-1"
+            };
+            return new AmazonSQSClient(config);
+        });
+
+        // Event Queue Consumer (Payment Events - Completed & Failed)
+        services.AddScoped<IEventQueue<PaymentEventMessage>>(sp =>
+        {
+            var sqsClient = sp.GetRequiredService<IAmazonSQS>();
+            var config = sp.GetRequiredService<IOptions<MessagingConfiguration>>();
+            var logger = sp.GetRequiredService<ILogger<SqsEventQueue<PaymentEventMessage>>>();
+
+            return new SqsEventQueue<PaymentEventMessage>(
+                sqsClient,
+                config.Value.SQS.PaymentEventsQueueUrl,
+                logger,
+                eventTypeFilters: ["PaymentCompletedEvent", "PaymentFailedEvent"],
+                eventTypeEnricher: (msg, type) => msg with { EventType = type });
+        });
+        services.AddScoped<IEventHandler<PaymentEventMessage>, PaymentEventHandler>();
+        services.AddHostedService<EventQueueProcessor<PaymentEventMessage>>();
+
+        // Auth Service Client
+        services.AddHttpClient<IAuthServiceClient, AuthServiceClient>(client =>
+        {
+            var authServiceUrl = Configuration["AuthService:BaseUrl"] ?? "http://localhost:5001";
+            client.BaseAddress = new Uri(authServiceUrl);
+        });
 
         // Swagger
         services.AddSwaggerGen(c =>

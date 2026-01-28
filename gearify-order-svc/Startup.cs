@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
 namespace Gearify.OrderService;
@@ -90,7 +92,19 @@ public class Startup
         });
 
         // Messaging Services (for receiving payment events)
-        services.AddScoped<IEventQueue<PaymentEventMessage>, SqsPaymentEventQueue>();
+        services.AddScoped<IEventQueue<PaymentEventMessage>>(sp =>
+        {
+            var sqsClient = sp.GetRequiredService<IAmazonSQS>();
+            var config = sp.GetRequiredService<IOptions<MessagingConfiguration>>();
+            var logger = sp.GetRequiredService<ILogger<SqsEventQueue<PaymentEventMessage>>>();
+
+            return new SqsEventQueue<PaymentEventMessage>(
+                sqsClient,
+                config.Value.SQS.PaymentEventsQueueUrl,
+                logger,
+                eventTypeFilters: ["PaymentCompletedEvent", "PaymentFailedEvent"],
+                eventTypeEnricher: (msg, type) => msg with { EventType = type });
+        });
         services.AddScoped<IEventHandler<PaymentEventMessage>, PaymentEventHandler>();
 
         // Background services

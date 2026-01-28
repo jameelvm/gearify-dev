@@ -1,5 +1,6 @@
 using Gearify.AuthService.API.DTOs;
 using Gearify.AuthService.Application.Commands;
+using Gearify.AuthService.Application.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,39 @@ public class UserController : ControllerBase
     {
         _mediator = mediator;
         _logger = logger;
+    }
+
+    /// <summary>
+    /// Get user by ID (internal service-to-service endpoint)
+    /// </summary>
+    [HttpGet("{userId}")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetUserById(string userId)
+    {
+        try
+        {
+            var user = await _mediator.Send(new GetUserByIdQuery(userId));
+            if (user == null)
+            {
+                return NotFound(new { error = "User not found" });
+            }
+
+            return Ok(new
+            {
+                id = user.Id,
+                email = user.Email,
+                firstName = user.FirstName,
+                lastName = user.LastName,
+                phone = user.Phone
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting user {UserId}", userId);
+            return StatusCode(500, new { error = "Failed to get user" });
+        }
     }
 
     /// <summary>

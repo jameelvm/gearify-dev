@@ -32,7 +32,7 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
 
         try
         {
-            var tenantId = _tenantContext.TenantId;
+            var tenantId = request.TenantIdOverride ?? _tenantContext.TenantId;
 
             var order = await unitOfWork.Orders.GetByIdAsync(request.OrderId, tenantId, cancellationToken);
             if (order == null)
@@ -96,6 +96,7 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
         return (from, to) switch
         {
             (OrderStatus.Pending, OrderStatus.PaymentProcessing) => true,
+            (OrderStatus.Pending, OrderStatus.PaymentFailed) => true,
             (OrderStatus.Pending, OrderStatus.Cancelled) => true,
             (OrderStatus.PaymentProcessing, OrderStatus.Paid) => true,
             (OrderStatus.PaymentProcessing, OrderStatus.PaymentFailed) => true,

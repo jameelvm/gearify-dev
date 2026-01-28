@@ -15,9 +15,10 @@ public class SnsConfiguration
 public class SqsConfiguration
 {
     /// <summary>
-    /// Queue URL for receiving payment result events from Payment Service
+    /// Queue URL for receiving payment events from Payment Service
+    /// (PaymentCompletedEvent, PaymentFailedEvent)
     /// </summary>
-    public string PaymentProcessedQueueUrl { get; set; } = string.Empty;
+    public string PaymentEventsQueueUrl { get; set; } = string.Empty;
 
     /// <summary>
     /// Polling interval in seconds

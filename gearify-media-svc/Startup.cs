@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
 namespace Gearify.MediaService;
@@ -125,7 +127,19 @@ public class Startup
 
         // Messaging Services (for async image processing)
         services.AddScoped<ISnsEventPublisher, SnsEventPublisher>();
-        services.AddScoped<IEventQueue<ImageProcessingEventMessage>, SqsImageProcessingQueue>();
+        services.AddScoped<IEventQueue<ImageProcessingEventMessage>>(sp =>
+        {
+            var sqsClient = sp.GetRequiredService<IAmazonSQS>();
+            var config = sp.GetRequiredService<IOptions<Infrastructure.Configuration.MessagingConfiguration>>();
+            var logger = sp.GetRequiredService<ILogger<SqsEventQueue<ImageProcessingEventMessage>>>();
+
+            return new SqsEventQueue<ImageProcessingEventMessage>(
+                sqsClient,
+                config.Value.SQS.ImageProcessingQueueUrl,
+                logger,
+                eventTypeFilters: ["MediaUploadedEvent"],
+                eventTypeEnricher: (msg, type) => msg with { EventType = type });
+        });
         services.AddScoped<IEventHandler<ImageProcessingEventMessage>, ImageProcessingEventHandler>();
 
         // Background Services

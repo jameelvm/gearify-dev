@@ -9,7 +9,8 @@ public record UpdateOrderStatusCommand(
     Guid OrderId,
     OrderStatus NewStatus,
     string? Reason = null,
-    string? ChangedBy = null
+    string? ChangedBy = null,
+    string? TenantIdOverride = null
 ) : IRequest<UpdateOrderStatusResult>;
 
 public record UpdateOrderStatusResult(

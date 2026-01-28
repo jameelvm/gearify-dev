@@ -22,6 +22,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -171,7 +173,19 @@ public class Startup
         services.AddHttpClient<IMediaServiceClient, Gearify.CatalogService.Infrastructure.Clients.MediaServiceClient>();
 
         // Messaging Services (for receiving image processing events)
-        services.AddScoped<IEventQueue<ImageProcessingCompletedEventMessage>, SqsProductThumbnailUpdateQueue>();
+        services.AddScoped<IEventQueue<ImageProcessingCompletedEventMessage>>(sp =>
+        {
+            var sqsClient = sp.GetRequiredService<IAmazonSQS>();
+            var config = sp.GetRequiredService<IOptions<Infrastructure.Configuration.MessagingConfiguration>>();
+            var logger = sp.GetRequiredService<ILogger<SqsEventQueue<ImageProcessingCompletedEventMessage>>>();
+
+            return new SqsEventQueue<ImageProcessingCompletedEventMessage>(
+                sqsClient,
+                config.Value.SQS.ProductThumbnailUpdateQueueUrl,
+                logger,
+                eventTypeFilters: ["ImageProcessingCompletedEvent"],
+                eventTypeEnricher: (msg, type) => msg with { EventType = type });
+        });
         services.AddScoped<IEventHandler<ImageProcessingCompletedEventMessage>, ImageProcessingCompletedEventHandler>();
 
         // Background Services

@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Gearify.OrderService.Application.Commands;
+using Gearify.OrderService.Domain.Entities;
 using Gearify.OrderService.Infrastructure.Messaging.Events.Inbound;
 using Gearify.SharedKernel.Messaging;
 using MediatR;
@@ -70,22 +71,23 @@ public class PaymentEventHandler : IEventHandler<PaymentEventMessage>
         PaymentEventMessage evt,
         CancellationToken cancellationToken)
     {
-        var command = new CancelOrderCommand(
+        var command = new UpdateOrderStatusCommand(
             evt.OrderId,
-            evt.TenantId,
+            OrderStatus.PaymentFailed,
             $"Payment failed: {evt.ErrorMessage}",
-            "System");
+            "System",
+            evt.TenantId);
 
         var result = await _mediator.Send(command, cancellationToken);
 
         if (result.Success)
         {
-            _logger.LogInformation("Order {OrderId} cancelled due to payment failure: {Error}",
+            _logger.LogInformation("Order {OrderId} marked as PaymentFailed: {Error}",
                 evt.OrderId, evt.ErrorMessage);
         }
         else
         {
-            _logger.LogWarning("Failed to cancel order {OrderId}: {Error}",
+            _logger.LogWarning("Failed to update order {OrderId} status to PaymentFailed: {Error}",
                 evt.OrderId, result.ErrorMessage);
         }
 

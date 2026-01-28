@@ -453,9 +453,9 @@ awslocal sqs create-queue \
   --region us-east-1 \
   2>/dev/null || echo "    Queue gearify-order-created-queue already exists"
 
-# Payment completed queue (order-svc and shipping-svc listen)
+# Order Service payment events queue (order-svc listens for payment outcomes)
 awslocal sqs create-queue \
-  --queue-name gearify-payment-completed-queue \
+  --queue-name order-payment-events-queue \
   --attributes "{
     \"VisibilityTimeout\":\"300\",
     \"MessageRetentionPeriod\":\"1209600\",
@@ -463,7 +463,7 @@ awslocal sqs create-queue \
     \"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$PAYMENT_DLQ_ARN\\\",\\\"maxReceiveCount\\\":3}\"
   }" \
   --region us-east-1 \
-  2>/dev/null || echo "    Queue gearify-payment-completed-queue already exists"
+  2>/dev/null || echo "    Queue order-payment-events-queue already exists"
 
 # Payment failed queue (order-svc listens for saga rollback)
 awslocal sqs create-queue \
@@ -500,6 +500,18 @@ awslocal sqs create-queue \
   }" \
   --region us-east-1 \
   2>/dev/null || echo "    Queue gearify-shipping-status-queue already exists"
+
+# Notification Service payment events queue (notification-svc listens for payment emails)
+awslocal sqs create-queue \
+  --queue-name notification-payment-events-queue \
+  --attributes "{
+    \"VisibilityTimeout\":\"300\",
+    \"MessageRetentionPeriod\":\"1209600\",
+    \"ReceiveMessageWaitTimeSeconds\":\"20\",
+    \"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$PAYMENT_DLQ_ARN\\\",\\\"maxReceiveCount\\\":3}\"
+  }" \
+  --region us-east-1 \
+  2>/dev/null || echo "    Queue notification-payment-events-queue already exists"
 
 # Search Service queue for catalog events
 echo "  - Creating queue: search-catalog-events-queue"
@@ -607,12 +619,21 @@ if [ ! -z "$ORDER_TOPIC_ARN" ]; then
   fi
 fi
 
-# Subscribe payment-completed-queue to payment-events topic (order-svc listens)
+# Subscribe order-payment-events-queue to payment-events topic (order-svc listens)
 if [ ! -z "$PAYMENT_TOPIC_ARN" ]; then
-  PAYMENT_COMPLETED_QUEUE_ARN=$(awslocal sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/gearify-payment-completed-queue --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn' 2>/dev/null || echo "")
-  if [ ! -z "$PAYMENT_COMPLETED_QUEUE_ARN" ]; then
-    awslocal sns subscribe --topic-arn $PAYMENT_TOPIC_ARN --protocol sqs --notification-endpoint $PAYMENT_COMPLETED_QUEUE_ARN --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
-    echo "  - Subscribed gearify-payment-completed-queue to gearify-payment-events"
+  ORDER_PAYMENT_QUEUE_ARN=$(awslocal sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/order-payment-events-queue --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn' 2>/dev/null || echo "")
+  if [ ! -z "$ORDER_PAYMENT_QUEUE_ARN" ]; then
+    awslocal sns subscribe --topic-arn $PAYMENT_TOPIC_ARN --protocol sqs --notification-endpoint $ORDER_PAYMENT_QUEUE_ARN --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
+    echo "  - Subscribed order-payment-events-queue to gearify-payment-events"
+  fi
+fi
+
+# Subscribe notification-payment-events-queue to payment-events topic (notification-svc listens)
+if [ ! -z "$PAYMENT_TOPIC_ARN" ]; then
+  NOTIFICATION_PAYMENT_QUEUE_ARN=$(awslocal sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/notification-payment-events-queue --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn' 2>/dev/null || echo "")
+  if [ ! -z "$NOTIFICATION_PAYMENT_QUEUE_ARN" ]; then
+    awslocal sns subscribe --topic-arn $PAYMENT_TOPIC_ARN --protocol sqs --notification-endpoint $NOTIFICATION_PAYMENT_QUEUE_ARN --attributes '{"FilterPolicy":"{\"eventType\":[\"PaymentCompletedEvent\",\"PaymentFailedEvent\"]}"}' --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
+    echo "  - Subscribed notification-payment-events-queue to gearify-payment-events (PaymentCompleted + PaymentFailed filter)"
   fi
 fi
 
