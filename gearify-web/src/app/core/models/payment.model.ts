@@ -51,16 +51,6 @@ export interface PaymentListDto {
 }
 
 // Request models
-export interface ProcessPaymentRequest {
-  orderId: string;
-  userId: string;
-  amount: number;
-  currency: string;
-  provider: string;
-  paymentMethodToken: string;
-  idempotencyKey: string;
-}
-
 export interface ProcessRefundRequest {
   amount: number;
   reason: string;
@@ -75,11 +65,6 @@ export enum PaymentStatus {
   Refunded = 'Refunded',
   PartiallyRefunded = 'PartiallyRefunded',
   Cancelled = 'Cancelled'
-}
-
-export enum PaymentProviderType {
-  Stripe = 'Stripe',
-  PayPal = 'PayPal'
 }
 
 export enum RefundStatus {

@@ -16,9 +16,9 @@ public record PaymentEventMessage
     public string UserId { get; init; } = string.Empty;
     public decimal Amount { get; init; }
     public string Currency { get; init; } = "USD";
-    public string Provider { get; init; } = string.Empty;
+    public int Provider { get; init; }
     public string ProviderTransactionId { get; init; } = string.Empty;
-    public string? ErrorCode { get; init; }
+    public int? ErrorCode { get; init; }
     public string? ErrorMessage { get; init; }
     public DateTime OccurredAt { get; init; }
 }

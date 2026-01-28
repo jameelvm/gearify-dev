@@ -632,7 +632,7 @@ fi
 if [ ! -z "$PAYMENT_TOPIC_ARN" ]; then
   NOTIFICATION_PAYMENT_QUEUE_ARN=$(awslocal sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/notification-payment-events-queue --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn' 2>/dev/null || echo "")
   if [ ! -z "$NOTIFICATION_PAYMENT_QUEUE_ARN" ]; then
-    awslocal sns subscribe --topic-arn $PAYMENT_TOPIC_ARN --protocol sqs --notification-endpoint $NOTIFICATION_PAYMENT_QUEUE_ARN --attributes '{"FilterPolicy":"{\"eventType\":[\"PaymentCompletedEvent\",\"PaymentFailedEvent\"]}"}' --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
+    awslocal sns subscribe --topic-arn $PAYMENT_TOPIC_ARN --protocol sqs --notification-endpoint $NOTIFICATION_PAYMENT_QUEUE_ARN --attributes '{"FilterPolicy":"{\"EventType\":[\"PaymentCompletedEvent\",\"PaymentFailedEvent\"]}"}' --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
     echo "  - Subscribed notification-payment-events-queue to gearify-payment-events (PaymentCompleted + PaymentFailed filter)"
   fi
 fi
@@ -641,13 +641,13 @@ fi
 if [ ! -z "$SHIPPING_TOPIC_ARN" ]; then
   SHIPPING_CREATED_QUEUE_ARN=$(awslocal sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/gearify-shipping-created-queue --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn' 2>/dev/null || echo "")
   if [ ! -z "$SHIPPING_CREATED_QUEUE_ARN" ]; then
-    awslocal sns subscribe --topic-arn $SHIPPING_TOPIC_ARN --protocol sqs --notification-endpoint $SHIPPING_CREATED_QUEUE_ARN --attributes '{"FilterPolicy":"{\"eventType\":[\"ShipmentCreated\"]}"}' --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
+    awslocal sns subscribe --topic-arn $SHIPPING_TOPIC_ARN --protocol sqs --notification-endpoint $SHIPPING_CREATED_QUEUE_ARN --attributes '{"FilterPolicy":"{\"EventType\":[\"ShipmentCreated\"]}"}' --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
     echo "  - Subscribed gearify-shipping-created-queue to gearify-shipping-events (ShipmentCreated filter)"
   fi
 
   SHIPPING_STATUS_QUEUE_ARN=$(awslocal sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/gearify-shipping-status-queue --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn' 2>/dev/null || echo "")
   if [ ! -z "$SHIPPING_STATUS_QUEUE_ARN" ]; then
-    awslocal sns subscribe --topic-arn $SHIPPING_TOPIC_ARN --protocol sqs --notification-endpoint $SHIPPING_STATUS_QUEUE_ARN --attributes '{"FilterPolicy":"{\"eventType\":[\"ShipmentStatusUpdated\",\"ShipmentDelivered\"]}"}' --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
+    awslocal sns subscribe --topic-arn $SHIPPING_TOPIC_ARN --protocol sqs --notification-endpoint $SHIPPING_STATUS_QUEUE_ARN --attributes '{"FilterPolicy":"{\"EventType\":[\"ShipmentStatusUpdated\",\"ShipmentDelivered\"]}"}' --region us-east-1 2>/dev/null || echo "  - Failed to subscribe queue to topic"
     echo "  - Subscribed gearify-shipping-status-queue to gearify-shipping-events (status updates filter)"
   fi
 fi

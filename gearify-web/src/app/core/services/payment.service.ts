@@ -5,7 +5,6 @@ import { API_CONFIG } from '@shared/constants/api.constants';
 import {
   PaymentDto,
   PaymentListDto,
-  ProcessPaymentRequest,
   ProcessRefundRequest,
   RefundDto
 } from '@core/models/payment.model';
@@ -21,35 +20,11 @@ export class PaymentService {
   private currentPaymentSignal = signal<PaymentDto | null>(null);
   private loadingSignal = signal(false);
   private errorSignal = signal<string | null>(null);
-  private processingSignal = signal(false);
 
   // Read-only access
   readonly currentPayment = this.currentPaymentSignal.asReadonly();
   readonly loading = this.loadingSignal.asReadonly();
   readonly error = this.errorSignal.asReadonly();
-  readonly processing = this.processingSignal.asReadonly();
-
-  /**
-   * Process a payment
-   */
-  processPayment(request: ProcessPaymentRequest): Observable<PaymentDto> {
-    this.processingSignal.set(true);
-    this.errorSignal.set(null);
-
-    return this.http.post<PaymentDto>(API_CONFIG.ENDPOINTS.PAYMENTS, request).pipe(
-      tap({
-        next: (payment) => {
-          this.currentPaymentSignal.set(payment);
-          this.processingSignal.set(false);
-        },
-        error: (err) => {
-          const errorDetail = err.error?.detail || err.error?.title || err.message || 'Payment processing failed';
-          this.errorSignal.set(errorDetail);
-          this.processingSignal.set(false);
-        }
-      })
-    );
-  }
 
   /**
    * Get payment by ID
@@ -119,30 +94,22 @@ export class PaymentService {
    * Process a refund
    */
   processRefund(paymentId: string, request: ProcessRefundRequest): Observable<RefundDto> {
-    this.processingSignal.set(true);
+    this.loadingSignal.set(true);
     this.errorSignal.set(null);
 
     return this.http.post<RefundDto>(API_CONFIG.ENDPOINTS.REFUND_PAYMENT(paymentId), request).pipe(
       tap({
         next: () => {
-          this.processingSignal.set(false);
+          this.loadingSignal.set(false);
           // Reload payment to get updated refund list
           this.getPaymentById(paymentId).subscribe();
         },
         error: (err) => {
           this.errorSignal.set(err.error?.detail || 'Refund processing failed');
-          this.processingSignal.set(false);
+          this.loadingSignal.set(false);
         }
       })
     );
-  }
-
-  /**
-   * Generate an idempotency key for a payment
-   * Uses order ID + timestamp to ensure uniqueness
-   */
-  generateIdempotencyKey(orderId: string): string {
-    return `${orderId}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
   }
 
   /**

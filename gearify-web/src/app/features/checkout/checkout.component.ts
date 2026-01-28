@@ -1,7 +1,6 @@
-import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { Subject, takeUntil, interval, switchMap, filter, take, tap } from 'rxjs';
 import { CheckoutStepsComponent, CheckoutStep } from './components/checkout-steps/checkout-steps.component';
 import { ShippingAddressComponent, ShippingAddress } from './components/shipping-address/shipping-address.component';
 import { PaymentMethodComponent, PaymentDetails } from './components/payment-method/payment-method.component';
@@ -31,12 +30,11 @@ import {
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.scss'
 })
-export class CheckoutComponent implements OnInit, OnDestroy {
+export class CheckoutComponent implements OnInit {
   private router = inject(Router);
   private cartService = inject(CartService);
   private orderService = inject(OrderService);
   private authService = inject(AuthService);
-  private destroy$ = new Subject<void>();
 
   currentStep = signal<CheckoutStep>('shipping');
   shippingAddress = signal<ShippingAddress | null>(null);
@@ -45,16 +43,11 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   orderId = signal<string | null>(null);
   orderNumber = signal<string | null>(null);
   createdOrder = signal<OrderDto | null>(null);
-  useSameAsBilling = signal(true); // Use shipping address as billing by default
+  useSameAsBilling = signal(true);
 
   // Loading and error states
   isProcessing = signal(false);
-  processingStatus = signal<string>('Creating order...');
   errorMessage = signal<string | null>(null);
-
-  // Polling config
-  private readonly POLL_INTERVAL = 2000; // 2 seconds
-  private readonly MAX_POLL_ATTEMPTS = 30; // 1 minute max wait
 
   cart = this.cartService.cart;
   cartItems = computed(() => this.cart()?.items ?? []);
@@ -88,11 +81,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     this.currentStep.set('review');
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
   onPlaceOrder(): void {
     const address = this.shippingAddress();
     const payment = this.paymentDetails();
@@ -104,89 +92,27 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     }
 
     this.isProcessing.set(true);
-    this.processingStatus.set('Creating order...');
     this.errorMessage.set(null);
 
-    // Build the order request
     const orderRequest = this.buildOrderRequest(address, items);
 
-    // Create the order - payment will be processed automatically via event-driven saga
+    // Create the order — payment is processed automatically via backend event-driven flow
     this.orderService.createOrder(orderRequest).subscribe({
       next: (order) => {
         this.createdOrder.set(order);
         this.orderId.set(order.id);
         this.orderNumber.set(order.orderNumber);
 
-        this.processingStatus.set('Processing payment...');
-
-        // Poll for order status until payment is complete
-        this.pollOrderStatus(order.id);
+        // Clear cart and show confirmation
+        this.cartService.clearCart().subscribe();
+        this.orderPlaced.set(true);
+        this.isProcessing.set(false);
       },
       error: (err) => {
         this.isProcessing.set(false);
         this.errorMessage.set(err.error?.detail || 'Failed to create order. Please try again.');
       }
     });
-  }
-
-  private pollOrderStatus(orderId: string): void {
-    let attempts = 0;
-
-    interval(this.POLL_INTERVAL).pipe(
-      takeUntil(this.destroy$),
-      take(this.MAX_POLL_ATTEMPTS),
-      tap(() => {
-        attempts++;
-        if (attempts > 5) {
-          this.processingStatus.set('Verifying payment...');
-        }
-      }),
-      switchMap(() => this.orderService.getOrder(orderId)),
-      filter(order => {
-        // Update the order in state
-        this.createdOrder.set(order);
-
-        // Check if order has reached a terminal state
-        const terminalStatuses = ['Paid', 'PaymentFailed', 'Cancelled'];
-        return terminalStatuses.includes(order.status);
-      }),
-      take(1)
-    ).subscribe({
-      next: (order) => {
-        this.handleOrderStatusUpdate(order);
-      },
-      error: (err) => {
-        console.error('Error polling order status:', err);
-        // On error, still consider order created successfully
-        // User can check order details later
-        this.cartService.clearCart().subscribe();
-        this.orderPlaced.set(true);
-        this.isProcessing.set(false);
-      },
-      complete: () => {
-        // If polling completes without finding terminal status, show success anyway
-        if (this.isProcessing()) {
-          this.cartService.clearCart().subscribe();
-          this.orderPlaced.set(true);
-          this.isProcessing.set(false);
-        }
-      }
-    });
-  }
-
-  private handleOrderStatusUpdate(order: OrderDto): void {
-    this.createdOrder.set(order);
-
-    if (order.status === 'Paid') {
-      // Payment successful
-      this.cartService.clearCart().subscribe();
-      this.orderPlaced.set(true);
-      this.isProcessing.set(false);
-    } else if (order.status === 'PaymentFailed' || order.status === 'Cancelled') {
-      // Payment failed
-      this.isProcessing.set(false);
-      this.errorMessage.set('Payment failed. Please try again or contact support.');
-    }
   }
 
   private buildOrderRequest(address: ShippingAddress, items: any[]): CreateOrderRequest {

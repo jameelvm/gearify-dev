@@ -90,7 +90,7 @@
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
   border-radius: 10px;
   padding: 16px 24px;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 
   p {
     margin: 0;
@@ -103,6 +103,12 @@
       color: #1f2937;
     }
   }
+}
+
+.status-hint {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 32px;
 }
 
 .success-actions {

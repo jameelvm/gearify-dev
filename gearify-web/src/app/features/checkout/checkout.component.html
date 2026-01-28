@@ -7,17 +7,20 @@
           <polyline points="22 4 12 14.01 9 11.01"></polyline>
         </svg>
       </div>
-      <h1>Order Placed Successfully!</h1>
+      <h1>Your Order is Being Processed</h1>
       <p class="order-number">Order Number: <strong>{{ orderNumber() }}</strong></p>
       <p class="confirmation-message">
-        Thank you for your purchase! A confirmation email has been sent to
-        <strong>{{ shippingAddress()?.email }}</strong>
+        Thank you for your purchase! Your payment is being processed and you will
+        receive a confirmation email at <strong>{{ shippingAddress()?.email }}</strong> once completed.
       </p>
       <div class="order-summary-brief">
         <p>Total: <strong>{{ createdOrder()?.totalAmount | currency }}</strong></p>
       </div>
+      <p class="status-hint">
+        You can check your order and payment status anytime from your account.
+      </p>
       <div class="success-actions">
-        <button class="btn-primary" (click)="onViewOrder()">View Order Details</button>
+        <button class="btn-primary" (click)="onViewOrder()">View Order Status</button>
         <button class="btn-secondary" (click)="onContinueShopping()">Continue Shopping</button>
       </div>
     </div>
@@ -46,7 +49,6 @@
                 [paymentDetails]="paymentDetails()"
                 [total]="orderTotal()"
                 [isProcessing]="isProcessing()"
-                [processingStatus]="processingStatus()"
                 [errorMessage]="errorMessage()"
                 [useSameAsBilling]="useSameAsBilling()"
                 (placeOrder)="onPlaceOrder()"
