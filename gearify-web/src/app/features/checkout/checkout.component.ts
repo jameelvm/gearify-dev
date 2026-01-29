@@ -185,7 +185,7 @@ export class CheckoutComponent implements OnInit {
   onViewOrder(): void {
     const id = this.orderId();
     if (id) {
-      this.router.navigate(['/orders', id]);
+      this.router.navigate(['/account/orders', id]);
     }
   }
 
