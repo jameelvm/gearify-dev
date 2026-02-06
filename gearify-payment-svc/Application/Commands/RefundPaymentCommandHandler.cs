@@ -3,9 +3,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Gearify.PaymentService.Application.Mappers;
 using Gearify.PaymentService.Domain.Entities;
+using Gearify.PaymentService.Events;
 using Gearify.PaymentService.Infrastructure.PaymentProviders;
 using Gearify.PaymentService.Infrastructure.UnitOfWork;
-using Gearify.SharedKernel.Multitenancy;
+using Gearify.SharedKernel.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -16,20 +17,20 @@ public class RefundPaymentCommandHandler : IRequestHandler<RefundPaymentCommand,
     private readonly IUnitOfWorkFactory _unitOfWorkFactory;
     private readonly IStripePaymentProvider _stripeProvider;
     private readonly IPayPalPaymentProvider _paypalProvider;
-    private readonly ITenantContext _tenantContext;
+    private readonly ISnsEventPublisher _eventPublisher;
     private readonly ILogger<RefundPaymentCommandHandler> _logger;
 
     public RefundPaymentCommandHandler(
         IUnitOfWorkFactory unitOfWorkFactory,
         IStripePaymentProvider stripeProvider,
         IPayPalPaymentProvider paypalProvider,
-        ITenantContext tenantContext,
+        ISnsEventPublisher eventPublisher,
         ILogger<RefundPaymentCommandHandler> logger)
     {
         _unitOfWorkFactory = unitOfWorkFactory;
         _stripeProvider = stripeProvider;
         _paypalProvider = paypalProvider;
-        _tenantContext = tenantContext;
+        _eventPublisher = eventPublisher;
         _logger = logger;
     }
 
@@ -39,16 +40,18 @@ public class RefundPaymentCommandHandler : IRequestHandler<RefundPaymentCommand,
 
         try
         {
-            var tenantId = _tenantContext.TenantId;
-
             var transaction = await unitOfWork.Payments.GetTransactionByIdAsync(request.TransactionId);
             if (transaction == null)
             {
                 return new RefundPaymentResult(false, null, "Transaction not found");
             }
 
-            if (transaction.TenantId != tenantId)
+            // Verify tenant matches (use request.TenantId for event-driven context)
+            if (transaction.TenantId != request.TenantId)
             {
+                _logger.LogWarning(
+                    "Tenant mismatch for refund: request TenantId={RequestTenantId}, transaction TenantId={TransactionTenantId}",
+                    request.TenantId, transaction.TenantId);
                 return new RefundPaymentResult(false, null, "Transaction not found");
             }
 
@@ -71,7 +74,7 @@ public class RefundPaymentCommandHandler : IRequestHandler<RefundPaymentCommand,
             var refund = new Refund
             {
                 TransactionId = request.TransactionId,
-                TenantId = tenantId,
+                TenantId = request.TenantId,
                 Amount = request.Amount,
                 Currency = transaction.Currency,
                 Status = RefundStatus.Processing,
@@ -125,7 +128,7 @@ public class RefundPaymentCommandHandler : IRequestHandler<RefundPaymentCommand,
                 await unitOfWork.Payments.CreateLedgerEntryAsync(new PaymentLedgerEntry
                 {
                     TransactionId = transaction.Id,
-                    TenantId = tenantId,
+                    TenantId = request.TenantId,
                     AccountType = "debit",
                     Amount = request.Amount,
                     Currency = transaction.Currency,
@@ -138,6 +141,13 @@ public class RefundPaymentCommandHandler : IRequestHandler<RefundPaymentCommand,
             _logger.LogInformation("Refund processed: {RefundId}, Status: {Status}",
                 refund.Id, refund.Status);
 
+            // Publish RefundCompletedEvent on success
+            if (success)
+            {
+                await PublishRefundCompletedEventAsync(
+                    refund, transaction, request, cancellationToken);
+            }
+
             return new RefundPaymentResult(success, PaymentMapper.ToRefundDto(refund));
         }
         catch (Exception ex)
@@ -145,5 +155,41 @@ public class RefundPaymentCommandHandler : IRequestHandler<RefundPaymentCommand,
             _logger.LogError(ex, "Failed to process refund for transaction {TransactionId}", request.TransactionId);
             return new RefundPaymentResult(false, null, ex.Message);
         }
+    }
+
+    /// <summary>
+    /// Publishes RefundCompletedEvent to notify Order Service and Notification Service.
+    /// </summary>
+    private async Task PublishRefundCompletedEventAsync(
+        Refund refund,
+        PaymentTransaction transaction,
+        RefundPaymentCommand request,
+        CancellationToken cancellationToken)
+    {
+        // Parse OrderId - transaction stores it as string but event needs Guid
+        var orderId = request.OrderId ??
+            (Guid.TryParse(transaction.OrderId, out var parsedOrderId) ? parsedOrderId : Guid.Empty);
+
+        var evt = new RefundCompletedEvent
+        {
+            TenantId = transaction.TenantId,
+            RefundId = refund.Id,
+            OriginalTransactionId = transaction.Id,
+            OrderId = orderId,
+            OrderNumber = request.OrderNumber ?? "",
+            UserId = transaction.UserId,
+            RefundAmount = refund.Amount,
+            OriginalAmount = transaction.Amount,
+            Currency = refund.Currency,
+            Reason = refund.Reason,
+            ProviderRefundId = refund.ProviderRefundId,
+            OccurredAt = DateTime.UtcNow
+        };
+
+        await _eventPublisher.PublishAsync(evt, cancellationToken);
+
+        _logger.LogInformation(
+            "Published RefundCompletedEvent. RefundId: {RefundId}, OrderId: {OrderId}, Amount: {Amount} {Currency}",
+            evt.RefundId, evt.OrderId, evt.RefundAmount, evt.Currency);
     }
 }

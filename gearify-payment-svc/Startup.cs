@@ -6,6 +6,7 @@ using Gearify.PaymentService.Infrastructure.Data;
 using Gearify.PaymentService.Infrastructure.Messaging;
 using Gearify.PaymentService.Infrastructure.PaymentProviders;
 using Gearify.PaymentService.Infrastructure.Messaging.Events.Inbound;
+using Gearify.PaymentService.Infrastructure.Messaging.Handlers;
 using Gearify.SharedKernel.Events;
 using Gearify.SharedKernel.Messaging;
 using Gearify.PaymentService.Infrastructure.Repositories;
@@ -118,12 +119,18 @@ public class Startup
             return new AmazonSQSClient(config);
         });
 
-        // Messaging Services (for receiving order events)
-        services.AddScoped<IEventQueue<OrderCreatedEventMessage>, SqsOrderEventQueue>();
-        services.AddScoped<IEventHandler<OrderCreatedEventMessage>, OrderCreatedEventHandler>();
+        // Event Queue Processors - One queue per event type
+        // Pattern: SNS filters events to correct queue, handler processes single event type
+        var messagingConfig = Configuration.GetSection("MessagingConfiguration").Get<MessagingConfiguration>()
+            ?? new MessagingConfiguration();
 
-        // Background services
-        services.AddHostedService<EventQueueProcessor<OrderCreatedEventMessage>>();
+        // OrderCreatedEvent -> Process Payment
+        services.AddEventQueueProcessor<OrderCreatedEvent, OrderCreatedEventHandler>(
+            messagingConfig.SQS.OrderCreatedQueueUrl);
+
+        // OrderCancelledEvent -> Process Refund (if paid)
+        services.AddEventQueueProcessor<OrderCancelledEvent, OrderCancelledEventHandler>(
+            messagingConfig.SQS.OrderCancelledQueueUrl);
 
         // MediatR
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly));

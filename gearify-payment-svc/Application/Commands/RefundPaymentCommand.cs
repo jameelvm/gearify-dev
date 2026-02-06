@@ -6,8 +6,11 @@ namespace Gearify.PaymentService.Application.Commands;
 
 public record RefundPaymentCommand(
     Guid TransactionId,
+    string TenantId,
     decimal Amount,
-    string Reason
+    string Reason,
+    Guid? OrderId = null,
+    string? OrderNumber = null
 ) : IRequest<RefundPaymentResult>;
 
 public record RefundPaymentResult(

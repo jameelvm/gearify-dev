@@ -4,7 +4,20 @@
 
 This document describes the standardized event-driven messaging pattern used across all Gearify microservices for asynchronous inter-service communication via AWS SNS and SQS.
 
-All services use a consistent **EventEnvelope** pattern that wraps domain events with metadata for routing, filtering, and idempotency.
+All services use a consistent **EventEnvelope** pattern that wraps domain events with metadata for routing and idempotency.
+
+### Design Principle: One Queue Per Event Type
+
+Each event type gets its own dedicated queue with SNS filter policies handling routing:
+
+```
+Pattern: 1 Event Type → 1 Queue → 1 Handler → 1 Command
+```
+
+This provides:
+- **Scalability**: Scale each event processor independently
+- **Debuggability**: Easy to trace issues (problem → queue → handler)
+- **Clarity**: Handler name = what it does
 
 ---
 
@@ -26,7 +39,7 @@ All services use a consistent **EventEnvelope** pattern that wraps domain events
 │                                     │                 └─────────────────────────────┘   │
 └─────────────────────────────────────┼───────────────────────────────────────────────────┘
                                       │
-                                      │ Publish
+                                      │ Publish (with EventType attribute)
                                       ▼
                          ┌────────────────────────┐
                          │                        │
@@ -35,25 +48,23 @@ All services use a consistent **EventEnvelope** pattern that wraps domain events
                          │                        │
                          └───────────┬────────────┘
                                      │
-                    ┌────────────────┼────────────────┐
-                    │ Subscribe      │ Subscribe      │ Subscribe (Fan-out)
-                    ▼                ▼                ▼
-           ┌────────────────┐ ┌────────────────┐ ┌────────────────┐
-           │   SQS Queue    │ │   SQS Queue    │ │   SQS Queue    │
-           │ (order-svc)    │ │ (notif-svc)    │ │ (future-svc)   │
-           └───────┬────────┘ └───────┬────────┘ └───────┬────────┘
-                   │                  │                  │
-┌──────────────────┼──────────────────┼──────────────────┼─────────────────────────────────┐
-│                  │                  │                  │           CONSUMER SIDE          │
-│                  ▼                  ▼                  ▼                                  │
+           ┌─────────────────────────┼─────────────────────────┐
+           │ Filter: PaymentCompleted│ Filter: PaymentFailed   │ Filter: RefundCompleted
+           ▼                         ▼                         ▼
+   ┌─────────────────────┐  ┌─────────────────────┐  ┌─────────────────────┐
+   │ payment-completed   │  │ payment-failed      │  │ refund-completed    │
+   │ -queue              │  │ -queue              │  │ -queue              │
+   └──────────┬──────────┘  └──────────┬──────────┘  └──────────┬──────────┘
+              │                        │                        │
+┌─────────────┼────────────────────────┼────────────────────────┼─────────────────────────┐
+│             │                        │                        │       CONSUMER SIDE      │
+│             ▼                        ▼                        ▼                          │
 │  ┌───────────────────────────────────────────────────────────────────────────────────┐  │
 │  │                        SqsEventQueue<T> (SharedKernel)                             │  │
 │  │                                                                                    │  │
 │  │  1. Long-poll SQS for messages                                                     │  │
 │  │  2. Unwrap SNS envelope → EventEnvelope                                            │  │
-│  │  3. Filter by EventType (optional)                                                 │  │
-│  │  4. Deserialize Payload → T                                                        │  │
-│  │  5. Enrich message with EventType (optional)                                       │  │
+│  │  3. Deserialize Payload → T (no filtering needed - SNS handles it)                 │  │
 │  └────────────────────────────────────────────┬──────────────────────────────────────┘  │
 │                                               │                                          │
 │                                               ▼                                          │
@@ -70,7 +81,7 @@ All services use a consistent **EventEnvelope** pattern that wraps domain events
 │  ┌───────────────────────────────────────────────────────────────────────────────────┐  │
 │  │                      IEventHandler<T> (Service-specific)                           │  │
 │  │                                                                                    │  │
-│  │  - Contains business logic                                                         │  │
+│  │  - Contains business logic for ONE event type                                      │  │
 │  │  - Sends MediatR commands                                                          │  │
 │  │  - Returns true (delete) or false (retry)                                          │  │
 │  └───────────────────────────────────────────────────────────────────────────────────┘  │
@@ -93,6 +104,9 @@ gearify-shared-kernel/
 │   ├── ISnsEventPublisher.cs     # Publisher interface
 │   ├── EventEnvelope.cs          # Standard event wrapper
 │   └── SnsEventPublisherBase.cs  # Base publisher class
+│
+├── Extensions/
+│   └── EventQueueExtensions.cs   # AddEventQueueProcessor<TEvent, THandler>()
 │
 └── Messaging/
     ├── IEventQueue.cs            # Queue consumer interface
@@ -178,12 +192,11 @@ public abstract class SnsEventPublisherBase : ISnsEventPublisher
 ```csharp
 public class SqsEventQueue<T> : IEventQueue<T> where T : class
 {
+    // Simplified constructor (recommended with SNS filter policies)
     public SqsEventQueue(
         IAmazonSQS sqsClient,
         string queueUrl,
-        ILogger<SqsEventQueue<T>> logger,
-        IEnumerable<string>? eventTypeFilters = null,    // Filter by event type
-        Func<T, string, T>? eventTypeEnricher = null);   // Enrich message with EventType
+        ILogger<SqsEventQueue<T>> logger);
 
     public Task<List<QueueMessage<T>>> ReceiveMessagesAsync(...);
     public Task DeleteMessageAsync(string receiptHandle, ...);
@@ -193,9 +206,12 @@ public class SqsEventQueue<T> : IEventQueue<T> where T : class
 **Parameters:**
 | Parameter | Description |
 |-----------|-------------|
+| `sqsClient` | AWS SQS client instance |
 | `queueUrl` | SQS queue URL to consume from |
-| `eventTypeFilters` | Only process these event types (case-insensitive). Messages not matching are auto-deleted. |
-| `eventTypeEnricher` | Function to set EventType on deserialized message, e.g., `(msg, type) => msg with { EventType = type }` |
+| `logger` | Logger for diagnostics |
+
+> **Note:** With the "one queue per event type" architecture, SNS filter policies handle event routing.
+> Each queue receives only one event type, so code-level filtering is not needed.
 
 **Message Processing Flow:**
 ```
@@ -215,19 +231,7 @@ SQS Message
                   │
                   ▼
 ┌─────────────────────────────────┐
-│ 3. Check EventType Filter       │
-│    If not in filter → DELETE    │
-└─────────────────┬───────────────┘
-                  │
-                  ▼
-┌─────────────────────────────────┐
-│ 4. Deserialize Payload → T      │
-└─────────────────┬───────────────┘
-                  │
-                  ▼
-┌─────────────────────────────────┐
-│ 5. Enrich with EventType        │
-│    (if enricher provided)       │
+│ 3. Deserialize Payload → T      │
 └─────────────────┬───────────────┘
                   │
                   ▼
@@ -322,61 +326,66 @@ public interface IEventHandler<T>
 ┌──────────────────────────────────────────────────────────────────────────────────────────────┐
 │                              GEARIFY EVENT COMMUNICATION MAP                                  │
 │                                                                                               │
+│  ┌─────────────┐         gearify-order-events              ┌─────────────────┐               │
+│  │   ORDER     │ ─────────────────────────────────────────>│  SNS Topic      │               │
+│  │   SERVICE   │  (OrderCreatedEvent,                      │                 │               │
+│  │             │   OrderCancelledEvent)                    └────────┬────────┘               │
+│  │             │                                        ┌───────────┴───────────┐            │
+│  │             │                                        ▼                       ▼            │
+│  │             │                            gearify-order-         gearify-order-            │
+│  │             │                            created-queue          cancelled-queue           │
+│  │             │                                   │                       │                 │
+│  │             │◄── payment-completed-queue ◄──┐   └───────────┬───────────┘                 │
+│  │             │◄── payment-failed-queue ◄─────┤               ▼                             │
+│  │             │◄── refund-completed-queue ◄───┤    ┌─────────────────┐                      │
+│  └─────────────┘                               │    │   PAYMENT       │                      │
+│                                                │    │   SERVICE       │                      │
+│  ┌─────────────┐     gearify-payment-events    │    │   (Consumer)    │                      │
+│  │  PAYMENT    │ ──────────────────────────────┼───>└─────────────────┘                      │
+│  │  SERVICE    │  (PaymentCompletedEvent,      │            │                                │
+│  │             │   PaymentFailedEvent,         │            │ gearify-payment-events         │
+│  │             │   RefundCompletedEvent)       │            ▼                                │
+│  │             │                               │    ┌─────────────────┐                      │
+│  └─────────────┘                               │    │   SNS Topic     │                      │
+│                                                │    └────────┬────────┘                      │
+│                                                │    ┌────────┼────────┬────────────┐         │
+│                                                │    ▼        ▼        ▼            ▼         │
+│                                                │ payment- payment- refund-    notification-  │
+│                                                │ completed failed   completed  queues        │
+│                                                │ -queue   -queue   -queue                    │
+│                                                │    │        │        │                      │
+│                                                └────┴────────┴────────┘                      │
 │                                                                                               │
-│  ┌─────────────┐         gearify-order-events          ┌─────────────────┐                   │
-│  │   ORDER     │ ──────────────────────────────────────>│  SNS Topic      │                   │
-│  │   SERVICE   │  (OrderCreatedEvent,                   │                 │                   │
-│  │             │   OrderStatusChangedEvent)              └────────┬────────┘                   │
-│  │             │                                                 │                            │
-│  │             │◄─── order-payment-events-queue ◄───┐       │                            │
-│  └─────────────┘                                         │       ▼                            │
-│                                                          │  gearify-order-created-queue       │
-│                                                          │       │                            │
-│                                                          │       ▼                            │
-│  ┌─────────────┐         gearify-payment-events          │  ┌─────────────────┐              │
-│  │  PAYMENT    │ ──────────────────────────────────────>│  │   PAYMENT       │              │
-│  │  SERVICE    │  (PaymentCompletedEvent,               │  │   SERVICE       │              │
-│  │             │   PaymentFailedEvent,                  │  │   (Consumer)    │              │
-│  │             │   PaymentProcessingEvent)               │  └─────────────────┘              │
-│  │             │◄─── gearify-order-created-queue ◄──────┘                                    │
-│  └─────────────┘                                                                              │
-│        │                                                                                      │
-│        │ gearify-payment-events (Fan-out)                                                     │
-│        │                                                                                      │
-│        ├────────────────────────────────────────────────────┐                                 │
-│        ▼                                                    ▼                                 │
-│  order-payment-events-queue                notification-payment-events-queue             │
-│  (Order Service)                                (Notification Service)                        │
-│                                                                                               │
-│                                                 ┌─────────────────┐                          │
-│                                                 │  NOTIFICATION   │                          │
-│                                                 │  SERVICE        │                          │
-│                                                 │  (Consumer only)│                          │
-│                                                 └─────────────────┘                          │
-│                                                                                               │
+│                                                  ┌─────────────────┐                         │
+│                                                  │  NOTIFICATION   │                         │
+│                                                  │  SERVICE        │◄── notification-        │
+│                                                  │                 │    payment-events-queue │
+│                                                  │                 │◄── notification-        │
+│                                                  │                 │    refund-queue         │
+│                                                  └─────────────────┘                         │
 │                                                                                               │
 │  ┌─────────────┐      gearify-media-upload-events       ┌─────────────────┐                  │
 │  │   MEDIA     │ ─────────────────────────────────────> │  SNS Topic      │                  │
 │  │   SERVICE   │  (MediaUploadedEvent)                  └────────┬────────┘                  │
-│  │             │                                                 │                            │
-│  │             │◄── gearify-image-processing-queue ◄─────────────┘ (self-subscribe)          │
-│  │             │                                                                              │
-│  │             │      gearify-image-processing-completed                                      │
-│  │             │ ─────────────────────────────────────> ┌────────────────┐                    │
-│  │             │  (ImageProcessingCompletedEvent)       │  SNS Topic     │                    │
-│  └─────────────┘                                        └───────┬────────┘                    │
-│                                                                 │                             │
-│                                                                 ▼                             │
-│                                        gearify-product-thumbnail-update-queue                 │
-│                                                                 │                             │
-│                                                                 ▼                             │
+│  │             │                                                 │                           │
+│  │             │◄── gearify-image-processing-queue ◄─────────────┘                           │
+│  │             │                                                                             │
+│  │             │      gearify-image-processing-completed                                     │
+│  │             │ ─────────────────────────────────────> ┌────────────────┐                   │
+│  │             │  (ImageProcessingCompletedEvent)       │  SNS Topic     │                   │
+│  └─────────────┘                                        └───────┬────────┘                   │
+│                                                                 │                            │
+│                                                                 ▼                            │
+│                                       gearify-product-thumbnail-update-queue                 │
+│                                                                 │                            │
+│                                                                 ▼                            │
 │  ┌─────────────┐       catalog-events-topic            ┌─────────────────┐                   │
 │  │  CATALOG    │ ─────────────────────────────────────>│  SNS Topic      │                   │
 │  │  SERVICE    │  (ProductCreatedEvent,                │                 │                   │
 │  │             │   ProductUpdatedEvent,                └────────┬────────┘                   │
 │  │             │   ProductDeletedEvent)                         │                            │
 │  │             │                                                ▼                            │
-│  │             │◄── gearify-product-thumbnail-          search-catalog-events-queue           │
+│  │             │◄── gearify-product-thumbnail-    gearify-search-catalog-events-queue        │
 │  │             │    update-queue                                │                            │
 │  └─────────────┘                                                ▼                            │
 │                                                         ┌─────────────────┐                  │
@@ -393,7 +402,13 @@ public interface IEventHandler<T>
 │  └─────────────┘                                       ▼                ▼                    │
 │                                            gearify-shipping-   gearify-shipping-             │
 │                                            created-queue       status-queue                  │
-│                                                                                               │
+│                                                   │                    │                     │
+│                                                   └────────┬───────────┘                     │
+│                                                            ▼                                 │
+│                                                    ┌─────────────────┐                       │
+│                                                    │  ORDER SERVICE  │                       │
+│                                                    │  (Consumer)     │                       │
+│                                                    └─────────────────┘                       │
 └──────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -403,61 +418,64 @@ public interface IEventHandler<T>
 
 | # | SNS Topic Name | Topic ARN | Publisher Service | Events Published |
 |---|---------------|-----------|-------------------|------------------|
-| 1 | `gearify-order-events` | `arn:aws:sns:us-east-1:000000000000:gearify-order-events` | **Order Service** | `OrderCreatedEvent`, `OrderStatusChangedEvent` |
-| 2 | `gearify-payment-events` | `arn:aws:sns:us-east-1:000000000000:gearify-payment-events` | **Payment Service** | `PaymentCompletedEvent`, `PaymentFailedEvent`, `PaymentProcessingEvent` |
-| 3 | `gearify-media-upload-events` | `arn:aws:sns:us-east-1:000000000000:gearify-media-upload-events` | **Media Service** | `MediaUploadedEvent` |
-| 4 | `gearify-image-processing-completed` | `arn:aws:sns:us-east-1:000000000000:gearify-image-processing-completed` | **Media Service** | `ImageProcessingCompletedEvent` |
-| 5 | `catalog-events-topic` | `arn:aws:sns:us-east-1:000000000000:catalog-events-topic` | **Catalog Service** | `ProductCreatedEvent`, `ProductUpdatedEvent`, `ProductDeletedEvent` |
-| 6 | `gearify-shipping-events` | `arn:aws:sns:us-east-1:000000000000:gearify-shipping-events` | **Shipping Service** | `ShipmentCreated`, `ShipmentStatusUpdated`, `ShipmentDelivered` |
-| 7 | `gearify-inventory-events` | `arn:aws:sns:us-east-1:000000000000:gearify-inventory-events` | **Inventory Service** | *(No subscribers yet)* |
-| 8 | `gearify-checkout-events` | `arn:aws:sns:us-east-1:000000000000:gearify-checkout-events` | **Checkout Service** | *(No subscribers yet)* |
+| 1 | `gearify-order-events` | `arn:aws:sns:us-east-1:000000000000:gearify-order-events` | **Order Service** | `OrderCreatedEvent`, `OrderCancelledEvent` |
+| 2 | `gearify-payment-events` | `arn:aws:sns:us-east-1:000000000000:gearify-payment-events` | **Payment Service** | `PaymentCompletedEvent`, `PaymentFailedEvent`, `RefundCompletedEvent`, `RefundFailedEvent` |
+| 3 | `gearify-shipping-events` | `arn:aws:sns:us-east-1:000000000000:gearify-shipping-events` | **Shipping Service** | `ShipmentCreated`, `ShipmentStatusUpdated`, `ShipmentDelivered` |
+| 4 | `gearify-media-upload-events` | `arn:aws:sns:us-east-1:000000000000:gearify-media-upload-events` | **Media Service** | `MediaUploadedEvent` |
+| 5 | `gearify-image-processing-completed` | `arn:aws:sns:us-east-1:000000000000:gearify-image-processing-completed` | **Media Service** | `ImageProcessingCompletedEvent` |
+| 6 | `catalog-events-topic` | `arn:aws:sns:us-east-1:000000000000:catalog-events-topic` | **Catalog Service** | `ProductCreatedEvent`, `ProductUpdatedEvent`, `ProductDeletedEvent` |
 
 ---
 
 ### SQS Queues & Subscriptions
 
-| # | SQS Queue Name | Queue URL | Subscribes To (SNS Topic) | Consumer Service | Event Type Filter | Message Type |
-|---|---------------|-----------|---------------------------|------------------|-------------------|--------------|
-| 1 | `gearify-order-created-queue` | `http://localstack:4566/000000000000/gearify-order-created-queue` | `gearify-order-events` | **Payment Service** | `OrderCreatedEvent` | `OrderCreatedEventMessage` |
-| 2 | `order-payment-events-queue` | `http://localstack:4566/000000000000/order-payment-events-queue` | `gearify-payment-events` | **Order Service** | `PaymentCompletedEvent`, `PaymentFailedEvent` | `PaymentEventMessage` |
-| 3 | `notification-payment-events-queue` | `http://localstack:4566/000000000000/notification-payment-events-queue` | `gearify-payment-events` | **Notification Service** | `PaymentFailedEvent` | `PaymentFailedEventMessage` |
-| 4 | `gearify-image-processing-queue` | `http://localstack:4566/000000000000/gearify-image-processing-queue` | `gearify-media-upload-events` | **Media Service** (self) | `MediaUploadedEvent` | `ImageProcessingEventMessage` |
-| 5 | `gearify-product-thumbnail-update-queue` | `http://localstack:4566/000000000000/gearify-product-thumbnail-update-queue` | `gearify-image-processing-completed` | **Catalog Service** | `ImageProcessingCompletedEvent` | `ImageProcessingCompletedEventMessage` |
-| 6 | `search-catalog-events-queue` | `http://localstack:4566/000000000000/search-catalog-events-queue` | `catalog-events-topic` | **Search Service** | `ProductCreatedEvent`, `ProductUpdatedEvent`, `ProductDeletedEvent` | `CatalogEventMessage` |
-| 7 | `gearify-shipping-created-queue` | `http://localstack:4566/000000000000/gearify-shipping-created-queue` | `gearify-shipping-events` | *(TBD)* | `ShipmentCreated` | *(TBD)* |
-| 8 | `gearify-shipping-status-queue` | `http://localstack:4566/000000000000/gearify-shipping-status-queue` | `gearify-shipping-events` | *(TBD)* | `ShipmentStatusUpdated`, `ShipmentDelivered` | *(TBD)* |
+| # | SQS Queue Name | Subscribes To (SNS Topic) | Consumer Service | SNS Filter Policy | Handler |
+|---|---------------|---------------------------|------------------|-------------------|---------|
+| 1 | `gearify-order-created-queue` | `gearify-order-events` | **Payment Service** | `OrderCreatedEvent` | `OrderCreatedEventHandler` |
+| 2 | `gearify-order-cancelled-queue` | `gearify-order-events` | **Payment Service** | `OrderCancelledEvent` | `OrderCancelledEventHandler` |
+| 3 | `gearify-payment-completed-queue` | `gearify-payment-events` | **Order Service** | `PaymentCompletedEvent` | `PaymentCompletedEventHandler` |
+| 4 | `gearify-payment-failed-queue` | `gearify-payment-events` | **Order Service** | `PaymentFailedEvent` | `PaymentFailedEventHandler` |
+| 5 | `gearify-refund-completed-queue` | `gearify-payment-events` | **Order Service** | `RefundCompletedEvent` | `RefundCompletedEventHandler` |
+| 6 | `gearify-notification-payment-events-queue` | `gearify-payment-events` | **Notification Service** | `PaymentCompletedEvent`, `PaymentFailedEvent` | `PaymentEventHandler` |
+| 7 | `gearify-notification-refund-queue` | `gearify-payment-events` | **Notification Service** | `RefundCompletedEvent`, `RefundFailedEvent` | `RefundEventHandler` |
+| 8 | `gearify-shipping-created-queue` | `gearify-shipping-events` | **Order Service** | `ShipmentCreated` | `ShipmentCreatedEventHandler` |
+| 9 | `gearify-shipping-status-queue` | `gearify-shipping-events` | **Order Service** | `ShipmentStatusUpdated`, `ShipmentDelivered` | `ShippingStatusEventHandler` |
+| 10 | `gearify-image-processing-queue` | `gearify-media-upload-events` | **Media Service** | *(all)* | `ImageProcessingEventHandler` |
+| 11 | `gearify-product-thumbnail-update-queue` | `gearify-image-processing-completed` | **Catalog Service** | *(all)* | `ThumbnailUpdateEventHandler` |
+| 12 | `gearify-search-catalog-events-queue` | `catalog-events-topic` | **Search Service** | *(all)* | `CatalogEventHandler` |
 
 ---
 
 ### Fan-Out: Topics With Multiple Subscribers
 
-The following topics deliver to more than one queue:
+The following topics deliver to multiple queues using SNS filter policies:
 
-**`gearify-payment-events`** (2 subscribers)
+**`gearify-payment-events`** (5 subscribers)
 
 ```
 Payment Service
       │
-      │ publishes PaymentCompletedEvent / PaymentFailedEvent
+      │ publishes PaymentCompletedEvent / PaymentFailedEvent / RefundCompletedEvent
       ▼
 ┌──────────────────────────┐
 │ gearify-payment-events   │
 │ (SNS Topic)              │
 └─────────────┬────────────┘
               │
-     ┌────────┴──────────────────────────┐
-     │                                   │
-     ▼                                   ▼
-┌──────────────────────────┐   ┌──────────────────────────────────┐
-│gearify-payment-completed │   │notification-payment-events-queue │
-│-queue                    │   │                                  │
-│                          │   │                                  │
-│ → Order Service          │   │ → Notification Service           │
-│   Filters: Completed,    │   │   Filters: FailedEvent only     │
-│            FailedEvent   │   │                                  │
-│   Handles: Update order  │   │   Handles: Send failure email   │
-│            status        │   │            to customer           │
-└──────────────────────────┘   └──────────────────────────────────┘
+    ┌─────────┼─────────┬──────────┬────────────────┬────────────────┐
+    │         │         │          │                │                │
+    ▼         ▼         ▼          ▼                ▼                ▼
+┌────────┐ ┌────────┐ ┌────────┐ ┌────────────┐ ┌────────────┐
+│payment-│ │payment-│ │refund- │ │notification│ │notification│
+│complet-│ │failed- │ │complet-│ │-payment-   │ │-refund-    │
+│ed-queue│ │queue   │ │ed-queue│ │events-queue│ │queue       │
+└───┬────┘ └───┬────┘ └───┬────┘ └─────┬──────┘ └─────┬──────┘
+    │          │          │            │              │
+    │          │          │            │              │
+    ▼          ▼          ▼            ▼              ▼
+ Order      Order      Order     Notification   Notification
+ Service    Service    Service    Service        Service
+ (Confirm)  (Fail)     (Refund)  (Email)        (Email)
 ```
 
 **`gearify-shipping-events`** (2 subscribers)
@@ -479,8 +497,11 @@ Shipping Service
 │gearify-shipping-created  │   │gearify-shipping-status-queue     │
 │-queue                    │   │                                  │
 │                          │   │                                  │
-│ Filters: ShipmentCreated │   │ Filters: ShipmentStatusUpdated,  │
-│                          │   │          ShipmentDelivered        │
+│ SNS Filter:              │   │ SNS Filter:                      │
+│   ShipmentCreated        │   │   ShipmentStatusUpdated,         │
+│                          │   │   ShipmentDelivered              │
+│ → Order Service          │   │ → Order Service                  │
+│   Attach shipment        │   │   Update order status            │
 └──────────────────────────┘   └──────────────────────────────────┘
 ```
 
@@ -488,32 +509,34 @@ Shipping Service
 
 ### Dead Letter Queues (DLQs)
 
-| DLQ Name | Protects Queue | Max Receive Count |
-|----------|----------------|-------------------|
-| `gearify-checkout-events-dlq` | checkout event queues | 3 |
-| `gearify-order-events-dlq` | order event queues | 3 |
-| `gearify-payment-events-dlq` | payment event queues | 3 |
-| `gearify-shipping-events-dlq` | shipping event queues | 3 |
+| DLQ Name | Protects Queues | Max Receive Count |
+|----------|-----------------|-------------------|
+| `gearify-order-events-dlq` | `gearify-order-created-queue`, `gearify-order-cancelled-queue` | 3 |
+| `gearify-payment-events-dlq` | `gearify-payment-completed-queue`, `gearify-payment-failed-queue`, `gearify-refund-completed-queue`, notification queues | 3 |
+| `gearify-shipping-events-dlq` | `gearify-shipping-created-queue`, `gearify-shipping-status-queue` | 3 |
 
 ---
 
 ### Quick Reference: "Where does this event go?"
 
-| Event | Published By | SNS Topic | Consumed By (Queue) |
-|-------|-------------|-----------|---------------------|
-| `OrderCreatedEvent` | Order Service | `gearify-order-events` | Payment Service (`gearify-order-created-queue`) |
-| `OrderStatusChangedEvent` | Order Service | `gearify-order-events` | *(no consumer yet)* |
-| `PaymentCompletedEvent` | Payment Service | `gearify-payment-events` | Order Service (`order-payment-events-queue`) |
-| `PaymentFailedEvent` | Payment Service | `gearify-payment-events` | Order Service (`order-payment-events-queue`), Notification Service (`notification-payment-events-queue`) |
-| `PaymentProcessingEvent` | Payment Service | `gearify-payment-events` | *(no consumer yet)* |
-| `MediaUploadedEvent` | Media Service | `gearify-media-upload-events` | Media Service (`gearify-image-processing-queue`) |
-| `ImageProcessingCompletedEvent` | Media Service | `gearify-image-processing-completed` | Catalog Service (`gearify-product-thumbnail-update-queue`) |
-| `ProductCreatedEvent` | Catalog Service | `catalog-events-topic` | Search Service (`search-catalog-events-queue`) |
-| `ProductUpdatedEvent` | Catalog Service | `catalog-events-topic` | Search Service (`search-catalog-events-queue`) |
-| `ProductDeletedEvent` | Catalog Service | `catalog-events-topic` | Search Service (`search-catalog-events-queue`) |
-| `ShipmentCreated` | Shipping Service | `gearify-shipping-events` | *(TBD)* (`gearify-shipping-created-queue`) |
-| `ShipmentStatusUpdated` | Shipping Service | `gearify-shipping-events` | *(TBD)* (`gearify-shipping-status-queue`) |
-| `ShipmentDelivered` | Shipping Service | `gearify-shipping-events` | *(TBD)* (`gearify-shipping-status-queue`) |
+| Event | Published By | SNS Topic | Queue → Consumer |
+|-------|-------------|-----------|------------------|
+| `OrderCreatedEvent` | Order Service | `gearify-order-events` | `gearify-order-created-queue` → Payment Service |
+| `OrderCancelledEvent` | Order Service | `gearify-order-events` | `gearify-order-cancelled-queue` → Payment Service |
+| `PaymentCompletedEvent` | Payment Service | `gearify-payment-events` | `gearify-payment-completed-queue` → Order Service |
+| `PaymentFailedEvent` | Payment Service | `gearify-payment-events` | `gearify-payment-failed-queue` → Order Service |
+| `RefundCompletedEvent` | Payment Service | `gearify-payment-events` | `gearify-refund-completed-queue` → Order Service |
+| `PaymentCompletedEvent` | Payment Service | `gearify-payment-events` | `gearify-notification-payment-events-queue` → Notification Service |
+| `PaymentFailedEvent` | Payment Service | `gearify-payment-events` | `gearify-notification-payment-events-queue` → Notification Service |
+| `RefundCompletedEvent` | Payment Service | `gearify-payment-events` | `gearify-notification-refund-queue` → Notification Service |
+| `ShipmentCreated` | Shipping Service | `gearify-shipping-events` | `gearify-shipping-created-queue` → Order Service |
+| `ShipmentStatusUpdated` | Shipping Service | `gearify-shipping-events` | `gearify-shipping-status-queue` → Order Service |
+| `ShipmentDelivered` | Shipping Service | `gearify-shipping-events` | `gearify-shipping-status-queue` → Order Service |
+| `MediaUploadedEvent` | Media Service | `gearify-media-upload-events` | `gearify-image-processing-queue` → Media Service |
+| `ImageProcessingCompletedEvent` | Media Service | `gearify-image-processing-completed` | `gearify-product-thumbnail-update-queue` → Catalog Service |
+| `ProductCreatedEvent` | Catalog Service | `catalog-events-topic` | `gearify-search-catalog-events-queue` → Search Service |
+| `ProductUpdatedEvent` | Catalog Service | `catalog-events-topic` | `gearify-search-catalog-events-queue` → Search Service |
+| `ProductDeletedEvent` | Catalog Service | `catalog-events-topic` | `gearify-search-catalog-events-queue` → Search Service |
 
 ---
 
@@ -617,21 +640,20 @@ public class YourCommandHandler
 
 ## How to Add a New Event Consumer
 
-### Step 1: Define the Inbound Message Model
+### Step 1: Define the Inbound Event DTO
 
 **Location:** `{service}/Infrastructure/Messaging/Events/Inbound/`
+
+Each event type gets its own simple DTO matching the domain event payload:
 
 ```csharp
 namespace YourService.Infrastructure.Messaging.Events.Inbound;
 
-public record YourEventMessage
+public record YourDomainEvent
 {
-    // EventType is extracted from the envelope
-    public string EventType { get; init; } = string.Empty;
-
     // Fields matching the domain event's payload
+    public Guid EntityId { get; init; }
     public string TenantId { get; init; } = string.Empty;
-    public string EntityId { get; init; } = string.Empty;
     public string SomeData { get; init; } = string.Empty;
     public DateTime OccurredAt { get; init; }
 }
@@ -639,90 +661,70 @@ public record YourEventMessage
 
 ### Step 2: Implement the Event Handler
 
-**Location:** `{service}/Infrastructure/Messaging/YourEventHandler.cs`
+**Location:** `{service}/Infrastructure/Messaging/Handlers/YourDomainEventHandler.cs`
+
+One handler per event type - keeps it simple and debuggable:
 
 ```csharp
 using Gearify.SharedKernel.Messaging;
 using MediatR;
 
-namespace YourService.Infrastructure.Messaging;
+namespace YourService.Infrastructure.Messaging.Handlers;
 
-public class YourEventHandler : IEventHandler<YourEventMessage>
+public class YourDomainEventHandler : IEventHandler<YourDomainEvent>
 {
     private readonly IMediator _mediator;
-    private readonly ILogger<YourEventHandler> _logger;
+    private readonly ILogger<YourDomainEventHandler> _logger;
 
-    public YourEventHandler(IMediator mediator, ILogger<YourEventHandler> logger)
+    public YourDomainEventHandler(IMediator mediator, ILogger<YourDomainEventHandler> logger)
     {
         _mediator = mediator;
         _logger = logger;
     }
 
-    public async Task<bool> HandleAsync(YourEventMessage message, CancellationToken ct)
+    public async Task<bool> HandleAsync(YourDomainEvent message, CancellationToken ct)
     {
-        _logger.LogInformation("Processing {EventType} for entity {EntityId}",
-            message.EventType, message.EntityId);
+        _logger.LogInformation("Processing YourDomainEvent for entity {EntityId}", message.EntityId);
 
         try
         {
-            // Dispatch to appropriate command based on event type
             var command = new ProcessYourEventCommand(
                 message.EntityId,
                 message.SomeData,
                 message.TenantId);
 
             await _mediator.Send(command, ct);
-
             return true;  // Success - delete from queue
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to process {EventType}", message.EventType);
+            _logger.LogError(ex, "Failed to process YourDomainEvent for {EntityId}", message.EntityId);
             return false;  // Failure - keep in queue for retry
         }
     }
 }
 ```
 
-### Step 3: Register in Startup.cs
+### Step 3: Register in Startup.cs (One Line!)
+
+Using the `AddEventQueueProcessor` extension method:
 
 ```csharp
-using Gearify.SharedKernel.Messaging;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Gearify.SharedKernel.Extensions;
 
 // In ConfigureServices():
 
-// SQS Client (if not already registered)
-services.AddSingleton<IAmazonSQS>(sp =>
-{
-    var config = new AmazonSQSConfig
-    {
-        ServiceURL = Environment.GetEnvironmentVariable("SQS_ENDPOINT") ?? "http://localhost:4566"
-    };
-    return new AmazonSQSClient(config);
-});
+var messagingConfig = Configuration.GetSection("MessagingConfiguration").Get<MessagingConfiguration>()
+    ?? new MessagingConfiguration();
 
-// Event Queue (using generic SqsEventQueue)
-services.AddScoped<IEventQueue<YourEventMessage>>(sp =>
-{
-    var sqsClient = sp.GetRequiredService<IAmazonSQS>();
-    var config = sp.GetRequiredService<IOptions<MessagingConfiguration>>();
-    var logger = sp.GetRequiredService<ILogger<SqsEventQueue<YourEventMessage>>>();
+// One line per event type - that's it!
+services.AddEventQueueProcessor<YourDomainEvent, YourDomainEventHandler>(
+    messagingConfig.SQS.YourDomainEventQueueUrl);
 
-    return new SqsEventQueue<YourEventMessage>(
-        sqsClient,
-        config.Value.SQS.YourQueueUrl,
-        logger,
-        eventTypeFilters: ["YourDomainEvent"],  // Only process these event types
-        eventTypeEnricher: (msg, type) => msg with { EventType = type });
-});
-
-// Event Handler
-services.AddScoped<IEventHandler<YourEventMessage>, YourEventHandler>();
-
-// Background Processor
-services.AddHostedService<EventQueueProcessor<YourEventMessage>>();
+// The extension method wires up:
+// - IEventQueue<YourDomainEvent> using SqsEventQueue<YourDomainEvent>
+// - IEventHandler<YourDomainEvent> using YourDomainEventHandler
+// - EventQueueProcessor<YourDomainEvent> as background service
 ```
 
 ### Step 4: Add Configuration
@@ -732,7 +734,7 @@ services.AddHostedService<EventQueueProcessor<YourEventMessage>>();
 {
   "MessagingConfiguration": {
     "SQS": {
-      "YourQueueUrl": "http://localhost:4566/000000000000/your-queue"
+      "YourDomainEventQueueUrl": "http://localhost:4566/000000000000/gearify-your-domain-event-queue"
     }
   }
 }
@@ -742,99 +744,162 @@ services.AddHostedService<EventQueueProcessor<YourEventMessage>>();
 ```csharp
 public class MessagingConfiguration
 {
+    public SnsConfiguration SNS { get; set; } = new();
     public SqsConfiguration SQS { get; set; } = new();
 }
 
 public class SqsConfiguration
 {
-    public string YourQueueUrl { get; set; } = string.Empty;
+    public string YourDomainEventQueueUrl { get; set; } = string.Empty;
+    // One queue URL per event type you consume
 }
+```
+
+### Step 5: Create Infrastructure (Queue + SNS Subscription)
+
+Add to `localstack/scripts/init-sqs.sh`:
+```bash
+# YourDomainEvent -> Your Service
+awslocal sqs create-queue \
+  --queue-name gearify-your-domain-event-queue \
+  --attributes "{
+    \"VisibilityTimeout\":\"300\",
+    \"MessageRetentionPeriod\":\"1209600\",
+    \"ReceiveMessageWaitTimeSeconds\":\"20\",
+    \"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$YOUR_DLQ_ARN\\\",\\\"maxReceiveCount\\\":3}\"
+  }" \
+  --region us-east-1
+```
+
+Add to `localstack/scripts/init-sns.sh`:
+```bash
+# Subscribe with filter policy
+QUEUE_ARN=$(awslocal sqs get-queue-attributes \
+  --queue-url http://localhost:4566/000000000000/gearify-your-domain-event-queue \
+  --attribute-names QueueArn --region us-east-1 \
+  --output text --query 'Attributes.QueueArn')
+
+awslocal sns subscribe \
+  --topic-arn $YOUR_TOPIC_ARN \
+  --protocol sqs \
+  --notification-endpoint $QUEUE_ARN \
+  --attributes '{"FilterPolicy":"{\"EventType\":[\"YourDomainEvent\"]}"}' \
+  --region us-east-1
 ```
 
 ---
 
 ## AWS Infrastructure Setup
 
+### Pattern: One Queue Per Event Type
+
+Every event type that a service consumes gets its own queue with an SNS filter policy.
+
 ### Creating SNS Topic
 
-**LocalStack (docker-compose or init script):**
 ```bash
-awslocal sns create-topic --name your-events
-# Returns: arn:aws:sns:us-east-1:000000000000:your-events
+awslocal sns create-topic --name gearify-your-events --region us-east-1
+# Returns: arn:aws:sns:us-east-1:000000000000:gearify-your-events
 ```
 
-### Creating SQS Queue
+### Creating SQS Queue with DLQ
 
 ```bash
-awslocal sqs create-queue --queue-name your-service-your-events
-# Returns: http://localhost:4566/000000000000/your-service-your-events
+# Create DLQ first
+awslocal sqs create-queue \
+  --queue-name gearify-your-events-dlq \
+  --attributes '{"MessageRetentionPeriod":"1209600"}' \
+  --region us-east-1
+
+# Get DLQ ARN
+DLQ_ARN=$(awslocal sqs get-queue-attributes \
+  --queue-url http://localhost:4566/000000000000/gearify-your-events-dlq \
+  --attribute-names QueueArn --region us-east-1 \
+  --output text --query 'Attributes.QueueArn')
+
+# Create queue with redrive policy
+awslocal sqs create-queue \
+  --queue-name gearify-your-domain-event-queue \
+  --attributes "{
+    \"VisibilityTimeout\":\"300\",
+    \"MessageRetentionPeriod\":\"1209600\",
+    \"ReceiveMessageWaitTimeSeconds\":\"20\",
+    \"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$DLQ_ARN\\\",\\\"maxReceiveCount\\\":3}\"
+  }" \
+  --region us-east-1
 ```
 
-### Creating SNS → SQS Subscription
+### Creating SNS → SQS Subscription with Filter Policy
 
 ```bash
 # Get the queue ARN
-awslocal sqs get-queue-attributes \
-  --queue-url http://localhost:4566/000000000000/your-service-your-events \
-  --attribute-names QueueArn
+QUEUE_ARN=$(awslocal sqs get-queue-attributes \
+  --queue-url http://localhost:4566/000000000000/gearify-your-domain-event-queue \
+  --attribute-names QueueArn --region us-east-1 \
+  --output text --query 'Attributes.QueueArn')
 
-# Subscribe queue to topic
+# Subscribe with filter policy (REQUIRED for one-queue-per-event pattern)
 awslocal sns subscribe \
-  --topic-arn arn:aws:sns:us-east-1:000000000000:your-events \
+  --topic-arn arn:aws:sns:us-east-1:000000000000:gearify-your-events \
   --protocol sqs \
-  --notification-endpoint arn:aws:sqs:us-east-1:000000000000:your-service-your-events
+  --notification-endpoint $QUEUE_ARN \
+  --attributes '{"FilterPolicy":"{\"EventType\":[\"YourDomainEvent\"]}"}' \
+  --region us-east-1
 ```
 
-### Adding Event Type Filter Policy (Optional)
-
-Filter at SNS level to only deliver specific event types to a queue:
-
-```bash
-awslocal sns set-subscription-attributes \
-  --subscription-arn arn:aws:sns:us-east-1:000000000000:your-events:subscription-id \
-  --attribute-name FilterPolicy \
-  --attribute-value '{"EventType": ["YourDomainEvent", "AnotherEvent"]}'
-```
-
-### Complete Infrastructure Script Example
+### Complete Example: Payment Events Fan-Out
 
 ```bash
 #!/bin/bash
-# init-messaging.sh
+# Example: Setting up payment events with separate queues
 
-# Create Payment Events Topic
-awslocal sns create-topic --name payment-events
+PAYMENT_TOPIC_ARN="arn:aws:sns:us-east-1:000000000000:gearify-payment-events"
+PAYMENT_DLQ_ARN=$(awslocal sqs get-queue-attributes \
+  --queue-url http://localhost:4566/000000000000/gearify-payment-events-dlq \
+  --attribute-names QueueArn --region us-east-1 \
+  --output text --query 'Attributes.QueueArn')
 
-# Create queues for subscribers
-awslocal sqs create-queue --queue-name order-payment-events
-awslocal sqs create-queue --queue-name notification-payment-events
+# PaymentCompletedEvent -> Order Service
+awslocal sqs create-queue --queue-name gearify-payment-completed-queue \
+  --attributes "{\"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$PAYMENT_DLQ_ARN\\\",\\\"maxReceiveCount\\\":3}\"}" \
+  --region us-east-1
 
-# Subscribe Order Service to payment events (all events)
 QUEUE_ARN=$(awslocal sqs get-queue-attributes \
-  --queue-url http://localhost:4566/000000000000/order-payment-events \
-  --attribute-names QueueArn --query 'Attributes.QueueArn' --output text)
+  --queue-url http://localhost:4566/000000000000/gearify-payment-completed-queue \
+  --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn')
 
-awslocal sns subscribe \
-  --topic-arn arn:aws:sns:us-east-1:000000000000:payment-events \
-  --protocol sqs \
-  --notification-endpoint $QUEUE_ARN
+awslocal sns subscribe --topic-arn $PAYMENT_TOPIC_ARN --protocol sqs \
+  --notification-endpoint $QUEUE_ARN \
+  --attributes '{"FilterPolicy":"{\"EventType\":[\"PaymentCompletedEvent\"]}"}' \
+  --region us-east-1
 
-# Subscribe Notification Service (only PaymentFailedEvent)
-NOTIF_QUEUE_ARN=$(awslocal sqs get-queue-attributes \
-  --queue-url http://localhost:4566/000000000000/notification-payment-events \
-  --attribute-names QueueArn --query 'Attributes.QueueArn' --output text)
+# PaymentFailedEvent -> Order Service
+awslocal sqs create-queue --queue-name gearify-payment-failed-queue \
+  --attributes "{\"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$PAYMENT_DLQ_ARN\\\",\\\"maxReceiveCount\\\":3}\"}" \
+  --region us-east-1
 
-SUB_ARN=$(awslocal sns subscribe \
-  --topic-arn arn:aws:sns:us-east-1:000000000000:payment-events \
-  --protocol sqs \
-  --notification-endpoint $NOTIF_QUEUE_ARN \
-  --query 'SubscriptionArn' --output text)
+QUEUE_ARN=$(awslocal sqs get-queue-attributes \
+  --queue-url http://localhost:4566/000000000000/gearify-payment-failed-queue \
+  --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn')
 
-# Apply filter policy
-awslocal sns set-subscription-attributes \
-  --subscription-arn $SUB_ARN \
-  --attribute-name FilterPolicy \
-  --attribute-value '{"EventType": ["PaymentFailedEvent"]}'
+awslocal sns subscribe --topic-arn $PAYMENT_TOPIC_ARN --protocol sqs \
+  --notification-endpoint $QUEUE_ARN \
+  --attributes '{"FilterPolicy":"{\"EventType\":[\"PaymentFailedEvent\"]}"}' \
+  --region us-east-1
+
+# RefundCompletedEvent -> Order Service
+awslocal sqs create-queue --queue-name gearify-refund-completed-queue \
+  --attributes "{\"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$PAYMENT_DLQ_ARN\\\",\\\"maxReceiveCount\\\":3}\"}" \
+  --region us-east-1
+
+QUEUE_ARN=$(awslocal sqs get-queue-attributes \
+  --queue-url http://localhost:4566/000000000000/gearify-refund-completed-queue \
+  --attribute-names QueueArn --region us-east-1 --output text --query 'Attributes.QueueArn')
+
+awslocal sns subscribe --topic-arn $PAYMENT_TOPIC_ARN --protocol sqs \
+  --notification-endpoint $QUEUE_ARN \
+  --attributes '{"FilterPolicy":"{\"EventType\":[\"RefundCompletedEvent\"]}"}' \
+  --region us-east-1
 ```
 
 ---
@@ -892,7 +957,7 @@ awslocal sqs set-queue-attributes \
 ```
 gearify-{service}/
 ├── Domain/
-│   └── Events/                         # Outbound domain events
+│   └── Events/                         # Outbound domain events (published by this service)
 │       ├── YourCreatedEvent.cs
 │       └── YourUpdatedEvent.cs
 │
@@ -902,12 +967,27 @@ gearify-{service}/
     │
     └── Messaging/
         ├── SnsEventPublisher.cs        # Extends SnsEventPublisherBase
-        ├── YourEventHandler.cs         # IEventHandler<T> implementation
         │
-        └── Events/
-            └── Inbound/
-                └── YourEventMessage.cs # Deserialization model for incoming events
+        ├── Events/
+        │   └── Inbound/                # One DTO per event type consumed
+        │       ├── PaymentCompletedEvent.cs
+        │       ├── PaymentFailedEvent.cs
+        │       └── RefundCompletedEvent.cs
+        │
+        └── Handlers/                   # One handler per event type
+            ├── PaymentCompletedEventHandler.cs
+            ├── PaymentFailedEventHandler.cs
+            └── RefundCompletedEventHandler.cs
 ```
+
+### Naming Conventions
+
+| Component | Pattern | Example |
+|-----------|---------|---------|
+| Inbound Event DTO | `{EventName}.cs` | `PaymentCompletedEvent.cs` |
+| Handler | `{EventName}Handler.cs` | `PaymentCompletedEventHandler.cs` |
+| Queue Name | `gearify-{event-name}-queue` | `gearify-payment-completed-queue` |
+| Config Property | `{EventName}QueueUrl` | `PaymentCompletedQueueUrl` |
 
 ---
 
@@ -915,11 +995,13 @@ gearify-{service}/
 
 | Decision | Rationale |
 |----------|-----------|
-| **EventEnvelope pattern** | Consistent metadata (eventId, eventType, tenantId, timestamp) across all services for filtering, routing, and idempotency |
+| **One Queue Per Event Type** | Scalability (scale handlers independently), debuggability (easy tracing), clarity (handler name = purpose) |
+| **SNS Filter Policies** | Event routing handled at infrastructure level, no code-level filtering needed |
+| **EventEnvelope pattern** | Consistent metadata (eventId, eventType, tenantId, timestamp) across all services for routing and idempotency |
 | **SnsEventPublisherBase** | Eliminates boilerplate; services only implement topic routing |
-| **Generic SqsEventQueue\<T\>** | Single implementation handles envelope unwrapping, filtering, enrichment |
-| **EventType filtering in SqsEventQueue** | Application-level filtering; more flexible than SNS filter policies |
-| **EventType enricher function** | Allows handlers to know which event type they're processing without reflection |
+| **Generic SqsEventQueue\<T\>** | Single implementation handles envelope unwrapping and deserialization |
+| **AddEventQueueProcessor extension** | One-line registration in Startup.cs reduces boilerplate |
+| **One Handler Per Event Type** | Simple, focused handlers that do one thing; easy to understand and maintain |
 | **Handler returns bool** | Clean contract: `true` = delete, `false` = retry |
 | **Never throw on publish** | Event publishing failure shouldn't fail the main operation |
 | **Scoped DI per polling cycle** | Ensures fresh DbContext and dependencies per batch |
@@ -934,46 +1016,85 @@ gearify-{service}/
 
 1. **Check queue URL configuration:**
    ```csharp
-   _logger.LogInformation("Queue URL: {Url}", config.Value.SQS.YourQueueUrl);
+   _logger.LogInformation("Queue URL: {Url}", config.Value.SQS.YourDomainEventQueueUrl);
    ```
 
 2. **Verify SNS subscription exists:**
    ```bash
-   awslocal sns list-subscriptions-by-topic --topic-arn arn:aws:sns:...
+   awslocal sns list-subscriptions-by-topic --topic-arn arn:aws:sns:us-east-1:000000000000:your-topic --region us-east-1
    ```
 
-3. **Check filter policy (if using SNS filtering):**
+3. **Check SNS filter policy is set correctly:**
    ```bash
-   awslocal sns get-subscription-attributes --subscription-arn arn:aws:sns:...
+   # Get subscription ARN first
+   awslocal sns list-subscriptions --region us-east-1
+
+   # Then check its filter policy
+   awslocal sns get-subscription-attributes \
+     --subscription-arn arn:aws:sns:us-east-1:000000000000:your-topic:subscription-id \
+     --region us-east-1 \
+     --query 'Attributes.FilterPolicy'
    ```
 
-### Messages being deleted without processing
+4. **Verify EventType attribute is being published:**
+   - Check that the publisher includes `EventType` as a message attribute
+   - SNS filter policies filter on message attributes, not message body
 
-1. **Check event type filter:**
-   - If `eventTypeFilters` is set, messages not matching are auto-deleted
-   - Log shows: `"Message filtered out: EventType X not in filter list"`
+### Messages going to wrong queue
 
-2. **Check payload deserialization:**
-   - Ensure message model properties match the domain event payload
-   - Use `PropertyNameCaseInsensitive = true` in JSON options
+1. **Check filter policy matches event type exactly:**
+   ```bash
+   # Filter policy should match the exact event type name
+   {"EventType": ["PaymentCompletedEvent"]}  # Correct
+   {"EventType": ["paymentcompleted"]}       # Wrong - case sensitive!
+   ```
+
+2. **Verify publisher is setting EventType attribute:**
+   - `SnsEventPublisherBase` sets this automatically from the event class name
 
 ### Handler not being called
 
-1. **Verify DI registration:**
+1. **Verify AddEventQueueProcessor was called:**
    ```csharp
-   services.AddScoped<IEventHandler<YourMessage>, YourHandler>();
+   services.AddEventQueueProcessor<YourDomainEvent, YourDomainEventHandler>(
+       messagingConfig.SQS.YourDomainEventQueueUrl);
    ```
 
-2. **Check background service registration:**
-   ```csharp
-   services.AddHostedService<EventQueueProcessor<YourMessage>>();
+2. **Check service is running (look for log output):**
+   ```
+   [INF] EventQueueProcessor<YourDomainEvent> starting...
+   ```
+
+### Payload deserialization issues
+
+1. **Ensure DTO properties match domain event payload:**
+   - Property names are case-insensitive by default
+   - Check for missing or renamed properties
+
+2. **Check logs for deserialization errors:**
+   ```
+   [ERR] Failed to deserialize message payload
    ```
 
 ### Duplicate message processing
 
-1. **Implement idempotency in handler:**
+1. **Implement idempotency in handler using EventId:**
    ```csharp
-   // Use EventId from envelope for deduplication
-   if (await _deduplicationService.HasProcessed(message.EventId))
+   // The EventEnvelope contains a unique EventId
+   if (await _deduplicationService.HasProcessed(eventId))
        return true;  // Already processed, delete from queue
+   ```
+
+### Messages stuck in queue
+
+1. **Check visibility timeout:**
+   - Default is 300 seconds (5 minutes)
+   - If handler takes longer, message becomes visible again
+
+2. **Check DLQ for poison messages:**
+   ```bash
+   awslocal sqs get-queue-attributes \
+     --queue-url http://localhost:4566/000000000000/your-events-dlq \
+     --attribute-names ApproximateNumberOfMessages \
+     --region us-east-1
    ```

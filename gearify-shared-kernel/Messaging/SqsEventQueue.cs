@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Amazon.SQS;
@@ -25,11 +26,29 @@ public class SqsEventQueue<T> : IEventQueue<T> where T : class
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
-        PropertyNameCaseInsensitive = true
+        PropertyNameCaseInsensitive = true,
+        Converters = { new JsonStringEnumConverter() }
     };
 
     /// <summary>
     /// Creates a new SQS event queue consumer.
+    /// Simplified constructor for single-event-type queues (recommended pattern).
+    /// </summary>
+    /// <param name="sqsClient">AWS SQS client</param>
+    /// <param name="queueUrl">The SQS queue URL to consume from</param>
+    /// <param name="logger">Logger instance</param>
+    public SqsEventQueue(
+        IAmazonSQS sqsClient,
+        string queueUrl,
+        ILogger<SqsEventQueue<T>> logger)
+        : this(sqsClient, queueUrl, logger, eventTypeFilters: null, eventTypeEnricher: null)
+    {
+    }
+
+    /// <summary>
+    /// Creates a new SQS event queue consumer with optional filtering.
+    /// Use this constructor only when a single queue receives multiple event types.
+    /// For the recommended pattern (one queue per event type), use the simpler constructor.
     /// </summary>
     /// <param name="sqsClient">AWS SQS client</param>
     /// <param name="queueUrl">The SQS queue URL to consume from</param>
@@ -40,8 +59,8 @@ public class SqsEventQueue<T> : IEventQueue<T> where T : class
         IAmazonSQS sqsClient,
         string queueUrl,
         ILogger<SqsEventQueue<T>> logger,
-        IEnumerable<string>? eventTypeFilters = null,
-        Func<T, string, T>? eventTypeEnricher = null)
+        IEnumerable<string>? eventTypeFilters,
+        Func<T, string, T>? eventTypeEnricher)
     {
         _sqsClient = sqsClient;
         _queueUrl = queueUrl;
@@ -55,8 +74,8 @@ public class SqsEventQueue<T> : IEventQueue<T> where T : class
         }
         else
         {
-            _logger.LogInformation("SqsEventQueue<{EventType}> initialized with queue: {QueueUrl}, filters: {Filters}",
-                typeof(T).Name, _queueUrl, _eventTypeFilters != null ? string.Join(", ", _eventTypeFilters) : "none");
+            _logger.LogInformation("SqsEventQueue<{EventType}> initialized with queue: {QueueUrl}",
+                typeof(T).Name, _queueUrl);
         }
     }
 

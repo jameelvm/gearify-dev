@@ -13,6 +13,7 @@ namespace Gearify.PaymentService.Infrastructure.PaymentProviders;
 /// - Card ending in 0000: Always succeeds
 /// - Card ending in 9999: Always fails
 /// - Card ending in 3333: Simulates network delay (3 seconds)
+/// - Card ending in 7777: Simulates SLOW processing (30 seconds) - for testing deferred cancellation
 /// - Any other: 90% success rate (random)
 /// </summary>
 public class MockStripePaymentProvider : IStripePaymentProvider
@@ -106,6 +107,13 @@ public class MockStripePaymentProvider : IStripePaymentProvider
 
     private int GetSimulatedDelay(string paymentMethodToken)
     {
+        // Token ending in 7777 simulates VERY slow processing (for testing deferred cancellation)
+        if (paymentMethodToken?.EndsWith("7777") == true)
+        {
+            _logger.LogWarning("[MOCK STRIPE] Simulating 30 second delay for deferred cancellation testing...");
+            return 30000;
+        }
+
         // Token ending in 3333 simulates slow network
         if (paymentMethodToken?.EndsWith("3333") == true)
             return 3000;

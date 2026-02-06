@@ -98,6 +98,23 @@ public class Startup
         services.AddScoped<IEventHandler<PaymentEventMessage>, PaymentEventHandler>();
         services.AddHostedService<EventQueueProcessor<PaymentEventMessage>>();
 
+        // Event Queue Consumer (Refund Events - Completed & Failed)
+        services.AddScoped<IEventQueue<RefundEventMessage>>(sp =>
+        {
+            var sqsClient = sp.GetRequiredService<IAmazonSQS>();
+            var config = sp.GetRequiredService<IOptions<MessagingConfiguration>>();
+            var logger = sp.GetRequiredService<ILogger<SqsEventQueue<RefundEventMessage>>>();
+
+            return new SqsEventQueue<RefundEventMessage>(
+                sqsClient,
+                config.Value.SQS.RefundEventsQueueUrl,
+                logger,
+                eventTypeFilters: ["RefundCompletedEvent", "RefundFailedEvent"],
+                eventTypeEnricher: (msg, type) => msg with { EventType = type });
+        });
+        services.AddScoped<IEventHandler<RefundEventMessage>, RefundEventHandler>();
+        services.AddHostedService<EventQueueProcessor<RefundEventMessage>>();
+
         // Auth Service Client
         services.AddHttpClient<IAuthServiceClient, AuthServiceClient>(client =>
         {

@@ -6,6 +6,7 @@ using Gearify.PaymentService.Application.Commands;
 using Gearify.PaymentService.Application.DTOs;
 using Gearify.PaymentService.Application.Queries;
 using Gearify.PaymentService.Domain.Entities;
+using Gearify.SharedKernel.Multitenancy;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -17,11 +18,16 @@ namespace Gearify.PaymentService.API;
 public class PaymentsController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly ITenantContext _tenantContext;
     private readonly ILogger<PaymentsController> _logger;
 
-    public PaymentsController(IMediator mediator, ILogger<PaymentsController> logger)
+    public PaymentsController(
+        IMediator mediator,
+        ITenantContext tenantContext,
+        ILogger<PaymentsController> logger)
     {
         _mediator = mediator;
+        _tenantContext = tenantContext;
         _logger = logger;
     }
 
@@ -144,7 +150,7 @@ public class PaymentsController : ControllerBase
             return BadRequest(new ValidationProblemDetails(ModelState));
         }
 
-        var command = new RefundPaymentCommand(id, request.Amount, request.Reason);
+        var command = new RefundPaymentCommand(id, _tenantContext.TenantId, request.Amount, request.Reason);
         var result = await _mediator.Send(command, cancellationToken);
 
         if (!result.Success)

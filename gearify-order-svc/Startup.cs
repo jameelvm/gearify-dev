@@ -4,6 +4,7 @@ using Amazon.SQS;
 using Gearify.OrderService.Infrastructure.Configuration;
 using Gearify.OrderService.Infrastructure.Data;
 using Gearify.OrderService.Infrastructure.Messaging;
+using Gearify.OrderService.Infrastructure.Messaging.Handlers;
 using Gearify.OrderService.Infrastructure.Repositories;
 using Gearify.OrderService.Infrastructure.UnitOfWork;
 using Gearify.OrderService.Infrastructure.Messaging.Events.Inbound;
@@ -17,8 +18,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
 namespace Gearify.OrderService;
@@ -91,24 +90,22 @@ public class Startup
             return new AmazonSQSClient(config);
         });
 
-        // Messaging Services (for receiving payment events)
-        services.AddScoped<IEventQueue<PaymentEventMessage>>(sp =>
-        {
-            var sqsClient = sp.GetRequiredService<IAmazonSQS>();
-            var config = sp.GetRequiredService<IOptions<MessagingConfiguration>>();
-            var logger = sp.GetRequiredService<ILogger<SqsEventQueue<PaymentEventMessage>>>();
+        // Event Queue Processors - One queue per event type
+        // Pattern: SNS filters events to correct queue, handler processes single event type
+        var messagingConfig = Configuration.GetSection("MessagingConfiguration").Get<MessagingConfiguration>()
+            ?? new MessagingConfiguration();
 
-            return new SqsEventQueue<PaymentEventMessage>(
-                sqsClient,
-                config.Value.SQS.PaymentEventsQueueUrl,
-                logger,
-                eventTypeFilters: ["PaymentCompletedEvent", "PaymentFailedEvent"],
-                eventTypeEnricher: (msg, type) => msg with { EventType = type });
-        });
-        services.AddScoped<IEventHandler<PaymentEventMessage>, PaymentEventHandler>();
+        // PaymentCompletedEvent -> Confirm Order
+        services.AddEventQueueProcessor<PaymentCompletedEvent, PaymentCompletedEventHandler>(
+            messagingConfig.SQS.PaymentCompletedQueueUrl);
 
-        // Background services
-        services.AddHostedService<EventQueueProcessor<PaymentEventMessage>>();
+        // PaymentFailedEvent -> Mark Order as PaymentFailed
+        services.AddEventQueueProcessor<PaymentFailedEvent, PaymentFailedEventHandler>(
+            messagingConfig.SQS.PaymentFailedQueueUrl);
+
+        // RefundCompletedEvent -> Mark Order as Refunded
+        services.AddEventQueueProcessor<RefundCompletedEvent, RefundCompletedEventHandler>(
+            messagingConfig.SQS.RefundCompletedQueueUrl);
 
         // MediatR
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly));

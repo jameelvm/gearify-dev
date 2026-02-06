@@ -3,11 +3,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Gearify.PaymentService.Domain.Entities;
 using Gearify.PaymentService.Events;
+using Gearify.PaymentService.Infrastructure.Configuration;
 using Gearify.SharedKernel.Events;
 using Gearify.PaymentService.Infrastructure.PaymentProviders;
 using Gearify.PaymentService.Infrastructure.UnitOfWork;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Gearify.PaymentService.Application.Commands;
 
@@ -20,17 +22,20 @@ public class ProcessOrderPaymentCommandHandler : IRequestHandler<ProcessOrderPay
     private readonly IStripePaymentProvider _stripeProvider;
     private readonly ISnsEventPublisher _eventPublisher;
     private readonly ILogger<ProcessOrderPaymentCommandHandler> _logger;
+    private readonly PaymentProviderConfiguration _config;
 
     public ProcessOrderPaymentCommandHandler(
         IUnitOfWorkFactory unitOfWorkFactory,
         IStripePaymentProvider stripeProvider,
         ISnsEventPublisher eventPublisher,
-        ILogger<ProcessOrderPaymentCommandHandler> logger)
+        ILogger<ProcessOrderPaymentCommandHandler> logger,
+        IOptions<PaymentProviderConfiguration> config)
     {
         _unitOfWorkFactory = unitOfWorkFactory;
         _stripeProvider = stripeProvider;
         _eventPublisher = eventPublisher;
         _logger = logger;
+        _config = config.Value;
     }
 
     public async Task<ProcessOrderPaymentResult> Handle(ProcessOrderPaymentCommand request, CancellationToken cancellationToken)
@@ -80,10 +85,21 @@ public class ProcessOrderPaymentCommandHandler : IRequestHandler<ProcessOrderPay
             // Process payment via provider
             // In real implementation, we'd need payment method from checkout session
             // For now, using mock provider which auto-approves
+            // Configuration: PaymentTestingMode="Slow" triggers 30s delay (for testing deferred cancellation)
+            var isSlowMode = _config.PaymentTestingMode.Equals("Slow", StringComparison.OrdinalIgnoreCase);
+            var paymentToken = isSlowMode
+                ? "test-slow-7777"
+                : $"auto-payment-{request.OrderId}";
+
+            if (isSlowMode)
+            {
+                _logger.LogWarning("Payment testing mode is SLOW - payment will take 30 seconds for order {OrderId}", request.OrderId);
+            }
+
             var (success, providerTransactionId) = await _stripeProvider.ProcessPaymentAsync(
                 request.Amount,
                 request.Currency,
-                $"auto-payment-{request.OrderId}", // Placeholder token for mock
+                paymentToken,
                 request.OrderId.ToString()
             );
 

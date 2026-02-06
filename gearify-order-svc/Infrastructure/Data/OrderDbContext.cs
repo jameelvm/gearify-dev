@@ -144,6 +144,18 @@ public class OrderDbContext : DbContext
             entity.Property(e => e.CancelledAt)
                 .HasColumnName("cancelled_at");
 
+            // Cancellation tracking
+            entity.Property(e => e.CancellationReason)
+                .HasColumnName("cancellation_reason")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.CancellationRequestedBy)
+                .HasColumnName("cancellation_requested_by")
+                .HasMaxLength(100);
+
+            entity.Property(e => e.CancellationRequestedAt)
+                .HasColumnName("cancellation_requested_at");
+
             // Metadata
             entity.Property(e => e.Notes)
                 .HasColumnName("notes");

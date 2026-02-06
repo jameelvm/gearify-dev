@@ -45,6 +45,11 @@ public class Order
     public DateTime? CompletedAt { get; set; }
     public DateTime? CancelledAt { get; set; }
 
+// Cancellation tracking (for deferred cancellation during PaymentProcessing)
+    public string? CancellationReason { get; set; }
+    public string? CancellationRequestedBy { get; set; }
+    public DateTime? CancellationRequestedAt { get; set; }
+
     // Metadata
     public string? Notes { get; set; }
     public JsonDocument? Metadata { get; set; }
@@ -68,8 +73,8 @@ public enum OrderStatus
     PaymentProcessing,
     PaymentFailed,
     Paid,
-    Processing,
-    Shipped,
+    Processing, //Order Processing
+    Shipped,    
     Delivered,
     Cancelled,
     Refunded

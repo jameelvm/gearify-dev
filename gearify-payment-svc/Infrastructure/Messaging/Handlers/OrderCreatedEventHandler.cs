@@ -6,13 +6,13 @@ using Gearify.SharedKernel.Messaging;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Gearify.PaymentService.Infrastructure.Messaging;
+namespace Gearify.PaymentService.Infrastructure.Messaging.Handlers;
 
 /// <summary>
-/// Handles order created events received from Order Service.
-/// Triggers payment processing when a new order is created.
+/// Handles OrderCreatedEvent from Order Service.
+/// Triggers payment processing for the new order.
 /// </summary>
-public class OrderCreatedEventHandler : IEventHandler<OrderCreatedEventMessage>
+public class OrderCreatedEventHandler : IEventHandler<OrderCreatedEvent>
 {
     private readonly IMediator _mediator;
     private readonly ILogger<OrderCreatedEventHandler> _logger;
@@ -25,13 +25,14 @@ public class OrderCreatedEventHandler : IEventHandler<OrderCreatedEventMessage>
         _logger = logger;
     }
 
-    public async Task<bool> HandleAsync(OrderCreatedEventMessage evt, CancellationToken cancellationToken = default)
+    public async Task<bool> HandleAsync(OrderCreatedEvent evt, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation(
-            "Processing OrderCreatedEvent for Order {OrderId} ({OrderNumber}), total: {Total}",
+            "Processing payment for Order {OrderId} ({OrderNumber}), Amount: {Total} {Currency}",
             evt.OrderId,
             evt.OrderNumber,
-            evt.Total);
+            evt.Total,
+            evt.Currency);
 
         var command = new ProcessOrderPaymentCommand(
             evt.OrderId,
@@ -45,15 +46,20 @@ public class OrderCreatedEventHandler : IEventHandler<OrderCreatedEventMessage>
 
         if (result.Success)
         {
-            _logger.LogInformation("Payment completed for Order {OrderId}: TransactionId={TransactionId}",
-                evt.OrderId, result.TransactionId);
+            _logger.LogInformation(
+                "Payment completed for Order {OrderId}: TransactionId={TransactionId}",
+                evt.OrderId,
+                result.TransactionId);
         }
         else
         {
-            _logger.LogWarning("Payment failed for Order {OrderId}: {Error}",
-                evt.OrderId, result.ErrorMessage);
+            _logger.LogWarning(
+                "Payment failed for Order {OrderId}: {Error}",
+                evt.OrderId,
+                result.ErrorMessage);
         }
 
+        // Always delete from queue - payment result is published via SNS
         return true;
     }
 }

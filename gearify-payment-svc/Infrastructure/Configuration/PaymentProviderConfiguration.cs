@@ -12,4 +12,10 @@ public class PaymentProviderConfiguration
     /// Enable detailed logging of payment provider operations.
     /// </summary>
     public bool EnableDetailedLogging { get; set; } = true;
+
+    /// <summary>
+    /// Testing mode for payment processing.
+    /// Values: "Normal" (default), "Slow" (30-second delay for deferred cancellation testing)
+    /// </summary>
+    public string PaymentTestingMode { get; set; } = "Normal";
 }

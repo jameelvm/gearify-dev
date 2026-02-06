@@ -32,11 +32,13 @@ services:
     ports:
       - "4566:4566"
     volumes:
+      # Main orchestrator script (only this runs directly, others are sourced)
       - "./localstack/init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh"
+      # Individual resource initialization scripts (in subdirectory so LocalStack doesn't run them directly)
+      - "./localstack/scripts:/etc/localstack/init/ready.d/scripts"
+      # Resource data directories
       - "./localstack/dynamodb:/etc/localstack/init/ready.d/dynamodb"
       - "./localstack/s3:/etc/localstack/init/ready.d/s3"
-      - "./localstack/sqs:/etc/localstack/init/ready.d/sqs"
-      - "./localstack/sns:/etc/localstack/init/ready.d/sns"
       - "./localstack/ses:/etc/localstack/init/ready.d/ses"
       - "./localstack/cognito:/etc/localstack/init/ready.d/cognito"
       - "./localstack/secretsmanager:/etc/localstack/init/ready.d/secretsmanager"
@@ -307,7 +309,9 @@ services:
       - POSTGRES_CONNECTION_STRING=Host=postgres;Port=5432;Database=gearify_orders;Username=postgres;Password=postgres
       - SNS_ENDPOINT=${SNS_ENDPOINT}
       - SQS_ENDPOINT=${SQS_ENDPOINT}
-      - MessagingConfiguration__SQS__PaymentEventsQueueUrl=http://localstack:4566/000000000000/order-payment-events-queue
+      - MessagingConfiguration__SQS__PaymentCompletedQueueUrl=http://localstack:4566/000000000000/gearify-payment-completed-queue
+      - MessagingConfiguration__SQS__PaymentFailedQueueUrl=http://localstack:4566/000000000000/gearify-payment-failed-queue
+      - MessagingConfiguration__SQS__RefundCompletedQueueUrl=http://localstack:4566/000000000000/gearify-refund-completed-queue
       - REDIS_URL=${REDIS_URL}
       - SEQ_URL=${SEQ_URL}
       - OTLP_ENDPOINT=${OTLP_ENDPOINT}
@@ -334,6 +338,7 @@ services:
       - SNS_ENDPOINT=${SNS_ENDPOINT}
       - SQS_ENDPOINT=${SQS_ENDPOINT}
       - MessagingConfiguration__SQS__OrderCreatedQueueUrl=http://localstack:4566/000000000000/gearify-order-created-queue
+      - MessagingConfiguration__SQS__OrderCancelledQueueUrl=http://localstack:4566/000000000000/gearify-order-cancelled-queue
       - SECRETS_MANAGER_ENDPOINT=${SECRETS_MANAGER_ENDPOINT}
       - STRIPE_API_KEY=${STRIPE_API_KEY}
       - PAYPAL_CLIENT_ID=${PAYPAL_CLIENT_ID}

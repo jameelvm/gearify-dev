@@ -80,6 +80,10 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Cre
             _logger.LogInformation("Created order {OrderId} ({OrderNumber}) for user {UserId} in tenant {TenantId}",
                 createdOrder.Id, createdOrder.OrderNumber, request.UserId, tenantId);
 
+            // Update status to PaymentProcessing BEFORE publishing the event
+            createdOrder = await TransitionToPaymentProcessingAsync(createdOrder.Id, tenantId, cancellationToken);
+
+            // Publish event to trigger payment processing
             await PublishOrderCreatedEvent(request, createdOrder, tenantId, cancellationToken);
 
             return new CreateOrderResult(true, OrderMapper.ToDto(createdOrder));
@@ -142,5 +146,35 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Cre
         };
 
         await _eventPublisher.PublishAsync(orderCreatedEvent, cancellationToken);
+    }
+
+    private async Task<Order> TransitionToPaymentProcessingAsync(
+        Guid orderId,
+        string tenantId,
+        CancellationToken cancellationToken)
+    {
+        await using var unitOfWork = await _unitOfWorkFactory.CreateWithTransactionAsync(cancellationToken);
+        var order = await unitOfWork.Orders.GetByIdAsync(orderId, tenantId, cancellationToken);
+
+        if (order == null)
+        {
+            throw new InvalidOperationException($"Order {orderId} not found");
+        }
+
+        order.Status = OrderStatus.PaymentProcessing;
+        order.SagaState = SagaState.PaymentPending;
+
+        await unitOfWork.Orders.AddStatusHistoryAsync(new OrderStatusHistory
+        {
+            OrderId = order.Id,
+            FromStatus = OrderStatus.Pending.ToString(),
+            ToStatus = OrderStatus.PaymentProcessing.ToString(),
+            Reason = "Payment processing initiated"
+        }, cancellationToken);
+
+        await unitOfWork.Orders.UpdateAsync(order, cancellationToken);
+        await unitOfWork.CommitAsync(cancellationToken);
+
+        return order;
     }
 }

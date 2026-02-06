@@ -39,7 +39,10 @@ public class EmailTemplateService : IEmailTemplateService
             { "MfaEnabled", "Multi-Factor Authentication Enabled" },
             { "MfaDisabled", "Multi-Factor Authentication Disabled" },
             { "PaymentFailed", "Payment Failed for Your Gearify Order" },
-            { "PaymentSucceeded", "Payment Successful - Your Gearify Order is Confirmed" }
+            { "PaymentSucceeded", "Payment Successful - Your Gearify Order is Confirmed" },
+            { "OrderCancelled", "Your Gearify Order Has Been Cancelled" },
+            { "OrderCancelledRefunded", "Your Gearify Order Has Been Cancelled and Refunded" },
+            { "RefundFailed", "Issue Processing Your Refund - Action Required" }
         };
 
         // Ensure template directory exists
