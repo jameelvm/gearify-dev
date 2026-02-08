@@ -67,7 +67,7 @@ public class PaymentCompletedEventHandler : IEventHandler<PaymentCompletedEvent>
 
             // Update order with PaymentId from the completed payment
             order.PaymentId = evt.TransactionId;
-            order.PaymentStatus = "Paid";
+            order.PaymentStatus = PaymentStatus.Completed;
             order.Status = OrderStatus.Cancelled;
             order.CancelledAt = DateTime.UtcNow;
             order.UpdatedAt = DateTime.UtcNow;

@@ -1,13 +1,11 @@
 using System;
-using Gearify.SharedKernel.Events;
 
-namespace Gearify.ShippingService.Events;
+namespace Gearify.OrderService.Infrastructure.Messaging.Events.Inbound;
 
 /// <summary>
-/// Published when shipment is delivered.
-/// Triggers order completion.
+/// Inbound event from Shipping Service when shipment is delivered.
 /// </summary>
-public record ShippingDeliveredEvent : IDomainEvent
+public record ShippingDeliveredEvent
 {
     public Guid ShipmentId { get; init; }
     public string TenantId { get; init; } = string.Empty;
@@ -17,5 +15,5 @@ public record ShippingDeliveredEvent : IDomainEvent
     public string DeliveredTo { get; init; } = string.Empty;
     public string? SignedBy { get; init; }
     public DateTime DeliveredAt { get; init; }
-    public DateTime OccurredAt { get; init; } = DateTime.UtcNow;
+    public DateTime OccurredAt { get; init; }
 }

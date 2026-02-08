@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Gearify.OrderService.Application.Mappers;
@@ -47,12 +48,13 @@ public class ConfirmOrderCommandHandler : IRequestHandler<ConfirmOrderCommand, C
             }
 
             var previousStatus = order.Status;
+
+            // Step 1: Mark as Paid
             order.Status = OrderStatus.Paid;
             order.PaymentId = request.PaymentTransactionId;
-            order.PaymentStatus = "Completed";
+            order.PaymentStatus = PaymentStatus.Completed;
             order.SagaState = SagaState.PaymentCompleted;
 
-            // Add status history
             await unitOfWork.Orders.AddStatusHistoryAsync(new OrderStatusHistory
             {
                 OrderId = order.Id,
@@ -62,10 +64,24 @@ public class ConfirmOrderCommandHandler : IRequestHandler<ConfirmOrderCommand, C
                 ChangedBy = "System"
             }, cancellationToken);
 
+            // Step 2: Transition to Processing (automated fulfillment)
+            order.Status = OrderStatus.Processing;
+            order.SagaState = SagaState.ShippingPending;
+
+            await unitOfWork.Orders.AddStatusHistoryAsync(new OrderStatusHistory
+            {
+                OrderId = order.Id,
+                FromStatus = OrderStatus.Paid.ToString(),
+                ToStatus = OrderStatus.Processing.ToString(),
+                Reason = "Order ready for fulfillment",
+                ChangedBy = "System"
+            }, cancellationToken);
+
             await unitOfWork.Orders.UpdateAsync(order, cancellationToken);
             await unitOfWork.CommitAsync(cancellationToken);
 
-            _logger.LogInformation("Confirmed order {OrderId} ({OrderNumber}) with payment {TransactionId}",
+            _logger.LogInformation(
+                "Order {OrderId} ({OrderNumber}) confirmed and ready for fulfillment. PaymentId: {TransactionId}",
                 request.OrderId, order.OrderNumber, request.PaymentTransactionId);
 
             // Publish OrderConfirmedEvent for shipping service
@@ -75,7 +91,10 @@ public class ConfirmOrderCommandHandler : IRequestHandler<ConfirmOrderCommand, C
                 OrderNumber = order.OrderNumber,
                 TenantId = request.TenantId,
                 UserId = order.UserId,
-                PaymentTransactionId = request.PaymentTransactionId
+                PaymentTransactionId = request.PaymentTransactionId,
+                TotalAmount = order.TotalAmount,
+                Currency = order.Currency,
+                ShippingAddress = ParseShippingAddress(order.ShippingAddress)
             };
             await _eventPublisher.PublishAsync(confirmedEvent, cancellationToken);
 
@@ -90,5 +109,30 @@ public class ConfirmOrderCommandHandler : IRequestHandler<ConfirmOrderCommand, C
             _logger.LogError(ex, "Failed to confirm order {OrderId}", request.OrderId);
             return new ConfirmOrderResult(false, null, ex.Message);
         }
+    }
+
+    private static OrderConfirmedEvent.OrderAddressInfo ParseShippingAddress(JsonDocument? addressJson)
+    {
+        if (addressJson == null)
+            return new OrderConfirmedEvent.OrderAddressInfo();
+
+        var root = addressJson.RootElement;
+        return new OrderConfirmedEvent.OrderAddressInfo
+        {
+            AddressId = GetStringProperty(root, "addressId"),
+            FullName = GetStringProperty(root, "fullName") ?? "",
+            Street = GetStringProperty(root, "street") ?? "",
+            Street2 = GetStringProperty(root, "street2"),
+            City = GetStringProperty(root, "city") ?? "",
+            State = GetStringProperty(root, "state") ?? "",
+            PostalCode = GetStringProperty(root, "postalCode") ?? "",
+            Country = GetStringProperty(root, "country") ?? "",
+            Phone = GetStringProperty(root, "phone")
+        };
+    }
+
+    private static string? GetStringProperty(JsonElement element, string propertyName)
+    {
+        return element.TryGetProperty(propertyName, out var prop) ? prop.GetString() : null;
     }
 }

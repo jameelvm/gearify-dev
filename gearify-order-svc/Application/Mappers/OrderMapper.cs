@@ -27,7 +27,7 @@ public static class OrderMapper
             ShippingAddress = ParseAddress(order.ShippingAddress),
             BillingAddress = ParseAddress(order.BillingAddress),
             PaymentId = order.PaymentId,
-            PaymentStatus = order.PaymentStatus,
+            PaymentStatus = order.PaymentStatus?.ToString(),
             ShipmentId = order.ShipmentId,
             ShippingStatus = order.ShippingStatus,
             SagaState = order.SagaState.ToString(),

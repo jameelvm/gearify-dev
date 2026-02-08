@@ -1,9 +1,18 @@
-using Gearify.ShippingService.Infrastructure.Adapters;
-using Microsoft.AspNetCore.Http;
+using Amazon.SimpleNotificationService;
+using Amazon.SQS;
+using Gearify.SharedKernel.Events;
+using Gearify.SharedKernel.Extensions;
+using Gearify.SharedKernel.Messaging;
 using Gearify.SharedKernel.Swagger;
+using Gearify.ShippingService.Infrastructure.Adapters;
+using Gearify.ShippingService.Infrastructure.Configuration;
+using Gearify.ShippingService.Infrastructure.Messaging;
+using Gearify.ShippingService.Infrastructure.Messaging.Events.Inbound;
+using Gearify.ShippingService.Infrastructure.Messaging.Handlers;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -21,6 +30,9 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        // Configuration
+        services.Configure<MessagingConfiguration>(Configuration.GetSection("MessagingConfiguration"));
+
         // Controllers
         services.AddControllers();
 
@@ -44,6 +56,45 @@ public class Startup
         services.AddSingleton<IShippingAdapter, EasyPostAdapter>();
         services.AddSingleton<IShippingAdapter, ShippoAdapter>();
         services.AddSingleton<ShippingAggregator>();
+
+        // AWS SNS Client
+        var snsConfig = Configuration.GetSection("MessagingConfiguration:SNS").Get<SnsConfiguration>() ?? new SnsConfiguration();
+        services.AddSingleton<IAmazonSimpleNotificationService>(sp =>
+        {
+            var config = new AmazonSimpleNotificationServiceConfig
+            {
+                ServiceURL = System.Environment.GetEnvironmentVariable("SNS_ENDPOINT")
+                    ?? System.Environment.GetEnvironmentVariable("AWS_ENDPOINT_URL")
+                    ?? "http://localhost:4566",
+                AuthenticationRegion = snsConfig.Region
+            };
+            return new AmazonSimpleNotificationServiceClient(config);
+        });
+        services.AddScoped<ISnsEventPublisher, SnsEventPublisher>();
+
+        // AWS SQS Client
+        services.AddSingleton<IAmazonSQS>(sp =>
+        {
+            var config = new AmazonSQSConfig
+            {
+                ServiceURL = System.Environment.GetEnvironmentVariable("SQS_ENDPOINT")
+                    ?? System.Environment.GetEnvironmentVariable("AWS_ENDPOINT_URL")
+                    ?? "http://localhost:4566",
+                AuthenticationRegion = snsConfig.Region
+            };
+            return new AmazonSQSClient(config);
+        });
+
+        // Event Queue Processors - One queue per event type
+        var messagingConfig = Configuration.GetSection("MessagingConfiguration").Get<MessagingConfiguration>()
+            ?? new MessagingConfiguration();
+
+        // OrderConfirmedEvent -> Create shipment and publish shipping events
+        services.AddEventQueueProcessor<OrderConfirmedEvent, OrderConfirmedEventHandler>(
+            messagingConfig.SQS.OrderConfirmedQueueUrl);
+
+        // Health checks
+        services.AddHealthChecks();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -59,7 +110,8 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
-            endpoints.MapGet("/health", () => Results.Ok(new { status = "healthy", service = "shipping" }));
+            endpoints.MapHealthChecks("/health");
+            endpoints.MapGet("/", () => Results.Ok(new { service = "shipping-svc", status = "running" }));
         });
     }
 }

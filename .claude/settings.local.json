@@ -129,7 +129,8 @@
       "Bash(del \"C:\\\\Gearify\\\\gearify-order-svc\\\\Infrastructure\\\\Messaging\\\\PaymentEventQueueProcessor.cs\")",
       "Bash(del \"C:\\\\Gearify\\\\gearify-order-svc\\\\Infrastructure\\\\Data\\\\Migrations\\\\20260123010000_AddPaymentProvider.cs\")",
       "Bash(npx ng build)",
-      "Bash(MSYS_NO_PATHCONV=1 docker exec:*)"
+      "Bash(MSYS_NO_PATHCONV=1 docker exec:*)",
+      "Bash(cd:*)"
     ],
     "deny": [],
     "ask": []

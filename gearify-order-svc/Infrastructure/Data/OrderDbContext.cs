@@ -105,7 +105,8 @@ public class OrderDbContext : DbContext
 
             entity.Property(e => e.PaymentStatus)
                 .HasColumnName("payment_status")
-                .HasMaxLength(30);
+                .HasMaxLength(30)
+                .HasConversion<string>();
 
             // Shipping fields
             entity.Property(e => e.ShipmentId)

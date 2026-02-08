@@ -1,12 +1,11 @@
 using System;
-using Gearify.SharedKernel.Events;
 
-namespace Gearify.ShippingService.Events;
+namespace Gearify.OrderService.Infrastructure.Messaging.Events.Inbound;
 
 /// <summary>
-/// Published when shipment is picked up by carrier.
+/// Inbound event from Shipping Service when shipment is picked up by carrier.
 /// </summary>
-public record ShippingShippedEvent : IDomainEvent
+public record ShippingShippedEvent
 {
     public Guid ShipmentId { get; init; }
     public string TenantId { get; init; } = string.Empty;
@@ -16,5 +15,5 @@ public record ShippingShippedEvent : IDomainEvent
     public string Carrier { get; init; } = string.Empty;
     public string TrackingUrl { get; init; } = string.Empty;
     public DateTime? EstimatedDelivery { get; init; }
-    public DateTime OccurredAt { get; init; } = DateTime.UtcNow;
+    public DateTime OccurredAt { get; init; }
 }

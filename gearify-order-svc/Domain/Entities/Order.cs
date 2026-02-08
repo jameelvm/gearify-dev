@@ -28,7 +28,7 @@ public class Order
 
     // Payment reference
     public Guid? PaymentId { get; set; }
-    public string? PaymentStatus { get; set; }
+    public PaymentStatus? PaymentStatus { get; set; }
 
     // Shipping reference
     public Guid? ShipmentId { get; set; }
@@ -90,4 +90,14 @@ public enum SagaState
     Completed,
     Compensating,
     Failed
+}
+
+public enum PaymentStatus
+{
+    Pending,
+    Processing,
+    Completed,
+    Failed,
+    Refunded,
+    PartiallyRefunded
 }

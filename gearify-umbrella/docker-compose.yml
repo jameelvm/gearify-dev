@@ -312,6 +312,8 @@ services:
       - MessagingConfiguration__SQS__PaymentCompletedQueueUrl=http://localstack:4566/000000000000/gearify-payment-completed-queue
       - MessagingConfiguration__SQS__PaymentFailedQueueUrl=http://localstack:4566/000000000000/gearify-payment-failed-queue
       - MessagingConfiguration__SQS__RefundCompletedQueueUrl=http://localstack:4566/000000000000/gearify-refund-completed-queue
+      - MessagingConfiguration__SQS__ShippingShippedQueueUrl=http://localstack:4566/000000000000/gearify-shipping-shipped-queue
+      - MessagingConfiguration__SQS__ShippingDeliveredQueueUrl=http://localstack:4566/000000000000/gearify-shipping-delivered-queue
       - REDIS_URL=${REDIS_URL}
       - SEQ_URL=${SEQ_URL}
       - OTLP_ENDPOINT=${OTLP_ENDPOINT}

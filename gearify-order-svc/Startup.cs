@@ -107,6 +107,14 @@ public class Startup
         services.AddEventQueueProcessor<RefundCompletedEvent, RefundCompletedEventHandler>(
             messagingConfig.SQS.RefundCompletedQueueUrl);
 
+        // ShippingShippedEvent -> Mark Order as Shipped
+        services.AddEventQueueProcessor<ShippingShippedEvent, ShippingShippedEventHandler>(
+            messagingConfig.SQS.ShippingShippedQueueUrl);
+
+        // ShippingDeliveredEvent -> Mark Order as Delivered
+        services.AddEventQueueProcessor<ShippingDeliveredEvent, ShippingDeliveredEventHandler>(
+            messagingConfig.SQS.ShippingDeliveredQueueUrl);
+
         // MediatR
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly));
 

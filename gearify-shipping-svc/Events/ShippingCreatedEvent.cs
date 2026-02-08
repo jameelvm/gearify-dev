@@ -1,11 +1,12 @@
 using System;
+using Gearify.SharedKernel.Events;
 
 namespace Gearify.ShippingService.Events;
 
 /// <summary>
 /// Published when a shipment is created for an order.
 /// </summary>
-public record ShippingCreatedEvent
+public record ShippingCreatedEvent : IDomainEvent
 {
     public Guid ShipmentId { get; init; }
     public string TenantId { get; init; } = string.Empty;

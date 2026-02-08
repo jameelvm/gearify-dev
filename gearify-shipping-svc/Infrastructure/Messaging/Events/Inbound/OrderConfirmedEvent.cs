@@ -1,22 +1,18 @@
 using System;
-using Gearify.SharedKernel.Events;
 
-namespace Gearify.OrderService.Events;
+namespace Gearify.ShippingService.Infrastructure.Messaging.Events.Inbound;
 
 /// <summary>
-/// Published when an order is confirmed after successful payment.
-/// Triggers shipping fulfillment.
+/// Inbound event from Order Service when order is confirmed after payment.
 /// </summary>
-public record OrderConfirmedEvent : IDomainEvent
+public record OrderConfirmedEvent
 {
     public Guid OrderId { get; init; }
     public string OrderNumber { get; init; } = string.Empty;
     public string TenantId { get; init; } = string.Empty;
     public string UserId { get; init; } = string.Empty;
     public Guid PaymentTransactionId { get; init; }
-    public decimal TotalAmount { get; init; }
-    public string Currency { get; init; } = "USD";
-    public OrderAddressInfo ShippingAddress { get; init; } = new();
+    public OrderAddressInfo? ShippingAddress { get; init; }
     public DateTime OccurredAt { get; init; } = DateTime.UtcNow;
 
     public record OrderAddressInfo

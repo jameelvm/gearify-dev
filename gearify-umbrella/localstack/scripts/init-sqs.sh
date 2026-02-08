@@ -140,13 +140,30 @@ awslocal sqs create-queue \
   2>/dev/null || echo "    Queue gearify-notification-refund-queue already exists"
 
 # ==========================================
+# Order Events -> Shipping Service
+# ==========================================
+echo "  - Creating order event queues (Shipping Service consumers)..."
+
+# OrderConfirmedEvent -> Shipping Service creates shipment
+awslocal sqs create-queue \
+  --queue-name gearify-order-confirmed-shipping-queue \
+  --attributes "{
+    \"VisibilityTimeout\":\"300\",
+    \"MessageRetentionPeriod\":\"1209600\",
+    \"ReceiveMessageWaitTimeSeconds\":\"20\",
+    \"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$ORDER_DLQ_ARN\\\",\\\"maxReceiveCount\\\":3}\"
+  }" \
+  --region us-east-1 \
+  2>/dev/null || echo "    Queue gearify-order-confirmed-shipping-queue already exists"
+
+# ==========================================
 # Shipping Events -> Order Service
 # ==========================================
 echo "  - Creating shipping event queues..."
 
-# ShipmentCreated -> Order Service
+# ShippingShippedEvent -> Order Service (marks order as Shipped)
 awslocal sqs create-queue \
-  --queue-name gearify-shipping-created-queue \
+  --queue-name gearify-shipping-shipped-queue \
   --attributes "{
     \"VisibilityTimeout\":\"300\",
     \"MessageRetentionPeriod\":\"1209600\",
@@ -154,11 +171,11 @@ awslocal sqs create-queue \
     \"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$SHIPPING_DLQ_ARN\\\",\\\"maxReceiveCount\\\":3}\"
   }" \
   --region us-east-1 \
-  2>/dev/null || echo "    Queue gearify-shipping-created-queue already exists"
+  2>/dev/null || echo "    Queue gearify-shipping-shipped-queue already exists"
 
-# ShipmentStatusUpdated, ShipmentDelivered -> Order Service
+# ShippingDeliveredEvent -> Order Service (marks order as Delivered)
 awslocal sqs create-queue \
-  --queue-name gearify-shipping-status-queue \
+  --queue-name gearify-shipping-delivered-queue \
   --attributes "{
     \"VisibilityTimeout\":\"300\",
     \"MessageRetentionPeriod\":\"1209600\",
@@ -166,7 +183,7 @@ awslocal sqs create-queue \
     \"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$SHIPPING_DLQ_ARN\\\",\\\"maxReceiveCount\\\":3}\"
   }" \
   --region us-east-1 \
-  2>/dev/null || echo "    Queue gearify-shipping-status-queue already exists"
+  2>/dev/null || echo "    Queue gearify-shipping-delivered-queue already exists"
 
 # ==========================================
 # Other Service Queues

@@ -30,6 +30,16 @@ public class SqsConfiguration
     public string RefundCompletedQueueUrl { get; set; } = string.Empty;
 
     /// <summary>
+    /// Queue URL for receiving ShippingShippedEvent
+    /// </summary>
+    public string ShippingShippedQueueUrl { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Queue URL for receiving ShippingDeliveredEvent
+    /// </summary>
+    public string ShippingDeliveredQueueUrl { get; set; } = string.Empty;
+
+    /// <summary>
     /// Polling interval in seconds
     /// </summary>
     public int PollingIntervalSeconds { get; set; } = 5;
