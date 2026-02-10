@@ -1,0 +1,134 @@
+name: Promote Environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      source-environment:
+        description: 'Source environment'
+        required: true
+        type: choice
+        options:
+          - dev
+          - staging
+      target-environment:
+        description: 'Target environment'
+        required: true
+        type: choice
+        options:
+          - staging
+          - prod
+      services:
+        description: 'Services to promote (comma-separated, or "all")'
+        required: true
+        default: 'all'
+        type: string
+
+env:
+  GITOPS_REPO: your-org/gearify-gitops
+
+jobs:
+  validate:
+    name: Validate Promotion
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate environment progression
+        run: |
+          if [ "${{ inputs.source-environment }}" == "dev" ] && [ "${{ inputs.target-environment }}" == "prod" ]; then
+            echo "Cannot promote directly from dev to prod. Please promote to staging first."
+            exit 1
+          fi
+          if [ "${{ inputs.source-environment }}" == "staging" ] && [ "${{ inputs.target-environment }}" == "dev" ]; then
+            echo "Cannot promote from staging to dev."
+            exit 1
+          fi
+          if [ "${{ inputs.source-environment }}" == "${{ inputs.target-environment }}" ]; then
+            echo "Source and target environments must be different."
+            exit 1
+          fi
+
+  promote:
+    name: Promote Services
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GitOps repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.GITOPS_REPO }}
+          token: ${{ secrets.GITOPS_TOKEN }}
+          path: gitops
+
+      - name: Determine services to promote
+        id: services
+        run: |
+          cd gitops
+          if [ "${{ inputs.services }}" == "all" ]; then
+            SERVICES=$(ls -1 apps/overlays/${{ inputs.source-environment }}/ | tr '\n' ',' | sed 's/,$//')
+          else
+            SERVICES="${{ inputs.services }}"
+          fi
+          echo "services=$SERVICES" >> $GITHUB_OUTPUT
+          echo "Promoting services: $SERVICES"
+
+      - name: Promote image tags
+        run: |
+          cd gitops
+          IFS=',' read -ra SERVICES <<< "${{ steps.services.outputs.services }}"
+
+          for SERVICE in "${SERVICES[@]}"; do
+            SERVICE=$(echo $SERVICE | xargs)  # Trim whitespace
+            SOURCE_FILE="apps/overlays/${{ inputs.source-environment }}/${SERVICE}/values.yaml"
+            TARGET_FILE="apps/overlays/${{ inputs.target-environment }}/${SERVICE}/values.yaml"
+
+            if [ -f "$SOURCE_FILE" ] && [ -f "$TARGET_FILE" ]; then
+              # Extract image tag from source
+              SOURCE_TAG=$(grep -oP 'tag: "\K[^"]+' "$SOURCE_FILE" | head -1)
+
+              if [ -n "$SOURCE_TAG" ]; then
+                echo "Promoting $SERVICE: $SOURCE_TAG"
+                sed -i "s|tag: \".*\"|tag: \"${SOURCE_TAG}\"|g" "$TARGET_FILE"
+              else
+                echo "Warning: Could not extract tag from $SOURCE_FILE"
+              fi
+            else
+              echo "Warning: Skipping $SERVICE - files not found"
+            fi
+          done
+
+      - name: Create Pull Request
+        if: inputs.target-environment == 'prod'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITOPS_TOKEN }}
+          path: gitops
+          commit-message: "Promote ${{ inputs.services }} from ${{ inputs.source-environment }} to ${{ inputs.target-environment }}"
+          title: "Promote to ${{ inputs.target-environment }}: ${{ inputs.services }}"
+          body: |
+            ## Promotion Request
+
+            **Source Environment:** ${{ inputs.source-environment }}
+            **Target Environment:** ${{ inputs.target-environment }}
+            **Services:** ${{ inputs.services }}
+
+            ### Checklist
+            - [ ] Verified services are stable in ${{ inputs.source-environment }}
+            - [ ] Reviewed image tags being promoted
+            - [ ] Confirmed no breaking changes
+
+            ---
+            Triggered by: @${{ github.actor }}
+          branch: promote/${{ inputs.target-environment }}/${{ github.run_id }}
+          base: main
+          labels: |
+            promotion
+            ${{ inputs.target-environment }}
+
+      - name: Commit and push (non-prod)
+        if: inputs.target-environment != 'prod'
+        run: |
+          cd gitops
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Promote ${{ inputs.services }} from ${{ inputs.source-environment }} to ${{ inputs.target-environment }}" || echo "No changes"
+          git push

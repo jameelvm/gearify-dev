@@ -1,0 +1,114 @@
+name: Reusable Microservice CI
+
+on:
+  workflow_call:
+    inputs:
+      service-name:
+        required: true
+        type: string
+        description: 'Name of the service (e.g., gearify-catalog-svc)'
+      service-path:
+        required: true
+        type: string
+        description: 'Path to the service directory'
+      dotnet-version:
+        required: false
+        type: string
+        default: '8.0.x'
+        description: '.NET SDK version'
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      GITOPS_TOKEN:
+        required: true
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  build-and-push:
+    name: Build and Push
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ inputs.dotnet-version }}
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ inputs.service-path }}
+
+      - name: Build
+        run: dotnet build ${{ inputs.service-path }} --no-restore -c Release
+
+      - name: Test
+        run: dotnet test ${{ inputs.service-path }} --no-build -c Release --verbosity normal
+
+      - name: Configure AWS credentials
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set image tag
+        id: image-tag
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/develop" ]; then
+            echo "tag=dev-${{ github.sha }}" >> $GITHUB_OUTPUT
+            echo "latest_tag=dev-latest" >> $GITHUB_OUTPUT
+            echo "environment=dev" >> $GITHUB_OUTPUT
+          else
+            echo "tag=${{ github.sha }}" >> $GITHUB_OUTPUT
+            echo "latest_tag=staging-latest" >> $GITHUB_OUTPUT
+            echo "environment=staging" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and push Docker image
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ steps.image-tag.outputs.tag }}
+          LATEST_TAG: ${{ steps.image-tag.outputs.latest_tag }}
+        run: |
+          docker build -t $ECR_REGISTRY/${{ inputs.service-name }}:$IMAGE_TAG ${{ inputs.service-path }}
+          docker push $ECR_REGISTRY/${{ inputs.service-name }}:$IMAGE_TAG
+
+          docker tag $ECR_REGISTRY/${{ inputs.service-name }}:$IMAGE_TAG $ECR_REGISTRY/${{ inputs.service-name }}:$LATEST_TAG
+          docker push $ECR_REGISTRY/${{ inputs.service-name }}:$LATEST_TAG
+
+      - name: Update GitOps repository
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+        env:
+          GITOPS_TOKEN: ${{ secrets.GITOPS_TOKEN }}
+          IMAGE_TAG: ${{ steps.image-tag.outputs.tag }}
+          ENVIRONMENT: ${{ steps.image-tag.outputs.environment }}
+        run: |
+          git clone https://x-access-token:${GITOPS_TOKEN}@github.com/your-org/gearify-gitops.git
+          cd gearify-gitops
+
+          # Extract service name without prefix
+          SERVICE_NAME=$(echo "${{ inputs.service-name }}" | sed 's/gearify-//')
+          VALUES_FILE="apps/overlays/${ENVIRONMENT}/${SERVICE_NAME}/values.yaml"
+
+          if [ -f "$VALUES_FILE" ]; then
+            sed -i "s|tag: \".*\"|tag: \"${IMAGE_TAG}\"|g" "$VALUES_FILE"
+
+            git config user.name "GitHub Actions"
+            git config user.email "actions@github.com"
+            git add .
+            git commit -m "Update ${SERVICE_NAME} image to ${IMAGE_TAG} [skip ci]" || echo "No changes to commit"
+            git push
+          else
+            echo "Values file not found: $VALUES_FILE"
+          fi

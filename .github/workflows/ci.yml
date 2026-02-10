@@ -1,0 +1,251 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'feature/**'
+      - 'fix/**'
+  pull_request:
+    branches:
+      - main
+      - develop
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      services: ${{ steps.filter.outputs.changes }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            gearify-tenant-svc:
+              - 'gearify-tenant-svc/**'
+            gearify-catalog-svc:
+              - 'gearify-catalog-svc/**'
+            gearify-auth-svc:
+              - 'gearify-auth-svc/**'
+            gearify-search-svc:
+              - 'gearify-search-svc/**'
+            gearify-cart-svc:
+              - 'gearify-cart-svc/**'
+            gearify-order-svc:
+              - 'gearify-order-svc/**'
+            gearify-payment-svc:
+              - 'gearify-payment-svc/**'
+            gearify-shipping-svc:
+              - 'gearify-shipping-svc/**'
+            gearify-inventory-svc:
+              - 'gearify-inventory-svc/**'
+            gearify-media-svc:
+              - 'gearify-media-svc/**'
+            gearify-notification-svc:
+              - 'gearify-notification-svc/**'
+            gearify-api-gateway:
+              - 'gearify-api-gateway/**'
+            gearify-web:
+              - 'gearify-web/**'
+            gearify-shared-kernel:
+              - 'gearify-shared-kernel/**'
+
+  build-microservice:
+    name: Build ${{ matrix.service }}
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.services != '[]' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        service: ${{ fromJson(needs.detect-changes.outputs.services) }}
+        exclude:
+          - service: gearify-web
+          - service: gearify-shared-kernel
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ matrix.service }}
+
+      - name: Build
+        run: dotnet build ${{ matrix.service }} --no-restore -c Release
+
+      - name: Test
+        run: dotnet test ${{ matrix.service }} --no-build -c Release --verbosity normal
+
+      - name: Configure AWS credentials
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push Docker image
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.ref == 'refs/heads/develop' && format('dev-{0}', github.sha) || github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/${{ matrix.service }}:$IMAGE_TAG ${{ matrix.service }}
+          docker push $ECR_REGISTRY/${{ matrix.service }}:$IMAGE_TAG
+
+          # Also tag as latest for the environment
+          if [ "${{ github.ref }}" == "refs/heads/develop" ]; then
+            docker tag $ECR_REGISTRY/${{ matrix.service }}:$IMAGE_TAG $ECR_REGISTRY/${{ matrix.service }}:dev-latest
+            docker push $ECR_REGISTRY/${{ matrix.service }}:dev-latest
+          else
+            docker tag $ECR_REGISTRY/${{ matrix.service }}:$IMAGE_TAG $ECR_REGISTRY/${{ matrix.service }}:staging-latest
+            docker push $ECR_REGISTRY/${{ matrix.service }}:staging-latest
+          fi
+
+      - name: Update GitOps repository
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+        env:
+          GITOPS_TOKEN: ${{ secrets.GITOPS_TOKEN }}
+          IMAGE_TAG: ${{ github.ref == 'refs/heads/develop' && format('dev-{0}', github.sha) || github.sha }}
+          ENVIRONMENT: ${{ github.ref == 'refs/heads/develop' && 'dev' || 'staging' }}
+        run: |
+          git clone https://x-access-token:${GITOPS_TOKEN}@github.com/your-org/gearify-gitops.git
+          cd gearify-gitops
+
+          # Update image tag in values.yaml
+          SERVICE_NAME=$(echo "${{ matrix.service }}" | sed 's/gearify-//')
+          VALUES_FILE="apps/overlays/${ENVIRONMENT}/${SERVICE_NAME}/values.yaml"
+
+          if [ -f "$VALUES_FILE" ]; then
+            sed -i "s|tag: \".*\"|tag: \"${IMAGE_TAG}\"|g" "$VALUES_FILE"
+
+            git config user.name "GitHub Actions"
+            git config user.email "actions@github.com"
+            git add .
+            git commit -m "Update ${SERVICE_NAME} image to ${IMAGE_TAG} [skip ci]" || echo "No changes"
+            git push
+          fi
+
+  build-web:
+    name: Build Web Application
+    needs: detect-changes
+    if: contains(needs.detect-changes.outputs.services, 'gearify-web')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: gearify-web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: gearify-web
+
+      - name: Lint
+        run: npm run lint
+        working-directory: gearify-web
+
+      - name: Test
+        run: npm test -- --coverage
+        working-directory: gearify-web
+
+      - name: Build
+        run: npm run build
+        working-directory: gearify-web
+
+      - name: Configure AWS credentials
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push Docker image
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.ref == 'refs/heads/develop' && format('dev-{0}', github.sha) || github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/gearify-web:$IMAGE_TAG gearify-web
+          docker push $ECR_REGISTRY/gearify-web:$IMAGE_TAG
+
+          if [ "${{ github.ref }}" == "refs/heads/develop" ]; then
+            docker tag $ECR_REGISTRY/gearify-web:$IMAGE_TAG $ECR_REGISTRY/gearify-web:dev-latest
+            docker push $ECR_REGISTRY/gearify-web:dev-latest
+          else
+            docker tag $ECR_REGISTRY/gearify-web:$IMAGE_TAG $ECR_REGISTRY/gearify-web:staging-latest
+            docker push $ECR_REGISTRY/gearify-web:staging-latest
+          fi
+
+      - name: Update GitOps repository
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+        env:
+          GITOPS_TOKEN: ${{ secrets.GITOPS_TOKEN }}
+          IMAGE_TAG: ${{ github.ref == 'refs/heads/develop' && format('dev-{0}', github.sha) || github.sha }}
+          ENVIRONMENT: ${{ github.ref == 'refs/heads/develop' && 'dev' || 'staging' }}
+        run: |
+          git clone https://x-access-token:${GITOPS_TOKEN}@github.com/your-org/gearify-gitops.git
+          cd gearify-gitops
+
+          VALUES_FILE="apps/overlays/${ENVIRONMENT}/web/values.yaml"
+
+          if [ -f "$VALUES_FILE" ]; then
+            sed -i "s|tag: \".*\"|tag: \"${IMAGE_TAG}\"|g" "$VALUES_FILE"
+
+            git config user.name "GitHub Actions"
+            git config user.email "actions@github.com"
+            git add .
+            git commit -m "Update web image to ${IMAGE_TAG} [skip ci]" || echo "No changes"
+            git push
+          fi
+
+  build-shared-kernel:
+    name: Build Shared Kernel
+    needs: detect-changes
+    if: contains(needs.detect-changes.outputs.services, 'gearify-shared-kernel')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore gearify-shared-kernel
+
+      - name: Build
+        run: dotnet build gearify-shared-kernel --no-restore -c Release
+
+      - name: Test
+        run: dotnet test gearify-shared-kernel --no-build -c Release --verbosity normal
+
+      - name: Pack NuGet
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: dotnet pack gearify-shared-kernel -c Release -o ./artifacts

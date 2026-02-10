@@ -1,0 +1,145 @@
+name: Deploy Infrastructure
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+      action:
+        description: 'Terraform action'
+        required: true
+        type: choice
+        options:
+          - plan
+          - apply
+          - destroy
+      module:
+        description: 'Module to deploy (or "all")'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - vpc
+          - eks
+          - rds
+          - elasticache
+          - sns-sqs
+          - dynamodb
+          - s3
+          - secrets
+
+env:
+  AWS_REGION: us-east-1
+  TF_VERSION: '1.5.7'
+  TG_VERSION: '0.54.0'
+
+jobs:
+  terraform:
+    name: Terraform ${{ inputs.action }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    defaults:
+      run:
+        working-directory: gearify-infrastructure/environments/${{ inputs.environment }}/us-east-1
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Setup Terragrunt
+        run: |
+          curl -LO https://github.com/gruntwork-io/terragrunt/releases/download/v${{ env.TG_VERSION }}/terragrunt_linux_amd64
+          chmod +x terragrunt_linux_amd64
+          sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terragrunt Init
+        run: |
+          if [ "${{ inputs.module }}" == "all" ]; then
+            terragrunt run-all init --terragrunt-non-interactive
+          else
+            cd ${{ inputs.module }}
+            terragrunt init --terragrunt-non-interactive
+          fi
+
+      - name: Terragrunt Plan
+        if: inputs.action == 'plan' || inputs.action == 'apply'
+        run: |
+          if [ "${{ inputs.module }}" == "all" ]; then
+            terragrunt run-all plan --terragrunt-non-interactive
+          else
+            cd ${{ inputs.module }}
+            terragrunt plan --terragrunt-non-interactive
+          fi
+
+      - name: Terragrunt Apply
+        if: inputs.action == 'apply'
+        run: |
+          if [ "${{ inputs.module }}" == "all" ]; then
+            terragrunt run-all apply --terragrunt-non-interactive -auto-approve
+          else
+            cd ${{ inputs.module }}
+            terragrunt apply --terragrunt-non-interactive -auto-approve
+          fi
+
+      - name: Terragrunt Destroy
+        if: inputs.action == 'destroy'
+        run: |
+          if [ "${{ inputs.module }}" == "all" ]; then
+            terragrunt run-all destroy --terragrunt-non-interactive -auto-approve
+          else
+            cd ${{ inputs.module }}
+            terragrunt destroy --terragrunt-non-interactive -auto-approve
+          fi
+
+  deploy-ecr:
+    name: Deploy ECR (Global)
+    if: inputs.module == 'all' && inputs.environment == 'dev'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: gearify-infrastructure/global/ecr
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Setup Terragrunt
+        run: |
+          curl -LO https://github.com/gruntwork-io/terragrunt/releases/download/v${{ env.TG_VERSION }}/terragrunt_linux_amd64
+          chmod +x terragrunt_linux_amd64
+          sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terragrunt Apply ECR
+        if: inputs.action == 'apply'
+        run: |
+          terragrunt init --terragrunt-non-interactive
+          terragrunt apply --terragrunt-non-interactive -auto-approve
