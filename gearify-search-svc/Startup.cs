@@ -8,6 +8,8 @@ using Gearify.SearchService.Infrastructure.Messaging;
 using Gearify.SearchService.Infrastructure.OpenSearch;
 using Gearify.SharedKernel.Swagger;
 using Gearify.SharedKernel.Extensions;
+using Gearify.SharedKernel.Messaging.Idempotency;
+using StackExchange.Redis;
 using LocalStack.Client.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -145,7 +147,20 @@ public class Startup
 
         Console.WriteLine($"Catalog Service Client configured: {catalogServiceUrl}");
 
-        // TODO: Module 4.3 - Add Redis cache configuration
+        // Redis for idempotency
+        var redisConnectionString = Configuration.GetValue<string>("Redis:ConnectionString")
+            ?? Environment.GetEnvironmentVariable("REDIS_URL")
+            ?? "localhost:6379";
+
+        services.AddSingleton<IConnectionMultiplexer>(sp =>
+            ConnectionMultiplexer.Connect(redisConnectionString));
+
+        // SQS Message Idempotency - prevents duplicate event processing
+        services.AddRedisIdempotency(
+            ttl: TimeSpan.FromDays(7),
+            keyPrefix: "search-svc:idempotency:");
+
+        Console.WriteLine("Redis idempotency configured successfully");
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

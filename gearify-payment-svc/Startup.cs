@@ -9,6 +9,7 @@ using Gearify.PaymentService.Infrastructure.Messaging.Events.Inbound;
 using Gearify.PaymentService.Infrastructure.Messaging.Handlers;
 using Gearify.SharedKernel.Events;
 using Gearify.SharedKernel.Messaging;
+using Gearify.SharedKernel.Messaging.Idempotency;
 using Gearify.PaymentService.Infrastructure.Repositories;
 using Gearify.PaymentService.Infrastructure.UnitOfWork;
 using Gearify.SharedKernel.Swagger;
@@ -64,6 +65,11 @@ public class Startup
 
         services.AddSingleton<IConnectionMultiplexer>(sp =>
             ConnectionMultiplexer.Connect(redisConnectionString));
+
+        // SQS Message Idempotency - prevents duplicate event processing
+        services.AddRedisIdempotency(
+            ttl: TimeSpan.FromDays(7),
+            keyPrefix: "payment-svc:idempotency:");
 
         // Repositories & Unit of Work
         services.AddScoped<IPaymentRepository, PaymentRepository>();

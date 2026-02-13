@@ -5,7 +5,9 @@ using Gearify.NotificationService.Infrastructure.Configuration;
 using Gearify.NotificationService.Infrastructure.Email;
 using Gearify.NotificationService.Infrastructure.Messaging;
 using Gearify.SharedKernel.Messaging;
+using Gearify.SharedKernel.Messaging.Idempotency;
 using Gearify.SharedKernel.Swagger;
+using StackExchange.Redis;
 using LocalStack.Client.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
@@ -42,6 +44,19 @@ public class Startup
                        .AllowAnyHeader();
             });
         });
+
+        // Redis for idempotency
+        var redisConnectionString = Configuration.GetValue<string>("Redis:ConnectionString")
+            ?? Environment.GetEnvironmentVariable("REDIS_URL")
+            ?? "localhost:6379";
+
+        services.AddSingleton<IConnectionMultiplexer>(sp =>
+            ConnectionMultiplexer.Connect(redisConnectionString));
+
+        // SQS Message Idempotency - prevents duplicate event processing
+        services.AddRedisIdempotency(
+            ttl: TimeSpan.FromDays(7),
+            keyPrefix: "notification-svc:idempotency:");
 
         // AWS Services with LocalStack
         var awsOptions = Configuration.GetAWSOptions();

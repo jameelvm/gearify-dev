@@ -12,7 +12,9 @@ using Gearify.CatalogService.Infrastructure.Clients;
 using Gearify.CatalogService.Infrastructure.Messaging;
 using Gearify.CatalogService.Infrastructure.Messaging.Events.Inbound;
 using Gearify.SharedKernel.Messaging;
+using Gearify.SharedKernel.Messaging.Idempotency;
 using Gearify.CatalogService.Infrastructure.Repositories;
+using StackExchange.Redis;
 using Gearify.SharedKernel.Swagger;
 using Gearify.SharedKernel.Extensions;
 using LocalStack.Client.Extensions;
@@ -73,6 +75,19 @@ public class Startup
 
         // Multitenancy
         services.AddMultitenancy();
+
+        // Redis for idempotency
+        var redisConnectionString = Configuration.GetValue<string>("Redis:ConnectionString")
+            ?? Environment.GetEnvironmentVariable("REDIS_URL")
+            ?? "localhost:6379";
+
+        services.AddSingleton<IConnectionMultiplexer>(sp =>
+            ConnectionMultiplexer.Connect(redisConnectionString));
+
+        // SQS Message Idempotency - prevents duplicate event processing
+        services.AddRedisIdempotency(
+            ttl: TimeSpan.FromDays(7),
+            keyPrefix: "catalog-svc:idempotency:");
 
         // Configuration
         services.Configure<Infrastructure.Configuration.ProductImageUploadConfiguration>(Configuration.GetSection("ProductImageUploadConfiguration"));

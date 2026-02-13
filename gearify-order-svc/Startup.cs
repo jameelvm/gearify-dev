@@ -10,6 +10,7 @@ using Gearify.OrderService.Infrastructure.UnitOfWork;
 using Gearify.OrderService.Infrastructure.Messaging.Events.Inbound;
 using Gearify.SharedKernel.Events;
 using Gearify.SharedKernel.Messaging;
+using Gearify.SharedKernel.Messaging.Idempotency;
 using Gearify.SharedKernel.Swagger;
 using Gearify.SharedKernel.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -19,6 +20,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
 
 namespace Gearify.OrderService;
 
@@ -61,6 +63,21 @@ public class Startup
         // Multitenancy
         services.AddHttpContextAccessor();
         services.AddMultitenancy();
+
+        // Redis for caching and idempotency
+        var redisConnectionString = Configuration.GetValue<string>("Redis:ConnectionString")
+            ?? Environment.GetEnvironmentVariable("REDIS_URL")
+            ?? "localhost:6379";
+
+        services.AddSingleton<IConnectionMultiplexer>(sp =>
+        {
+            return ConnectionMultiplexer.Connect(redisConnectionString);
+        });
+
+        // Idempotency store - prevents duplicate event processing
+        services.AddRedisIdempotency(
+            ttl: TimeSpan.FromDays(7),
+            keyPrefix: "order-svc:idempotency:");
 
         // AWS SNS Client
         var snsConfig = Configuration.GetSection("MessagingConfiguration:SNS").Get<SnsConfiguration>() ?? new SnsConfiguration();

@@ -180,6 +180,7 @@ public class SqsEventQueue<T> : IEventQueue<T> where T : class
         {
             MessageId = message.MessageId,
             ReceiptHandle = message.ReceiptHandle,
+            EventId = envelope.EventId,
             Body = eventMessage
         };
     }

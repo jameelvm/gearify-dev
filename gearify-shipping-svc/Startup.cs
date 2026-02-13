@@ -1,9 +1,12 @@
+using System;
 using Amazon.SimpleNotificationService;
 using Amazon.SQS;
 using Gearify.SharedKernel.Events;
 using Gearify.SharedKernel.Extensions;
 using Gearify.SharedKernel.Messaging;
+using Gearify.SharedKernel.Messaging.Idempotency;
 using Gearify.SharedKernel.Swagger;
+using StackExchange.Redis;
 using Gearify.ShippingService.Infrastructure.Adapters;
 using Gearify.ShippingService.Infrastructure.Configuration;
 using Gearify.ShippingService.Infrastructure.Messaging;
@@ -32,6 +35,19 @@ public class Startup
     {
         // Configuration
         services.Configure<MessagingConfiguration>(Configuration.GetSection("MessagingConfiguration"));
+
+        // Redis for idempotency
+        var redisConnectionString = Configuration.GetValue<string>("Redis:ConnectionString")
+            ?? System.Environment.GetEnvironmentVariable("REDIS_URL")
+            ?? "localhost:6379";
+
+        services.AddSingleton<IConnectionMultiplexer>(sp =>
+            ConnectionMultiplexer.Connect(redisConnectionString));
+
+        // SQS Message Idempotency - prevents duplicate event processing
+        services.AddRedisIdempotency(
+            ttl: TimeSpan.FromDays(7),
+            keyPrefix: "shipping-svc:idempotency:");
 
         // Controllers
         services.AddControllers();

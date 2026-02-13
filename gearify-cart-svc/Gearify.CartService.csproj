@@ -6,7 +6,7 @@
   <ItemGroup>
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.300" />
     <PackageReference Include="LocalStack.Client.Extensions" Version="1.4.0" />
-    <PackageReference Include="StackExchange.Redis" Version="2.7.10" />
+    <PackageReference Include="StackExchange.Redis" Version="2.7.33" />
     <PackageReference Include="MediatR" Version="12.2.0" />
     <PackageReference Include="Polly" Version="8.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
