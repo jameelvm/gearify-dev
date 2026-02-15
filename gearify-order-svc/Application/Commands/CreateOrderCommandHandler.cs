@@ -7,8 +7,8 @@ using Gearify.OrderService.Application.Mappers;
 using Gearify.OrderService.Domain.Entities;
 using Gearify.OrderService.Events;
 using Gearify.OrderService.Infrastructure.UnitOfWork;
-using Gearify.SharedKernel.Events;
 using Gearify.SharedKernel.Multitenancy;
+using Gearify.SharedKernel.Outbox;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -18,18 +18,18 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Cre
 {
     private readonly IUnitOfWorkFactory _unitOfWorkFactory;
     private readonly ITenantContext _tenantContext;
-    private readonly ISnsEventPublisher _eventPublisher;
+    private readonly IOutboxMessageFactory _outboxMessageFactory;
     private readonly ILogger<CreateOrderCommandHandler> _logger;
 
     public CreateOrderCommandHandler(
         IUnitOfWorkFactory unitOfWorkFactory,
         ITenantContext tenantContext,
-        ISnsEventPublisher eventPublisher,
+        IOutboxMessageFactory outboxMessageFactory,
         ILogger<CreateOrderCommandHandler> logger)
     {
         _unitOfWorkFactory = unitOfWorkFactory;
         _tenantContext = tenantContext;
-        _eventPublisher = eventPublisher;
+        _outboxMessageFactory = outboxMessageFactory;
         _logger = logger;
     }
 
@@ -80,11 +80,12 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Cre
             _logger.LogInformation("Created order {OrderId} ({OrderNumber}) for user {UserId} in tenant {TenantId}",
                 createdOrder.Id, createdOrder.OrderNumber, request.UserId, tenantId);
 
-            // Update status to PaymentProcessing BEFORE publishing the event
-            createdOrder = await TransitionToPaymentProcessingAsync(createdOrder.Id, tenantId, cancellationToken);
+            // Build the event
+            var orderCreatedEvent = BuildOrderCreatedEvent(request, createdOrder, tenantId);
 
-            // Publish event to trigger payment processing
-            await PublishOrderCreatedEvent(request, createdOrder, tenantId, cancellationToken);
+            // Transition to PaymentProcessing + write outbox message atomically
+            createdOrder = await TransitionToPaymentProcessingAsync(
+                createdOrder.Id, tenantId, orderCreatedEvent, cancellationToken);
 
             return new CreateOrderResult(true, OrderMapper.ToDto(createdOrder));
         }
@@ -95,10 +96,9 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Cre
         }
     }
 
-    private async Task PublishOrderCreatedEvent(CreateOrderCommand request, Order createdOrder, string tenantId, CancellationToken cancellationToken)
+    private static OrderCreatedEvent BuildOrderCreatedEvent(CreateOrderCommand request, Order createdOrder, string tenantId)
     {
-        // Publish OrderCreatedEvent to trigger payment processing
-        var orderCreatedEvent = new OrderCreatedEvent
+        return new OrderCreatedEvent
         {
             OrderId = createdOrder.Id,
             OrderNumber = createdOrder.OrderNumber,
@@ -144,13 +144,12 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Cre
                 }
                 : null
         };
-
-        await _eventPublisher.PublishAsync(orderCreatedEvent, cancellationToken);
     }
 
     private async Task<Order> TransitionToPaymentProcessingAsync(
         Guid orderId,
         string tenantId,
+        OrderCreatedEvent orderCreatedEvent,
         CancellationToken cancellationToken)
     {
         await using var unitOfWork = await _unitOfWorkFactory.CreateWithTransactionAsync(cancellationToken);
@@ -173,6 +172,11 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Cre
         }, cancellationToken);
 
         await unitOfWork.Orders.UpdateAsync(order, cancellationToken);
+
+        // Write outbox message in same transaction as status transition
+        var outbox = _outboxMessageFactory.CreateOutboxMessage(orderCreatedEvent);
+        await unitOfWork.AddOutboxMessageAsync(outbox, cancellationToken);
+
         await unitOfWork.CommitAsync(cancellationToken);
 
         return order;

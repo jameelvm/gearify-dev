@@ -6,7 +6,7 @@ using Gearify.PaymentService.Domain.Entities;
 using Gearify.PaymentService.Events;
 using Gearify.PaymentService.Infrastructure.PaymentProviders;
 using Gearify.PaymentService.Infrastructure.UnitOfWork;
-using Gearify.SharedKernel.Events;
+using Gearify.SharedKernel.Outbox;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -17,20 +17,20 @@ public class RefundPaymentCommandHandler : IRequestHandler<RefundPaymentCommand,
     private readonly IUnitOfWorkFactory _unitOfWorkFactory;
     private readonly IStripePaymentProvider _stripeProvider;
     private readonly IPayPalPaymentProvider _paypalProvider;
-    private readonly ISnsEventPublisher _eventPublisher;
+    private readonly IOutboxMessageFactory _outboxMessageFactory;
     private readonly ILogger<RefundPaymentCommandHandler> _logger;
 
     public RefundPaymentCommandHandler(
         IUnitOfWorkFactory unitOfWorkFactory,
         IStripePaymentProvider stripeProvider,
         IPayPalPaymentProvider paypalProvider,
-        ISnsEventPublisher eventPublisher,
+        IOutboxMessageFactory outboxMessageFactory,
         ILogger<RefundPaymentCommandHandler> logger)
     {
         _unitOfWorkFactory = unitOfWorkFactory;
         _stripeProvider = stripeProvider;
         _paypalProvider = paypalProvider;
-        _eventPublisher = eventPublisher;
+        _outboxMessageFactory = outboxMessageFactory;
         _logger = logger;
     }
 
@@ -134,19 +134,35 @@ public class RefundPaymentCommandHandler : IRequestHandler<RefundPaymentCommand,
                     Currency = transaction.Currency,
                     Description = $"Refund for order {transaction.OrderId}: {request.Reason}"
                 });
+
+                // Write outbox message in same transaction
+                var orderId = request.OrderId ??
+                    (Guid.TryParse(transaction.OrderId, out var parsedOrderId) ? parsedOrderId : Guid.Empty);
+
+                var evt = new RefundCompletedEvent
+                {
+                    TenantId = transaction.TenantId,
+                    RefundId = refund.Id,
+                    OriginalTransactionId = transaction.Id,
+                    OrderId = orderId,
+                    OrderNumber = request.OrderNumber ?? "",
+                    UserId = transaction.UserId,
+                    RefundAmount = refund.Amount,
+                    OriginalAmount = transaction.Amount,
+                    Currency = refund.Currency,
+                    Reason = refund.Reason,
+                    ProviderRefundId = refund.ProviderRefundId,
+                    OccurredAt = DateTime.UtcNow
+                };
+
+                var outbox = _outboxMessageFactory.CreateOutboxMessage(evt);
+                await unitOfWork.AddOutboxMessageAsync(outbox, cancellationToken);
             }
 
             await unitOfWork.CommitAsync(cancellationToken);
 
             _logger.LogInformation("Refund processed: {RefundId}, Status: {Status}",
                 refund.Id, refund.Status);
-
-            // Publish RefundCompletedEvent on success
-            if (success)
-            {
-                await PublishRefundCompletedEventAsync(
-                    refund, transaction, request, cancellationToken);
-            }
 
             return new RefundPaymentResult(success, PaymentMapper.ToRefundDto(refund));
         }
@@ -155,41 +171,5 @@ public class RefundPaymentCommandHandler : IRequestHandler<RefundPaymentCommand,
             _logger.LogError(ex, "Failed to process refund for transaction {TransactionId}", request.TransactionId);
             return new RefundPaymentResult(false, null, ex.Message);
         }
-    }
-
-    /// <summary>
-    /// Publishes RefundCompletedEvent to notify Order Service and Notification Service.
-    /// </summary>
-    private async Task PublishRefundCompletedEventAsync(
-        Refund refund,
-        PaymentTransaction transaction,
-        RefundPaymentCommand request,
-        CancellationToken cancellationToken)
-    {
-        // Parse OrderId - transaction stores it as string but event needs Guid
-        var orderId = request.OrderId ??
-            (Guid.TryParse(transaction.OrderId, out var parsedOrderId) ? parsedOrderId : Guid.Empty);
-
-        var evt = new RefundCompletedEvent
-        {
-            TenantId = transaction.TenantId,
-            RefundId = refund.Id,
-            OriginalTransactionId = transaction.Id,
-            OrderId = orderId,
-            OrderNumber = request.OrderNumber ?? "",
-            UserId = transaction.UserId,
-            RefundAmount = refund.Amount,
-            OriginalAmount = transaction.Amount,
-            Currency = refund.Currency,
-            Reason = refund.Reason,
-            ProviderRefundId = refund.ProviderRefundId,
-            OccurredAt = DateTime.UtcNow
-        };
-
-        await _eventPublisher.PublishAsync(evt, cancellationToken);
-
-        _logger.LogInformation(
-            "Published RefundCompletedEvent. RefundId: {RefundId}, OrderId: {OrderId}, Amount: {Amount} {Currency}",
-            evt.RefundId, evt.OrderId, evt.RefundAmount, evt.Currency);
     }
 }

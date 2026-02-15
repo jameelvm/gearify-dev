@@ -10,6 +10,7 @@ using Gearify.PaymentService.Infrastructure.Messaging.Handlers;
 using Gearify.SharedKernel.Events;
 using Gearify.SharedKernel.Messaging;
 using Gearify.SharedKernel.Messaging.Idempotency;
+using Gearify.SharedKernel.Outbox;
 using Gearify.PaymentService.Infrastructure.Repositories;
 using Gearify.PaymentService.Infrastructure.UnitOfWork;
 using Gearify.SharedKernel.Swagger;
@@ -111,6 +112,9 @@ public class Startup
             return new AmazonSimpleNotificationServiceClient(config);
         });
         services.AddScoped<ISnsEventPublisher, SnsEventPublisher>();
+
+        // Outbox pattern - atomic event publishing
+        services.AddOutboxPublisher<PaymentDbContext>();
 
         // AWS SQS Client
         services.AddSingleton<IAmazonSQS>(sp =>

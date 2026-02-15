@@ -5,6 +5,7 @@ using Gearify.PaymentService.Domain.Entities;
 using Gearify.PaymentService.Events;
 using Gearify.PaymentService.Infrastructure.Configuration;
 using Gearify.SharedKernel.Events;
+using Gearify.SharedKernel.Outbox;
 using Gearify.PaymentService.Infrastructure.PaymentProviders;
 using Gearify.PaymentService.Infrastructure.UnitOfWork;
 using MediatR;
@@ -20,6 +21,7 @@ public class ProcessOrderPaymentCommandHandler : IRequestHandler<ProcessOrderPay
 {
     private readonly IUnitOfWorkFactory _unitOfWorkFactory;
     private readonly IStripePaymentProvider _stripeProvider;
+    private readonly IOutboxMessageFactory _outboxMessageFactory;
     private readonly ISnsEventPublisher _eventPublisher;
     private readonly ILogger<ProcessOrderPaymentCommandHandler> _logger;
     private readonly PaymentProviderConfiguration _config;
@@ -27,12 +29,14 @@ public class ProcessOrderPaymentCommandHandler : IRequestHandler<ProcessOrderPay
     public ProcessOrderPaymentCommandHandler(
         IUnitOfWorkFactory unitOfWorkFactory,
         IStripePaymentProvider stripeProvider,
+        IOutboxMessageFactory outboxMessageFactory,
         ISnsEventPublisher eventPublisher,
         ILogger<ProcessOrderPaymentCommandHandler> logger,
         IOptions<PaymentProviderConfiguration> config)
     {
         _unitOfWorkFactory = unitOfWorkFactory;
         _stripeProvider = stripeProvider;
+        _outboxMessageFactory = outboxMessageFactory;
         _eventPublisher = eventPublisher;
         _logger = logger;
         _config = config.Value;
@@ -51,10 +55,10 @@ public class ProcessOrderPaymentCommandHandler : IRequestHandler<ProcessOrderPay
                 _logger.LogInformation("Payment already exists for order {OrderId}: {TransactionId}",
                     request.OrderId, existingTransaction.Id);
 
-                // Re-publish event if payment was already processed
+                // Re-publish event if payment was already processed (best-effort, no business data to write)
                 if (existingTransaction.Status == PaymentStatus.Succeeded)
                 {
-                    await PublishPaymentCompletedEvent(existingTransaction, request, cancellationToken);
+                    await _eventPublisher.PublishAsync(BuildPaymentCompletedEvent(existingTransaction, request), cancellationToken);
                 }
 
                 return new ProcessOrderPaymentResult(
@@ -128,20 +132,22 @@ public class ProcessOrderPaymentCommandHandler : IRequestHandler<ProcessOrderPay
                 });
             }
 
+            // Write outbox message in same transaction
+            if (success)
+            {
+                var outbox = _outboxMessageFactory.CreateOutboxMessage(BuildPaymentCompletedEvent(transaction, request));
+                await unitOfWork.AddOutboxMessageAsync(outbox, cancellationToken);
+            }
+            else
+            {
+                var outbox = _outboxMessageFactory.CreateOutboxMessage(BuildPaymentFailedEvent(transaction, request));
+                await unitOfWork.AddOutboxMessageAsync(outbox, cancellationToken);
+            }
+
             await unitOfWork.CommitAsync(cancellationToken);
 
             _logger.LogInformation("Payment {Status} for order {OrderId}: TransactionId={TransactionId}",
                 success ? "completed" : "failed", request.OrderId, transaction.Id);
-
-            // Publish payment event
-            if (success)
-            {
-                await PublishPaymentCompletedEvent(transaction, request, cancellationToken);
-            }
-            else
-            {
-                await PublishPaymentFailedEvent(transaction, request, cancellationToken);
-            }
 
             return new ProcessOrderPaymentResult(
                 success,
@@ -154,7 +160,7 @@ public class ProcessOrderPaymentCommandHandler : IRequestHandler<ProcessOrderPay
         {
             _logger.LogError(ex, "Failed to process payment for order {OrderId}", request.OrderId);
 
-            // Publish failure event
+            // Best-effort direct publish — transaction is rolling back, can't write outbox
             await _eventPublisher.PublishAsync(new PaymentFailedEvent
             {
                 TransactionId = Guid.Empty,
@@ -173,12 +179,11 @@ public class ProcessOrderPaymentCommandHandler : IRequestHandler<ProcessOrderPay
         }
     }
 
-    private async Task PublishPaymentCompletedEvent(
+    private static PaymentCompletedEvent BuildPaymentCompletedEvent(
         PaymentTransaction transaction,
-        ProcessOrderPaymentCommand request,
-        CancellationToken cancellationToken)
+        ProcessOrderPaymentCommand request)
     {
-        var completedEvent = new PaymentCompletedEvent
+        return new PaymentCompletedEvent
         {
             TransactionId = transaction.Id,
             TenantId = request.TenantId,
@@ -190,16 +195,13 @@ public class ProcessOrderPaymentCommandHandler : IRequestHandler<ProcessOrderPay
             Provider = transaction.Provider,
             ProviderTransactionId = transaction.ProviderTransactionId ?? string.Empty
         };
-
-        await _eventPublisher.PublishAsync(completedEvent, cancellationToken);
     }
 
-    private async Task PublishPaymentFailedEvent(
+    private static PaymentFailedEvent BuildPaymentFailedEvent(
         PaymentTransaction transaction,
-        ProcessOrderPaymentCommand request,
-        CancellationToken cancellationToken)
+        ProcessOrderPaymentCommand request)
     {
-        var failedEvent = new PaymentFailedEvent
+        return new PaymentFailedEvent
         {
             TransactionId = transaction.Id,
             TenantId = request.TenantId,
@@ -212,7 +214,5 @@ public class ProcessOrderPaymentCommandHandler : IRequestHandler<ProcessOrderPay
             ErrorCode = PaymentErrorCode.PaymentFailed,
             ErrorMessage = transaction.ErrorMessage ?? "Payment processing failed"
         };
-
-        await _eventPublisher.PublishAsync(failedEvent, cancellationToken);
     }
 }

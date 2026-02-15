@@ -2,10 +2,11 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Gearify.PaymentService.Infrastructure.Repositories;
+using Gearify.SharedKernel.Outbox;
 
 namespace Gearify.PaymentService.Infrastructure.UnitOfWork;
 
-public interface IUnitOfWork : IAsyncDisposable, IDisposable
+public interface IUnitOfWork : IAsyncDisposable, IDisposable, IOutboxWriter
 {
     IPaymentRepository Payments { get; }
 

@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
+using Gearify.SharedKernel.Outbox;
 using Microsoft.Extensions.Logging;
 
 namespace Gearify.SharedKernel.Events;
@@ -9,8 +10,10 @@ namespace Gearify.SharedKernel.Events;
 /// <summary>
 /// Base class for SNS event publishers that standardizes envelope wrapping.
 /// Services inherit and provide topic ARN routing and tenant ID extraction.
+/// Also implements ITopicArnResolver so the OutboxMessageFactory can resolve
+/// topic ARNs using the same service-specific routing logic.
 /// </summary>
-public abstract class SnsEventPublisherBase : ISnsEventPublisher
+public abstract class SnsEventPublisherBase : ISnsEventPublisher, ITopicArnResolver
 {
     private readonly IAmazonSimpleNotificationService _snsClient;
     private readonly ILogger _logger;
@@ -81,6 +84,9 @@ public abstract class SnsEventPublisherBase : ISnsEventPublisher
             // Don't throw - event publishing failure shouldn't fail the main operation
         }
     }
+
+    // Explicit interface implementation — delegates to the existing protected method
+    string? ITopicArnResolver.GetTopicArn(string eventType) => GetTopicArn(eventType);
 
     /// <summary>
     /// Get the SNS topic ARN for the given event type.

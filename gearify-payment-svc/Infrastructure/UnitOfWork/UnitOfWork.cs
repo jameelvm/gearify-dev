@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Gearify.PaymentService.Infrastructure.Data;
 using Gearify.PaymentService.Infrastructure.Repositories;
+using Gearify.SharedKernel.Outbox;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 
@@ -25,6 +26,11 @@ public class UnitOfWork : IUnitOfWork
     }
 
     public IPaymentRepository Payments => _paymentRepository ??= new PaymentRepository(_context);
+
+    public async Task AddOutboxMessageAsync(OutboxMessage message, CancellationToken ct = default)
+    {
+        await _context.OutboxMessages.AddAsync(message, ct);
+    }
 
     internal async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
     {

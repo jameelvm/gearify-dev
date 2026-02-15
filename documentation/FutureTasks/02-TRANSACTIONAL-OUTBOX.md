@@ -3,7 +3,7 @@
 **Priority:** High
 **Effort:** Medium
 **Risk if skipped:** Events lost when SNS is unavailable, data inconsistency between services
-**Status:** In Progress
+**Status:** Implemented
 
 ---
 
@@ -91,7 +91,7 @@ Save the event to an **outbox_messages** table in the **same database transactio
 
 ## Implementation Plan — 7 Pieces
 
-### Piece 1: SharedKernel — OutboxMessage entity + IOutboxWriter interface ✅
+### Piece 1: SharedKernel — OutboxMessage entity + IOutboxWriter interface ✅ DONE
 
 **Create:**
 - `gearify-shared-kernel/Outbox/OutboxMessage.cs` — Entity with: Id, EventType, TopicArn, Payload (serialized EventEnvelope JSON), MessageAttributes (JSON), CreatedAt, PublishedAt, RetryCount, NextRetryAt, LastError
@@ -100,7 +100,7 @@ Save the event to an **outbox_messages** table in the **same database transactio
 **Delete:**
 - `gearify-shared-kernel/Abstractions/IOutboxMessage.cs` — Unused skeleton, replaced by OutboxMessage
 
-### Piece 2: SharedKernel — CreateOutboxMessage helper on SnsEventPublisherBase
+### Piece 2: SharedKernel — OutboxMessageFactory (SRP refactor) ✅ DONE
 
 **Modify:**
 - `gearify-shared-kernel/Events/ISnsEventPublisher.cs` — Add `OutboxMessage CreateOutboxMessage<TEvent>(TEvent)` to interface
@@ -108,14 +108,14 @@ Save the event to an **outbox_messages** table in the **same database transactio
 
 **Key design**: TopicArn is resolved at write-time by the service's publisher, so the OutboxPublisher needs zero routing knowledge.
 
-### Piece 3: Order Service — DbContext + UnitOfWork changes
+### Piece 3: Order Service — DbContext + UnitOfWork changes ✅ DONE
 
 **Modify:**
 - `gearify-order-svc/Infrastructure/Data/OrderDbContext.cs` — Add `DbSet<OutboxMessage>`, configure `outbox_messages` table in `OnModelCreating` with indexes for unpublished polling and cleanup
 - `gearify-order-svc/Infrastructure/UnitOfWork/IUnitOfWork.cs` — Extend with `IOutboxWriter`
 - `gearify-order-svc/Infrastructure/UnitOfWork/UnitOfWork.cs` — Implement `AddOutboxMessageAsync` via `_context.OutboxMessages.AddAsync()` (same DbContext = same transaction)
 
-### Piece 4: Order Service — Update command handlers
+### Piece 4: Order Service — Update command handlers ✅ DONE
 
 **Modify:**
 - `gearify-order-svc/Application/Commands/CreateOrderCommandHandler.cs`
@@ -139,20 +139,20 @@ await unitOfWork.CommitAsync();
 // 5. REMOVE the old post-commit _eventPublisher.PublishAsync() call
 ```
 
-### Piece 5: Payment Service — DbContext + UnitOfWork changes
+### Piece 5: Payment Service — DbContext + UnitOfWork changes ✅ DONE
 
 **Modify:**
 - `gearify-payment-svc/Infrastructure/Data/PaymentDbContext.cs` — Add `DbSet<OutboxMessage>` + table config (identical to Order)
 - `gearify-payment-svc/Infrastructure/UnitOfWork/IUnitOfWork.cs` — Extend with `IOutboxWriter`
 - `gearify-payment-svc/Infrastructure/UnitOfWork/UnitOfWork.cs` — Implement `AddOutboxMessageAsync`
 
-### Piece 6: Payment Service — Update command handlers
+### Piece 6: Payment Service — Update command handlers ✅ DONE
 
 **Modify:**
 - `gearify-payment-svc/Application/Commands/ProcessOrderPaymentCommandHandler.cs` — Use outbox for PaymentCompleted/PaymentFailed events. Exception path keeps direct SNS publish as best-effort fallback (transaction is rolling back, can't write outbox)
 - `gearify-payment-svc/Application/Commands/RefundPaymentCommandHandler.cs` — Use outbox for RefundCompletedEvent
 
-### Piece 7: OutboxPublisher + Registration
+### Piece 7: OutboxPublisher + Registration ✅ DONE
 
 **Create:**
 - `gearify-shared-kernel/Outbox/OutboxPublisher.cs` — Generic `BackgroundService<TDbContext>` that polls outbox every 5s, publishes to SNS using stored TopicArn/Payload, marks as published, exponential backoff on failure

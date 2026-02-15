@@ -11,6 +11,7 @@ using Gearify.OrderService.Infrastructure.Messaging.Events.Inbound;
 using Gearify.SharedKernel.Events;
 using Gearify.SharedKernel.Messaging;
 using Gearify.SharedKernel.Messaging.Idempotency;
+using Gearify.SharedKernel.Outbox;
 using Gearify.SharedKernel.Swagger;
 using Gearify.SharedKernel.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -93,6 +94,9 @@ public class Startup
             return new AmazonSimpleNotificationServiceClient(config);
         });
         services.AddScoped<ISnsEventPublisher, SnsEventPublisher>();
+
+        // Outbox pattern - atomic event publishing
+        services.AddOutboxPublisher<OrderDbContext>();
 
         // AWS SQS Client
         services.AddSingleton<IAmazonSQS>(sp =>

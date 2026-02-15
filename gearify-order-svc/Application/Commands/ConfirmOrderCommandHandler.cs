@@ -6,7 +6,7 @@ using Gearify.OrderService.Application.Mappers;
 using Gearify.OrderService.Domain.Entities;
 using Gearify.OrderService.Events;
 using Gearify.OrderService.Infrastructure.UnitOfWork;
-using Gearify.SharedKernel.Events;
+using Gearify.SharedKernel.Outbox;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -15,16 +15,16 @@ namespace Gearify.OrderService.Application.Commands;
 public class ConfirmOrderCommandHandler : IRequestHandler<ConfirmOrderCommand, ConfirmOrderResult>
 {
     private readonly IUnitOfWorkFactory _unitOfWorkFactory;
-    private readonly ISnsEventPublisher _eventPublisher;
+    private readonly IOutboxMessageFactory _outboxMessageFactory;
     private readonly ILogger<ConfirmOrderCommandHandler> _logger;
 
     public ConfirmOrderCommandHandler(
         IUnitOfWorkFactory unitOfWorkFactory,
-        ISnsEventPublisher eventPublisher,
+        IOutboxMessageFactory outboxMessageFactory,
         ILogger<ConfirmOrderCommandHandler> logger)
     {
         _unitOfWorkFactory = unitOfWorkFactory;
-        _eventPublisher = eventPublisher;
+        _outboxMessageFactory = outboxMessageFactory;
         _logger = logger;
     }
 
@@ -78,13 +78,8 @@ public class ConfirmOrderCommandHandler : IRequestHandler<ConfirmOrderCommand, C
             }, cancellationToken);
 
             await unitOfWork.Orders.UpdateAsync(order, cancellationToken);
-            await unitOfWork.CommitAsync(cancellationToken);
 
-            _logger.LogInformation(
-                "Order {OrderId} ({OrderNumber}) confirmed and ready for fulfillment. PaymentId: {TransactionId}",
-                request.OrderId, order.OrderNumber, request.PaymentTransactionId);
-
-            // Publish OrderConfirmedEvent for shipping service
+            // Write outbox message in same transaction
             var confirmedEvent = new OrderConfirmedEvent
             {
                 OrderId = order.Id,
@@ -96,7 +91,14 @@ public class ConfirmOrderCommandHandler : IRequestHandler<ConfirmOrderCommand, C
                 Currency = order.Currency,
                 ShippingAddress = ParseShippingAddress(order.ShippingAddress)
             };
-            await _eventPublisher.PublishAsync(confirmedEvent, cancellationToken);
+            var outbox = _outboxMessageFactory.CreateOutboxMessage(confirmedEvent);
+            await unitOfWork.AddOutboxMessageAsync(outbox, cancellationToken);
+
+            await unitOfWork.CommitAsync(cancellationToken);
+
+            _logger.LogInformation(
+                "Order {OrderId} ({OrderNumber}) confirmed and ready for fulfillment. PaymentId: {TransactionId}",
+                request.OrderId, order.OrderNumber, request.PaymentTransactionId);
 
             // Reload to get updated status history
             await using var readUow = _unitOfWorkFactory.Create();

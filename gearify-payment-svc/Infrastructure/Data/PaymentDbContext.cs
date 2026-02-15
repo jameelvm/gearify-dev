@@ -1,4 +1,5 @@
 using Gearify.PaymentService.Domain.Entities;
+using Gearify.SharedKernel.Outbox;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gearify.PaymentService.Infrastructure.Data;
@@ -13,14 +14,76 @@ public class PaymentDbContext : DbContext
     public DbSet<PaymentTransaction> PaymentTransactions => Set<PaymentTransaction>();
     public DbSet<PaymentLedgerEntry> PaymentLedgerEntries => Set<PaymentLedgerEntry>();
     public DbSet<Refund> Refunds => Set<Refund>();
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
+        ConfigureOutboxMessage(modelBuilder);
         ConfigurePaymentTransaction(modelBuilder);
         ConfigurePaymentLedgerEntry(modelBuilder);
         ConfigureRefund(modelBuilder);
+    }
+
+    private static void ConfigureOutboxMessage(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<OutboxMessage>(entity =>
+        {
+            entity.ToTable("outbox_messages");
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .HasDefaultValueSql("gen_random_uuid()");
+
+            entity.Property(e => e.EventType)
+                .HasColumnName("event_type")
+                .HasMaxLength(255)
+                .IsRequired();
+
+            entity.Property(e => e.TopicArn)
+                .HasColumnName("topic_arn")
+                .HasMaxLength(512)
+                .IsRequired();
+
+            entity.Property(e => e.Payload)
+                .HasColumnName("payload")
+                .HasColumnType("jsonb")
+                .IsRequired();
+
+            entity.Property(e => e.MessageAttributes)
+                .HasColumnName("message_attributes")
+                .HasColumnType("jsonb");
+
+            entity.Property(e => e.CreatedAt)
+                .HasColumnName("created_at")
+                .HasDefaultValueSql("NOW()");
+
+            entity.Property(e => e.PublishedAt)
+                .HasColumnName("published_at");
+
+            entity.Property(e => e.RetryCount)
+                .HasColumnName("retry_count")
+                .HasDefaultValue(0);
+
+            entity.Property(e => e.NextRetryAt)
+                .HasColumnName("next_retry_at");
+
+            entity.Property(e => e.LastError)
+                .HasColumnName("last_error");
+
+            // Index for polling unpublished messages
+            entity.HasIndex(e => e.CreatedAt)
+                .HasDatabaseName("idx_outbox_unpublished")
+                .HasFilter("published_at IS NULL");
+
+            // Index for cleanup of old published messages
+            entity.HasIndex(e => e.PublishedAt)
+                .HasDatabaseName("idx_outbox_published_at")
+                .HasFilter("published_at IS NOT NULL");
+        });
     }
 
     private static void ConfigurePaymentTransaction(ModelBuilder modelBuilder)

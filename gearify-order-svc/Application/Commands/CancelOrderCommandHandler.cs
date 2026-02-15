@@ -5,8 +5,8 @@ using Gearify.OrderService.Application.Mappers;
 using Gearify.OrderService.Domain.Entities;
 using Gearify.OrderService.Events;
 using Gearify.OrderService.Infrastructure.UnitOfWork;
-using Gearify.SharedKernel.Events;
 using Gearify.SharedKernel.Multitenancy;
+using Gearify.SharedKernel.Outbox;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -16,18 +16,18 @@ public class CancelOrderCommandHandler : IRequestHandler<CancelOrderCommand, Can
 {
     private readonly IUnitOfWorkFactory _unitOfWorkFactory;
     private readonly ITenantContext _tenantContext;
-    private readonly ISnsEventPublisher _eventPublisher;
+    private readonly IOutboxMessageFactory _outboxMessageFactory;
     private readonly ILogger<CancelOrderCommandHandler> _logger;
 
     public CancelOrderCommandHandler(
         IUnitOfWorkFactory unitOfWorkFactory,
         ITenantContext tenantContext,
-        ISnsEventPublisher eventPublisher,
+        IOutboxMessageFactory outboxMessageFactory,
         ILogger<CancelOrderCommandHandler> logger)
     {
         _unitOfWorkFactory = unitOfWorkFactory;
         _tenantContext = tenantContext;
-        _eventPublisher = eventPublisher;
+        _outboxMessageFactory = outboxMessageFactory;
         _logger = logger;
     }
 
@@ -91,14 +91,29 @@ public class CancelOrderCommandHandler : IRequestHandler<CancelOrderCommand, Can
             }, cancellationToken);
 
             await unitOfWork.Orders.UpdateAsync(order, cancellationToken);
+
+            // Write outbox message in same transaction
+            var evt = new OrderCancelledEvent
+            {
+                TenantId = order.TenantId,
+                OrderId = order.Id,
+                OrderNumber = order.OrderNumber,
+                UserId = order.UserId,
+                Reason = request.Reason,
+                CancelledBy = request.CancelledBy,
+                PaymentId = wasPaid ? order.PaymentId : null,
+                PaidAmount = wasPaid ? order.TotalAmount : null,
+                Currency = wasPaid ? order.Currency : null,
+                OccurredAt = DateTime.UtcNow
+            };
+            var outbox = _outboxMessageFactory.CreateOutboxMessage(evt);
+            await unitOfWork.AddOutboxMessageAsync(outbox, cancellationToken);
+
             await unitOfWork.CommitAsync(cancellationToken);
 
             _logger.LogInformation(
                 "Cancelled order {OrderId} from status {FromStatus}. Reason: {Reason}. RefundRequired: {RefundRequired}",
                 request.OrderId, previousStatus, request.Reason, wasPaid);
-
-            // Publish OrderCancelledEvent
-            await PublishOrderCancelledEventAsync(order, request.Reason, request.CancelledBy, wasPaid, cancellationToken);
 
             // Reload to get updated status history
             await using var readUow = _unitOfWorkFactory.Create();
@@ -152,40 +167,9 @@ public class CancelOrderCommandHandler : IRequestHandler<CancelOrderCommand, Can
             "You will receive an email confirmation once the cancellation is complete.");
     }
 
-    /// <summary>
-    /// Publish OrderCancelledEvent to trigger downstream actions (refund, notification).
-    /// </summary>
-    private async Task PublishOrderCancelledEventAsync(
-        Order order,
-        string reason,
-        string? cancelledBy,
-        bool wasPaid,
-        CancellationToken cancellationToken)
-    {
-        var evt = new OrderCancelledEvent
-        {
-            TenantId = order.TenantId,
-            OrderId = order.Id,
-            OrderNumber = order.OrderNumber,
-            UserId = order.UserId,
-            Reason = reason,
-            CancelledBy = cancelledBy,
-            PaymentId = wasPaid ? order.PaymentId : null,
-            PaidAmount = wasPaid ? order.TotalAmount : null,
-            Currency = wasPaid ? order.Currency : null,
-            OccurredAt = DateTime.UtcNow
-        };
-
-        await _eventPublisher.PublishAsync(evt, cancellationToken);
-
-        _logger.LogInformation(
-            "Published OrderCancelledEvent for order {OrderId}. PaymentId: {PaymentId}",
-            order.Id, evt.PaymentId);
-    }
-
     private static bool CanBeCancelled(OrderStatus status)
     {
-        //Before all the status before shipping is cancellable/reversible 
+        //Before all the status before shipping is cancellable/reversible
         return status switch
         {
             OrderStatus.Pending => true,

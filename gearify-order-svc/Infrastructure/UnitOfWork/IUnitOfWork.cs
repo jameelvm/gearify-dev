@@ -2,10 +2,11 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Gearify.OrderService.Infrastructure.Repositories;
+using Gearify.SharedKernel.Outbox;
 
 namespace Gearify.OrderService.Infrastructure.UnitOfWork;
 
-public interface IUnitOfWork : IAsyncDisposable, IDisposable
+public interface IUnitOfWork : IAsyncDisposable, IDisposable, IOutboxWriter
 {
     IOrderRepository Orders { get; }
 
