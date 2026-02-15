@@ -1,7 +1,9 @@
+using Gearify.SharedKernel.Correlation;
 using Gearify.SharedKernel.Messaging.Idempotency;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog.Context;
 
 namespace Gearify.SharedKernel.Messaging;
 
@@ -81,6 +83,12 @@ public class EventQueueProcessor<T> : BackgroundService
     {
         var eventId = queueMessage.EventId;
         var typeName = typeof(T).Name;
+        var correlationId = queueMessage.CorrelationId;
+
+        if (!string.IsNullOrEmpty(correlationId))
+            CorrelationContext.Set(correlationId);
+
+        using var _ = LogContext.PushProperty("CorrelationId", correlationId);
 
         try
         {

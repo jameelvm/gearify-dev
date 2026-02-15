@@ -169,6 +169,9 @@ public class Startup
             dbContext.Database.EnsureCreated();
         }
 
+        // Correlation ID tracking (must be early in pipeline)
+        app.UseCorrelation();
+
         // Tenant resolution middleware (must be before controllers)
         app.UseMultitenancy();
 

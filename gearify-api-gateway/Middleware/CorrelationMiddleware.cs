@@ -1,9 +1,12 @@
-﻿using Gearify.SharedKernel.Correlation;
-using Microsoft.AspNetCore.Http;
 using Serilog.Context;
 
-namespace Gearify.SharedKernel.Middleware;
+namespace Gearify.ApiGateway.Middleware;
 
+/// <summary>
+/// Middleware that ensures every request has a CorrelationId.
+/// Reads from X-Correlation-ID header or generates a new GUID.
+/// Echoes the ID back in the response header and pushes it into Serilog LogContext.
+/// </summary>
 public class CorrelationMiddleware
 {
     private readonly RequestDelegate _next;
@@ -16,7 +19,6 @@ public class CorrelationMiddleware
         var correlationId = context.Request.Headers[CorrelationIdHeader].FirstOrDefault()
                             ?? Guid.NewGuid().ToString();
 
-        CorrelationContext.Set(correlationId);
         context.Response.Headers[CorrelationIdHeader] = correlationId;
 
         using (LogContext.PushProperty("CorrelationId", correlationId))

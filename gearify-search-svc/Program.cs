@@ -1,12 +1,9 @@
 using System;
+using Gearify.SharedKernel.Logging;
 using Microsoft.AspNetCore.Builder;
 using Serilog;
-using Serilog.Formatting.Json;
 
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console(new JsonFormatter())
-    .WriteTo.Seq(Environment.GetEnvironmentVariable("SEQ_URL") ?? "http://seq:5341")
-    .CreateLogger();
+Log.Logger = SerilogBootstrap.CreateJsonConsole().CreateLogger();
 
 try
 {

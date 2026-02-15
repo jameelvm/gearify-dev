@@ -23,6 +23,11 @@ public class QueueMessage<T>
     public string EventId { get; set; } = string.Empty;
 
     /// <summary>
+    /// Distributed tracing identifier propagated from the publishing service
+    /// </summary>
+    public string CorrelationId { get; set; } = string.Empty;
+
+    /// <summary>
     /// The deserialized event message body
     /// </summary>
     public T Body { get; set; } = default!;

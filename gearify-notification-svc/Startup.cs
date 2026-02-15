@@ -4,6 +4,7 @@ using Gearify.NotificationService.Infrastructure.Clients;
 using Gearify.NotificationService.Infrastructure.Configuration;
 using Gearify.NotificationService.Infrastructure.Email;
 using Gearify.NotificationService.Infrastructure.Messaging;
+using Gearify.SharedKernel.Extensions;
 using Gearify.SharedKernel.Messaging;
 using Gearify.SharedKernel.Messaging.Idempotency;
 using Gearify.SharedKernel.Swagger;
@@ -153,6 +154,9 @@ public class Startup
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+        // Correlation ID tracking (must be early in pipeline)
+        app.UseCorrelation();
+
         // CORS
         app.UseCors();
 

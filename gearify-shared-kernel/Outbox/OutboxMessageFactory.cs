@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Gearify.SharedKernel.Correlation;
 using Gearify.SharedKernel.Events;
 
 namespace Gearify.SharedKernel.Outbox;
@@ -29,7 +30,7 @@ public class OutboxMessageFactory : IOutboxMessageFactory
             throw new InvalidOperationException($"Topic ARN not configured for event type {eventType}");
 
         var tenantId = ExtractTenantId(domainEvent);
-        var envelope = EventEnvelope.Wrap(domainEvent, tenantId);
+        var envelope = EventEnvelope.Wrap(domainEvent, tenantId, CorrelationContext.GetOrCreate());
         var payload = JsonSerializer.Serialize(envelope, JsonOptions);
 
         var messageAttributes = JsonSerializer.Serialize(

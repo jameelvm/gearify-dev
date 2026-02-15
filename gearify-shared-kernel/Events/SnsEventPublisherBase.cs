@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
+using Gearify.SharedKernel.Correlation;
 using Gearify.SharedKernel.Outbox;
 using Microsoft.Extensions.Logging;
 
@@ -48,7 +49,7 @@ public abstract class SnsEventPublisherBase : ISnsEventPublisher, ITopicArnResol
         try
         {
             var tenantId = GetTenantId(domainEvent);
-            var envelope = EventEnvelope.Wrap(domainEvent, tenantId);
+            var envelope = EventEnvelope.Wrap(domainEvent, tenantId, CorrelationContext.GetOrCreate());
             var message = JsonSerializer.Serialize(envelope, JsonOptions);
 
             var request = new PublishRequest

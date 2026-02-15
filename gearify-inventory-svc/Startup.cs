@@ -1,3 +1,4 @@
+using Gearify.SharedKernel.Extensions;
 using Gearify.SharedKernel.Swagger;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
@@ -38,6 +39,9 @@ public class Startup
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+        // Correlation ID tracking (must be early in pipeline)
+        app.UseCorrelation();
+
         // Swagger
         app.UseSwagger();
         app.UseSwaggerUI();

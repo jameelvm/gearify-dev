@@ -176,6 +176,9 @@ public class Startup
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+        // Correlation ID tracking (must be early in pipeline)
+        app.UseCorrelation();
+
         // Tenant resolution middleware (must be before controllers)
         app.UseMultitenancy();
 

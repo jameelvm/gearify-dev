@@ -181,6 +181,7 @@ public class SqsEventQueue<T> : IEventQueue<T> where T : class
             MessageId = message.MessageId,
             ReceiptHandle = message.ReceiptHandle,
             EventId = envelope.EventId,
+            CorrelationId = envelope.CorrelationId,
             Body = eventMessage
         };
     }
@@ -227,6 +228,7 @@ public class SqsEventQueue<T> : IEventQueue<T> where T : class
         public string EventId { get; set; } = string.Empty;
         public string EventType { get; set; } = string.Empty;
         public string TenantId { get; set; } = string.Empty;
+        public string CorrelationId { get; set; } = string.Empty;
         public DateTime Timestamp { get; set; }
         public object? Payload { get; set; }
     }

@@ -1,8 +1,9 @@
 using System;
+using Gearify.SharedKernel.Logging;
 using Microsoft.AspNetCore.Builder;
 ﻿using Serilog;
 
-Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
+Log.Logger = SerilogBootstrap.CreateConsole().CreateLogger();
 
 try
 {

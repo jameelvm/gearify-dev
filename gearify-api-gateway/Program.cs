@@ -7,8 +7,9 @@ using Serilog.Formatting.Json;
 using System.Threading.RateLimiting;
 
 Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
     .WriteTo.Console(new JsonFormatter())
-    .WriteTo.Seq(Environment.GetEnvironmentVariable("SEQ_URL") ?? "http://seq:5341")
+    .WriteTo.Seq(Environment.GetEnvironmentVariable("SEQ_URL") ?? "http://seq:80")
     .CreateLogger();
 
 try
@@ -144,6 +145,9 @@ try
             }));
 
     var app = builder.Build();
+
+    // Correlation ID tracking (must be early in pipeline)
+    app.UseMiddleware<CorrelationMiddleware>();
 
     app.UseSerilogRequestLogging();
     app.UseCors();

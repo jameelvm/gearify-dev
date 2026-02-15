@@ -1,5 +1,6 @@
 using Amazon.DynamoDBv2;
 using Gearify.TenantService.Infrastructure.Repositories;
+using Gearify.SharedKernel.Extensions;
 using Gearify.SharedKernel.Swagger;
 using LocalStack.Client.Extensions;
 using Microsoft.AspNetCore.Http;
@@ -50,6 +51,9 @@ public class Startup
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+        // Correlation ID tracking (must be early in pipeline)
+        app.UseCorrelation();
+
         // Swagger
         app.UseSwagger();
         app.UseSwaggerUI();

@@ -25,6 +25,11 @@ public class EventEnvelope
     public string TenantId { get; set; } = string.Empty;
 
     /// <summary>
+    /// Distributed tracing identifier propagated across services
+    /// </summary>
+    public string CorrelationId { get; set; } = string.Empty;
+
+    /// <summary>
     /// When the event occurred
     /// </summary>
     public DateTime Timestamp { get; set; }
@@ -37,13 +42,15 @@ public class EventEnvelope
     /// <summary>
     /// Creates an envelope wrapping the given domain event
     /// </summary>
-    public static EventEnvelope Wrap<TEvent>(TEvent domainEvent, string tenantId) where TEvent : IDomainEvent
+    public static EventEnvelope Wrap<TEvent>(TEvent domainEvent, string tenantId, string correlationId = "")
+        where TEvent : IDomainEvent
     {
         return new EventEnvelope
         {
             EventId = Guid.NewGuid().ToString(),
             EventType = typeof(TEvent).Name,
             TenantId = tenantId,
+            CorrelationId = correlationId,
             Timestamp = domainEvent.OccurredAt,
             Payload = domainEvent
         };
