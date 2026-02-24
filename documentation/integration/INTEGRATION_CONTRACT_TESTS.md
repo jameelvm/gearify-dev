@@ -14,12 +14,12 @@ Tests the shared messaging infrastructure in isolation using real containers (Lo
 |---|---|---|---|
 | `EventEnvelopeSerializationTests` | Unit / Contract | None | 5 |
 | `OutboxMessageFactoryTests` | Unit / Contract | None | 4 |
-| `SqsEventQueueDeserializationTests` | Integration | LocalStack | 4 |
+| `SqsEventQueueDeserializationTests` | Integration | LocalStack | 5 |
 | `OutboxPublisherIntegrationTests` | Integration | LocalStack + PostgreSQL | 3 |
 | `RedisIdempotencyStoreTests` | Integration | Redis | 5 |
 | `OutboxToSqsEndToEndTests` | End-to-End | LocalStack + PostgreSQL | 1 |
 
-**Total: 22 tests**
+**Total: 23 tests**
 
 ### 2. Gearify.Messaging.IntegrationTests
 
@@ -115,7 +115,8 @@ Integration tests using a real LocalStack container to verify the SQS consumer c
 |---|---|
 | `ReceiveMessages_UnwrapsSnsEnvelope_DeserializesPayload` | SNS envelope → EventEnvelope → typed payload deserialization works |
 | `ReceiveMessages_ExtractsEventId_And_CorrelationId` | EventId and CorrelationId are extracted from the envelope into `QueueMessage` |
-| `ReceiveMessages_WithFilter_SkipsNonMatchingEventTypes` | Event type filtering only returns matching events |
+| `ReceiveMessages_WithFilter_SkipsNonMatchingEventTypes` | Code-level event type filtering only returns matching events |
+| `SnsFilterPolicy_RoutesEventTypes_ToCorrectQueues` | **SNS subscription filter policies** route different event types to different SQS queues based on `MessageAttributes.EventType` — one topic, two queues, each receives only its own event type |
 | `DeleteMessage_RemovesFromQueue` | Deleting a message prevents it from being received again |
 
 ### OutboxPublisher (Piece 5)
@@ -179,23 +180,47 @@ The `LocalStackFixture` provides a `SetupTopicWithQueue(topicName, queueName, ev
 ## Architecture: What These Tests Protect Against
 
 ```
-Order Service                          Payment Service
-┌─────────────┐                       ┌──────────────┐
-│ OrderCreated │──┐                   │              │
-│    Event     │  │   ┌───────────┐   │  Inbound DTO │
-│ (full model) │  ├──>│ Outbox DB │   │  (subset)    │
-└─────────────┘  │   └─────┬─────┘   └──────┬───────┘
-                 │         │                 │
-  Contract Test  │   ┌─────▼─────┐    ┌─────▼──────┐
-  catches here ──┤   │ Publisher │    │ SqsEvent   │
-                 │   │ (SNS)     │    │ Queue      │
-                 │   └─────┬─────┘    └─────┬──────┘
-                 │         │                 │
-                 │   ┌─────▼─────────────────▼──┐
-                 └──>│     SNS → SQS Flow       │
-                     │  (EventEnvelope wrapper)  │
-                     └──────────────────────────┘
+Order Service                                     Payment Service
+┌──────────────────┐                             ┌──────────────────┐
+│ OrderCreatedEvent │                             │ OrderCreatedEvent│
+│ (full model)      │                             │ (inbound DTO)    │
+└────────┬─────────┘                             └────────▲─────────┘
+         │                                                │
+    Contract Test ◄──────────────────────────────────────►│
+    catches mismatches                                    │
+         │                                                │
+  ┌──────▼──────┐                                         │
+  │  Outbox DB  │                                         │
+  └──────┬──────┘                                         │
+         │                                                │
+  ┌──────▼──────┐      SNS Filter Policy Routing          │
+  │  Outbox     │    ┌──────────────────────────┐   ┌─────┴──────┐
+  │  Publisher  ├───>│      SNS Topic           │   │  SQS Queue │
+  └─────────────┘    │                          ├──>│ (filtered) │
+                     │  EventType=OrderCreated ─┤   └────────────┘
+                     │  EventType=PaymentDone ──┤   ┌────────────┐
+                     │                          ├──>│  SQS Queue │
+                     └──────────────────────────┘   │ (filtered) │
+                                                    └─────┬──────┘
+                                                          │
+                                                   ┌──────▼──────┐
+                                                   │ SqsEventQueue│
+                                                   │ deserialize  │
+                                                   └──────────────┘
 ```
+
+**What each test layer covers:**
+
+| Layer | Test | Docker? |
+|---|---|---|
+| Publisher ↔ Consumer type compatibility | `CrossServiceEventContractTests` | No |
+| EventEnvelope serialization round-trip | `EventEnvelopeSerializationTests` | No |
+| OutboxMessageFactory → envelope creation | `OutboxMessageFactoryTests` | No |
+| SNS filter policy → correct SQS queue | `SnsFilterPolicy_RoutesEventTypes_ToCorrectQueues` | Yes |
+| SNS envelope → SqsEventQueue deserialization | `SqsEventQueueDeserializationTests` | Yes |
+| Outbox DB → OutboxPublisher → SNS → SQS | `OutboxPublisherIntegrationTests` | Yes |
+| Redis idempotency (claim / release / dedup) | `RedisIdempotencyStoreTests` | Yes |
+| Full chain: Factory → DB → Publisher → SNS → SQS → Queue | `OutboxToSqsEndToEndTests` | Yes |
 
 **Without these tests, the following bugs would only surface in production:**
 - A renamed property on the publisher event breaks consumer deserialization
@@ -206,6 +231,7 @@ Order Service                          Payment Service
 - EventId not surviving the SNS envelope wrapping/unwrapping
 - Outbox publisher not marking messages as published after SNS success
 - Redis idempotency store allowing duplicate event processing
+- SNS filter policies not routing events to the correct SQS queues
 
 ---
 
@@ -215,6 +241,6 @@ Order Service                          Payment Service
 |---|---|
 | Unit/contract tests only (9 tests, no Docker) | ~3 seconds |
 | Cross-service contract tests (4 tests, no Docker) | ~3 seconds |
-| Full suite including containers (26 tests) | ~2-3 minutes |
+| Full suite including containers (27 tests) | ~2-3 minutes |
 
 The first run may take longer if Docker needs to pull the LocalStack, PostgreSQL, or Redis images.
