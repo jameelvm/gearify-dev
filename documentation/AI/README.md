@@ -22,16 +22,19 @@ All AI features are designed to integrate seamlessly with this stack.
 
 ## Documentation Structure
 
+### Planning & Design
 1. **[AI Features Overview](./01-features-overview.md)** - Complete catalog of AI features
 2. **[Technology Stack](./02-technology-stack.md)** - Recommended AI/ML services for .NET & AWS
-3. **[Implementation Roadmap](./03-implementation-roadmap.md)** - Phased rollout plan
-4. **[Product Recommendations](./features/product-recommendations.md)** - Recommendation engine design
-5. **[Bedrock Generative AI](./features/bedrock-generative-ai.md)** - Content generation, chatbot, and AI automation
-6. **[Smart Search](./features/smart-search.md)** - NLP-powered search
-7. **[Customer Support AI](./features/customer-support-ai.md)** - Chatbot and automation
-8. **[Pricing & Forecasting](./features/pricing-forecasting.md)** - Dynamic pricing and demand prediction
-9. **[Computer Vision](./features/computer-vision.md)** - Visual search and image processing
-10. **[Architecture Patterns](./architecture/patterns.md)** - Integration patterns for AI services
+3. **[Implementation Roadmap](./03-implementation-roadmap.md)** - Phased rollout plan with code samples
+4. **[Implementation Plan](./04-implementation-plan.md)** - File-level plan mapping features to codebase (progress tracker)
+
+### Feature Specs
+5. **[Product Recommendations](./features/product-recommendations.md)** - Recommendation engine design
+6. **[Bedrock Generative AI](./features/bedrock-generative-ai.md)** - Content generation, chatbot, and AI automation
+7. **[Architecture Patterns](./architecture/patterns.md)** - Integration patterns for AI services
+
+### Implementation Guides (completed features)
+8. **[Product Recommendations — Implementation](./features/product-recommendations-implementation.md)** - How it was built, API docs, config, testing
 
 ## Quick Start
 
