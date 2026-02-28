@@ -35,6 +35,7 @@ All AI features are designed to integrate seamlessly with this stack.
 
 ### Implementation Guides (completed features)
 8. **[Product Recommendations — Implementation](./features/product-recommendations-implementation.md)** - How it was built, API docs, config, testing
+9. **[User Interaction Event Tracking — Implementation](./features/user-interaction-event-tracking.md)** - Event capture pipeline, SQS/DynamoDB, middleware design
 
 ## Quick Start
 
@@ -84,5 +85,5 @@ All services integrate with existing .NET SDK and LocalStack for development.
 
 ---
 
-**Last Updated**: January 2026
+**Last Updated**: February 2026
 **Maintained By**: Gearify Development Team

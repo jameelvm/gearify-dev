@@ -28,7 +28,7 @@ Concrete, file-level implementation plan that maps the AI feature roadmap to the
 |---|---|---|---|---|
 | 0 | Shared AI Infrastructure | Foundation | **Done** | `gearify-shared-kernel` |
 | 1.1 | Product Recommendations | Phase 1 | **Done** | `gearify-catalog-svc` |
-| 0.2 | User Interaction Event Tracking | Phase 0 | Pending | `gearify-api-gateway` + SharedKernel |
+| 0.2 | User Interaction Event Tracking | Phase 0 | **Done** | `gearify-api-gateway` + SharedKernel |
 | 1.2 | Smart Autocomplete | Phase 1 | Already existed (search svc) | `gearify-search-svc` |
 | 1.3 | Cart Abandonment Prevention | Phase 1 | Pending | `gearify-notification-svc` |
 | 2.1 | AI Product Descriptions (Bedrock) | Phase 2 | Pending | `gearify-catalog-svc` |
@@ -99,41 +99,18 @@ See [product-recommendations-implementation.md](./features/product-recommendatio
 
 ---
 
-## Pending: Phase 0 — User Interaction Event Tracking
+## What Was Built: Phase 0 — User Interaction Event Tracking
 
-**Goal:** Capture user views/clicks/cart additions/purchases to train recommendation models.
+See [user-interaction-event-tracking.md](./features/user-interaction-event-tracking.md) for full details.
 
-### What to Create
+### Summary
 
-| File | Purpose |
-|---|---|
-| `gearify-shared-kernel/AI/Events/UserInteractionEvent.cs` | Event model (UserId, ProductId, TenantId, EventType, EventValue, SessionId, Timestamp, Metadata) |
-| `gearify-shared-kernel/AI/Events/IUserInteractionPublisher.cs` | Interface for publishing events |
-| `gearify-shared-kernel/AI/Events/SqsUserInteractionPublisher.cs` | SQS publisher (fire-and-forget, never blocks user flow) |
-| `gearify-shared-kernel/AI/Events/UserInteractionProcessor.cs` | BackgroundService: reads SQS → stores to DynamoDB |
-| `gearify-api-gateway/Middleware/EventTrackingMiddleware.cs` | Detects interactions from HTTP patterns (product view, cart add, purchase, search) |
-
-### What to Modify
-
-| File | Change |
-|---|---|
-| `gearify-api-gateway/Gearify.ApiGateway.csproj` | Add `ProjectReference` to SharedKernel |
-| `gearify-api-gateway/Program.cs` | Register SQS client, `IUserInteractionPublisher`, add `EventTrackingMiddleware` after auth |
-| `gearify-api-gateway/appsettings.json` | Add `AI` section with `UserEventsQueueUrl` |
-
-### Event Types Tracked
-
-| HTTP Pattern | Event Type |
-|---|---|
-| `GET /api/catalog/products/{id}` | `View` |
-| `POST /api/cart/items` | `AddToCart` |
-| `POST /api/orders` | `Purchase` |
-| `GET /api/search/*` | `Search` |
-
-### Infrastructure
-
-- SQS queue: `gearify-user-events-queue` (add to LocalStack init script)
-- DynamoDB table: `gearify-user-events` (UserId HASH, Timestamp RANGE)
+- **EventTrackingMiddleware** in the API Gateway detects user interactions from HTTP request/response patterns
+- **SQS publisher** sends events asynchronously (fire-and-forget, never blocks user responses)
+- **Background processor** long-polls SQS and persists events to DynamoDB with 90-day TTL
+- **4 event types:** View, AddToCart, Purchase, Search
+- **Multi-tenant** — events tagged with TenantId from request headers
+- Works without AWS configured — graceful degradation when queue URL is not set
 
 ---
 
@@ -447,7 +424,7 @@ Scheduled Job (Hangfire) → Batch Processor → AI Service → Store Results
 |---|---|---|---|
 | **Done** | Shared AI Infrastructure | None | -- |
 | **Done** | Feature 1.1: Product Recommendations | SharedKernel AI | -- |
-| 1 | Phase 0: Event Tracking | SharedKernel AI | 2-3 days |
+| **Done** | Phase 0: Event Tracking | SharedKernel AI | -- |
 | 2 | Feature 1.3: Cart Abandonment Prevention | Notification svc | 2-3 days |
 | 3 | Feature 2.1: AI Product Descriptions | Bedrock SDK | 2-3 days |
 | 4 | Feature 2.2: NLP Smart Search | Comprehend SDK + Search svc | 2-3 days |
@@ -525,13 +502,13 @@ else
 | `gearify-catalog-svc/Application/Services/RecommendationService.cs` | Product Recommendations |
 | `gearify-catalog-svc/API/Controllers/RecommendationsController.cs` | Recommendations API |
 | `gearify-catalog-svc/Infrastructure/ML/PersonalizeDataExporter.cs` | Training data export |
+| `gearify-shared-kernel/AI/Events/*` (4 files) | Event Tracking |
+| `gearify-api-gateway/Middleware/EventTrackingMiddleware.cs` | Event Tracking |
 
 ### To Create (pending features)
 
 | File | Feature |
 |---|---|
-| `gearify-shared-kernel/AI/Events/*` | Event Tracking |
-| `gearify-api-gateway/Middleware/EventTrackingMiddleware.cs` | Event Tracking |
 | `gearify-notification-svc/BackgroundJobs/CartAbandonmentJob.cs` | Cart Abandonment |
 | `gearify-catalog-svc/Application/Services/ProductDescriptionService.cs` | AI Descriptions |
 | `gearify-catalog-svc/Application/Services/QueryUnderstandingService.cs` | NLP Search |
