@@ -88,6 +88,23 @@ CREATE TABLE IF NOT EXISTS order_status_history (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Outbox messages table (for transactional outbox pattern)
+CREATE TABLE IF NOT EXISTS outbox_messages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    event_type VARCHAR(255) NOT NULL,
+    topic_arn VARCHAR(512) NOT NULL,
+    payload JSONB NOT NULL,
+    message_attributes JSONB,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    published_at TIMESTAMPTZ,
+    retry_count INT NOT NULL DEFAULT 0,
+    next_retry_at TIMESTAMPTZ,
+    last_error TEXT
+);
+
+CREATE INDEX idx_outbox_published_at ON outbox_messages(published_at) WHERE published_at IS NOT NULL;
+CREATE INDEX idx_outbox_unpublished ON outbox_messages(created_at) WHERE published_at IS NULL;
+
 -- Indexes for orders
 CREATE INDEX idx_orders_tenant_id ON orders(tenant_id);
 CREATE INDEX idx_orders_user_id ON orders(user_id);
@@ -201,6 +218,23 @@ CREATE TABLE IF NOT EXISTS payment_events (
     payload JSONB NOT NULL DEFAULT '{}'::jsonb,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Outbox messages table (for transactional outbox pattern)
+CREATE TABLE IF NOT EXISTS outbox_messages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    event_type VARCHAR(255) NOT NULL,
+    topic_arn VARCHAR(512) NOT NULL,
+    payload JSONB NOT NULL,
+    message_attributes JSONB,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    published_at TIMESTAMPTZ,
+    retry_count INT NOT NULL DEFAULT 0,
+    next_retry_at TIMESTAMPTZ,
+    last_error TEXT
+);
+
+CREATE INDEX idx_outbox_published_at ON outbox_messages(published_at) WHERE published_at IS NOT NULL;
+CREATE INDEX idx_outbox_unpublished ON outbox_messages(created_at) WHERE published_at IS NULL;
 
 -- Indexes for payments
 CREATE INDEX idx_payments_tenant_id ON payments(tenant_id);

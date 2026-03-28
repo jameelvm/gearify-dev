@@ -7,18 +7,18 @@ WORKDIR /src
 
 # Copy shared kernel project
 COPY gearify-shared-kernel/Gearify.SharedKernel.csproj gearify-shared-kernel/
-# Copy inventory service project
-COPY gearify-inventory-svc/Gearify.InventoryService.csproj gearify-inventory-svc/
+# Copy search service project
+COPY gearify-search-svc/Gearify.SearchService.csproj gearify-search-svc/
 
 # Restore dependencies
-RUN dotnet restore gearify-inventory-svc/Gearify.InventoryService.csproj
+RUN dotnet restore gearify-search-svc/Gearify.SearchService.csproj
 
 # Copy all source files
 COPY gearify-shared-kernel/ gearify-shared-kernel/
-COPY gearify-inventory-svc/ gearify-inventory-svc/
+COPY gearify-search-svc/ gearify-search-svc/
 
 # Build the project
-WORKDIR /src/gearify-inventory-svc
+WORKDIR /src/gearify-search-svc
 RUN dotnet build -c Release -o /app/build
 
 FROM build AS publish
@@ -28,4 +28,4 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENV ASPNETCORE_URLS=http://+:80
-ENTRYPOINT ["dotnet", "Gearify.InventoryService.dll"]
+ENTRYPOINT ["dotnet", "Gearify.SearchService.dll"]

@@ -1,17 +1,20 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy project file
+# Copy shared kernel project
+COPY gearify-shared-kernel/Gearify.SharedKernel.csproj gearify-shared-kernel/
+# Copy api gateway project
 COPY gearify-api-gateway/Gearify.ApiGateway.csproj gearify-api-gateway/
 
 # Restore dependencies
 RUN dotnet restore gearify-api-gateway/Gearify.ApiGateway.csproj
 
 # Copy all source files
+COPY gearify-shared-kernel/ gearify-shared-kernel/
 COPY gearify-api-gateway/ gearify-api-gateway/
 
 # Build the project

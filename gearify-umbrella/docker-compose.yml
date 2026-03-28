@@ -306,7 +306,7 @@ services:
     container_name: gearify-order-svc
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - POSTGRES_CONNECTION_STRING=Host=postgres;Port=5432;Database=gearify_orders;Username=postgres;Password=postgres
+      - DatabaseConfiguration__ConnectionString=Host=postgres;Port=5432;Database=gearify_orders;Username=postgres;Password=postgres
       - SNS_ENDPOINT=${SNS_ENDPOINT}
       - SQS_ENDPOINT=${SQS_ENDPOINT}
       - MessagingConfiguration__SQS__PaymentCompletedQueueUrl=http://localstack:4566/000000000000/gearify-payment-completed-queue
@@ -336,7 +336,7 @@ services:
     container_name: gearify-payment-svc
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - POSTGRES_CONNECTION_STRING=Host=postgres;Port=5432;Database=gearify_payments;Username=postgres;Password=postgres
+      - ConnectionStrings__PaymentDb=Host=postgres;Port=5432;Database=gearify_payments;Username=postgres;Password=postgres
       - SNS_ENDPOINT=${SNS_ENDPOINT}
       - SQS_ENDPOINT=${SQS_ENDPOINT}
       - MessagingConfiguration__SQS__OrderCreatedQueueUrl=http://localstack:4566/000000000000/gearify-order-created-queue
