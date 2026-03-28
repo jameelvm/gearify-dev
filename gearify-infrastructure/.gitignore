@@ -1,0 +1,21 @@
+# Terragrunt
+.terragrunt-cache/
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+
+# Generated
+backend.tf
+provider.tf
+provider_aws.tf
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
