@@ -23,6 +23,10 @@
     <PackageReference Include="AWSSDK.SQS" Version="3.7.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Polly" Version="8.4.2" />
+    <PackageReference Include="AWSSDK.Personalize" Version="3.7.0" />
+    <PackageReference Include="AWSSDK.PersonalizeRuntime" Version="3.7.0" />
+    <PackageReference Include="AWSSDK.PersonalizeEvents" Version="3.7.0" />
+    <PackageReference Include="CsvHelper" Version="31.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\gearify-shared-kernel\Gearify.SharedKernel.csproj" />

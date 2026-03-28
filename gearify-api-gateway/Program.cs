@@ -1,4 +1,7 @@
+using Amazon.DynamoDBv2;
+using Amazon.SQS;
 using Gearify.ApiGateway.Middleware;
+using Gearify.SharedKernel.AI;
 using Microsoft.AspNetCore.RateLimiting;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -133,6 +136,44 @@ try
 
     builder.Services.AddAuthorization();
 
+    // AWS SQS + DynamoDB for event tracking
+    var awsEndpoint = Environment.GetEnvironmentVariable("AWS_ENDPOINT")
+                      ?? builder.Configuration["AI:LocalStackEndpoint"];
+    var useLocalStack = !string.IsNullOrEmpty(awsEndpoint);
+
+    builder.Services.AddSingleton<IAmazonSQS>(_ =>
+    {
+        var config = new AmazonSQSConfig
+        {
+            RegionEndpoint = Amazon.RegionEndpoint.GetBySystemName(
+                builder.Configuration["AI:Region"] ?? "us-east-1")
+        };
+        if (useLocalStack)
+        {
+            config.ServiceURL = awsEndpoint;
+            config.AuthenticationRegion = "us-east-1";
+        }
+        return new AmazonSQSClient(config);
+    });
+
+    builder.Services.AddSingleton<IAmazonDynamoDB>(_ =>
+    {
+        var config = new AmazonDynamoDBConfig
+        {
+            RegionEndpoint = Amazon.RegionEndpoint.GetBySystemName(
+                builder.Configuration["AI:Region"] ?? "us-east-1")
+        };
+        if (useLocalStack)
+        {
+            config.ServiceURL = awsEndpoint;
+            config.AuthenticationRegion = "us-east-1";
+        }
+        return new AmazonDynamoDBClient(config);
+    });
+
+    // User interaction event tracking (SQS publisher + background processor)
+    builder.Services.AddUserInteractionTracking(builder.Configuration);
+
     // OpenTelemetry
     builder.Services.AddOpenTelemetry()
         .WithTracing(tracing => tracing
@@ -160,6 +201,9 @@ try
     // Always enable authentication and authorization
     app.UseAuthentication();
     app.UseAuthorization();
+
+    // Event tracking — after auth so user identity is available
+    app.UseMiddleware<EventTrackingMiddleware>();
 
     app.MapReverseProxy();
     app.MapGet("/health", () => Results.Ok(new

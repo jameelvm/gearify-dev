@@ -1,4 +1,6 @@
 using Amazon.DynamoDBv2;
+using Amazon.PersonalizeEvents;
+using Amazon.PersonalizeRuntime;
 using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.SimpleNotificationService;
@@ -6,11 +8,14 @@ using Amazon.SQS;
 using FluentValidation;
 using Gearify.CatalogService.Application.Commands;
 using Gearify.CatalogService.Application.Mappers;
+using Gearify.CatalogService.Application.Services;
+using Gearify.CatalogService.Application.Services.Recommendations;
 using Gearify.SharedKernel.Events;
 using Gearify.CatalogService.Application.Validators;
 using Gearify.CatalogService.Infrastructure.Clients;
 using Gearify.CatalogService.Infrastructure.Messaging;
 using Gearify.CatalogService.Infrastructure.Messaging.Events.Inbound;
+using Gearify.SharedKernel.AI;
 using Gearify.SharedKernel.Messaging;
 using Gearify.SharedKernel.Messaging.Idempotency;
 using Gearify.CatalogService.Infrastructure.Repositories;
@@ -175,6 +180,38 @@ public class Startup
         services.AddScoped<IBrandRepository, DynamoDbBrandRepository>();
         services.AddScoped<IPriceRangeRepository, DynamoDbPriceRangeRepository>();
         services.AddScoped<IDepartmentRepository, DynamoDbDepartmentRepository>();
+
+        // AI Infrastructure + Product Recommendations (AWS Personalize)
+        services.AddAIInfrastructure(Configuration);
+
+        var personalizeEndpoint = Environment.GetEnvironmentVariable("PERSONALIZERUNTIME_ENDPOINT")
+            ?? Configuration["AWS:Personalize:ServiceUrl"]
+            ?? "http://localhost:4566";
+
+        services.AddSingleton<IAmazonPersonalizeRuntime>(sp =>
+        {
+            var config = new AmazonPersonalizeRuntimeConfig { ServiceURL = personalizeEndpoint };
+            var accessKey = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID") ?? "test";
+            var secretKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY") ?? "test";
+            return new AmazonPersonalizeRuntimeClient(new BasicAWSCredentials(accessKey, secretKey), config);
+        });
+
+        services.AddSingleton<IAmazonPersonalizeEvents>(sp =>
+        {
+            var config = new AmazonPersonalizeEventsConfig { ServiceURL = personalizeEndpoint };
+            var accessKey = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID") ?? "test";
+            var secretKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY") ?? "test";
+            return new AmazonPersonalizeEventsClient(new BasicAWSCredentials(accessKey, secretKey), config);
+        });
+
+        // Recommendation services (split by concern)
+        services.AddScoped<IRecommendationEnricher, RecommendationEnricher>();
+        services.AddScoped<IPersonalizedRecommendationService, PersonalizedRecommendationService>();
+        services.AddScoped<ISimilarItemsService, SimilarItemsService>();
+        services.AddScoped<IComplementaryItemsService, ComplementaryItemsService>();
+        services.AddScoped<IRecommendationRerankingService, RecommendationRerankingService>();
+        services.AddScoped<IInteractionRecorderService, InteractionRecorderService>();
+        services.AddScoped<IRecommendationsService, RecommendationsService>();
 
         // Event Publishing (for Search Service sync)
         services.AddScoped<ISnsEventPublisher, SnsEventPublisher>();
