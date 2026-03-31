@@ -39,45 +39,14 @@
     </div>
   </section>
 
-  <!-- Featured Products Section -->
-  <section class="featured-products">
-    <div class="container">
-      <div class="section-header">
-        <h2>Featured Products</h2>
-        <a routerLink="/products" class="view-all">View All</a>
-      </div>
-      <div class="products-grid">
-        @for (product of featuredProducts(); track product.id) {
-          <app-product-card
-            [product]="product"
-            (productClicked)="handleProductClick(product)"
-            (addToCart)="handleAddToCart(product)"
-            (toggleWishlist)="handleToggleWishlist(product)">
-          </app-product-card>
-        }
-      </div>
-    </div>
-  </section>
-
-  <!-- New Arrivals Section -->
-  <section class="new-arrivals">
-    <div class="container">
-      <div class="section-header">
-        <h2>New Arrivals</h2>
-        <app-badge variant="success">New</app-badge>
-      </div>
-      <div class="products-grid">
-        @for (product of newArrivals(); track product.id) {
-          <app-product-card
-            [product]="product"
-            (productClicked)="handleProductClick(product)"
-            (addToCart)="handleAddToCart(product)"
-            (toggleWishlist)="handleToggleWishlist(product)">
-          </app-product-card>
-        }
-      </div>
-    </div>
-  </section>
+  <!-- Recommended Products Section -->
+  <app-recommended-products
+    title="Featured Products"
+    [limit]="8"
+    (productClicked)="handleProductClick($event)"
+    (addToCart)="handleAddToCart($event)"
+    (toggleWishlist)="handleToggleWishlist($event)">
+  </app-recommended-products>
 
   <!-- Features Section -->
   <section class="features">

@@ -154,34 +154,6 @@
   }
 }
 
-/* Products Grid */
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--spacing-4);
-}
-
-/* Featured Products */
-.featured-products {
-  padding: var(--spacing-7) 0;
-  background: var(--color-background-default);
-}
-
-/* New Arrivals */
-.new-arrivals {
-  padding: var(--spacing-7) 0;
-
-  .section-header {
-    align-items: center;
-    gap: var(--spacing-3);
-
-    h2 {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-3);
-    }
-  }
-}
 
 /* Features Section */
 .features {

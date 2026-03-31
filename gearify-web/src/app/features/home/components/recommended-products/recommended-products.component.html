@@ -1,0 +1,42 @@
+<section class="recommended-products">
+  <div class="container">
+    <div class="section-header">
+      <h2>{{ title }}</h2>
+      <a *ngIf="showViewAll" routerLink="/products" class="view-all">View All</a>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading()" class="loading-grid">
+      @for (i of [1,2,3,4]; track i) {
+        <div class="skeleton-card">
+          <div class="skeleton-image"></div>
+          <div class="skeleton-text"></div>
+          <div class="skeleton-text short"></div>
+        </div>
+      }
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error() && !loading()" class="error-state">
+      <p>Unable to load recommendations.</p>
+      <button class="retry-btn" (click)="retry()">Try Again</button>
+    </div>
+
+    <!-- Products Grid -->
+    <div *ngIf="!loading() && !error() && products().length > 0" class="products-grid">
+      @for (product of products(); track product.id) {
+        <app-product-card
+          [product]="product"
+          (productClicked)="onProductClick(product)"
+          (addToCart)="onAddToCart(product)"
+          (toggleWishlist)="onToggleWishlist(product)">
+        </app-product-card>
+      }
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading() && !error() && products().length === 0" class="empty-state">
+      <p>No recommendations available yet. Start browsing to get personalized suggestions!</p>
+    </div>
+  </div>
+</section>

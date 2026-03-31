@@ -1,0 +1,118 @@
+.recommended-products {
+  padding: var(--spacing-7) 0;
+  background: var(--color-background-default);
+}
+
+.container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-4);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-5);
+
+  h2 {
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  .view-all {
+    color: var(--color-primary);
+    font-weight: var(--font-weight-medium);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+
+    &:hover {
+      color: var(--color-primary-dark);
+      text-decoration: underline;
+    }
+  }
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-4);
+
+  ::ng-deep .product-card__image-container {
+    height: 180px;
+  }
+}
+
+/* Loading skeleton */
+.loading-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-4);
+}
+
+.skeleton-card {
+  background: var(--color-background-paper);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-4);
+  box-shadow: var(--elevation-2);
+
+  .skeleton-image {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: var(--border-radius-md);
+    margin-bottom: var(--spacing-3);
+  }
+
+  .skeleton-text {
+    height: 16px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+    margin-bottom: var(--spacing-2);
+
+    &.short {
+      width: 60%;
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Error state */
+.error-state {
+  text-align: center;
+  padding: var(--spacing-6);
+  color: var(--color-text-secondary);
+
+  .retry-btn {
+    margin-top: var(--spacing-3);
+    padding: var(--spacing-2) var(--spacing-4);
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    font-weight: var(--font-weight-medium);
+    transition: background var(--transition-fast);
+
+    &:hover {
+      background: var(--color-primary-dark);
+    }
+  }
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: var(--spacing-6);
+  color: var(--color-text-secondary);
+}

@@ -54,6 +54,12 @@ export const API_CONFIG = {
     ADDRESSES: '/api/address',
     ADDRESS_BY_ID: (id: string) => `/api/address/${id}`,
 
+    // Recommendations
+    RECOMMENDATIONS_FOR_YOU: '/api/recommendations/for-you',
+    RECOMMENDATIONS_SIMILAR: (productId: string) => `/api/recommendations/products/${productId}/similar`,
+    RECOMMENDATIONS_COMPLEMENTARY: (productId: string) => `/api/recommendations/products/${productId}/complementary`,
+    RECOMMENDATIONS_INTERACTIONS: '/api/recommendations/interactions',
+
     // Search
     SEARCH_PRODUCTS: '/api/search/products',
     SEARCH_AUTOCOMPLETE: '/api/search/autocomplete',

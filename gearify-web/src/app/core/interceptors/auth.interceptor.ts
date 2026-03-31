@@ -143,7 +143,48 @@ function addAuthHeaders(req: any, token: string | null, tenantId: string | null)
     headers['Authorization'] = `Bearer ${token}`;
   }
 
+  // Add X-User-Id from stored user or session ID fallback
+  const userId = getUserId(token);
+  if (userId) {
+    headers['X-User-Id'] = userId;
+  }
+
   return req.clone({
     setHeaders: headers
   });
+}
+
+/**
+ * Extract user ID from JWT token, localStorage user, or generate a session-based ID
+ */
+function getUserId(token: string | null): string | null {
+  // Try extracting from JWT token
+  if (token) {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const userId = payload.sub || payload.userId || payload['cognito:username'];
+      if (userId) return userId;
+    } catch { /* ignore parse errors */ }
+  }
+
+  // Try from stored user
+  if (typeof localStorage !== 'undefined') {
+    const userStr = localStorage.getItem(STORAGE_KEYS.USER);
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        if (user?.id) return user.id;
+      } catch { /* ignore parse errors */ }
+    }
+
+    // Fallback: generate and persist a session-based anonymous ID
+    let sessionId = localStorage.getItem(STORAGE_KEYS.SESSION_ID);
+    if (!sessionId) {
+      sessionId = `anon-${Date.now()}-${Math.random().toString(36).substring(2, 10)}`;
+      localStorage.setItem(STORAGE_KEYS.SESSION_ID, sessionId);
+    }
+    return sessionId;
+  }
+
+  return 'anonymous';
 }
