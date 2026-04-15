@@ -19,13 +19,14 @@ public class ComplementaryItemsService : IComplementaryItemsService
 
     private static readonly Dictionary<string, List<string>> ComplementaryCategories = new(StringComparer.OrdinalIgnoreCase)
     {
-        ["Cricket Bats"] = ["Batting Pads", "Batting Gloves", "Cricket Helmets", "Bat Grips", "Bat Covers"],
-        ["Batting Pads"] = ["Cricket Bats", "Batting Gloves", "Cricket Helmets", "Thigh Guards"],
-        ["Batting Gloves"] = ["Cricket Bats", "Batting Pads", "Inner Gloves"],
-        ["Cricket Helmets"] = ["Cricket Bats", "Batting Pads", "Batting Gloves"],
-        ["Cricket Balls"] = ["Cricket Bats", "Wicket Keeping Gloves", "Bowling Shoes"],
-        ["Cricket Shoes"] = ["Cricket Socks", "Cricket Whites", "Cricket Bags"],
-        ["Cricket Bags"] = ["Cricket Bats", "Cricket Shoes", "Cricket Whites"],
+        // Match actual DynamoDB category names
+        ["Bats"] = ["Pads", "Gloves", "Helmets", "Bags", "Accessories"],
+        ["Pads"] = ["Bats", "Gloves", "Helmets", "Accessories"],
+        ["Gloves"] = ["Bats", "Pads", "Helmets"],
+        ["Helmets"] = ["Bats", "Pads", "Gloves"],
+        ["Balls"] = ["Bats", "Gloves", "Bags"],
+        ["Bags"] = ["Bats", "Accessories", "Balls"],
+        ["Accessories"] = ["Bats", "Bags", "Balls"],
     };
 
     public ComplementaryItemsService(

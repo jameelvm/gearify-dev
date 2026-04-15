@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Product } from '@core/models/product.model';
 import { ProductService } from '@core/services/product.service';
-import { SearchService, ProductSearchItem } from '@core/services/search.service';
 import { CartService } from '@core/services/cart.service';
 import {
   ImageGalleryComponent,
@@ -16,6 +15,8 @@ import {
   BreadcrumbComponent
 } from '@app/ui-kit/components';
 import { GalleryImage } from '@app/ui-kit/components/image-gallery/image-gallery.component';
+import { SimilarProductsComponent } from './components/similar-products/similar-products.component';
+import { ComplementaryProductsComponent } from './components/complementary-products/complementary-products.component';
 
 export type TabType = 'description' | 'reviews' | 'specifications';
 
@@ -48,7 +49,9 @@ export interface Review {
     ProductCardComponent,
     PriceTagComponent,
     BadgeComponent,
-    BreadcrumbComponent
+    BreadcrumbComponent,
+    SimilarProductsComponent,
+    ComplementaryProductsComponent
   ],
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.scss'
@@ -57,7 +60,6 @@ export class ProductDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private productService = inject(ProductService);
-  private searchService = inject(SearchService);
   private cartService = inject(CartService);
 
   // Loading and error states
@@ -82,13 +84,14 @@ export class ProductDetailComponent implements OnInit {
   // Reviews (placeholder for future API integration)
   reviews = signal<Review[]>([]);
 
-  // Related products (placeholder for future API integration)
-  relatedProducts = signal<Product[]>([]);
+  // Current product ID for recommendation components
+  currentProductId = signal<string>('');
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       const productId = params['id'];
       if (productId) {
+        this.currentProductId.set(productId);
         this.loadProduct(productId);
       }
     });
@@ -102,8 +105,6 @@ export class ProductDetailComponent implements OnInit {
       next: (product) => {
         this.product.set(product);
         this.isLoading.set(false);
-        // Load similar products based on category
-        this.loadSimilarProducts(product);
       },
       error: (err) => {
         console.error('Error loading product:', err);
@@ -111,54 +112,6 @@ export class ProductDetailComponent implements OnInit {
         this.isLoading.set(false);
       }
     });
-  }
-
-  /**
-   * Load similar products using dedicated API endpoint
-   * Backend uses brand, category, price range, and tags for matching
-   */
-  private loadSimilarProducts(currentProduct: Product): void {
-    this.searchService.getSimilarProducts(currentProduct.id, 4).subscribe({
-      next: (response) => {
-        const similar = response.items.map(item => this.mapSearchItemToProduct(item));
-        this.relatedProducts.set(similar);
-      },
-      error: (err) => {
-        console.error('Error loading similar products:', err);
-      }
-    });
-  }
-
-  /**
-   * Map ProductSearchItem to Product for ProductCardComponent
-   */
-  private mapSearchItemToProduct(item: ProductSearchItem): Product {
-    return {
-      id: item.id,
-      tenantId: '',
-      sku: item.sku,
-      name: item.name,
-      description: item.description || '',
-      department: item.department,
-      departmentSlug: item.departmentSlug,
-      category: item.category,
-      categorySlug: item.categorySlug,
-      brand: item.brand,
-      brandSlug: item.brandSlug,
-      price: item.price,
-      compareAtPrice: item.compareAtPrice || item.price,
-      discountPercentage: item.discountPercentage,
-      currency: item.currency,
-      thumbnailUrl: item.thumbnailUrl || item.imageUrl,
-      imageUrls: item.imageUrl ? [item.imageUrl] : [],
-      tags: [],
-      attributes: {},
-      isActive: true,
-      ratingAverage: item.ratingAverage,
-      ratingCount: item.ratingCount,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
   }
 
   // Computed gallery images - use enriched images if available, fallback to imageUrls or thumbnailUrl

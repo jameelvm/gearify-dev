@@ -1,0 +1,28 @@
+<section class="similar-products" *ngIf="loading() || products().length > 0">
+  <h2 class="section-title">You May Also Like</h2>
+
+  <!-- Loading Skeleton -->
+  <div *ngIf="loading()" class="products-grid">
+    @for (i of [1,2,3,4]; track i) {
+      <div class="skeleton-card">
+        <div class="skeleton-image"></div>
+        <div class="skeleton-content">
+          <div class="skeleton-line brand"></div>
+          <div class="skeleton-line title"></div>
+          <div class="skeleton-line price"></div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Loaded Products -->
+  <div *ngIf="!loading()" class="products-grid">
+    @for (product of products(); track product.id) {
+      <app-product-card
+        [product]="product"
+        (productClicked)="onProductClick(product)"
+        (addToCart)="onAddToCart(product)">
+      </app-product-card>
+    }
+  </div>
+</section>

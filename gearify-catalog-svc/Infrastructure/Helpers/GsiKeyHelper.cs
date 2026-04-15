@@ -59,6 +59,18 @@ public static class GsiKeyHelper
     }
 
     /// <summary>
+    /// Compute GSI7PK and GSI7SK for category-based product lookups
+    /// PK: TENANT#{tenantId}#CATEGORY#{categorySlug}
+    /// SK: PRODUCT#{productId}
+    /// </summary>
+    public static (string GSI7PK, string GSI7SK) ComputeCategorySortKeys(Product product)
+    {
+        var gsi7PK = $"TENANT#{product.TenantId}#CATEGORY#{product.CategorySlug}";
+        var gsi7SK = $"PRODUCT#{product.Id}";
+        return (gsi7PK, gsi7SK);
+    }
+
+    /// <summary>
     /// Compute GSI6PK and GSI6SK for featured products (sparse index)
     /// Only products with IsFeatured=true will have these keys set
     /// </summary>

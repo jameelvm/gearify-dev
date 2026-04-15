@@ -73,14 +73,17 @@ public class DynamoDbProductRepository(
 
     public async Task<List<Product>> GetByCategoryAsync(string category, string tenantId)
     {
+        // Use categorySlug for GSI7 lookup (convert category name to slug)
+        var categorySlug = category.ToLowerInvariant().Replace(" ", "-");
+
         var request = new QueryRequest
         {
             TableName = _tableName,
-            IndexName = "GSI1",
-            KeyConditionExpression = "GSI1PK = :gsi1pk",
+            IndexName = "GSI7",
+            KeyConditionExpression = "GSI7PK = :gsi7pk",
             ExpressionAttributeValues = new Dictionary<string, AttributeValue>
             {
-                { ":gsi1pk", new AttributeValue { S = $"TENANT#{tenantId}#CATEGORY#{category}" } }
+                { ":gsi7pk", new AttributeValue { S = $"TENANT#{tenantId}#CATEGORY#{categorySlug}" } }
             }
         };
 
@@ -118,6 +121,9 @@ public class DynamoDbProductRepository(
         // Compute GSI6 keys for featured products (sparse index - only if IsFeatured=true)
         var (gsi6PK, gsi6SK) = GsiKeyHelper.ComputeFeaturedSortKeys(product);
 
+        // Compute GSI7 keys for category-based lookups
+        var (gsi7PK, gsi7SK) = GsiKeyHelper.ComputeCategorySortKeys(product);
+
         var item = new Dictionary<string, AttributeValue>
         {
             // ===== Main Table Keys =====
@@ -152,6 +158,12 @@ public class DynamoDbProductRepository(
             // SK Format: NAME#kookaburra bat#PRODUCT#{id} (lowercase for case-insensitive sort)
             { "GSI5PK", new AttributeValue { S = $"TENANT#{product.TenantId}" } },
             { "GSI5SK", new AttributeValue { S = GsiKeyHelper.ComputeNameSortKey(product) } },
+
+            // ===== GSI7: Category Lookup =====
+            // Used for: recommendations (similar/complementary), category browsing
+            // PK: TENANT#{tenantId}#CATEGORY#{categorySlug}, SK: PRODUCT#{id}
+            { "GSI7PK", new AttributeValue { S = gsi7PK } },
+            { "GSI7SK", new AttributeValue { S = gsi7SK } },
 
             // Note: GSI6 (Featured Products) is added below only if IsFeatured=true
 
@@ -284,21 +296,21 @@ public class DynamoDbProductRepository(
     {
         var product = new Product
         {
-            Id = item["Id"].S,
-            TenantId = item["TenantId"].S,
-            Sku = item["Sku"].S,
-            Name = item["Name"].S,
+            Id = item.TryGetValue("Id", out var id) ? id.S : item["PK"].S,
+            TenantId = item.TryGetValue("TenantId", out var tenantId) ? tenantId.S : string.Empty,
+            Sku = item.TryGetValue("Sku", out var sku) ? sku.S : string.Empty,
+            Name = item.TryGetValue("Name", out var name) ? name.S : string.Empty,
             Description = item.TryGetValue("Description", out var description) ? description.S : string.Empty,
             ThumbnailUrl = item.TryGetValue("ThumbnailUrl", out var thumbnailValue) ? thumbnailValue.S : string.Empty,
             Department = item.TryGetValue("Department", out var department) ? department.S : string.Empty,
             DepartmentSlug = item.TryGetValue("DepartmentSlug", out var departmentSlug) ? departmentSlug.S : string.Empty,
-            Category = item["Category"].S,
+            Category = item.TryGetValue("Category", out var category) ? category.S : string.Empty,
             CategorySlug = item.TryGetValue("CategorySlug", out var categorySlug) ? categorySlug.S : string.Empty,
             Subcategory = item.TryGetValue("Subcategory", out var subcategory) ? subcategory.S : string.Empty,
             SubcategorySlug = item.TryGetValue("SubcategorySlug", out var subcategorySlug) ? subcategorySlug.S : string.Empty,
             Brand = item.TryGetValue("Brand", out var brand) ? brand.S : string.Empty,
             BrandSlug = item.TryGetValue("BrandSlug", out var brandSlug) ? brandSlug.S : string.Empty,
-            Price = decimal.Parse(item["Price"].N),
+            Price = item.TryGetValue("Price", out var price) ? decimal.Parse(price.N) : 0,
             CompareAtPrice = item.TryGetValue("CompareAtPrice", out var compareAtPrice) ? decimal.Parse(compareAtPrice.N) : 0,
             Currency = item.TryGetValue("Currency", out var currency) ? currency.S : "USD",
             DiscountPercentage = item.TryGetValue("DiscountPercentage", out var discountPct) ? decimal.Parse(discountPct.N) : null,
@@ -313,8 +325,8 @@ public class DynamoDbProductRepository(
             DealStartDate = item.TryGetValue("DealStartDate", out var dealStart) ? DateTime.Parse(dealStart.S) : null,
             DealEndDate = item.TryGetValue("DealEndDate", out var dealEnd) ? DateTime.Parse(dealEnd.S) : null,
             IsActive = item.TryGetValue("IsActive", out var isActive) && isActive.BOOL,
-            CreatedAt = DateTime.Parse(item["CreatedAt"].S),
-            UpdatedAt = DateTime.Parse(item["UpdatedAt"].S)
+            CreatedAt = item.TryGetValue("CreatedAt", out var createdAt) ? DateTime.Parse(createdAt.S) : DateTime.UtcNow,
+            UpdatedAt = item.TryGetValue("UpdatedAt", out var updatedAt) ? DateTime.Parse(updatedAt.S) : DateTime.UtcNow
         };
 
         if (item.TryGetValue("Tags", out var tags) && tags.SS.Any())
